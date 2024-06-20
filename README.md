@@ -12,6 +12,11 @@ Welcome to my GitHub blog! Here, I share my thoughts, experiences, and projects 
 
 I am a passionate person with a strong interest in web development and open-source projects. I love learning new technologies and sharing my knowledge with others.
 
+## About
+{: .about-button}
+[About](https://example.com/about)
+{: .about-button}
+
 ## Contact Me
 
 - Email: ksw8841@knou.ac.kr
