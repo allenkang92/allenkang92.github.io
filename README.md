@@ -13,9 +13,8 @@ Welcome to my GitHub blog! Here, I share my thoughts, experiences, and projects 
 I am a passionate person with a strong interest in web development and open-source projects. I love learning new technologies and sharing my knowledge with others.
 
 ## About
-{: .about-button}
 [About](https://allenkang92.github.io/about)
-{: .about-button}
+
 
 ## Contact Me
 
