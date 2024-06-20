@@ -4,9 +4,9 @@ Welcome to my GitHub blog! Here, I share my thoughts, experiences, and projects 
 
 ## Latest Blog Posts
 
-1. [Getting Started with Git](https://example.com/getting-started-with-git)
-2. [Introduction to Python Programming](https://example.com/introduction-to-python-programming)
-3. [Building a RESTful API with Node.js](https://example.com/building-a-restful-api-with-nodejs)
+1. [Getting Started with Git](https://allenkang92.github.io/getting-started-with-git)
+2. [Introduction to Python Programming](https://allenkang92.github.io/introduction-to-python-programming)
+3. [Building a RESTful API with Node.js](https://allenkang92.github.io/building-a-restful-api-with-nodejs)
 
 ## About Me
 
@@ -14,7 +14,7 @@ I am a passionate person with a strong interest in web development and open-sour
 
 ## About
 {: .about-button}
-[About](https://example.com/about)
+[About](https://allenkang92.github.io/about)
 {: .about-button}
 
 ## Contact Me
@@ -26,9 +26,9 @@ I am a passionate person with a strong interest in web development and open-sour
 
 Check out some of my notable projects:
 
-1. [Awesome Project 1](https://github.com/example/awesome-project-1)
-2. [Cool Project 2](https://github.com/example/cool-project-2)
-3. [Amazing Project 3](https://github.com/example/amazing-project-3)
+1. [Awesome Project 1](https://github.com/allenkang92/awesome-project-1)
+2. [Cool Project 2](https://github.com/allenkang92/cool-project-2)
+3. [Amazing Project 3](https://github.com/allenkang92/amazing-project-3)
 
 ## Blog Categories
 
