@@ -15,7 +15,7 @@ I am a passionate person with a strong interest in web development and open-sour
 ## Contact Me
 
 - Email: ksw8841@knou.ac.kr
-- ## LinkedIn: (https://www.linkedin.com/in/example)_not yet.
+(-  LinkedIn: (https://www.linkedin.com/in/example)_not yet.)
 
 ## Projects _ also not yet.
 
