@@ -1,99 +1,41 @@
----
-title: "About"
-permalink: "/about/"
-layout: page
----
+# My GitHub Blog
 
-## Installation
+Welcome to my GitHub blog! Here, I share my thoughts, experiences, and projects related to (Cognitive Science, Brain Science, Data Engineering, software development, etc.) Feel free to explore and leave comments!
 
-Just fork this [repository](https://github.com/niklasbuschmann/contrast) and adjust the `_config.yml` to use with [Github Pages](https://pages.github.com/) and your page is done.
+## Latest Blog Posts
 
-## Features
+1. [Getting Started with Git](https://example.com/getting-started-with-git)
+2. [Introduction to Python Programming](https://example.com/introduction-to-python-programming)
+3. [Building a RESTful API with Node.js](https://example.com/building-a-restful-api-with-nodejs)
 
- - supports dark mode on macOS Mojave
- - optional sidebar
- - MathJax support
- - no external ressources
- - included archive page
- - supports pagination
- - feed generation
- - responsive
- - syntax highlighting
- - supports comments via [disqus](https://disqus.com/) or [isso](http://posativ.org/isso/)
+## About Me
 
-## Based on
+I am a passionate person with a strong interest in web development and open-source projects. I love learning new technologies and sharing my knowledge with others.
 
-- [Hyde](https://github.com/poole/hyde)
-- [Minima](https://github.com/jekyll/minima)
-- [Lagrange](https://github.com/LeNPaul/Lagrange)
-- [Font Awesome](http://fontawesome.io/)
-- [KaTeX](https://katex.org/)
-- [Pygments](https://github.com/richleland/pygments-css)
+## Contact Me
 
-## Installation (jekyll-remote-theme method)
+- Email: ksw8841@knou.ac.kr
+- ## LinkedIn: (https://www.linkedin.com/in/example)_not yet.
 
-You can use this theme with the `jekyll-remote-theme` plugin. Just create an empty repo, copy over the `index.html` file and add this to your `_config.yml`:
+## Projects _ also not yet.
 
-```yaml
-remote_theme: niklasbuschmann/contrast@v2.11
+Check out some of my notable projects:
 
-plugins:
-  - jekyll-remote-theme
-```
+1. [Awesome Project 1](https://github.com/example/awesome-project-1)
+2. [Cool Project 2](https://github.com/example/cool-project-2)
+3. [Amazing Project 3](https://github.com/example/amazing-project-3)
 
-Note: to enable icons you also need to copy over the `_data` folder.
+## Blog Categories
 
-## Config
+- Cognitive Science
+- Brain Science
+- Programming
+- Web Development
+- Data Engineering
+- Software Development
+- Tips & Tricks
+- etc.
 
-Your `_config.yml` could for example look like this:
+## Stay Updated
 
-```yaml
-title: "Blog Title"
-author: "Blog Author"
-description: "My personal blog about ... something"
-permalink: /:title/
-lang: "en"
-excerpt_separator: "\n\n\n"
-date_format: "%B %d, %Y"
-
-# Layout
-
-show_excerpts: true        # show article excerpts on the home page
-show_frame: true           # adds a gray frame to the site
-show_sidebar: false        # show a sidebar instead of the usual header
-
-# Menu
-
-navigation:                # accepts {file, title, url, icon, sidebaricon}
-  - {file: "index.html"}
-  - {file: "README.md"}
-
-external:                  # shows a footer with social links - for available icons see fontawesome.com/icons
-  - {title: Mail, icon: envelope, url: "mailto:niklasbuschmann@users.noreply.github.com"}
-  - {title: Github, icon: github, url: "https://github.com/niklasbuschmann/contrast"}
-  - {title: Subscribe, icon: rss, url: "/feed.xml"}
-
-comments:
-#  disqus_shortname: ""    # see https://disqus.com/
-#  isso_domain: ""         # see https://posativ.org/isso/
-
-plugins:
- - jekyll-feed
-
-```
-
-## MathJax
-
-Contrast comes preinstalled with a leightweight alternative to MathJax called [KaTeX](https://katex.org/). To display equations in a post simply set `mathjax: true` in the article's front matter.
-
-## License
-
-[public domain](http://unlicense.org/)
-
-## Screenshots
-
-![screenshot](https://user-images.githubusercontent.com/4943215/109431850-cd711780-7a08-11eb-8601-2763f2ee6bb4.png)
-
-![screenshot](https://user-images.githubusercontent.com/4943215/109431832-b6cac080-7a08-11eb-9c5e-a058680c23a1.png)
-
-![screenshot](https://user-images.githubusercontent.com/4943215/73125194-5f0b8b80-3fa4-11ea-805c-8387187503ad.png)
+Don't forget to subscribe to my blog to receive notifications about new posts and updates. Happy reading!
