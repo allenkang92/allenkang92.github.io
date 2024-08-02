@@ -1,0 +1,14 @@
+---
+layout: default
+---
+
+<article>
+  <h1>{{ page.title }}</h1>
+  {{ content }}
+  <div id="calculator"></div>
+</article>
+
+<script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+<script type="text/babel" src="/assets/js/{{ page.calculator }}.js"></script>
