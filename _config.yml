@@ -1,0 +1,22 @@
+title: "allen's blog"
+author: "allen_kang"
+description: "hell o world"
+url: "https://allenkang92.github.io"
+github_username: allenkang92
+
+# 빌드 설정
+markdown: kramdown
+theme: minima
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+
+# 제외할 파일/폴더
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor/bundle/
+  - vendor/cache/
+  - vendor/gems/
+  - vendor/ruby/

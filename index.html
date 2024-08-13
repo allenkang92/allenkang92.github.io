@@ -1,0 +1,21 @@
+---
+layout: default
+---
+
+<div class="home">
+  <h1 class="page-heading">최근 포스트</h1>
+
+  <ul class="post-list">
+    {% for post in site.posts %}
+      <li>
+        <span class="post-meta">{{ post.date | date: "%Y년 %-m월 %-d일" }}</span>
+        <h2>
+          <a class="post-link" href="{{ post.url | relative_url }}">{{ post.title | escape }}</a>
+        </h2>
+        {{ post.excerpt }}
+      </li>
+    {% endfor %}
+  </ul>
+
+  <p class="rss-subscribe">RSS로 구독하기 <a href="{{ "/feed.xml" | relative_url }}">via RSS</a></p>
+</div>
