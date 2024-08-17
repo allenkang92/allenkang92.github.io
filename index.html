@@ -1,21 +1,26 @@
 ---
 layout: default
+title: Home
 ---
 
 <div class="home">
-  <h1 class="page-heading">최근 포스트</h1>
+  <h1>Welcome to Allen's Blog</h1>
+  
+  <section class="profile">
+    <img src="/assets/images/profile.jpg" alt="Allen's profile picture" class="profile-pic">
+    <p>Short introduction about yourself...</p>
+  </section>
 
-  <ul class="post-list">
-    {% for post in site.posts %}
-      <li>
-        <span class="post-meta">{{ post.date | date: "%Y년 %-m월 %-d일" }}</span>
-        <h2>
-          <a class="post-link" href="{{ post.url | relative_url }}">{{ post.title | escape }}</a>
-        </h2>
-        {{ post.excerpt }}
-      </li>
-    {% endfor %}
-  </ul>
-
-  <p class="rss-subscribe">RSS로 구독하기 <a href="{{ "/feed.xml" | relative_url }}">via RSS</a></p>
+  <section class="recent-posts">
+    <h2>Recent Posts</h2>
+    <ul>
+      {% for post in site.posts limit:5 %}
+        <li>
+          <h3><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h3>
+          <small>{{ post.date | date: "%B %d, %Y" }}</small>
+          <p>{{ post.excerpt | strip_html | truncatewords: 50 }}</p>
+        </li>
+      {% endfor %}
+    </ul>
+  </section>
 </div>

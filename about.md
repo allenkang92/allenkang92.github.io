@@ -1,14 +1,6 @@
 ---
-layout: page
-title: 소개
-permalink: /about/
+layout: default
+title: About
 ---
 
-안녕하세요! 제 블로그에 오신 것을 환영합니다.
-
-저는 allen입니다. 
-
-이 블로그는 제가 배우고 경험한 것들을 공유하려고 만들었습니다
-
-궁금한 점이나 제안사항이 있으시면 언제든 연락 주세요!
-
+{% include_relative about_me_all.md %}

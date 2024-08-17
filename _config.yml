@@ -1,17 +1,16 @@
-title: "allen's blog"
-author: "allen_kang"
-description: "hell o world"
+title: Allen's Blog
+description: A blog about tech, science, and interdisciplinary studies
 url: "https://allenkang92.github.io"
 github_username: allenkang92
 
-# 빌드 설정
+# Build settings
 markdown: kramdown
 theme: minima
 plugins:
   - jekyll-feed
   - jekyll-seo-tag
 
-# 제외할 파일/폴더
+# Exclude from processing
 exclude:
   - Gemfile
   - Gemfile.lock
@@ -20,3 +19,7 @@ exclude:
   - vendor/cache/
   - vendor/gems/
   - vendor/ruby/
+
+# Custom settings
+author: Allen Kang
+email: ksw8841@knou.ac.kr
