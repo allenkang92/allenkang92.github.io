@@ -23,3 +23,17 @@ exclude:
 # Custom settings
 author: Allen Kang
 email: ksw8841@knou.ac.kr
+
+
+categories:
+  - name: "기술"
+    subcategories:
+      - name: "프로그래밍"
+        sub_subcategories:
+          - "Python"
+          - "Java"
+      - name: "데이터 과학"
+  - name: "과학"
+    subcategories:
+      - name: "물리학"
+      - name: "생명과학"
