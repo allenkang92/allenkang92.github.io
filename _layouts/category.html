@@ -1,0 +1,28 @@
+---
+layout: default
+---
+
+<h1>{{ page.title }}</h1>
+
+{{ content }}
+
+{% assign category_posts = site.posts | where: "categories", page.slug %}
+{% if category_posts.size > 0 %}
+  <ul>
+    {% for post in category_posts %}
+      <li><a href="{{ post.url | relative_url }}">{{ post.title }}</a></li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>No posts in this category yet.</p>
+{% endif %}
+
+{% assign subcategories = site.categories | where: "parent", page.slug %}
+{% if subcategories.size > 0 %}
+  <h2>Subcategories</h2>
+  <ul>
+    {% for subcategory in subcategories %}
+      <li><a href="{{ subcategory.url | relative_url }}">{{ subcategory.title }}</a></li>
+    {% endfor %}
+  </ul>
+{% endif %}

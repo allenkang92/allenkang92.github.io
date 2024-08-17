@@ -1,18 +1,22 @@
 ---
 layout: default
-title: Posts
 ---
-
-<div class="posts">
-  <h1>Blog Posts</h1>
-
-  <ul>
-    {% for post in site.posts %}
-      <li>
-        <h2><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
-        <p class="post-meta">{{ post.date | date: "%B %d, %Y" }}</p>
-        <p>{{ post.excerpt | strip_html | truncatewords: 50 }}</p>
-      </li>
+<article class="post">
+  <h1>{{ page.title }}</h1>
+  
+  <div class="post-categories">
+    카테고리:
+    {% for category in page.categories %}
+    <span class="category">{{ category }}</span>
+    {% unless forloop.last %}&nbsp;{% endunless %}
     {% endfor %}
-  </ul>
-</div>
+  </div>
+
+  <div class="post-date">
+    작성일: {{ page.date | date: "%Y-%m-%d" }}
+  </div>
+
+  <div class="post-content">
+    {{ content }}
+  </div>
+</article>
