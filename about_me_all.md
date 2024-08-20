@@ -30,5 +30,5 @@
 | Containers and Orchestration | ![Docker](https://img.shields.io/badge/Docker-A8E1DB?style=flat-square&logo=Docker&logoColor=white) ![Kubernetes](https://img.shields.io/badge/Kubernetes-A8E1DB?style=flat-square&logo=Kubernetes&logoColor=white) |
 | Message Brokers | ![Apache Kafka](https://img.shields.io/badge/Apache%20Kafka-A8E1DB?style=flat-square&logo=Apache-Kafka&logoColor=white) |
 | Collaboration Tools | ![Slack](https://img.shields.io/badge/Slack-FFFFFF?style=flat-square&logo=Slack&logoColor=130613) |
-| Bioinformatics Tools | | Bioinformatics Tools | ![BioPython](https://img.shields.io/badge/BioPython-A8E1DB?style=flat-square&logo=https%3A%2F%2Fraw.githubusercontent.com%2Fallenkang92%2Fallenkang92.github.io%2Fmain%2Fimages%2FBiopython_logo.svg&logoColor=000000) |
+| Bioinformatics Tools | | Bioinformatics Tools | ![BioPython](https://img.shields.io/badge/BioPython-A8E1DB?style=flat-square&logoColor=000000) |
 | IDE | ![VSCode](https://img.shields.io/badge/VSCode-FFFFFF?style=flat-square&logo=Visual-Studio-Code&logoColor=130613) ![IntelliJ](https://img.shields.io/badge/IntelliJ-FFFFFF?style=flat-square&logo=IntelliJ-IDEA&logoColor=130613) |
