@@ -22,7 +22,7 @@
 | Cloud Services | ![AWS](https://img.shields.io/badge/AWS-A8E1DB?style=flat-square&logo=amazonwebservices&logoColor=white) |
 | ETL Tools | ![Apache Airflow](https://img.shields.io/badge/Apache%20Airflow-4285F4?style=flat-square&logo=Apache-Airflow&logoColor=white) |
 | Databases | ![MySQL](https://img.shields.io/badge/MySQL-A8E1DB?style=flat-square&logo=MySQL&logoColor=white) ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-A8E1DB?style=flat-square&logo=PostgreSQL&logoColor=white) |
-| Machine Learning and Deep Learning | ![scikit-learn](https://img.shields.io/badge/scikit--learn-4285F4?style=flat-square&logo=scikit-learn&logoColor=white) ![TensorFlow](https://img.shields.io/badge/TensorFlow-4285F4?style=flat-square&logo=TensorFlow&logoColor=white) ![PyTorch](https://img.shields.io/badge/PyTorch-4285F4?style=flat-square&logo=PyTorch&logoColor=white) |
+| Machine Learning and Deep Learning | ![Scikit-learn](https://img.shields.io/badge/scikit--learn-4285F4?style=flat-square&logo=scikit-learn&logoColor=white) ![TensorFlow](https://img.shields.io/badge/TensorFlow-4285F4?style=flat-square&logo=TensorFlow&logoColor=white) ![PyTorch](https://img.shields.io/badge/PyTorch-4285F4?style=flat-square&logo=PyTorch&logoColor=white) |
 | Data Visualization | ![Tableau](https://img.shields.io/badge/Tableau-A8E1DB?style=flat-square&logo=Tableau&logoColor=white) |
 | Monitoring and Logging | ![ELK](https://img.shields.io/badge/ELK-A8E1DB?style=flat-square&logo=Elastic-Stack&logoColor=white) |
 | Version Control | ![GitHub](https://img.shields.io/badge/GitHub-A8E1DB?style=flat-square&logo=GitHub&logoColor=white) |
