@@ -1,28 +1,31 @@
 <header>
   <div class="blog-title">
-    <h1>Allen's Blog</h1>
+    <h1>{{ site.title }}</h1>
+    {% if site.description %}
+      <p>{{ site.description }}</p>
+    {% endif %}
   </div>
   
   <nav>
     <ul>
-      <li><a href="{{ '/' | relative_url }}">Home</a></li>
-      <li><a href="{{ '/achievements.html' | relative_url }}">Achievements</a></li>
-      <li><a href="{{ '/posts.html' | relative_url }}">Posts</a></li>
-      <li><a href="{{ '/tools.html' | relative_url }}">Tools</a></li>
-      <li><a href="{{ '/about.html' | relative_url }}">About</a></li>
+      {% for item in site.navigation %}
+        <li><a href="{{ item.url | relative_url }}">{{ item.title }}</a></li>
+      {% endfor %}
     </ul>
   </nav>
   
-  <div class="categories">
-    <h2>Categories:</h2>
-    <ul>
-      {% for category in site.categories %}
-        <li>
-          <a href="{{ category.url | relative_url }}">
-            {{ category.title }} ({{ site.posts | where: "categories", category.slug | size }})
-          </a>
-        </li>
-      {% endfor %}
-    </ul>
-  </div>
+  {% if site.categories.size > 0 %}
+    <div class="categories">
+      <h2>Categories:</h2>
+      <ul>
+        {% for category in site.categories %}
+          <li>
+            <a href="{{ site.baseurl }}/categories/{{ category | first | slugify }}/">
+              {{ category | first }} ({{ category | last | size }})
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
 </header>
