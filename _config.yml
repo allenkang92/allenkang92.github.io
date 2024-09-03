@@ -10,6 +10,18 @@ plugins:
   - jekyll-feed
   - jekyll-seo-tag
 
+navigation:
+  - title: Home
+    url: /
+  - title: Posts
+    url: /posts.html
+  - title: About
+    url: /about.html
+  - title: Tools
+    url: /tools.html
+  - title: Certificates
+    url: /certificates.html
+
 # Exclude from processing
 exclude:
   - Gemfile
