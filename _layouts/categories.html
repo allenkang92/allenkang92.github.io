@@ -6,9 +6,9 @@ title: Categories
 <h1>All Categories</h1>
 
 {% assign top_level_categories = site.categories | where_exp: "item", "item.parent == nil" %}
-
 {% for category in top_level_categories %}
   <h2><a href="{{ category.url | relative_url }}">{{ category.title }}</a></h2>
+  
   {% assign category_posts = site.posts | where: "categories", category.slug %}
   <p>Posts: {{ category_posts.size }}</p>
   

@@ -41,19 +41,92 @@ collections:
   categories:
     output: true
 
-# Category structure
 category_structure:
-  기술:
+  programming:
+    title: Programming
     subcategories:
-      프로그래밍:
-        - Python
-        - Java
-      데이터 과학: []
-  과학:
+      - python
+      - html-css
+      - web-automation
+  data_science:
+    title: Data Science
     subcategories:
-      물리학: []
-      생명과학: []
+      - data_analysis
+      - machine_learning
+      - data_visualization
+  devops:
+    title: DevOps & Cloud
+    subcategories:
+      - containerization
+      - orchestration
+      - version_control
+      - monitoring
+  data_engineering:
+    title: Data Engineering
+    subcategories:
+      - etl
+      - stream_processing
+  bioinformatics:
+    title: Bioinformatics
+    subcategories:
+      - genomics
+      - proteomics
+  design:
+    title: Design
+    subcategories:
+      - ui-ux
+      - graphic_design
 
+categories:
+  - name: python
+    title: Python
+    description: Python programming, including libraries and frameworks
+  - name: html-css
+    title: HTML & CSS
+    description: Web development fundamentals
+  - name: web-automation
+    title: Web Automation
+    description: Web scraping and automation techniques
+  - name: data_analysis
+    title: Data Analysis
+    description: Tools and techniques for analyzing data
+  - name: machine_learning
+    title: Machine Learning
+    description: ML algorithms, frameworks, and applications
+  - name: data_visualization
+    title: Data Visualization
+    description: Tools and techniques for visualizing data
+  - name: containerization
+    title: Containerization
+    description: Docker and container technologies
+  - name: orchestration
+    title: Orchestration
+    description: Kubernetes and container orchestration
+  - name: version_control
+    title: Version Control
+    description: Git and version control systems
+  - name: monitoring
+    title: Monitoring & Logging
+    description: System monitoring and log analysis
+  - name: etl
+    title: ETL Processes
+    description: Extract, Transform, Load processes and tools
+  - name: stream_processing
+    title: Stream Processing
+    description: Real-time data streaming and processing
+  - name: genomics
+    title: Genomics
+    description: Analysis of genomic data
+  - name: proteomics
+    title: Proteomics
+    description: Study of proteins and their structures
+  - name: ui-ux
+    title: UI/UX Design
+    description: User interface and experience design
+  - name: graphic_design
+    title: Graphic Design
+    description: Visual design and illustration
+    
 # Defaults
 defaults:
   - scope:
