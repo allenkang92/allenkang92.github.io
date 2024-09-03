@@ -1,10 +1,27 @@
 <header>
+    <div class="blog-title">
+      <h1>Allen's Blog</h1>
+    </div>
+    
     <nav>
-        <ul>
-            <li><a href="{{ '/' | relative_url }}">Home</a></li>
-            <li><a href="{{ '/posts.html' | relative_url }}">Posts</a></li>
-            <li><a href="{{ '/about.html' | relative_url }}">About</a></li>
-            <li><a href="{{ '/tools.html' | relative_url }}">Tools</a></li>
-        </ul>
+      <ul>
+        <li><a href="{{ '/' | relative_url }}">Home</a></li>
+        <li><a href="{{ '/posts.html' | relative_url }}">Posts</a></li>
+        <li><a href="{{ '/about.html' | relative_url }}">About</a></li>
+        <li><a href="{{ '/tools.html' | relative_url }}">Tools</a></li>
+      </ul>
     </nav>
-</header>
+    
+    <div class="categories">
+      <h2>Categories:</h2>
+      <ul>
+        {% for category in site.categories %}
+          <li>
+            <a href="{{ category.url | relative_url }}">
+              {{ category.title }} ({{ site.posts | where: "categories", category.slug | size }})
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </header>
