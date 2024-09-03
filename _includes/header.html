@@ -14,18 +14,20 @@
     </ul>
   </nav>
   
-  {% if site.categories.size > 0 %}
-    <div class="categories">
-      <h2>Categories:</h2>
-      <ul>
-        {% for category in site.categories %}
-          <li>
-            <a href="{{ site.baseurl }}/categories/{{ category | first | slugify }}/">
-              {{ category | first }} ({{ category | last | size }})
-            </a>
-          </li>
-        {% endfor %}
-      </ul>
-    </div>
+  {% if page.layout == 'post' or page.layout == 'achievements' %}
+    {% if site.categories.size > 0 %}
+      <div class="categories">
+        <h2>Categories:</h2>
+        <ul>
+          {% for category in site.categories %}
+            <li>
+              <a href="{{ site.baseurl }}/categories/{{ category | first | slugify }}/">
+                {{ category | first }} ({{ category | last | size }})
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
   {% endif %}
 </header>
