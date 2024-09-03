@@ -41,7 +41,8 @@ collections:
   categories:
     output: true
 
-category_structure:
+# Post category structure
+post_categories:
   programming:
     title: Programming
     subcategories:
@@ -126,7 +127,35 @@ categories:
   - name: graphic_design
     title: Graphic Design
     description: Visual design and illustration
-    
+
+# Achievement category structure
+achievement_categories:
+  certificates:
+    title: Certificates
+    subcategories:
+      - professional
+      - academic
+  education:
+    title: Education
+    subcategories:
+      - courses
+      - workshops
+  awards:
+    title: Awards
+    subcategories:
+      - academic
+      - professional
+  publications:
+    title: Publications
+    subcategories:
+      - journal_articles
+      - conference_papers
+  projects:
+    title: Projects
+    subcategories:
+      - personal
+      - collaborative
+
 # Defaults
 defaults:
   - scope:

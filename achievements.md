@@ -1,6 +1,5 @@
 ---
-layout: achievements
+layout: page
 title: Achievements
 ---
-
-자격증, 교육 수료증, 그리고 기타 전문성 개발 관련 내용
+Welcome to my achievements page. Here you can find information about my certificates, education, awards, publications, and projects.

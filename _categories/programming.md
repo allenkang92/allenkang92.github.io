@@ -1,6 +1,5 @@
 ---
+layout: category
 title: Programming
-slug: programming
 ---
-
-Programming related posts.
+This category covers various programming topics, including Python, HTML/CSS, and web automation.
