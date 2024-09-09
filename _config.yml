@@ -40,7 +40,9 @@ navigation:
 collections:
   categories:
     output: true
-
+  achievements:
+    output: true
+    
 # Category structure
 category_structure:
   programming:
