@@ -6,21 +6,12 @@ title: Achievements
 <div class="achievements-content">
   <h1>My Achievements</h1>
 
-  <p>Here you can find information about my certificates, education, awards, publications, and projects.</p>
+  <p>Welcome to my achievements page. Here you can find information about my certificates, education, awards, publications, and projects.</p>
 
-  {% for key, category in site.config.achievement_categories %}
-    <h2>{{ category.title }}</h2>
-    <ul>
-      {% for subcategory in category.subcategories %}
-        <li>
-          <a href="/achievements/{{ key | slugify }}/{{ subcategory | slugify }}">
-            {{ subcategory | capitalize | replace: '_', ' ' }}
-          </a>
-        </li>
-      {% endfor %}
-    </ul>
-  {% endfor %}
+  <!-- achievements.md 파일을 불러옴 -->
+  {% include_relative achievements.md %}
 </div>
 
-<h1>Debugging Data</h1>
-<pre>{{ site.config.achievement_categories | inspect }}</pre>
+<footer>
+  <p>&copy; {{ site.time | date: '%Y' }} Allen's Blog. All rights reserved.</p>
+</footer>
