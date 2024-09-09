@@ -45,52 +45,35 @@ footer {
 }
 
 .search-container {
-    position: relative;
-    margin-top: 10px;
-  }
-  
-  #search-input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-  }
-  
-  #search-results {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background-color: white;
-    border: 1px solid #ddd;
-    border-top: none;
-    max-height: 300px;
-    overflow-y: auto;
-    display: none;
-  }
-  
-  #search-results ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-  }
-  
-  #search-results li {
-    padding: 10px;
-    border-bottom: 1px solid #eee;
-  }
-  
-  #search-results li:last-child {
-    border-bottom: none;
-  }
-  
-  #search-results a {
-    color: #333;
-    text-decoration: none;
-  }
-  
-  #search-results p {
-    margin: 5px 0 0;
-    font-size: 0.9em;
-    color: #666;
-  }
+  position: relative;
+  margin-top: 10px;
+  width: 50%; /* 전체 너비 사용 */
+  max-width: 300px; /* 최대 너비 제한 */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#search-input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px; /* 폰트 크기 조정 */
+}
+
+#search-results {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-top: none;
+  max-height: 300px;
+  overflow-y: auto;
+  display: none;
+  z-index: 1000;
+  width: 100%; /* 결과 창 너비 조정 */
+}
+
+/* 나머지 스타일은 그대로 유지 */
