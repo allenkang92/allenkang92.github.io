@@ -40,12 +40,40 @@ navigation:
 collections:
   categories:
     output: true
-  achievement_categories:
+  achievement_categories: # Collections for achievement categories
     output: true
   tools:
     output: true
 
-# Category structure
+# Achievement category structure
+achievement_categories:
+  certificates:
+    title: Certificates
+    subcategories:
+      - professional
+      - academic
+  education:
+    title: Education
+    subcategories:
+      - courses
+      - workshops
+  awards:
+    title: Awards
+    subcategories:
+      - professional
+      - academic
+  publications:
+    title: Publications
+    subcategories:
+      - journal_articles
+      - conference_papers
+  projects:
+    title: Projects
+    subcategories:
+      - personal
+      - collaborative
+
+# Category structure for the blog
 category_structure:
   programming:
     title: Programming
@@ -145,35 +173,7 @@ categories:
     title: Graphic Design
     description: Visual design and illustration
 
-# Achievement category structure
-achievement_categories:
-  certificates:
-    title: Certificates
-    subcategories:
-      - professional
-      - academic
-  education:
-    title: Education
-    subcategories:
-      - courses
-      - workshops
-  awards:
-    title: Awards
-    subcategories:
-      - professional
-      - academic
-  publications:
-    title: Publications
-    subcategories:
-      - journal_articles
-      - conference_papers
-  projects:
-    title: Projects
-    subcategories:
-      - personal
-      - collaborative
-
-# Defaults
+# Defaults for different content types
 defaults:
   - scope:
       path: ""
@@ -192,6 +192,6 @@ defaults:
       layout: category
   - scope:
       path: ""
-      type: achievements
+      type: achievement_categories # Achievement categories collection defaults
     values:
       layout: default
