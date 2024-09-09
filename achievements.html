@@ -13,7 +13,7 @@ title: Achievements
     <ul>
       {% for subcategory in category[1].subcategories %}
         <li>
-          <a href="{{ achievements.url }}/achievements/{{ category[0] }}/{{ subcategory }}">
+          <a href="{{ page.url }}/achievements/{{ category[0] }}/{{ subcategory }}">
             {{ subcategory | capitalize | replace: '_', ' ' }}
           </a>
         </li>
