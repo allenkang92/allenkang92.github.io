@@ -8,12 +8,37 @@ title: Achievements
 
   <p>Welcome to my achievements page. Here you can find information about my certificates, education, awards, publications, and projects.</p>
 
-  <!-- Markdown 파일을 HTML로 변환하여 불러옴 -->
-  {% capture content %}
-    {% include achievements.md %}
-  {% endcapture %}
-  
-  {{ content | markdownify }}
+  <!-- 직접 HTML로 변환한 Markdown 내용 -->
+  <h2>Certificates</h2>
+  <ul>
+    <li>Professional Certificate</li>
+    <li>Academic Certificate</li>
+  </ul>
+
+  <h2>Education</h2>
+  <ul>
+    <li>Courses</li>
+    <li>Workshops</li>
+  </ul>
+
+  <h2>Awards</h2>
+  <ul>
+    <li>Professional Awards</li>
+    <li>Academic Awards</li>
+  </ul>
+
+  <h2>Publications</h2>
+  <ul>
+    <li>Journal Articles</li>
+    <li>Conference Papers</li>
+  </ul>
+
+  <h2>Projects</h2>
+  <ul>
+    <li>Personal Projects</li>
+    <li>Collaborative Projects</li>
+  </ul>
+
 </div>
 
 <footer>
