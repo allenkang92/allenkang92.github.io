@@ -35,6 +35,8 @@ navigation:
     url: /tools.html
   - title: About
     url: /about.html
+  - title: Search
+    url: /search.html
 
 # Collections
 collections:
