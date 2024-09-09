@@ -8,13 +8,10 @@ title: Achievements
 
   <p>Welcome to my achievements page. Here you can find information about my certificates, education, awards, publications, and projects.</p>
 
-  <!-- Markdown 파일 불러오기 -->
-  {% capture markdown_content %}
-    {% include_relative achievements.md %}
+  <!-- Markdown 파일을 HTML로 변환하여 불러옴 -->
+  {% capture content %}
+    {% include_relative ./achievements.md %}
   {% endcapture %}
-  {{ markdown_content | markdownify }}
+  
+  {{ content | markdownify }}
 </div>
-
-<footer>
-  <p>&copy; {{ site.time | date: '%Y' }} Allen's Blog. All rights reserved.</p>
-</footer>
