@@ -1,7 +1,8 @@
 ---
-layout: page
+layout: default
 title: Awards
 ---
+
 
 # My Awards
 
