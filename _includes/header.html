@@ -14,7 +14,7 @@
     </ul>
   </nav>
   
-  {% unless page.hide_categories %}
+  {% if page.layout == 'post' or page.url contains '/posts/' %}
     {% if site.category_structure.size > 0 %}
       <div class="categories">
         <h2>Blog Categories:</h2>
@@ -40,7 +40,9 @@
         </ul>
       </div>
     {% endif %}
+  {% endif %}
 
+  {% if page.layout == 'achievement' or page.url contains '/achievements/' %}
     {% if site.achievement_categories.size > 0 %}
       <div class="achievement-categories">
         <h2>Achievement Categories:</h2>
@@ -66,5 +68,5 @@
         </ul>
       </div>
     {% endif %}
-  {% endunless %}
+  {% endif %}
 </header>
