@@ -40,7 +40,7 @@ navigation:
 collections:
   categories:
     output: true
-  achievements:
+  achievement_categories:
     output: true
   tools:
     output: true
