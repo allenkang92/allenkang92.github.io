@@ -14,35 +14,44 @@
     </ul>
   </nav>
   
-  {% if page.layout == 'post' %}
-    {% if site.post_categories.size > 0 %}
-      <div class="categories">
-        <h2>Post Categories:</h2>
-        <ul>
-          {% for category in site.post_categories %}
-            <li>
-              <a href="{{ site.baseurl }}/categories/{{ category[0] }}/">
-                {{ category[1].title }}
-              </a>
-            </li>
-          {% endfor %}
-        </ul>
-      </div>
-    {% endif %}
-  {% elsif page.layout == 'achievement' %}
-    {% if site.achievement_categories.size > 0 %}
-      <div class="categories">
-        <h2>Achievement Categories:</h2>
-        <ul>
-          {% for category in site.achievement_categories %}
-            <li>
-              <a href="{{ site.baseurl }}/achievements/{{ category[0] }}/">
-                {{ category[1].title }}
-              </a>
-            </li>
-          {% endfor %}
-        </ul>
-      </div>
-    {% endif %}
+  {% if site.category_structure.size > 0 %}
+    <div class="categories">
+      <h2>Categories:</h2>
+      <ul>
+        {% for category in site.category_structure %}
+          <li>
+            <a href="{{ site.baseurl }}/categories/{{ category[0] }}/">
+              {{ category[1].title }}
+            </a>
+            {% if category[1].subcategories.size > 0 %}
+              <ul>
+                {% for subcategory in category[1].subcategories %}
+                  <li>
+                    <a href="{{ site.baseurl }}/categories/{{ category[0] }}/{{ subcategory }}/">
+                      {{ subcategory | capitalize | replace: '_', ' ' }}
+                    </a>
+                  </li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
+  {% if page.layout == 'achievement' and site.achievement_categories.size > 0 %}
+    <div class="achievement-categories">
+      <h2>Achievement Categories:</h2>
+      <ul>
+        {% for category in site.achievement_categories %}
+          <li>
+            <a href="{{ site.baseurl }}/achievements/{{ category[0] }}/">
+              {{ category[1].title }}
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
   {% endif %}
 </header>

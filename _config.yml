@@ -1,7 +1,10 @@
+# Site settings
 title: Allen's Blog
 description: A blog about tech, science, and interdisciplinary studies
 url: "https://allenkang92.github.io"
 github_username: allenkang92
+author: Allen Kang
+email: ksw8841@knou.ac.kr
 
 # Build settings
 markdown: kramdown
@@ -9,18 +12,6 @@ theme: minima
 plugins:
   - jekyll-feed
   - jekyll-seo-tag
-
-navigation:
-  - title: Home
-    url: /
-  - title: Posts
-    url: /posts.html
-  - title: About
-    url: /about.html
-  - title: Tools
-    url: /tools.html
-  - title: Certificates
-    url: /certificates.html
 
 # Exclude from processing
 exclude:
@@ -32,33 +23,44 @@ exclude:
   - vendor/gems/
   - vendor/ruby/
 
-# Custom settings
-author: Allen Kang
-email: ksw8841@knou.ac.kr
+# Navigation menu
+navigation:
+  - title: Home
+    url: /
+  - title: Posts
+    url: /posts.html
+  - title: Achievements
+    url: /achievements.html
+  - title: Tools
+    url: /tools.html
+  - title: About
+    url: /about.html
 
 # Collections
 collections:
   categories:
     output: true
 
-# Post category structure
-post_categories:
+# Category structure
+category_structure:
   programming:
     title: Programming
     subcategories:
       - python
-      - html-css
+      - java
+      - web_development
       - web-automation
   data_science:
     title: Data Science
     subcategories:
-      - data_analysis
       - machine_learning
+      - data_analysis
       - data_visualization
   devops:
     title: DevOps & Cloud
     subcategories:
       - containerization
+      - cloud_computing
       - orchestration
       - version_control
       - monitoring
@@ -72,12 +74,24 @@ post_categories:
     subcategories:
       - genomics
       - proteomics
+  science_philosophy:
+    title: Science Philosophy & History
+    subcategories:
+      - scientific_method
+      - history_of_science
+  web_tech:
+    title: Web Technologies
+    subcategories:
+      - html_css
+      - javascript
+      - web_frameworks
   design:
     title: Design
     subcategories:
       - ui-ux
       - graphic_design
 
+# Detailed category descriptions
 categories:
   - name: python
     title: Python
@@ -158,6 +172,16 @@ achievement_categories:
 
 # Defaults
 defaults:
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: post
+  - scope:
+      path: ""
+      type: pages
+    values:
+      layout: page
   - scope:
       path: ""
       type: categories

@@ -2,7 +2,7 @@
 layout: post
 title: "1장 : 우주의 기본구조"
 date: 2024-09-09 10:32:00 +0900
-categories: 과학철학 및 과학사
+categories: Science_Philosophy_and_History_Category
 ---
 
 # 1장: 우주의 기본 구조
