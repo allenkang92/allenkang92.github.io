@@ -8,8 +8,11 @@ title: Achievements
 
   <p>Welcome to my achievements page. Here you can find information about my certificates, education, awards, publications, and projects.</p>
 
-  
-  {% include_relative achievements.md %}
+  <!-- Markdown 파일 불러오기 -->
+  {% capture markdown_content %}
+    {% include_relative achievements.md %}
+  {% endcapture %}
+  {{ markdown_content | markdownify }}
 </div>
 
 <footer>
