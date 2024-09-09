@@ -43,3 +43,54 @@ footer {
     text-align: center;
     font-size: 0.9em;
 }
+
+.search-container {
+    position: relative;
+    margin-top: 10px;
+  }
+  
+  #search-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  #search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-top: none;
+    max-height: 300px;
+    overflow-y: auto;
+    display: none;
+  }
+  
+  #search-results ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  #search-results li {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+  }
+  
+  #search-results li:last-child {
+    border-bottom: none;
+  }
+  
+  #search-results a {
+    color: #333;
+    text-decoration: none;
+  }
+  
+  #search-results p {
+    margin: 5px 0 0;
+    font-size: 0.9em;
+    color: #666;
+  }

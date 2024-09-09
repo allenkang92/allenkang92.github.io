@@ -14,6 +14,11 @@
     </ul>
   </nav>
 
+  <div class="search-container">
+    <input type="text" id="search-input" placeholder="검색어를 입력하세요">
+    <div id="search-results"></div>
+  </div>
+
   {% if page.layout == 'post' or page.url contains '/posts/' %}
     {% if site.category_structure.size > 0 %}
       <div class="categories">

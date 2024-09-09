@@ -1,57 +1,47 @@
 (function() {
-    function displaySearchResults(results, store) {
-      var searchResults = document.getElementById('results-container');
+    var searchInput = document.getElementById('search-input');
+    var searchResults = document.getElementById('search-results');
+    var posts = [];
   
-      if (results.length) {
-        var appendString = '';
-  
-        for (var i = 0; i < results.length; i++) {
-          var item = store[results[i].ref];
-          appendString += '<li><a href="' + item.url + '"><h3>' + item.title + '</h3></a>';
-          appendString += '<p>' + item.content.substring(0, 150) + '...</p></li>';
-        }
-  
-        searchResults.innerHTML = appendString;
-      } else {
-        searchResults.innerHTML = '<li>검색 결과가 없습니다.</li>';
-      }
-    }
-  
-    function getQueryVariable(variable) {
-      var query = window.location.search.substring(1);
-      var vars = query.split('&');
-  
-      for (var i = 0; i < vars.length; i++) {
-        var pair = vars[i].split('=');
-  
-        if (pair[0] === variable) {
-          return decodeURIComponent(pair[1].replace(/\+/g, '%20'));
-        }
-      }
-    }
-  
-    var searchTerm = getQueryVariable('query');
-  
-    if (searchTerm) {
-      document.getElementById('search-input').setAttribute("value", searchTerm);
-  
-      var idx = lunr(function () {
-        this.field('id');
-        this.field('title', { boost: 10 });
-        this.field('category');
-        this.field('content');
+    // 포스트 데이터 로드
+    fetch('/search.json')
+      .then(response => response.json())
+      .then(data => {
+        posts = data;
       });
   
-      for (var key in window.store) {
-        idx.add({
-          'id': key,
-          'title': window.store[key].title,
-          'category': window.store[key].category,
-          'content': window.store[key].content
-        });
+    // 검색 이벤트 리스너
+    searchInput.addEventListener('input', function() {
+      var query = this.value.toLowerCase();
+      
+      if (query.length < 2) {
+        searchResults.innerHTML = '';
+        return;
       }
   
-      var results = idx.search(searchTerm);
-      displaySearchResults(results, window.store);
+      var results = posts.filter(function(post) {
+        return post.title.toLowerCase().includes(query) ||
+               post.content.toLowerCase().includes(query);
+      });
+  
+      displayResults(results);
+    });
+  
+    function displayResults(results) {
+      if (results.length === 0) {
+        searchResults.innerHTML = '<p>검색 결과가 없습니다.</p>';
+        return;
+      }
+  
+      var html = '<ul>';
+      results.forEach(function(result) {
+        html += '<li>';
+        html += '<a href="' + result.url + '">' + result.title + '</a>';
+        html += '<p>' + result.content.substring(0, 150) + '...</p>';
+        html += '</li>';
+      });
+      html += '</ul>';
+  
+      searchResults.innerHTML = html;
     }
   })();
