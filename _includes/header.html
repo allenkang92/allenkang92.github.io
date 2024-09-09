@@ -42,7 +42,7 @@
     {% endif %}
   {% endif %}
 
-  {% if page.layout == 'achievement' or page.url contains '/achievements/' %}
+  {% {% if page.title == 'Achievements' or page.url contains '/achievements/' %}
     {% if site.achievement_categories.size > 0 %}
       <div class="achievement-categories">
         <h2>Achievement Categories:</h2>
