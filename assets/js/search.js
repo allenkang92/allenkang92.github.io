@@ -4,7 +4,7 @@
     var posts = [];
   
     // 포스트 데이터 로드
-    fetch('/search.json')
+    fetch('{{ "/search.json" | relative_url }}')
       .then(response => response.json())
       .then(data => {
         posts = data;
