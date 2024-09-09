@@ -1,5 +1,5 @@
 ---
-layout: achievement
+layout: default
 title: Achievements
 ---
 
