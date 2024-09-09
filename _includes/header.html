@@ -14,55 +14,57 @@
     </ul>
   </nav>
   
-  {% if page.layout == 'post' and site.category_structure.size > 0 %}
-    <div class="categories">
-      <h2>Categories:</h2>
-      <ul>
-        {% for category in site.category_structure %}
-          <li>
-            <a href="{{ site.baseurl }}/categories/{{ category[0] }}/">
-              {{ category[1].title }}
-            </a>
-            {% if category[1].subcategories.size > 0 %}
-              <ul>
-                {% for subcategory in category[1].subcategories %}
-                  <li>
-                    <a href="{{ site.baseurl }}/categories/{{ category[0] }}/{{ subcategory }}/">
-                      {{ subcategory | capitalize | replace: '_', ' ' }}
-                    </a>
-                  </li>
-                {% endfor %}
-              </ul>
-            {% endif %}
-          </li>
-        {% endfor %}
-      </ul>
-    </div>
-  {% endif %}
+  {% unless page.hide_categories %}
+    {% if site.category_structure.size > 0 %}
+      <div class="categories">
+        <h2>Blog Categories:</h2>
+        <ul>
+          {% for category in site.category_structure %}
+            <li>
+              <a href="{{ site.baseurl }}/categories/{{ category[0] }}/">
+                {{ category[1].title }}
+              </a>
+              {% if category[1].subcategories.size > 0 %}
+                <ul>
+                  {% for subcategory in category[1].subcategories %}
+                    <li>
+                      <a href="{{ site.baseurl }}/categories/{{ category[0] }}/{{ subcategory }}/">
+                        {{ subcategory | capitalize | replace: '_', ' ' }}
+                      </a>
+                    </li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
 
-  {% if page.layout == 'achievement' or page.url contains '/achievements/' %}
-    <div class="achievement-categories">
-      <h2>Achievement Categories:</h2>
-      <ul>
-        {% for category in site.achievement_categories %}
-          <li>
-            <a href="{{ site.baseurl }}/achievements/{{ category[0] }}/">
-              {{ category[1].title }}
-            </a>
-            {% if category[1].subcategories.size > 0 %}
-              <ul>
-                {% for subcategory in category[1].subcategories %}
-                  <li>
-                    <a href="{{ site.baseurl }}/achievements/{{ category[0] }}/{{ subcategory }}/">
-                      {{ subcategory | capitalize | replace: '_', ' ' }}
-                    </a>
-                  </li>
-                {% endfor %}
-              </ul>
-            {% endif %}
-          </li>
-        {% endfor %}
-      </ul>
-    </div>
-  {% endif %}
+    {% if site.achievement_categories.size > 0 %}
+      <div class="achievement-categories">
+        <h2>Achievement Categories:</h2>
+        <ul>
+          {% for category in site.achievement_categories %}
+            <li>
+              <a href="{{ site.baseurl }}/achievements/{{ category[0] }}/">
+                {{ category[1].title }}
+              </a>
+              {% if category[1].subcategories.size > 0 %}
+                <ul>
+                  {% for subcategory in category[1].subcategories %}
+                    <li>
+                      <a href="{{ site.baseurl }}/achievements/{{ category[0] }}/{{ subcategory }}/">
+                        {{ subcategory | capitalize | replace: '_', ' ' }}
+                      </a>
+                    </li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+  {% endunless %}
 </header>
