@@ -14,7 +14,7 @@
     </ul>
   </nav>
   
-  {% if site.category_structure.size > 0 %}
+  {% if page.layout == 'post' and site.category_structure.size > 0 %}
     <div class="categories">
       <h2>Categories:</h2>
       <ul>
