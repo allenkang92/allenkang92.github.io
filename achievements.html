@@ -3,27 +3,47 @@ layout: default
 title: Achievements
 ---
 
-<h1>My Achievements</h1>
+<head>
+    <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
+</head>
 
-{% assign achievements_categories = site.achievement_categories %}
-{% for category in achievements_categories %}
-  <h2>{{ category[1].title }}</h2>
-  
-  {% assign subcategories = category[1].subcategories %}
-  <p>Subcategories: {{ subcategories | size }}</p>
+<div class="achievements-content">
+  <h1>My Achievements</h1>
 
-  {% if subcategories.size > 0 %}
-    <h3>Subcategories:</h3>
-    <ul>
-      {% for subcategory in subcategories %}
-        <li>{{ subcategory | capitalize | replace: '_', ' ' }}</li>
-      {% endfor %}
-    </ul>
-  {% else %}
-    <p>No subcategories available.</p>
-  {% endif %}
-  
-{% endfor %}
+  <p>Welcome to my achievements page. Here you can find information about my certificates, education, awards, publications, and projects.</p>
+
+  <!-- 내용 -->
+  <h2>Certificates</h2>
+  <ul>
+    <li>Professional Certificate</li>
+    <li>Academic Certificate</li>
+  </ul>
+
+  <h2>Education</h2>
+  <ul>
+    <li>Courses</li>
+    <li>Workshops</li>
+  </ul>
+
+  <h2>Awards</h2>
+  <ul>
+    <li>Professional Awards</li>
+    <li>Academic Awards</li>
+  </ul>
+
+  <h2>Publications</h2>
+  <ul>
+    <li>Journal Articles</li>
+    <li>Conference Papers</li>
+  </ul>
+
+  <h2>Projects</h2>
+  <ul>
+    <li>Personal Projects</li>
+    <li>Collaborative Projects</li>
+  </ul>
+
+</div>
 
 <footer>
   <p>&copy; {{ site.time | date: '%Y' }} Allen's Blog. All rights reserved.</p>
