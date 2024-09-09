@@ -8,12 +8,12 @@ title: Achievements
 
   <p>Here you can find information about my certificates, education, awards, publications, and projects.</p>
 
-  {% for category in site.data.achievement_categories %}
-    <h2>{{ category[1].title }}</h2>
+  {% for key, category in site.config.achievement_categories %}
+    <h2>{{ category.title }}</h2>
     <ul>
-      {% for subcategory in category[1].subcategories %}
+      {% for subcategory in category.subcategories %}
         <li>
-          <a href="/achievements/{{ category[0] }}/{{ subcategory | slugify }}">
+          <a href="/achievements/{{ key | slugify }}/{{ subcategory | slugify }}">
             {{ subcategory | capitalize | replace: '_', ' ' }}
           </a>
         </li>
