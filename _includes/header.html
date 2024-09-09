@@ -40,7 +40,7 @@
     </div>
   {% endif %}
 
-  {% if page.layout == 'achievement' and site.achievement_categories.size > 0 %}
+  {% if page.layout == 'achievement' or page.url contains '/achievements/' %}
     <div class="achievement-categories">
       <h2>Achievement Categories:</h2>
       <ul>
@@ -49,6 +49,17 @@
             <a href="{{ site.baseurl }}/achievements/{{ category[0] }}/">
               {{ category[1].title }}
             </a>
+            {% if category[1].subcategories.size > 0 %}
+              <ul>
+                {% for subcategory in category[1].subcategories %}
+                  <li>
+                    <a href="{{ site.baseurl }}/achievements/{{ category[0] }}/{{ subcategory }}/">
+                      {{ subcategory | capitalize | replace: '_', ' ' }}
+                    </a>
+                  </li>
+                {% endfor %}
+              </ul>
+            {% endif %}
           </li>
         {% endfor %}
       </ul>

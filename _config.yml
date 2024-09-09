@@ -82,13 +82,13 @@ category_structure:
   web_tech:
     title: Web Technologies
     subcategories:
-      - html_css
+      - html&css
       - javascript
       - web_frameworks
   design:
     title: Design
     subcategories:
-      - ui-ux
+      - ui&ux
       - graphic_design
 
 # Detailed category descriptions
