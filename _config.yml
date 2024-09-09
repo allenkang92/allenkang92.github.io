@@ -48,7 +48,6 @@ category_structure:
     subcategories:
       - python
       - java
-      - web_development
       - web-automation
   data_science:
     title: Data Science
@@ -157,8 +156,8 @@ achievement_categories:
   awards:
     title: Awards
     subcategories:
-      - academic
       - professional
+      - academic
   publications:
     title: Publications
     subcategories:
