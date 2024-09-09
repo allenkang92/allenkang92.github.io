@@ -8,33 +8,16 @@ title: Achievements
 
   <p>Welcome to my achievements page. Here you can find information about my certificates, education, awards, publications, and projects.</p>
 
-  <h2>Certificates</h2>
-  <ul>
-    <li><a href="#">Professional Certificate</a></li>
-    <li><a href="#">Academic Certificate</a></li>
-  </ul>
-
-  <h2>Education</h2>
-  <ul>
-    <li><a href="#">Courses</a></li>
-    <li><a href="#">Workshops</a></li>
-  </ul>
-
-  <h2>Awards</h2>
-  <ul>
-    <li><a href="#">Professional Awards</a></li>
-    <li><a href="#">Academic Awards</a></li>
-  </ul>
-
-  <h2>Publications</h2>
-  <ul>
-    <li><a href="#">Journal Articles</a></li>
-    <li><a href="#">Conference Papers</a></li>
-  </ul>
-
-  <h2>Projects</h2>
-  <ul>
-    <li><a href="#">Personal Projects</a></li>
-    <li><a href="#">Collaborative Projects</a></li>
-  </ul>
+  {% for category in site.data.achievement_categories %}
+    <h2>{{ category[1].title }}</h2>
+    <ul>
+      {% for subcategory in category[1].subcategories %}
+        <li>
+          <a href="{{ site.baseurl }}/achievements/{{ category[0] }}/{{ subcategory | slugify }}">
+            {{ subcategory | capitalize | replace: '_', ' ' }}
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% endfor %}
 </div>

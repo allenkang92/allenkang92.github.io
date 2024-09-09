@@ -9,11 +9,11 @@
   <nav>
     <ul>
       {% for item in site.navigation %}
-        <li><a href="{{ item.url | relative_url }}">{{ item.title }}</a></li>
+        <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a></li>
       {% endfor %}
     </ul>
   </nav>
-  
+
   {% if page.layout == 'post' or page.url contains '/posts/' %}
     {% if site.category_structure.size > 0 %}
       <div class="categories">
@@ -28,7 +28,7 @@
                 <ul>
                   {% for subcategory in category[1].subcategories %}
                     <li>
-                      <a href="{{ site.baseurl }}/categories/{{ category[0] }}/{{ subcategory }}/">
+                      <a href="{{ site.baseurl }}/categories/{{ category[0] }}/{{ subcategory | slugify }}/">
                         {{ subcategory | capitalize | replace: '_', ' ' }}
                       </a>
                     </li>
@@ -42,7 +42,7 @@
     {% endif %}
   {% endif %}
 
-  {% {% if page.title == 'Achievements' or page.url contains '/achievements/' %}
+  {% if page.title == 'Achievements' or page.url contains '/achievements/' %}
     {% if site.achievement_categories.size > 0 %}
       <div class="achievement-categories">
         <h2>Achievement Categories:</h2>
@@ -56,7 +56,7 @@
                 <ul>
                   {% for subcategory in category[1].subcategories %}
                     <li>
-                      <a href="{{ site.baseurl }}/achievements/{{ category[0] }}/{{ subcategory }}/">
+                      <a href="{{ site.baseurl }}/achievements/{{ category[0] }}/{{ subcategory | slugify }}/">
                         {{ subcategory | capitalize | replace: '_', ' ' }}
                       </a>
                     </li>
