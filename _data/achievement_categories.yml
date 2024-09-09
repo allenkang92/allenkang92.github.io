@@ -1,0 +1,25 @@
+certificates:
+  title: Certificates
+  subcategories:
+    - professional
+    - academic
+education:
+  title: Education
+  subcategories:
+    - courses
+    - workshops
+awards:
+  title: Awards
+  subcategories:
+    - professional
+    - academic
+publications:
+  title: Publications
+  subcategories:
+    - journal_articles
+    - conference_papers
+projects:
+  title: Projects
+  subcategories:
+    - personal
+    - collaborative

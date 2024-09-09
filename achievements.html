@@ -6,9 +6,9 @@ title: Achievements
 <div class="achievements-content">
   <h1>My Achievements</h1>
 
-  <p>Welcome to my achievements page. Here you can find information about my certificates, education, awards, publications, and projects.</p>
+  <p>Here you can find information about my certificates, education, awards, publications, and projects.</p>
 
-  {% for category in site.config.achievement_categories %}
+  {% for category in site.data.achievement_categories %}
     <h2>{{ category[1].title }}</h2>
     <ul>
       {% for subcategory in category[1].subcategories %}
