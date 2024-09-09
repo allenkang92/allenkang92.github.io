@@ -190,3 +190,8 @@ defaults:
       type: categories
     values:
       layout: category
+  - scope:
+      path: ""
+      type: achievements
+    values:
+      layout: default
