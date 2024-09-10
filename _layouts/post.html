@@ -20,7 +20,54 @@ layout: default
     {{ content }}
   </div>
 
-  <!-- 댓글 시스템 추가 -->
+  <!-- 시리즈 포스트 네비게이션 추가 -->
+  {% if page.series %}
+    {% assign series_posts = site.posts | where: "series", page.series | sort: "date" %}
+    <div class="series-navigation">
+      <h3>{{ page.series }} 시리즈:</h3>
+      <ol>
+      {% for post in series_posts %}
+        <li>
+          {% if post.url == page.url %}
+            {{ post.title }} (현재 글)
+          {% else %}
+            <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+          {% endif %}
+        </li>
+      {% endfor %}
+      </ol>
+    </div>
+  {% endif %}
+
+  <!-- 관련 포스트 섹션 추가 -->
+  <div class="related-posts">
+    <h3>관련 포스트:</h3>
+    <ul>
+    {% assign maxRelated = 4 %}
+    {% assign minCommonTags =  2 %}
+    {% assign maxRelatedCounter = 0 %}
+
+    {% for post in site.posts %}
+      {% assign sameTagCount = 0 %}
+      {% for tag in post.tags %}
+        {% if post.url != page.url %}
+          {% if page.tags contains tag %}
+            {% assign sameTagCount = sameTagCount | plus: 1 %}
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+      {% if sameTagCount >= minCommonTags %}
+        <li><a href="{{ post.url | relative_url }}">{{ post.title }}</a></li>
+        {% assign maxRelatedCounter = maxRelatedCounter | plus: 1 %}
+        {% if maxRelatedCounter >= maxRelated %}
+          {% break %}
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+    </ul>
+  </div>
+
+  <!-- 댓글 시스템 -->
   <div id="comments">
     <script src="https://utteranc.es/client.js"
             repo="allenkang92/allenkang92.github.io"

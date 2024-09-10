@@ -42,7 +42,10 @@ collections:
     output: true
   tools:
     output: true
-
+  series:
+    output: true
+    permalink: /series/:name/
+    
 # Category structure for the blog
 category_structure:
   programming:
