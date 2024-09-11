@@ -19,31 +19,18 @@
     <div id="search-results"></div>
   </div>
 
-  {% if page.url contains '/posts/' %}
+  {% if page.url contains '/posts/' or page.url contains '/achievements/' %}
     <div class="categories">
-      <h2>Blog Categories:</h2>
-      <select id="category-select" onchange="filterCategories()">
+      <h2>{% if page.url contains '/posts/' %}Blog{% else %}Achievement{% endif %} Categories:</h2>
+      <select id="{% if page.url contains '/posts/' %}category-select{% else %}achievement-category-select{% endif %}" onchange="{% if page.url contains '/posts/' %}filterCategories(){% else %}filterAchievements(){% endif %}">
         <option value="all">All Categories</option>
-        {% for category in site.category_structure %}
+        {% assign categories = page.url contains '/posts/' ? site.category_structure : site.achievement_categories %}
+        {% for category in categories %}
           <option value="{{ category[0] }}">{{ category[1].title }}</option>
         {% endfor %}
       </select>
     </div>
   {% endif %}
-
-  {% if page.url contains '/posts/' or page.url contains '/achievements/' %}
-  <div class="categories">
-    <h2>{% if page.url contains '/posts/' %}Blog{% else %}Achievement{% endif %} Categories:</h2>
-    <select id="{% if page.url contains '/posts/' %}category-select{% else %}achievement-category-select{% endif %}" onchange="{% if page.url contains '/posts/' %}filterCategories(){% else %}filterAchievements(){% endif %}">
-      <option value="all">All Categories</option>
-      {% assign categories = page.url contains '/posts/' ? site.category_structure : site.achievement_categories %}
-      {% for category in categories %}
-        <option value="{{ category[0] }}">{{ category[1].title }}</option>
-      {% endfor %}
-    </select>
-  </div>
-{% endif %}
-</header>
 
 <script>
 function filterCategories() {

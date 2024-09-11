@@ -54,11 +54,18 @@ function filterAchievements() {
   var categories = document.getElementsByClassName('achievement-category');
   
   for (var i = 0; i < categories.length; i++) {
-    if (selectedCategory === 'all' || categories[i].dataset.category === selectedCategory) {
+    if (selectedCategory === 'all' || categories[i].getAttribute('data-category') === selectedCategory) {
       categories[i].style.display = 'block';
     } else {
       categories[i].style.display = 'none';
     }
   }
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+  var achievementCategorySelect = document.getElementById('achievement-category-select');
+  if (achievementCategorySelect) {
+    achievementCategorySelect.addEventListener('change', filterAchievements);
+  }
+});
 </script>
