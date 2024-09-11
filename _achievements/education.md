@@ -1,7 +1,7 @@
 ---
 layout: achievement
 title: Education
-category: [education]
+categories: [education]
 ---
 
 This is a placeholder for the education category. Here you will find courses and workshops.

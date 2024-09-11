@@ -53,16 +53,17 @@
     function filterAchievements() {
       var select = document.getElementById('achievement-category-select');
       var selectedCategory = select.value;
-      var achievements = document.getElementsByClassName('achievement-category');
-      
-      for (var i = 0; i < achievements.length; i++) {
-        if (selectedCategory === 'all' || achievements[i].id === selectedCategory) {
-          achievements[i].style.display = 'block';
+      var categories = document.getElementsByClassName('achievement-category');
+  
+      for (var i = 0; i < categories.length; i++) {
+        if (selectedCategory === 'all' || categories[i].getAttribute('data-category') === selectedCategory) {
+          categories[i].style.display = 'block';
         } else {
-          achievements[i].style.display = 'none';
+          categories[i].style.display = 'none';
         }
       }
     }
+
     </script>
 
     <!-- 검색 스크립트 -->

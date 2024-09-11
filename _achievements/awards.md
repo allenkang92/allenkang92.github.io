@@ -1,7 +1,7 @@
 ---
 layout: achievement
 title: Awards
-category: [awards]
+categories: [awards]
 ---
 
 This is a placeholder for the awards category. Here you will find professional and academic awards.
