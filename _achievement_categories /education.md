@@ -1,12 +1,3 @@
----
-layout: default
-title: Education
----
-
-# My Education
-
-Here you can find information about my educational background, including courses and workshops.
-
 ## Formal Education
 
 - [Degree] in [Field of Study] - [Institution Name] - [Year]

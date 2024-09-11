@@ -20,7 +20,6 @@ layout: default
     {{ content }}
   </div>
 
-  <!-- 시리즈 포스트 네비게이션 추가 -->
   {% if page.series %}
     {% assign series_posts = site.posts | where: "series", page.series | sort: "date" %}
     <div class="series-navigation">
@@ -39,7 +38,6 @@ layout: default
     </div>
   {% endif %}
 
-  <!-- 수정된 관련 포스트 섹션 -->
   <div class="related-posts">
     <h3>관련 포스트:</h3>
     <ul>
@@ -60,7 +58,6 @@ layout: default
     </ul>
   </div>
 
-  <!-- 댓글 시스템 -->
   <div id="comments">
     <script src="https://utteranc.es/client.js"
             repo="allenkang92/allenkang92.github.io"
