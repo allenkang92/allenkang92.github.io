@@ -7,30 +7,62 @@ title: Achievements
 
 Welcome to my achievements page. Here you can find information about my certificates, education, awards, publications, and projects.
 
-{% for category in site.achievement_categories %}
-  <h2>{{ category[1].title }}</h2>
-  
-  {% case category[0] %}
-    {% when 'certificates' %}
-      {% include_relative certificates.md %}
-    {% when 'education' %}
-      {% include_relative education.md %}
-    {% when 'awards' %}
-      {% include_relative awards.md %}
-    {% when 'publications' %}
-      {% include_relative publications.md %}
-    {% when 'projects' %}
-      {% include_relative projects.md %}
-  {% endcase %}
-  
-  <h3>Subcategories:</h3>
-  <ul>
-    {% for subcategory in category[1].subcategories %}
-      <li>
-        <a href="{{ site.baseurl }}/achievements/{{ category[0] }}/{{ subcategory | slugify }}">
-          {{ subcategory | capitalize | replace: '_', ' ' }}
-        </a>
-      </li>
+<div class="category-filter">
+  <label for="achievement-category-select">Filter by category:</label>
+  <select id="achievement-category-select">
+    <option value="all">All Categories</option>
+    {% for category in site.achievement_categories %}
+      <option value="{{ category[0] }}">{{ category[1].title }}</option>
     {% endfor %}
-  </ul>
+  </select>
+</div>
+
+{% for category in site.achievement_categories %}
+  <div class="achievement-category" id="{{ category[0] }}">
+    <h2>{{ category[1].title }}</h2>
+    
+    {% case category[0] %}
+      {% when 'certificates' %}
+        {% include_relative certificates.md %}
+      {% when 'education' %}
+        {% include_relative education.md %}
+      {% when 'awards' %}
+        {% include_relative awards.md %}
+      {% when 'publications' %}
+        {% include_relative publications.md %}
+      {% when 'projects' %}
+        {% include_relative projects.md %}
+    {% endcase %}
+    
+    <h3>Subcategories:</h3>
+    <ul>
+      {% for subcategory in category[1].subcategories %}
+        <li>
+          <a href="{{ site.baseurl }}/achievements/{{ category[0] }}/{{ subcategory | slugify }}">
+            {{ subcategory | capitalize | replace: '_', ' ' }}
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
 {% endfor %}
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var categorySelect = document.getElementById('achievement-category-select');
+  if (categorySelect) {
+    categorySelect.addEventListener('change', function() {
+      var selectedCategory = this.value;
+      var categories = document.getElementsByClassName('achievement-category');
+      
+      for (var i = 0; i < categories.length; i++) {
+        if (selectedCategory === 'all' || categories[i].id === selectedCategory) {
+          categories[i].style.display = 'block';
+        } else {
+          categories[i].style.display = 'none';
+        }
+      }
+    });
+  }
+});
+</script>
