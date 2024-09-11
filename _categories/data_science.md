@@ -1,5 +1,8 @@
 ---
 layout: category
 title: Data Science
+slug: data-science
+description: Dive into data analysis, machine learning, and data visualization techniques.
 ---
-Explore topics in data analysis, machine learning, and data visualization.
+
+Welcome to the Data Science category. Here you'll find posts on data analysis, machine learning, deep learning, and data visualization.

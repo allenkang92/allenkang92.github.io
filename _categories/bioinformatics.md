@@ -1,6 +1,8 @@
 ---
 layout: category
 title: Bioinformatics
-slug: Bioinformatics
+slug: bioinformatics
+description: Learn about computational biology techniques.
 ---
-Delve into genomics and proteomics in the field of bioinformatics.
+
+Welcome to the Bioinformatics category. Explore posts related to Biopython, life science, computational methods.
