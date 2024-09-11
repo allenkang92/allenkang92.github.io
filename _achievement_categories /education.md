@@ -1,9 +1,7 @@
-## Formal Education
+---
+layout: achievement
+title: Education
+categories: [education]
+---
 
-- [Degree] in [Field of Study] - [Institution Name] - [Year]
-  - Brief description of key areas of study and achievements
-
-## Courses and Workshops
-
-- [Course/Workshop Name] - [Institution/Organization] - [Year]
-  - Brief description of what was learned and its application
+This is a placeholder for education category. List of education-related achievements will be shown here.

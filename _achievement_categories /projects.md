@@ -1,18 +1,7 @@
 ---
-layout: default
+layout: achievement
 title: Projects
+categories: [projects]
 ---
 
-# My Projects
-
-This page showcases some of the key projects I have worked on, both personal and collaborative.
-
-## Personal Projects
-
-- [Project Name 1]
-  - Brief description of the project, technologies used, and outcomes
-
-## Collaborative Projects
-
-- [Project Name 2]
-  - Brief description of the project, your role, technologies used, and outcomes
+This is a placeholder for projects category. List of projects will be shown here.
