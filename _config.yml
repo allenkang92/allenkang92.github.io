@@ -48,6 +48,9 @@ collections:
   series:
     output: true
     permalink: /series/:name/
+  achievements:
+    output: true
+    permalink: /achievements/:name/
 
 # Category structure for the blog
 category_structure:
@@ -176,3 +179,25 @@ category_structure:
     subcategories:
       - cognitive_psychology
       - social_psychology
+
+# Achievement category structure
+achievement_categories:
+  certificates:
+    title: Certificates
+    subcategories:
+      - professional
+      - academic
+  education:
+    title: Education
+    subcategories:
+      - courses
+      - workshops
+  awards:
+    title: Awards
+    subcategories:
+      - professional
+      - academic
+  publications:
+    title: Publications
+  projects:
+    title: Projects

@@ -1,6 +1,7 @@
 ---
 layout: achievement
 title: Certificates
+description: View all certificates categorized under professional and academic.
 categories: [certificates]
 ---
 
