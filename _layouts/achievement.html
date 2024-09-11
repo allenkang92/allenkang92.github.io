@@ -19,7 +19,9 @@ layout: default
       {% for achievement in achievement_items %}
         <li>
           <h3><a href="{{ achievement.url | relative_url }}">{{ achievement.title }}</a></h3>
-          <p>{{ achievement.description }}</p>
+          {% if achievement.description %}
+            <p>{{ achievement.description }}</p>
+          {% endif %}
         </li>
       {% endfor %}
     </ul>
@@ -28,13 +30,15 @@ layout: default
   {% endif %}
 
   <!-- 서브카테고리 리스트 출력 -->
-  {% assign subcategories = site.achievement_categories[page.slug].subcategories %}
-  {% if subcategories.size > 0 %}
+  {% assign current_category = site.data.achievement_categories[page.slug] %}
+  {% if current_category and current_category.subcategories %}
     <h2>Subcategories</h2>
     <ul class="subcategory-list">
-      {% for subcategory in subcategories %}
+      {% for subcategory in current_category.subcategories %}
         <li>
-          <a href="{{ site.baseurl }}/achievements/{{ subcategory | slugify }}/">{{ subcategory | replace: '_', ' ' | capitalize }}</a>
+          <a href="{{ site.baseurl }}/achievements/{{ page.slug }}/{{ subcategory | slugify }}/">
+            {{ subcategory | replace: '_', ' ' | capitalize }}
+          </a>
         </li>
       {% endfor %}
     </ul>
