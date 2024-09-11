@@ -20,8 +20,8 @@
   </div>
 
   <div class="categories">
-    <h2>Blog Categories:</h2>
-    <select id="category-select">
+    <h2>Categories:</h2>
+    <select id="category-select" onchange="filterCategories()">
       <option value="all">All Categories</option>
       {% for category in site.category_structure %}
         <option value="{{ category[0] }}">{{ category[1].title }}</option>
@@ -29,7 +29,7 @@
     </select>
     <ul id="category-list">
       {% for category in site.category_structure %}
-        <li>
+        <li data-category="{{ category[0] }}">
           <a href="{{ site.baseurl }}/categories/{{ category[0] }}/">
             {{ category[1].title }}
           </a>
@@ -48,62 +48,34 @@
       {% endfor %}
     </ul>
   </div>
-
-  {% if page.title == 'Achievements' or page.url contains '/achievements/' %}
-    {% if site.achievement_categories.size > 0 %}
-      <div class="achievement-categories">
-        <h2>Achievement Categories:</h2>
-        <ul>
-          {% for category in site.achievement_categories %}
-            <li>
-              <a href="{{ site.baseurl }}/achievements/{{ category[0] }}/">
-                {{ category[1].title }}
-              </a>
-              {% if category[1].subcategories.size > 0 %}
-                <ul>
-                  {% for subcategory in category[1].subcategories %}
-                    <li>
-                      <a href="{{ site.baseurl }}/achievements/{{ category[0] }}/{{ subcategory | slugify }}/">
-                        {{ subcategory | capitalize | replace: '_', ' ' }}
-                      </a>
-                    </li>
-                  {% endfor %}
-                </ul>
-              {% endif %}
-            </li>
-          {% endfor %}
-        </ul>
-      </div>
-    {% endif %}
-  {% endif %}
 </header>
 
 <script>
+function filterCategories() {
+  var select = document.getElementById('category-select');
+  var selectedCategory = select.value;
+  var categoryItems = document.querySelectorAll('#category-list > li');
+  
+  categoryItems.forEach(function(item) {
+    if (selectedCategory === 'all' || item.dataset.category === selectedCategory) {
+      item.style.display = 'block';
+    } else {
+      item.style.display = 'none';
+    }
+  });
+}
+
 document.addEventListener('DOMContentLoaded', function() {
+  var pathname = window.location.pathname;
   var categorySelect = document.getElementById('category-select');
   var categoryList = document.getElementById('category-list');
 
-  if (categorySelect && categoryList) {
-    if (window.location.pathname.includes('/posts/') || document.body.classList.contains('post-template')) {
-      categorySelect.style.display = 'block';
-      categoryList.style.display = 'none';
-    } else {
-      categorySelect.style.display = 'none';
-      categoryList.style.display = 'block';
-    }
-
-    categorySelect.addEventListener('change', function() {
-      var selectedCategory = this.value;
-      var posts = document.getElementsByClassName('post-preview');
-      
-      for (var i = 0; i < posts.length; i++) {
-        if (selectedCategory === 'all' || posts[i].getAttribute('data-category') === selectedCategory) {
-          posts[i].style.display = 'block';
-        } else {
-          posts[i].style.display = 'none';
-        }
-      }
-    });
+  if (pathname.includes('/posts/') || pathname.includes('/categories/') || document.body.classList.contains('post-template')) {
+    categorySelect.style.display = 'block';
+    categoryList.style.display = 'none';
+  } else {
+    categorySelect.style.display = 'none';
+    categoryList.style.display = 'block';
   }
 });
 </script>

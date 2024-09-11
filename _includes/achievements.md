@@ -9,7 +9,7 @@ Welcome to my achievements page. Here you can find information about my certific
 
 <div class="category-filter">
   <label for="achievement-category-select">Filter by category:</label>
-  <select id="achievement-category-select">
+  <select id="achievement-category-select" onchange="filterAchievements()">
     <option value="all">All Categories</option>
     {% for category in site.achievement_categories %}
       <option value="{{ category[0] }}">{{ category[1].title }}</option>
@@ -18,7 +18,7 @@ Welcome to my achievements page. Here you can find information about my certific
 </div>
 
 {% for category in site.achievement_categories %}
-  <div class="achievement-category" id="{{ category[0] }}">
+  <div class="achievement-category" data-category="{{ category[0] }}">
     <h2>{{ category[1].title }}</h2>
     
     {% case category[0] %}
@@ -48,21 +48,17 @@ Welcome to my achievements page. Here you can find information about my certific
 {% endfor %}
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-  var categorySelect = document.getElementById('achievement-category-select');
-  if (categorySelect) {
-    categorySelect.addEventListener('change', function() {
-      var selectedCategory = this.value;
-      var categories = document.getElementsByClassName('achievement-category');
-      
-      for (var i = 0; i < categories.length; i++) {
-        if (selectedCategory === 'all' || categories[i].id === selectedCategory) {
-          categories[i].style.display = 'block';
-        } else {
-          categories[i].style.display = 'none';
-        }
-      }
-    });
+function filterAchievements() {
+  var select = document.getElementById('achievement-category-select');
+  var selectedCategory = select.value;
+  var categories = document.getElementsByClassName('achievement-category');
+  
+  for (var i = 0; i < categories.length; i++) {
+    if (selectedCategory === 'all' || categories[i].dataset.category === selectedCategory) {
+      categories[i].style.display = 'block';
+    } else {
+      categories[i].style.display = 'none';
+    }
   }
-});
+}
 </script>
