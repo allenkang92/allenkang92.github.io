@@ -1,7 +1,7 @@
 ---
 layout: achievement
 title: Publications
-categories: [publications]
+category: [publications]
 ---
 
-This is a placeholder for publications category. List of publications will be shown here.
+This is a placeholder for the publications category. List of publications will be shown here.

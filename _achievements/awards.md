@@ -1,7 +1,13 @@
 ---
 layout: achievement
-title: awards
-categories: [awards]
+title: Awards
+category: [awards]
 ---
 
-This is a placeholder for publications category. List of publications will be shown here.
+This is a placeholder for the awards category. Here you will find professional and academic awards.
+
+## Professional Awards
+- Employee of the Year Award
+
+## Academic Awards
+- Best Research Paper Award

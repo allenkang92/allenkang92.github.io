@@ -1,7 +1,7 @@
 ---
 layout: achievement
 title: Projects
-categories: [projects]
+category: [projects]
 ---
 
-This is a placeholder for projects category. List of projects will be shown here.
+This is a placeholder for the projects category. Here you will find example projects.
