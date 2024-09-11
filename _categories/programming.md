@@ -1,5 +1,8 @@
 ---
 layout: category
 title: Programming
+slug: programming
+description: Explore various programming languages, software development practices, and coding techniques.
 ---
-This category covers various programming topics, including Python, HTML/CSS, and web automation.
+
+Welcome to the Programming category. Here you'll find posts about different programming languages, software development practices, and coding tutorials.

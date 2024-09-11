@@ -1,52 +1,3 @@
-# Site settings
-title: Allen's Blog
-description: A blog about tech, science, and interdisciplinary studies
-url: "https://allenkang92.github.io"
-github_username: allenkang92
-author: Allen Kang
-email: ksw8841@knou.ac.kr
-
-# Build settings
-markdown: kramdown
-theme: minima
-plugins:
-  - jekyll-feed
-  - jekyll-seo-tag
-  - jekyll-sitemap
-
-# Exclude from processing
-exclude:
-  - Gemfile
-  - Gemfile.lock
-  - node_modules
-  - vendor/bundle/
-  - vendor/cache/
-  - vendor/gems/
-  - vendor/ruby/
-
-# Navigation menu
-navigation:
-  - title: Home
-    url: /
-  - title: Posts
-    url: /posts.html
-  - title: Achievements
-    url: /achievements.html
-  - title: Tools
-    url: /tools.html
-  - title: About
-    url: /about.html
-
-# Collections
-collections:
-  categories:
-    output: true
-  tools:
-    output: true
-  series:
-    output: true
-    permalink: /series/:name/
-    
 # Category structure for the blog
 category_structure:
   programming:
@@ -58,10 +9,11 @@ category_structure:
   data_science:
     title: Data Science
     subcategories:
-      - machine_learning
       - data_analysis
+      - machine_learning
+      - deep_learning
       - data_visualization
-  devops:
+  devops_&_cloud:
     title: DevOps & Cloud
     subcategories:
       - containerization
@@ -74,97 +26,102 @@ category_structure:
     subcategories:
       - etl
       - stream_processing
+  computer_science:
+    title: Computer Science
+    subcategories:
+      - algorithms
+      - data_structures
+      - databases
+      - networking
+      - security
+      - operating_systems
+      - computer_architecture
+      - software_engineering
+      - programming_languages
+      - quantum_computing
   bioinformatics:
     title: Bioinformatics
     subcategories:
       - genomics
       - proteomics
-  science_philosophy:
+      - biopython
+      - life_sciences
+  science_philosophy_history:
     title: Science Philosophy & History
     subcategories:
-      - scientific_method
+      - philosophy_of_science
       - history_of_science
-  web_tech:
+  mathematics_philosophy_history:
+    title: Mathematics Philosophy & History
+    subcategories:
+      - philosophy_of_mathematics
+      - history_of_mathematics
+  web_technologies:
     title: Web Technologies
     subcategories:
-      - html&css
+      - html_css
       - javascript
       - web_frameworks
   design:
     title: Design
     subcategories:
-      - ui&ux
+      - ui_ux
       - graphic_design
-
-# Detailed category descriptions
-categories:
-  - name: python
-    title: Python
-    description: Python programming, including libraries and frameworks
-  - name: html-css
-    title: HTML & CSS
-    description: Web development fundamentals
-  - name: web-automation
-    title: Web Automation
-    description: Web scraping and automation techniques
-  - name: data_analysis
-    title: Data Analysis
-    description: Tools and techniques for analyzing data
-  - name: machine_learning
-    title: Machine Learning
-    description: ML algorithms, frameworks, and applications
-  - name: data_visualization
-    title: Data Visualization
-    description: Tools and techniques for visualizing data
-  - name: containerization
-    title: Containerization
-    description: Docker and container technologies
-  - name: orchestration
-    title: Orchestration
-    description: Kubernetes and container orchestration
-  - name: version_control
-    title: Version Control
-    description: Git and version control systems
-  - name: monitoring
-    title: Monitoring & Logging
-    description: System monitoring and log analysis
-  - name: etl
-    title: ETL Processes
-    description: Extract, Transform, Load processes and tools
-  - name: stream_processing
-    title: Stream Processing
-    description: Real-time data streaming and processing
-  - name: genomics
-    title: Genomics
-    description: Analysis of genomic data
-  - name: proteomics
-    title: Proteomics
-    description: Study of proteins and their structures
-  - name: ui-ux
-    title: UI/UX Design
-    description: User interface and experience design
-  - name: graphic_design
-    title: Graphic Design
-    description: Visual design and illustration
-
-# Defaults for different content types
-defaults:
-  - scope:
-      path: ""
-      type: posts
-    values:
-      layout: post
-  - scope:
-      path: ""
-      type: pages
-    values:
-      layout: default
-  - scope:
-      path: ""
-      type: categories
-    values:
-      layout: category
-
-
-sass:
-  style: compressed
+  physics:
+    title: Physics
+    subcategories:
+      - classical_mechanics
+      - quantum_mechanics
+      - relativity
+  chemistry:
+    title: Chemistry
+    subcategories:
+      - organic_chemistry
+      - inorganic_chemistry
+      - physical_chemistry
+  cognitive_science:
+    title: Cognitive Science
+    subcategories:
+      - cognitive_psychology
+      - neuroscience
+      - artificial_intelligence
+  human_factors_engineering:
+    title: Human Factors Engineering
+    subcategories:
+      - ergonomics
+      - human_computer_interaction
+  environmental_science:
+    title: Environmental Science
+    subcategories:
+      - climate_change
+      - sustainability
+  social_impact:
+    title: Social Impact
+    subcategories:
+      - technology_ethics
+      - social_innovation
+  sports_science:
+    title: Sports Science
+    subcategories:
+      - biomechanics
+      - exercise_physiology
+  law:
+    title: Law
+    subcategories:
+      - intellectual_property
+      - technology_law
+  mechanical_engineering:
+    title: Mechanical Engineering
+    subcategories:
+      - thermodynamics
+      - fluid_mechanics
+  atmospheric_science:
+    title: Atmospheric Science
+    subcategories:
+      - meteorology
+      - climatology
+  psychology:
+    title: Psychology
+    subcategories:
+      - cognitive_psychology
+      - social_psychology
