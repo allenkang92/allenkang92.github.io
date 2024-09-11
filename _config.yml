@@ -1,3 +1,53 @@
+# Site settings
+title: Allen's Blog
+description: A blog about tech, science, and interdisciplinary studies
+url: "https://allenkang92.github.io"
+github_username: allenkang92
+author: Allen Kang
+email: ksw8841@knou.ac.kr
+
+# Build settings
+markdown: kramdown
+theme: minima
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+  - jekyll-sitemap
+
+# Exclude from processing
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor/bundle/
+  - vendor/cache/
+  - vendor/gems/
+  - vendor/ruby/
+
+# Navigation menu
+navigation:
+  - title: Home
+    url: /
+  - title: Posts
+    url: /posts.html
+  - title: Achievements
+    url: /achievements.html
+  - title: Tools
+    url: /tools.html
+  - title: About
+    url: /about.html
+
+# Collections
+collections:
+  categories:
+    output: true
+    permalink: /categories/:name/
+  tools:
+    output: true
+  series:
+    output: true
+    permalink: /series/:name/
+
 # Category structure for the blog
 category_structure:
   programming:
