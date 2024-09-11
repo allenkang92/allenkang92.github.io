@@ -21,6 +21,51 @@
     <!-- 푸터 포함 -->
     {% include footer.html %}
     
+    <!-- 검색 및 필터링 스크립트 -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var categorySelect = document.getElementById('category-select');
+      var achievementCategorySelect = document.getElementById('achievement-category-select');
+
+      if (categorySelect) {
+        categorySelect.addEventListener('change', filterCategories);
+      }
+
+      if (achievementCategorySelect) {
+        achievementCategorySelect.addEventListener('change', filterAchievements);
+      }
+    });
+
+    function filterCategories() {
+      var select = document.getElementById('category-select');
+      var selectedCategory = select.value;
+      var posts = document.getElementsByClassName('post-preview');
+      
+      for (var i = 0; i < posts.length; i++) {
+        if (selectedCategory === 'all' || posts[i].getAttribute('data-category') === selectedCategory) {
+          posts[i].style.display = 'block';
+        } else {
+          posts[i].style.display = 'none';
+        }
+      }
+    }
+
+    function filterAchievements() {
+      var select = document.getElementById('achievement-category-select');
+      var selectedCategory = select.value;
+      var achievements = document.getElementsByClassName('achievement-category');
+      
+      for (var i = 0; i < achievements.length; i++) {
+        if (selectedCategory === 'all' || achievements[i].id === selectedCategory) {
+          achievements[i].style.display = 'block';
+        } else {
+          achievements[i].style.display = 'none';
+        }
+      }
+    }
+    </script>
+
+    <!-- 검색 스크립트 -->
     <script src="{{ '/assets/js/search.js' | relative_url }}"></script>
 </body>
 </html>

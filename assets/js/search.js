@@ -4,7 +4,7 @@
     var posts = [];
   
     // 포스트 데이터 로드
-    fetch('/search.json')  // baseurl 없이 바로 /search.json 경로로 요청
+    fetch('{{ site.baseurl }}/search.json')  // baseurl 추가
         .then(response => response.json())
         .then(data => {
             posts = data;
