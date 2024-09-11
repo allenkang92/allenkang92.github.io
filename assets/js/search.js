@@ -4,7 +4,7 @@
     var posts = [];
   
     // 포스트 데이터 로드
-    fetch('/allenkang92.github.io/search.json')  // baseurl 추가
+    fetch('/search.json')  // baseurl 추가
         .then(response => response.json())
         .then(data => {
             posts = data;
