@@ -1,7 +1,7 @@
 ---
 layout: achievement
 title: Certificates
-categories: [certificates]
+category: certificates
 ---
 
 This is a placeholder for the certificates category. Here you will find professional and academic certificates.
