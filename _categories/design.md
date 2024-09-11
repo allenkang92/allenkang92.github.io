@@ -1,5 +1,8 @@
 ---
 layout: category
 title: Design
+slug: design
+description: Discover the world of UI/UX and graphic design.
 ---
-Explore UI/UX design principles and graphic design techniques.
+
+Welcome to the Design category. Explore posts on UI/UX principles and graphic design techniques for creating impactful user experiences.
