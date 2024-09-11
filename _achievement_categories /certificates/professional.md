@@ -2,6 +2,7 @@
 title: Professional Certificates
 layout: achievement
 category: certificates
+description: All professional certificates I have earned.
 subcategory: professional
 ---
 

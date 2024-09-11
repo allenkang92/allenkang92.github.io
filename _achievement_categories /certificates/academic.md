@@ -2,6 +2,7 @@
 title: Academic Certificates
 layout: achievement
 category: certificates
+description: All academic certificates I have earned.
 subcategory: academic
 ---
 
