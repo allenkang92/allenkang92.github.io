@@ -38,6 +38,19 @@
 </header>
 
 <script>
+document.addEventListener('DOMContentLoaded', function() {
+  var categorySelect = document.getElementById('category-select');
+  var achievementCategorySelect = document.getElementById('achievement-category-select');
+
+  if (categorySelect) {
+    categorySelect.addEventListener('change', filterCategories);
+  }
+
+  if (achievementCategorySelect) {
+    achievementCategorySelect.addEventListener('change', filterAchievements);
+  }
+});
+
 function filterCategories() {
   var select = document.getElementById('category-select');
   var selectedCategory = select.value;
@@ -65,17 +78,4 @@ function filterAchievements() {
     }
   }
 }
-
-document.addEventListener('DOMContentLoaded', function() {
-  var categorySelect = document.getElementById('category-select');
-  var achievementCategorySelect = document.getElementById('achievement-category-select');
-
-  if (categorySelect) {
-    categorySelect.addEventListener('change', filterCategories);
-  }
-
-  if (achievementCategorySelect) {
-    achievementCategorySelect.addEventListener('change', filterAchievements);
-  }
-});
 </script>
