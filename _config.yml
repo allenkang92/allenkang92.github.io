@@ -202,6 +202,28 @@ achievement_categories:
   projects:
     title: Projects
 
+achievement_structure:
+  certificates:
+    title: Certificates
+    subcategories:
+      - professional
+      - academic
+  education:
+    title: Education
+    subcategories:
+      - courses
+      - workshops
+  awards:
+    title: Awards
+    subcategories:
+      - professional
+      - academic
+  publications:
+    title: Publications
+  projects:
+    title: Projects
+
+
 
 # _config.yml 파일의 마지막에 추가
 defaults:
