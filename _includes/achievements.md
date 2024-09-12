@@ -21,29 +21,24 @@ Welcome to my achievements page. Here you can find information about my certific
   <div class="achievement-category" data-category="{{ category[0] }}">
     <h2>{{ category[1].title }}</h2>
     
-    {% case category[0] %}
-      {% when 'certificates' %}
-        {% include_relative certificates.md %}
-      {% when 'education' %}
-        {% include_relative education.md %}
-      {% when 'awards' %}
-        {% include_relative awards.md %}
-      {% when 'publications' %}
-        {% include_relative publications.md %}
-      {% when 'projects' %}
-        {% include_relative projects.md %}
-    {% endcase %}
+    {% assign category_achievements = site.achievements | where: "category", category[0] %}
+    {% for achievement in category_achievements %}
+      <h3>{{ achievement.title }}</h3>
+      {{ achievement.content }}
+    {% endfor %}
     
-    <h3>Subcategories:</h3>
-    <ul>
-      {% for subcategory in category[1].subcategories %}
-        <li>
-          <a href="{{ site.baseurl }}/achievements/{{ category[0] }}/{{ subcategory | slugify }}">
-            {{ subcategory | capitalize | replace: '_', ' ' }}
-          </a>
-        </li>
-      {% endfor %}
-    </ul>
+    {% if category[1].subcategories %}
+      <h3>Subcategories:</h3>
+      <ul>
+        {% for subcategory in category[1].subcategories %}
+          <li>
+            <a href="{{ site.baseurl }}/achievements/{{ category[0] }}/{{ subcategory }}">
+              {{ subcategory | capitalize | replace: '_', ' ' }}
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
   </div>
 {% endfor %}
 
