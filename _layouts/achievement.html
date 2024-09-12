@@ -30,7 +30,7 @@ layout: default
 {% endif %}
 
 <!-- 서브카테고리 리스트 출력 -->
-{% assign current_category = site.data.achievement_categories[page.slug] %}
+{% assign current_category = site.achievement_structure[page.slug] %}
 {% if current_category and current_category.subcategories %}
   <h2>Subcategories</h2>
   <ul class="subcategory-list">
@@ -43,4 +43,5 @@ layout: default
     {% endfor %}
   </ul>
 {% endif %}
+
 </div>

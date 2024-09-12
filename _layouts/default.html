@@ -24,7 +24,9 @@
     <!-- 검색 및 필터링 스크립트 -->
     <script>
     document.addEventListener('DOMContentLoaded', function() {
+      // 포스트 카테고리 필터링
       var categorySelect = document.getElementById('category-select');
+      // 어치브먼트 카테고리 필터링
       var achievementCategorySelect = document.getElementById('achievement-category-select');
 
       if (categorySelect) {
@@ -36,6 +38,7 @@
       }
     });
 
+    // 포스트 카테고리 필터링 함수
     function filterCategories() {
       var select = document.getElementById('category-select');
       var selectedCategory = select.value;
@@ -50,6 +53,7 @@
       }
     }
 
+    // 어치브먼트 카테고리 필터링 함수
     function filterAchievements() {
       var select = document.getElementById('achievement-category-select');
       var selectedCategory = select.value;
