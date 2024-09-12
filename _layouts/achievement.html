@@ -30,7 +30,7 @@ layout: default
   {% endif %}
 
   <!-- 서브카테고리 리스트 출력 -->
-  {% assign current_category = site.achievement_structure[page.slug] %}
+  {% assign current_category = site.data.achievement_categories[page.slug] %}
   {% if current_category and current_category.subcategories %}
     <h2>Subcategories</h2>
     <ul class="subcategory-list">
@@ -48,7 +48,7 @@ layout: default
   <h2>Filter by category</h2>
   <select id="achievement-category-select">
     <option value="all">All Categories</option>
-    {% for category in site.achievement_structure %}
+    {% for category in site.data.achievement_categories %}
       <option value="{{ category[0] }}">{{ category[1].title }}</option>
     {% endfor %}
   </select>
