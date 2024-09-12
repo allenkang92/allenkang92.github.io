@@ -181,27 +181,6 @@ category_structure:
       - social_psychology
 
 # Achievement category structure
-achievement_categories:
-  certificates:
-    title: Certificates
-    subcategories:
-      - professional
-      - academic
-  education:
-    title: Education
-    subcategories:
-      - courses
-      - workshops
-  awards:
-    title: Awards
-    subcategories:
-      - professional
-      - academic
-  publications:
-    title: Publications
-  projects:
-    title: Projects
-
 achievement_structure:
   certificates:
     title: Certificates

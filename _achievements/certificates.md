@@ -1,7 +1,7 @@
 ---
-title: "Sample Achievement"
+layout: achievement
+title: Certificates
 category: certificates
-subcategory: professional
 ---
 
 

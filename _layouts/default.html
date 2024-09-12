@@ -58,7 +58,7 @@
       var select = document.getElementById('achievement-category-select');
       var selectedCategory = select.value;
       var categories = document.getElementsByClassName('achievement-category');
-  
+
       for (var i = 0; i < categories.length; i++) {
         if (selectedCategory === 'all' || categories[i].getAttribute('data-category') === selectedCategory) {
           categories[i].style.display = 'block';
@@ -67,6 +67,7 @@
         }
       }
     }
+
 
     </script>
 

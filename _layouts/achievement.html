@@ -16,7 +16,6 @@ layout: default
   {% if achievement_items.size > 0 %}
     <h2>Achievements in this category</h2>
     <ul class="achievement-list">
-    <pre>{{ site.achievement_structure | jsonify }}</pre>
       {% for achievement in achievement_items %}
         <li class="achievement-category" data-category="{{ achievement.category }}">
           <h3><a href="{{ achievement.url | relative_url }}">{{ achievement.title }}</a></h3>
@@ -25,7 +24,7 @@ layout: default
           {% endif %}
         </li>
       {% endfor %}
-    </ul>
+    </ul>    
   {% else %}
     <p>No achievements in this category yet.</p>
   {% endif %}
@@ -49,7 +48,6 @@ layout: default
   <h2>Filter by category</h2>
   <select id="achievement-category-select">
     <option value="all">All Categories</option>
-    <pre>{{ site.achievement_structure | jsonify }}</pre>
     {% for category in site.achievement_structure %}
       <option value="{{ category[0] }}">{{ category[1].title }}</option>
     {% endfor %}
