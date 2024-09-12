@@ -11,28 +11,22 @@ Welcome to my achievements page. Here you can find information about my certific
   <label for="achievement-category-select">Filter by category:</label>
   <select id="achievement-category-select" onchange="filterAchievements()">
     <option value="all">All Categories</option>
-    {% for category in site.data.achievement_categories %}
-      <option value="{{ category[0] }}">{{ category[1].title }}</option>
+    {% for achievement in site.achievements %}
+      <option value="{{ achievement.category }}">{{ achievement.title }}</option>
     {% endfor %}
   </select>
 </div>
 
-{% for category in site.data.achievement_categories %}
-  <div class="achievement-category" data-category="{{ category[0] }}">
-    <h2>{{ category[1].title }}</h2>
+{% for achievement in site.achievements %}
+  <div class="achievement-category" data-category="{{ achievement.category }}">
+    <h2>{{ achievement.title }}</h2>
+    {{ achievement.content }}
     
-    {% assign category_achievements = site.achievements | where: "category", category[0] %}
-    {% for achievement in category_achievements %}
-      <div class="achievement-item">
-        <h3>{{ achievement.title }}</h3>
-        {{ achievement.content }}
-      </div>
-    {% endfor %}
-    
-    {% if category[1].subcategories %}
+    {% assign subcategories = site.data.achievement_categories[achievement.category].subcategories %}
+    {% if subcategories %}
       <h3>Subcategories:</h3>
       <ul>
-        {% for subcategory in category[1].subcategories %}
+        {% for subcategory in subcategories %}
           <li>{{ subcategory | capitalize | replace: '_', ' ' }}</li>
         {% endfor %}
       </ul>
