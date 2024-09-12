@@ -11,13 +11,13 @@ Welcome to my achievements page. Here you can find information about my certific
   <label for="achievement-category-select">Filter by category:</label>
   <select id="achievement-category-select" onchange="filterAchievements()">
     <option value="all">All Categories</option>
-    {% for category in site.data.achievement_categories %}
+    {% for category in site.achievement_categories %}
       <option value="{{ category[0] }}">{{ category[1].title }}</option>
     {% endfor %}
   </select>
 </div>
 
-{% for category in site.data.achievement_categories %}
+{% for category in site.achievement_categories %}
   <div class="achievement-category" data-category="{{ category[0] }}">
     <h2>{{ category[1].title }}</h2>
     
