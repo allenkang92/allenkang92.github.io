@@ -1,8 +1,8 @@
 ---
-title: Academic Awards
 layout: achievement
+title: Academic Awards
 category: awards
-subcategory: academic
+slug: academic
 ---
 
 This section includes the academic awards I have earned throughout my academic career.
