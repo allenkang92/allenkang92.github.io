@@ -21,11 +21,10 @@ Welcome to my achievements page. Here you can find information about my certific
   <div class="achievement-category" data-category="{{ category[0] }}">
     <h2>{{ category[1].title }}</h2>
     
-    {% assign category_achievements = site.achievements | where: "category", category[0] %}
-    {% for achievement in category_achievements %}
-      <h3>{{ achievement.title }}</h3>
-      {{ achievement.content }}
-    {% endfor %}
+    {% assign category_file = site.achievements | where: "slug", category[0] | first %}
+    {% if category_file %}
+      {{ category_file.content }}
+    {% endif %}
     
     {% if category[1].subcategories %}
       <h3>Subcategories:</h3>
