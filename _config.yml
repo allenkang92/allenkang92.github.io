@@ -14,6 +14,7 @@ plugins:
   - jekyll-seo-tag
   - jekyll-sitemap
   - jekyll-lunr-js-search
+  - jekyll-redirect-from
 
 # Exclude from processing
 exclude:
