@@ -16,6 +16,10 @@ plugins:
   - jekyll-lunr-js-search
   - jekyll-redirect-from
 
+sass:
+  sass_dir: _sass
+  style: compressed
+
 # Exclude from processing
 exclude:
   - Gemfile
