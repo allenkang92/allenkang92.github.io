@@ -1,8 +1,9 @@
 ---
-layout: achievement
-title: Certificates
+title: "Sample Achievement"
 category: certificates
+subcategory: professional
 ---
+
 
 This is a placeholder for the certificates category. Here you will find professional and academic certificates.
 

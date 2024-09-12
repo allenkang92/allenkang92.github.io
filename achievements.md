@@ -32,7 +32,7 @@ Welcome to my achievements page. Here you can find information about my certific
       <ul>
         {% for subcategory in category[1].subcategories %}
           <li>
-            <a href="{{ site.baseurl }}/achievements/{{ category[0] }}/{{ subcategory }}">
+            <a href="{{ site.baseurl }}/achievements/{{ category[0] }}/{{ subcategory | slugify }}">
               {{ subcategory | capitalize | replace: '_', ' ' }}
             </a>
           </li>
