@@ -10,7 +10,6 @@ Welcome to my achievements page. Here you can find information about my certific
 <div class="category-filter">
   <label for="achievement-category-select">Filter by category:</label>
   <select id="achievement-category-select" onchange="filterAchievements()">
-    <option value="all">All Categories</option>
     {% for achievement in site.achievements %}
       <option value="{{ achievement.category }}">{{ achievement.title }}</option>
     {% endfor %}
@@ -41,7 +40,7 @@ function filterAchievements() {
   var categories = document.getElementsByClassName('achievement-category');
   
   for (var i = 0; i < categories.length; i++) {
-    if (selectedCategory === 'all' || categories[i].getAttribute('data-category') === selectedCategory) {
+    if (categories[i].getAttribute('data-category') === selectedCategory) {
       categories[i].style.display = 'block';
     } else {
       categories[i].style.display = 'none';
@@ -53,6 +52,9 @@ document.addEventListener('DOMContentLoaded', function() {
   var achievementCategorySelect = document.getElementById('achievement-category-select');
   if (achievementCategorySelect) {
     achievementCategorySelect.addEventListener('change', filterAchievements);
+    // 페이지 로드 시 첫 번째 카테고리 선택 및 필터링
+    achievementCategorySelect.selectedIndex = 3;
+    filterAchievements();
   }
 });
 </script>
