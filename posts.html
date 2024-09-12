@@ -2,12 +2,12 @@
 layout: default
 title: Blog Posts
 ---
-<div class="posts">
-  <h1>Blog Posts</h1>
+<div class="posts nes-container with-title is-rounded">
+  <h1 class="nes-text is-primary">Blog Posts</h1>
 
   <div class="category-filter">
-    <label for="category-select">Filter by category:</label>
-    <select id="category-select">
+    <label for="category-select" class="nes-text">Filter by category:</label>
+    <select id="category-select" class="nes-select">
       <option value="all">All Categories</option>
       {% for category in site.category_structure %}
         <option value="{{ category[0] }}">{{ category[1].title }}</option>
@@ -16,18 +16,19 @@ title: Blog Posts
   </div>
 
   {% for post in site.posts %}
-    <article class="post-preview" data-category="{{ post.categories | first }}">
-      <h2><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
-      <div class="post-meta">
+    <article class="post-preview nes-container is-dark" data-category="{{ post.categories | first }}">
+      <h2><a href="{{ post.url | relative_url }}" class="nes-btn">{{ post.title }}</a></h2>
+      <div class="post-meta nes-text is-success">
         <span class="post-date">{{ post.date | date: "%B %d, %Y" }}</span>
         <span class="post-category">Category: {{ post.categories | first }}</span>
       </div>
-      <div class="post-excerpt">
+      <div class="post-excerpt nes-text">
         {{ post.excerpt | strip_html | truncatewords: 50 }}
       </div>
     </article>
   {% endfor %}
 </div>
+
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {

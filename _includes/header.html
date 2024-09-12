@@ -1,15 +1,15 @@
-<header>
-  <div class="blog-title">
-    <h1>{{ site.title }}</h1>
+<header class="nes-container is-rounded">
+  <div class="blog-title nes-container">
+    <h1 class="nes-text is-primary">{{ site.title }}</h1>
     {% if site.description %}
-      <p>{{ site.description }}</p>
+      <p class="nes-text">{{ site.description }}</p>
     {% endif %}
   </div>
   
-  <nav>
-    <ul>
+  <nav class="nes-container is-dark>
+    <ul class="nes-list is-circle">
       {% for item in site.navigation %}
-        <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a></li>
+        <li><a href="{{ site.baseurl }}{{ item.url }}" class="nes-btn is-primary">{{ item.title }}</a></li>
       {% endfor %}
     </ul>
   </nav>

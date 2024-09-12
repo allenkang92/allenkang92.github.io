@@ -1,13 +1,13 @@
 ---
 layout: default
 ---
-<article class="post">
-  <h1>{{ page.title }}</h1>
+<article class="post nes-container is-rounded">
+  <h1 class="nes-text is-primary">{{ page.title }}</h1>
   
   <div class="post-categories">
     카테고리:
     {% for category in page.categories %}
-    <span class="category">{{ category }}</span>
+    <span class="nes-text is-warning">{{ category }}</span>
     {% unless forloop.last %}&nbsp;{% endunless %}
     {% endfor %}
   </div>
@@ -58,7 +58,7 @@ layout: default
     </ul>
   </div>
 
-  <div id="comments">
+  <div id="comments" class="nes-container is-dark">
     <script src="https://utteranc.es/client.js"
             repo="allenkang92/allenkang92.github.io"
             issue-term="pathname"
