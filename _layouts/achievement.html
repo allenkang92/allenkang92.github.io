@@ -12,35 +12,35 @@ layout: default
   {{ content }}
 
   <!-- 성취 항목 리스트 출력 -->
-  {% assign achievement_items = site.achievements | where: "category", page.slug %}
-  {% if achievement_items.size > 0 %}
-    <h2>Achievements in this category</h2>
-    <ul class="achievement-list">
-      {% for achievement in achievement_items %}
-        <li>
-          <h3><a href="{{ achievement.url | relative_url }}">{{ achievement.title }}</a></h3>
-          {% if achievement.description %}
-            <p>{{ achievement.description }}</p>
-          {% endif %}
-        </li>
-      {% endfor %}
-    </ul>
-  {% else %}
-    <p>No achievements in this category yet.</p>
-  {% endif %}
+{% assign achievement_items = site.achievements | where: "category", page.slug %}
+{% if achievement_items.size > 0 %}
+  <h2>Achievements in this category</h2>
+  <ul class="achievement-list">
+    {% for achievement in achievement_items %}
+      <li>
+        <h3><a href="{{ achievement.url | relative_url }}">{{ achievement.title }}</a></h3>
+        {% if achievement.description %}
+          <p>{{ achievement.description }}</p>
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>No achievements in this category yet.</p>
+{% endif %}
 
-  <!-- 서브카테고리 리스트 출력 -->
-  {% assign current_category = site.data.achievement_categories[page.slug] %}
-  {% if current_category and current_category.subcategories %}
-    <h2>Subcategories</h2>
-    <ul class="subcategory-list">
-      {% for subcategory in current_category.subcategories %}
-        <li>
-          <a href="{{ site.baseurl }}/achievements/{{ page.slug }}/{{ subcategory | slugify }}/">
-            {{ subcategory | replace: '_', ' ' | capitalize }}
-          </a>
-        </li>
-      {% endfor %}
-    </ul>
-  {% endif %}
+<!-- 서브카테고리 리스트 출력 -->
+{% assign current_category = site.data.achievement_categories[page.slug] %}
+{% if current_category and current_category.subcategories %}
+  <h2>Subcategories</h2>
+  <ul class="subcategory-list">
+    {% for subcategory in current_category.subcategories %}
+      <li>
+        <a href="{{ site.baseurl }}/achievements/{{ page.slug }}/{{ subcategory | slugify }}/">
+          {{ subcategory | replace: '_', ' ' | capitalize }}
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+{% endif %}
 </div>

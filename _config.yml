@@ -201,3 +201,11 @@ category_structure:
 #     title: Publications
 #   projects:
 #     title: Projects
+
+
+# _config.yml 파일의 마지막에 추가
+defaults:
+  - scope:
+      path: "_data/achievement_categories.yml"
+    values:
+      layout: achievement
