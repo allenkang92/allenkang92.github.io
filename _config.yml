@@ -48,7 +48,7 @@ collections:
   series:
     output: true
     permalink: /series/:name/
-  achievements:
+  achievement_categories:
     output: true
     permalink: /achievements/:name/
 
