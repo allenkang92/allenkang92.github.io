@@ -185,6 +185,30 @@ category_structure:
     subcategories:
       - cognitive_psychology
       - social_psychology
+  daily_life:
+    title: Daily Life
+    subcategories:
+      - personal  # 개인적인 일상
+      - travel  # 여행
+      - hobbies  # 취미
+      - reflections  # 생각 및 회고
+      - work  # 업무 및 생산성
+      - self_improvement  # 자기 계발
+      - tech_experiences  # 기술 사용 경험
+      - social_life  # 사회생활 및 모임
+      - entertainment  # 여가 및 취미 생활
+      - food  # 음식 및 요리
+      - fitness  # 운동 및 건강 관리
+      - relationships  # 인간관계 및 사회생활
+      - education  # 교육 및 학습
+      - culture  # 문화 및 예술
+      - politics  # 정치 및 사회 문제
+      - environment  # 환경 및 지속가능성
+      - pets  # 애완동물 및 반려동물
+      - shopping  # 쇼핑 및 소비
+      - media  # 미디어 및 방송
+      - literature  # 문학 및 작품
+      - music  # 음악 및 연주
 
 
 
