@@ -5,7 +5,20 @@
     <meta property="og:title" content="{{ page.title | escape }}">
     <meta property="og:description" content="{{ page.excerpt | default: site.description | strip_html | normalize_whitespace | truncate: 160 | escape }}">
     <meta property="og:url" content="{{ page.url | replace:'index.html','' | absolute_url }}">
-    {% seo %}
+    <link rel="canonical" href="{{ page.url | absolute_url }}">
+    <meta property="og:image" content="{{ page.image | default: '/assets/images/default.jpg' | absolute_url }}">
+    <meta name="robots" content="index, follow">
+
+    <!-- 구글 애널리틱스 -->
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-C2BXF21DKW"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-C2BXF21DKW');
+    </script>
     
     <!-- 메인 스타일 시트 링크 -->
     <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
