@@ -9,6 +9,7 @@ email: ksw8841@knou.ac.kr
 # Build settings
 markdown: kramdown
 theme: minima
+future: true  # 이 줄을 추가합니다.
 plugins:
   - jekyll-feed
   - jekyll-seo-tag
