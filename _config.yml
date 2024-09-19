@@ -73,7 +73,7 @@ category_structure:
       - machine_learning
       - deep_learning
       - data_visualization
-  'devops_&_cloud':
+  devops_and_cloud:
     title: DevOps & Cloud
     subcategories:
       - containerization

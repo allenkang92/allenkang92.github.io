@@ -1,7 +1,8 @@
----
+--- 
 layout: default
 title: Blog Posts
 ---
+
 <div>
   <h1>Blog Posts</h1>
 
@@ -16,7 +17,7 @@ title: Blog Posts
   </div>
 
   {% for post in site.posts %}
-    <article data-category="{{ post.categories | first }}">
+    <article class="post-preview" data-category="{{ post.categories | first }}">
       <h2><a href="{{ post.url | relative_url }}" class="nes-btn">{{ post.title }}</a></h2>
       <div class="post-meta nes-text is-success">
         <span class="post-date">{{ post.date | date: "%B %d, %Y" }}</span>
@@ -28,7 +29,6 @@ title: Blog Posts
     </article>
   {% endfor %}
 </div>
-
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
