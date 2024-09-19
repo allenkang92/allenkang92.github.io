@@ -62,18 +62,46 @@ footer {
 }
 
 #search-results {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  background-color: white;
-  border: 1px solid #ddd;
-  border-top: none;
-  max-height: 300px;
-  overflow-y: auto;
-  display: none;
-  z-index: 1000;
-  width: 100%; /* 결과 창 너비 조정 */
-}
-
-/* 나머지 스타일은 그대로 유지 */
+    position: absolute;
+    background: white;
+    width: 100%;
+    max-width: 300px;
+    border: 1px solid #ddd;
+    border-top: none;
+    z-index: 1000;
+    max-height: 300px;
+    overflow-y: auto;
+    display: none;
+  }
+  
+  #search-results ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  #search-results li {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+  }
+  
+  #search-results a {
+    color: #333;
+    text-decoration: none;
+  }
+  
+  #search-results a:hover {
+    text-decoration: underline;
+  }
+  
+  #search-results mark {
+    background-color: yellow;
+    padding: 2px;
+  }
+  
+  .category, .tags {
+    font-size: 0.8em;
+    color: #666;
+    display: block;
+    margin-top: 5px;
+  }
