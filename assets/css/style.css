@@ -105,3 +105,24 @@ footer {
     display: block;
     margin-top: 5px;
   }
+
+  #toc {
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-bottom: 20px;
+  }
+  
+  #toc ul {
+    list-style-type: none;
+    padding-left: 20px;
+  }
+  
+  #toc a {
+    color: #007bff;
+    text-decoration: none;
+  }
+  
+  #toc a:hover {
+    text-decoration: underline;
+  }

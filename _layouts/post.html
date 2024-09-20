@@ -16,6 +16,9 @@ layout: default
     작성일: {{ page.date | date: "%Y-%m-%d" }}
   </div>
 
+  <!-- 목차 추가 -->
+  <div id="toc"></div>
+
   <div class="post-content">
     {{ content }}
   </div>
@@ -68,3 +71,27 @@ layout: default
     </script>
   </div>
 </article>
+
+<!-- 목차 생성을 위한 JavaScript 추가 -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var headings = document.querySelectorAll('.post-content h2, .post-content h3, .post-content h4, .post-content h5, .post-content h6');
+  var tocDiv = document.getElementById('toc');
+  
+  if (headings.length > 0) {
+    tocDiv.innerHTML = '<h2>목차</h2><ul>';
+    
+    headings.forEach(function(heading, index) {
+      var anchor = 'toc-' + index;
+      heading.id = anchor;
+      var li = document.createElement('li');
+      li.innerHTML = '<a href="#' + anchor + '">' + heading.textContent + '</a>';
+      tocDiv.querySelector('ul').appendChild(li);
+    });
+    
+    tocDiv.innerHTML += '</ul>';
+  } else {
+    tocDiv.style.display = 'none';
+  }
+});
+</script>

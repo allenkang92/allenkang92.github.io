@@ -16,6 +16,7 @@ plugins:
   - jekyll-sitemap
   - jekyll-lunr-js-search
   - jekyll-redirect-from
+  - jekyll-sitemap
 
 sass:
   sass_dir: _sass
