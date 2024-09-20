@@ -1,20 +1,19 @@
 achievement_categories:
   certificates:
     title: Certificates
-    subcategories:
-      - professional
-      - academic
   education:
     title: Education
-    subcategories:
-      - courses
-      - workshops
   awards:
     title: Awards
-    subcategories:
-      - professional
-      - academic
   publications:
     title: Publications
   projects:
     title: Projects
+  volunteering:
+    title: Volunteering
+  leadership:
+    title: Leadership
+  personal_development:
+    title: Personal Development
+  teaching_experience:
+    title: Teaching Experience
