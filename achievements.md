@@ -10,8 +10,9 @@ Welcome to my achievements page. Here you can find information about my certific
 <div class="category-filter">
   <label for="achievement-category-select">Filter by category:</label>
   <select id="achievement-category-select" onchange="filterAchievements()">
-    {% for achievement in site.achievements %}
-      <option value="{{ achievement.category }}">{{ achievement.title }}</option>
+    <option value="all">All Categories</option>
+    {% for category in site.data.achievement_categories %}
+    <option value="{{ category[0] }}">{{ category[1].title }}</option>
     {% endfor %}
   </select>
 </div>
