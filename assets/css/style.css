@@ -1,147 +1,169 @@
-/* "PF스타더스트" 폰트 적용 */
+/* "PF스타더스트" 폰트 정의 */
 @font-face {
   font-family: 'PFStardust';
-  src: url('/assets/fonts/PF스타더스트 3.0.ttf') format('truetype');
+  src: url('/assets/fonts/PFStardust 3.0.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
 
+@font-face {
+  font-family: 'PFStardust';
+  src: url('/assets/fonts/PFStardust 3.0 Bold.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'PFStardust';
+  src: url('/assets/fonts/PFStardust 3.0 ExtraBold.ttf') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+}
+
 body {
-font-family: 'PFStardust', monospace;
-line-height: 1.6;
-color: #33ff00;
-background-color: #ffffff;
-max-width: 800px;
-margin: 0 auto;
-padding: 20px;
-image-rendering: pixelated;
+  font-family: 'PFStardust', monospace;
+  line-height: 1.6;
+  color: #33ff00;
+  background-color: #ffffff;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  image-rendering: pixelated;
 }
 
 header {
-background-color: #ffffff;
-padding: 20px;
-margin-bottom: 20px;
-border: 2px solid #33ff00;
+  background-color: #ffffff;
+  padding: 20px;
+  margin-bottom: 20px;
+  border: 2px solid #33ff00;
 }
 
 h1, h2, h3 {
-color: #ff00ff;
+  font-family: 'PFStardust', monospace;
+  font-weight: bold;
+  color: #ff00ff;
 }
 
 a {
-color: #00ffff;
-text-decoration: none;
+  font-family: 'PFStardust', monospace;
+  color: #00ffff;
+  text-decoration: none;
 }
 
 a:hover {
-color: #ffff00;
+  color: #ffff00;
 }
 
 .post-list {
-list-style-type: none;
-padding: 0;
+  list-style-type: none;
+  padding: 0;
 }
 
 .post-meta {
-color: #999999;
-font-size: 0.9em;
+  font-family: 'PFStardust', monospace;
+  color: #999999;
+  font-size: 0.9em;
 }
 
 footer {
-margin-top: 40px;
-padding-top: 20px;
-border-top: 1px solid #33ff00;
-text-align: center;
-font-size: 0.9em;
+  font-family: 'PFStardust', monospace;
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid #33ff00;
+  text-align: center;
+  font-size: 0.9em;
 }
 
 .search-container {
-position: relative;
-margin-top: 10px;
-width: 100%;
-max-width: 300px;
-margin-left: auto;
-margin-right: auto;
+  position: relative;
+  margin-top: 10px;
+  width: 100%;
+  max-width: 300px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 #search-input {
-width: 100%;
-padding: 10px;
-border: 2px solid #33ff00;
-background-color: #ffffff;
-color: #33ff00;
-font-family: 'PFStardust', monospace;
-font-size: 14px;
+  width: 100%;
+  padding: 10px;
+  border: 2px solid #33ff00;
+  background-color: #ffffff;
+  color: #33ff00;
+  font-family: 'PFStardust', monospace;
+  font-size: 14px;
 }
 
 #search-results {
-position: absolute;
-background: #ffffff;
-width: 100%;
-max-width: 300px;
-border: 2px solid #33ff00;
-border-top: none;
-z-index: 1000;
-max-height: 300px;
-overflow-y: auto;
-display: none;
+  position: absolute;
+  background: #ffffff;
+  width: 100%;
+  max-width: 300px;
+  border: 2px solid #33ff00;
+  border-top: none;
+  z-index: 1000;
+  max-height: 300px;
+  overflow-y: auto;
+  display: none;
 }
 
 #search-results ul {
-list-style-type: none;
-padding: 0;
-margin: 0;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
 }
 
 #search-results li {
-padding: 10px;
-border-bottom: 1px solid #33ff00;
+  padding: 10px;
+  border-bottom: 1px solid #33ff00;
 }
 
 #search-results a {
-color: #00ffff;
-text-decoration: none;
+  font-family: 'PFStardust', monospace;
+  color: #00ffff;
+  text-decoration: none;
 }
 
 #search-results a:hover {
-color: #ffff00;
+  color: #ffff00;
 }
 
 #search-results mark {
-background-color: #ff00ff;
-color: #000000;
-padding: 2px;
+  background-color: #ff00ff;
+  color: #000000;
+  padding: 2px;
 }
 
 .category, .tags {
-font-size: 0.8em;
-color: #999999;
-display: block;
-margin-top: 5px;
+  font-family: 'PFStardust', monospace;
+  font-size: 0.8em;
+  color: #999999;
+  display: block;
+  margin-top: 5px;
 }
 
 #toc {
-background-color: #ffffff;
-border: 2px solid #33ff00;
-padding: 15px;
-margin-bottom: 20px;
+  background-color: #ffffff;
+  border: 2px solid #33ff00;
+  padding: 15px;
+  margin-bottom: 20px;
 }
 
 #toc ul {
-list-style-type: none;
-padding-left: 20px;
+  list-style-type: none;
+  padding-left: 20px;
 }
 
 #toc a {
-color: #00ffff;
-text-decoration: none;
+  font-family: 'PFStardust', monospace;
+  color: #00ffff;
+  text-decoration: none;
 }
 
 #toc a:hover {
-color: #ffff00;
+  color: #ffff00;
 }
 
-/* 한글 폰트 스타일 */
+/* 한글 텍스트 스타일 */
 .korean-text {
-font-family: 'PFStardust', monospace;
+  font-family: 'PFStardust', monospace;
 }
