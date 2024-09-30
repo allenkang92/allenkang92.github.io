@@ -25,7 +25,7 @@ body {
   font-family: 'PFStardust', monospace;
   line-height: 1.6;
   color: #A8E1DB; /* 본문 텍스트 색상 */
-  background-color: #EAF4FB; /* 배경색 */
+  background-color: #fefefe; /* 배경색 */
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;
@@ -33,7 +33,7 @@ body {
 }
 
 header {
-  background-color: #EAF4FB;
+  background-color: #fefefe;
   padding: 20px;
   margin-bottom: 20px;
   border: 2px solid #A8E1DB;
@@ -84,7 +84,7 @@ footer {
   width: 100%;
   padding: 10px;
   border: 2px solid #A8E1DB;
-  background-color: #EAF4FB;
+  background-color: #fefefe;
   color: #A8E1DB;
   font-family: 'PFStardust', monospace;
   font-size: 14px;
@@ -92,7 +92,7 @@ footer {
 
 #search-results {
   position: absolute;
-  background: #EAF4FB;
+  background: #fefefe;
   width: 100%;
   max-width: 300px;
   border: 2px solid #A8E1DB;
@@ -137,7 +137,7 @@ footer {
 }
 
 #toc {
-  background-color: #EAF4FB;
+  background-color: #fefefe;
   border: 2px solid #A8E1DB;
   padding: 15px;
   margin-bottom: 20px;
@@ -223,7 +223,7 @@ footer {
 @media (prefers-color-scheme: dark) {
   body {
     background-color: #1a1a1a;
-    color: #EAF4FB;
+    color: #fefefe;
   }
 
   header, .sidebar-right, #search-input, #search-results, #toc {
