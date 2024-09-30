@@ -161,3 +161,115 @@ footer {
 .korean-text {
   font-family: 'PFStardust', monospace;
 }
+
+/* 미디어 쿼리 시작 */
+
+/* 모바일 기기 (세로 모드) */
+@media only screen and (max-width: 600px) {
+  body {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .sidebar-right {
+    position: static;
+    width: 100%;
+    height: auto;
+    border-left: none;
+    border-top: 2px solid #A8E1DB;
+    margin-top: 20px;
+  }
+
+  .sidebar-right .profile img {
+    width: 80px;
+    height: 80px;
+  }
+
+  #search-input {
+    font-size: 12px;
+  }
+}
+
+/* 태블릿 (세로 모드) */
+@media only screen and (min-width: 601px) and (max-width: 900px) {
+  body {
+    font-size: 16px;
+  }
+
+  .sidebar-right {
+    width: 250px;
+  }
+}
+
+/* 작은 랩톱 화면 */
+@media only screen and (min-width: 901px) and (max-width: 1200px) {
+  body {
+    font-size: 18px;
+  }
+
+  .sidebar-right {
+    width: 280px;
+  }
+}
+
+/* 큰 화면 */
+@media only screen and (min-width: 1201px) {
+  body {
+    font-size: 20px;
+  }
+}
+
+/* 다크 모드 */
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #1a1a1a;
+    color: #EAF4FB;
+  }
+
+  header, .sidebar-right, #search-input, #search-results, #toc {
+    background-color: #2a2a2a;
+  }
+
+  h1, h2, h3 {
+    color: #C1B3F2;
+  }
+
+  a, #search-results a {
+    color: #FFCBDF;
+  }
+
+  a:hover, #search-results a:hover {
+    color: #C1B3F2;
+  }
+
+  .post-meta, .category, .tags {
+    color: #A8E1DB;
+  }
+
+  #search-input, #search-results, #toc {
+    border-color: #A8E1DB;
+  }
+}
+
+/* 고해상도 화면 */
+@media only screen and (-webkit-min-device-pixel-ratio: 2),
+       only screen and (min-resolution: 192dpi) {
+  /* 고해상도 이미지나 아이콘이 있다면 여기에 추가 */
+}
+
+/* 인쇄용 스타일 */
+@media print {
+  .sidebar-right, #search-container {
+    display: none;
+  }
+
+  body {
+    font-size: 12pt;
+    color: #000;
+    background-color: #fff;
+  }
+
+  a {
+    color: #000;
+  }
+}
