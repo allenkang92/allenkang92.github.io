@@ -3,11 +3,6 @@
 <head>
     {% include head.html %}
     <title>{{ page.title }} - Allen's Blog</title>
-    <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
-
-    <!-- Favicon 링크 추가 -->
-    <link rel="icon" href="{{ '/favicon.ico' | relative_url }}" type="image/x-icon">
-    <link rel="shortcut icon" href="{{ '/favicon.ico' | relative_url }}" type="image/x-icon">
 </head>
 <body>
     <!-- 헤더 포함 -->
@@ -24,9 +19,7 @@
     <!-- 검색 및 필터링 스크립트 -->
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-      // 포스트 카테고리 필터링
       var categorySelect = document.getElementById('category-select');
-      // 어치브먼트 카테고리 필터링
       var achievementCategorySelect = document.getElementById('achievement-category-select');
 
       if (categorySelect) {
@@ -38,7 +31,6 @@
       }
     });
 
-    // 포스트 카테고리 필터링 함수
     function filterCategories() {
       var select = document.getElementById('category-select');
       var selectedCategory = select.value;
@@ -53,7 +45,6 @@
       }
     }
 
-    // 어치브먼트 카테고리 필터링 함수
     function filterAchievements() {
       var select = document.getElementById('achievement-category-select');
       var selectedCategory = select.value;
@@ -67,8 +58,6 @@
         }
       }
     }
-
-
     </script>
 
     <!-- 검색 스크립트 -->

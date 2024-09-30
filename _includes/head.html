@@ -13,14 +13,12 @@
   <link rel="preconnect" href="https://www.googletagmanager.com">
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link rel="preload" href="{{ '/assets/css/style.css' | relative_url }}" as="style">
-  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" as="style">
 
   <!-- 보안 개선 -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; img-src 'self' https://*; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com;">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; img-src 'self' https://*; style-src 'self' 'unsafe-inline'; font-src 'self';">
 
   <!-- 파비콘 및 앱 아이콘 -->
   <link rel="icon" href="/favicon.ico" sizes="any">
-  <!-- <link rel="apple-touch-icon" href="/apple-touch-icon.png"> -->
 
   <!-- 언어 설정 -->
   <meta http-equiv="content-language" content="ko">
@@ -38,9 +36,6 @@
       gtag('config', 'G-C2BXF21DKW');
   </script>
   
-  <!-- 픽셀 아트 폰트 -->
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-  
   <!-- 메인 스타일 시트 링크 -->
   <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
 
@@ -53,9 +48,4 @@
     "url": "{{ site.url }}"
   }
   </script>
-
-  <!-- 픽셀 아트 스타일 메타 태그 -->
-  <meta name="theme-color" content="#000000">
-  <meta name="msapplication-navbutton-color" content="#000000">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head>

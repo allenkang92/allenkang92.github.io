@@ -20,52 +20,53 @@
   font-style: normal;
 }
 
+/* 공통 스타일 */
 body {
   font-family: 'PFStardust', monospace;
   line-height: 1.6;
-  color: #A8E1DB; /* 본문 텍스트 색상 (밝은 민트색) */
-  background-color: #EAF4FB; /* 배경색 (아주 연한 파란색) */
+  color: #A8E1DB; /* 본문 텍스트 색상 */
+  background-color: #EAF4FB; /* 배경색 */
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;
-  image-rendering: pixelated; /* 이미지 픽셀화 렌더링 */
+  image-rendering: pixelated; /* 이미지 픽셀화 */
 }
 
 header {
-  background-color: #EAF4FB; /* 헤더 배경색 (아주 연한 파란색) */
+  background-color: #EAF4FB;
   padding: 20px;
   margin-bottom: 20px;
-  border: 2px solid #A8E1DB; /* 헤더 테두리 색상 (밝은 민트색) */
+  border: 2px solid #A8E1DB;
 }
 
 h1, h2, h3 {
-  font-weight: bold; /* 헤딩 요소에 볼드 폰트 적용 */
-  color: #C1B3F2; /* 헤딩 텍스트 색상 (연보라색) */
+  font-weight: bold;
+  color: #C1B3F2;
 }
 
 a {
-  color: #FFCBDF; /* 링크 텍스트 색상 (핑크색) */
-  text-decoration: none; /* 링크 밑줄 제거 */
+  color: #FFCBDF;
+  text-decoration: none;
 }
 
 a:hover {
-  color: #C1B3F2; /* 링크 호버 시 색상 (연보라색) */
+  color: #C1B3F2;
 }
 
 .post-list {
-  list-style-type: none; /* 리스트 스타일 제거 */
+  list-style-type: none;
   padding: 0;
 }
 
 .post-meta {
-  color: #FFCBDF; /* 포스트 메타 정보 색상 (핑크색) */
-  font-size: 0.9em; /* 메타 정보 크기 */
+  color: #FFCBDF;
+  font-size: 0.9em;
 }
 
 footer {
   margin-top: 40px;
   padding-top: 20px;
-  border-top: 1px solid #A8E1DB; /* 푸터 상단 테두리 색상 (밝은 민트색) */
+  border-top: 1px solid #A8E1DB;
   text-align: center;
   font-size: 0.9em;
 }
@@ -82,24 +83,24 @@ footer {
 #search-input {
   width: 100%;
   padding: 10px;
-  border: 2px solid #A8E1DB; /* 검색 입력 필드 테두리 색상 (밝은 민트색) */
-  background-color: #EAF4FB; /* 검색 입력 필드 배경색 (아주 연한 파란색) */
-  color: #A8E1DB; /* 검색 입력 텍스트 색상 (밝은 민트색) */
+  border: 2px solid #A8E1DB;
+  background-color: #EAF4FB;
+  color: #A8E1DB;
   font-family: 'PFStardust', monospace;
   font-size: 14px;
 }
 
 #search-results {
   position: absolute;
-  background: #EAF4FB; /* 검색 결과 배경색 (아주 연한 파란색) */
+  background: #EAF4FB;
   width: 100%;
   max-width: 300px;
-  border: 2px solid #A8E1DB; /* 검색 결과 테두리 색상 (밝은 민트색) */
+  border: 2px solid #A8E1DB;
   border-top: none;
   z-index: 1000;
   max-height: 300px;
   overflow-y: auto;
-  display: none; /* 검색 결과 기본적으로 숨김 */
+  display: none;
 }
 
 #search-results ul {
@@ -110,34 +111,34 @@ footer {
 
 #search-results li {
   padding: 10px;
-  border-bottom: 1px solid #A8E1DB; /* 검색 결과 각 항목 테두리 색상 (밝은 민트색) */
+  border-bottom: 1px solid #A8E1DB;
 }
 
 #search-results a {
-  color: #FFCBDF; /* 검색 결과 링크 색상 (핑크색) */
+  color: #FFCBDF;
   text-decoration: none;
 }
 
 #search-results a:hover {
-  color: #C1B3F2; /* 검색 결과 링크 호버 시 색상 (연보라색) */
+  color: #C1B3F2;
 }
 
 #search-results mark {
-  background-color: #C1B3F2; /* 검색어 강조 배경색 (연보라색) */
-  color: #EAF4FB; /* 검색어 강조 텍스트 색상 (아주 연한 파란색) */
+  background-color: #C1B3F2;
+  color: #EAF4FB;
   padding: 2px;
 }
 
 .category, .tags {
   font-size: 0.8em;
-  color: #FFCBDF; /* 카테고리 및 태그 색상 (핑크색) */
+  color: #FFCBDF;
   display: block;
   margin-top: 5px;
 }
 
 #toc {
-  background-color: #EAF4FB; /* 목차 배경색 (아주 연한 파란색) */
-  border: 2px solid #A8E1DB; /* 목차 테두리 색상 (밝은 민트색) */
+  background-color: #EAF4FB;
+  border: 2px solid #A8E1DB;
   padding: 15px;
   margin-bottom: 20px;
 }
@@ -148,15 +149,15 @@ footer {
 }
 
 #toc a {
-  color: #FFCBDF; /* 목차 링크 색상 (핑크색) */
+  color: #FFCBDF;
   text-decoration: none;
 }
 
 #toc a:hover {
-  color: #C1B3F2; /* 목차 링크 호버 시 색상 (연보라색) */
+  color: #C1B3F2;
 }
 
 /* 한글 폰트 스타일 */
 .korean-text {
-  font-family: 'PFStardust', monospace; /* 한글 텍스트에 스타더스트 폰트 적용 */
+  font-family: 'PFStardust', monospace;
 }
