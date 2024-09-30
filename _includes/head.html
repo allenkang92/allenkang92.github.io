@@ -1,51 +1,61 @@
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="{{ page.excerpt | default: site.description | strip_html | normalize_whitespace | truncate: 160 | escape }}">
-    <meta property="og:title" content="{{ page.title | escape }}">
-    <meta property="og:description" content="{{ page.excerpt | default: site.description | strip_html | normalize_whitespace | truncate: 160 | escape }}">
-    <meta property="og:url" content="{{ page.url | replace:'index.html','' | absolute_url }}">
-    <link rel="canonical" href="{{ page.url | absolute_url }}">
-    <meta property="og:image" content="{{ page.image | default: '/assets/images/default.jpg' | absolute_url }}">
-    <meta name="robots" content="index, follow">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="{{ page.excerpt | default: site.description | strip_html | normalize_whitespace | truncate: 160 | escape }}">
+  <meta property="og:title" content="{{ page.title | escape }}">
+  <meta property="og:description" content="{{ page.excerpt | default: site.description | strip_html | normalize_whitespace | truncate: 160 | escape }}">
+  <meta property="og:url" content="{{ page.url | replace:'index.html','' | absolute_url }}">
+  <link rel="canonical" href="{{ page.url | absolute_url }}">
+  <meta property="og:image" content="{{ page.image | default: '/assets/images/default.jpg' | absolute_url }}">
+  <meta name="robots" content="index, follow">
 
-    <!-- 성능 최적화 -->
-    <link rel="preconnect" href="https://www.googletagmanager.com">
-    <link rel="preload" href="{{ '/assets/css/style.css' | relative_url }}" as="style">
+  <!-- 성능 최적화 -->
+  <link rel="preconnect" href="https://www.googletagmanager.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link rel="preload" href="{{ '/assets/css/style.css' | relative_url }}" as="style">
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" as="style">
 
-    <!-- 보안 개선 -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; img-src 'self' https://*; style-src 'self' 'unsafe-inline';">
+  <!-- 보안 개선 -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; img-src 'self' https://*; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com;">
 
-    <!-- 파비콘 및 앱 아이콘 -->
-    <link rel="icon" href="/favicon.ico" sizes="any">
-    <!-- <link rel="apple-touch-icon" href="/apple-touch-icon.png"> -->
+  <!-- 파비콘 및 앱 아이콘 -->
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <!-- <link rel="apple-touch-icon" href="/apple-touch-icon.png"> -->
 
-    <!-- 언어 설정 -->
-    <meta http-equiv="content-language" content="ko">
+  <!-- 언어 설정 -->
+  <meta http-equiv="content-language" content="ko">
 
-    <!-- 저자 정보 -->
-    <meta name="author" content="{{ site.author }}">
+  <!-- 저자 정보 -->
+  <meta name="author" content="{{ site.author }}">
 
-    <!-- 구글 애널리틱스 -->
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-C2BXF21DKW"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-C2BXF21DKW');
-    </script>
-    
-    <!-- 메인 스타일 시트 링크 -->
-    <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
+  <!-- 구글 애널리틱스 -->
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-C2BXF21DKW"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-C2BXF21DKW');
+  </script>
+  
+  <!-- 픽셀 아트 폰트 -->
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  
+  <!-- 메인 스타일 시트 링크 -->
+  <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
 
-    <!-- JSON-LD 구조화된 데이터 -->
-    <script type="application/ld+json">
-    {
-      "@context": "http://schema.org",
-      "@type": "WebSite",
-      "name": "{{ site.title }}",
-      "url": "{{ site.url }}"
-    }
-    </script>
+  <!-- JSON-LD 구조화된 데이터 -->
+  <script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "WebSite",
+    "name": "{{ site.title }}",
+    "url": "{{ site.url }}"
+  }
+  </script>
+
+  <!-- 픽셀 아트 스타일 메타 태그 -->
+  <meta name="theme-color" content="#000000">
+  <meta name="msapplication-navbutton-color" content="#000000">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head>
