@@ -23,8 +23,8 @@
 body {
   font-family: 'PFStardust', monospace;
   line-height: 1.6;
-  color: #33ff00;
-  background-color: #ffffff;
+  color: #33ff00; /* 텍스트 색상 */
+  background-color: #ffffff; /* 배경색 */
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;
@@ -35,23 +35,21 @@ header {
   background-color: #ffffff;
   padding: 20px;
   margin-bottom: 20px;
-  border: 2px solid #33ff00;
+  border: 2px solid #33ff00; /* 테두리 색상 */
 }
 
 h1, h2, h3 {
-  font-family: 'PFStardust', monospace;
-  font-weight: bold;
-  color: #ff00ff;
+  font-weight: bold; /* 볼드 폰트 적용 */
+  color: #ff00ff; /* 헤딩 색상 */
 }
 
 a {
-  font-family: 'PFStardust', monospace;
-  color: #00ffff;
+  color: #00ffff; /* 링크 색상 */
   text-decoration: none;
 }
 
 a:hover {
-  color: #ffff00;
+  color: #ffff00; /* 링크 호버 색상 */
 }
 
 .post-list {
@@ -60,13 +58,11 @@ a:hover {
 }
 
 .post-meta {
-  font-family: 'PFStardust', monospace;
   color: #999999;
   font-size: 0.9em;
 }
 
 footer {
-  font-family: 'PFStardust', monospace;
   margin-top: 40px;
   padding-top: 20px;
   border-top: 1px solid #33ff00;
@@ -118,7 +114,6 @@ footer {
 }
 
 #search-results a {
-  font-family: 'PFStardust', monospace;
   color: #00ffff;
   text-decoration: none;
 }
@@ -134,7 +129,6 @@ footer {
 }
 
 .category, .tags {
-  font-family: 'PFStardust', monospace;
   font-size: 0.8em;
   color: #999999;
   display: block;
@@ -154,7 +148,6 @@ footer {
 }
 
 #toc a {
-  font-family: 'PFStardust', monospace;
   color: #00ffff;
   text-decoration: none;
 }
@@ -163,7 +156,7 @@ footer {
   color: #ffff00;
 }
 
-/* 한글 텍스트 스타일 */
+/* 한글 폰트 스타일 */
 .korean-text {
   font-family: 'PFStardust', monospace;
 }
