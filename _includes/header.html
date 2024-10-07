@@ -1,4 +1,10 @@
 <aside class="sidebar-right">
+  <!-- 프로필 이미지 추가 -->
+  <div class="profile">
+    <img src="/assets/images/allen_logo.png" alt="Allen's profile picture" class="profile-pic">
+  </div>
+  
+  <!-- 블로그 제목 및 설명 -->
   <div class="blog-title">
     <h1>{{ site.title }}</h1>
     {% if site.description %}
@@ -6,6 +12,7 @@
     {% endif %}
   </div>
   
+  <!-- 내비게이션 메뉴 -->
   <nav>
     <ul>
       {% for item in site.navigation %}
@@ -14,11 +21,13 @@
     </ul>
   </nav>
 
+  <!-- 검색 필드 -->
   <div class="search-container">
     <input type="text" id="search-input" placeholder="검색어를 입력하세요">
     <div id="search-results"></div>
   </div>
 
+  <!-- 카테고리 선택 -->
   {% if page.url contains '/posts/' or page.url contains '/achievements/' %}
     <div class="categories">
       <h2>{% if page.url contains '/posts/' %}Blog{% else %}Achievement{% endif %} Categories:</h2>

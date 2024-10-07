@@ -6,7 +6,7 @@ layout: null
     {
       "title"    : {{ post.title | jsonify }},
       "category" : {{ post.categories | first | jsonify }},
-      "tags"     : {{ post.tags | join: ', ' | jsonify }},
+      "tags"     : {{ post.tags | jsonify }}, <!-- 배열로 처리 -->
       "url"      : {{ site.baseurl | append: post.url | jsonify }},
       "date"     : {{ post.date | date: "%B %d, %Y" | jsonify }},
       "content"  : {{ post.content | strip_html | truncatewords: 50 | jsonify }}
