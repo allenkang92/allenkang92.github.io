@@ -20,17 +20,30 @@
   font-style: normal;
 }
 
+/* 사이드바 토글 버튼 */
+.sidebar-toggle-btn {
+  position: fixed;
+  right: 1rem;
+  top: 1rem;
+  background-color: #A8E1DB;
+  color: #1a1a1a;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  z-index: 1001;
+  border-radius: 8px;
+}
+
 /* 사이드바 스타일링 */
 .sidebar-right {
   position: fixed;
-  right: 30px; /* 오른쪽 여백 */
-  top: 20px; /* 상단 여백 */
-  width: 260px; /* 사이드바 너비 */
+  right: 1rem;
+  top: 4rem;
+  width: 20rem;
   background-color: #fefefe;
-  border: 2px solid #A8E1DB; /* 상하좌우 테두리 */
-  padding: 20px;
+  border: 2px solid #A8E1DB;
+  padding: 1rem;
   box-sizing: border-box;
-  z-index: 1000; /* 다른 요소 위에 표시 */
+  z-index: 1000;
   color: #A8E1DB;
 }
 
@@ -41,17 +54,20 @@
   color: #A8E1DB;
 }
 
-/* 링크 호버 시 색상 */
 .sidebar-right a:hover {
   color: #C1B3F2;
 }
 
+/* 숨김 스타일 */
+.hidden-sidebar {
+  display: none;
+}
+
 /* 메인 콘텐츠 영역 */
 .main-content {
-  margin-right: 330px; /* 사이드바와 겹치지 않도록 마진 추가 */
-  padding-left: 40px; /* 콘텐츠 내부 여백 */
+  margin-right: 21rem; /* 사이드바와 겹치지 않도록 마진 추가 */
+  padding-left: 1rem; /* 콘텐츠 내부 여백 */
   box-sizing: border-box;
-  max-width: calc(100% - 330px); /* 전체 화면에서 사이드바 너비를 뺀 공간에 맞춤 */
 }
 
 /* 전체 텍스트 스타일 */
@@ -60,47 +76,66 @@ body {
   line-height: 1.6;
   color: #A8E1DB;
   background-color: #fefefe;
-  max-width: 1200px;
+  max-width: 90vw;
   margin: 0 auto;
-  padding: 20px;
+  padding: 1rem;
   image-rendering: pixelated;
 }
 
 /* 프로필 스타일 */
 .profile {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 1rem;
 }
 
 .profile-pic {
-  width: 100px;
-  height: 100px;
+  width: 6rem;
+  height: 6rem;
   border-radius: 50%;
   border: 2px solid #A8E1DB;
-  margin-bottom: 15px;
+  margin-bottom: 1rem;
 }
 
 /* 검색창 스타일 */
 .search-container {
-  margin-top: 20px;
-  padding: 10px;
+  margin-top: 1rem;
 }
 
 #search-input {
   width: 100%;
-  padding: 10px;
+  padding: 0.5rem;
   border: 2px solid #A8E1DB;
   background-color: #fefefe;
   color: #A8E1DB;
   box-sizing: border-box;
-  margin-top: 10px;
+}
+
+/* 드롭다운 스타일 */
+select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 2px solid #A8E1DB;
+  background-color: #fefefe;
+  color: #A8E1DB;
+  font-family: 'PFStardust', monospace;
+  cursor: pointer;
+}
+
+select:hover {
+  border-color: #C1B3F2;
+  background-color: #e6f7f8;
+}
+
+select option {
+  background-color: #fefefe;
+  color: #A8E1DB;
 }
 
 /* 메인 헤더 스타일 */
 header {
   background-color: #fefefe;
-  padding: 20px;
-  margin-bottom: 20px;
+  padding: 1rem;
+  margin-bottom: 1rem;
   border: 2px solid #A8E1DB;
 }
 
@@ -133,8 +168,8 @@ a:hover {
 
 /* 푸터 스타일 */
 footer {
-  margin-top: 40px;
-  padding-top: 20px;
+  margin-top: 2rem;
+  padding-top: 1rem;
   border-top: 1px solid #A8E1DB;
   text-align: center;
   font-size: 0.9em;
@@ -145,11 +180,11 @@ footer {
   position: absolute;
   background: #fefefe;
   width: 100%;
-  max-width: 300px;
+  max-width: 18rem;
   border: 2px solid #A8E1DB;
   border-top: none;
   z-index: 1000;
-  max-height: 300px;
+  max-height: 15rem;
   overflow-y: auto;
   display: none;
 }
@@ -161,7 +196,7 @@ footer {
 }
 
 #search-results li {
-  padding: 10px;
+  padding: 0.5rem;
   border-bottom: 1px solid #A8E1DB;
 }
 
@@ -177,7 +212,7 @@ footer {
 #search-results mark {
   background-color: #C1B3F2;
   color: #EAF4FB;
-  padding: 2px;
+  padding: 0.2rem;
 }
 
 /* 카테고리와 태그 스타일 */
@@ -185,14 +220,14 @@ footer {
   font-size: 0.8em;
   color: #FFCBDF;
   display: block;
-  margin-top: 5px;
+  margin-top: 0.5rem;
 }
 
 #toc {
   background-color: #fefefe;
   border: 2px solid #A8E1DB;
-  padding: 15px;
-  margin-bottom: 20px;
+  padding: 1rem;
+  margin-bottom: 1rem;
 }
 
 /* 미디어 쿼리 시작 */
@@ -200,8 +235,8 @@ footer {
 /* 모바일 기기 (세로 모드) */
 @media only screen and (max-width: 600px) {
   body {
-    font-size: 14px;
-    padding: 10px;
+    font-size: 0.875rem;
+    padding: 0.5rem;
   }
 
   .sidebar-right {
@@ -210,7 +245,7 @@ footer {
     height: auto;
     border-left: none;
     border-top: 2px solid #A8E1DB;
-    margin-top: 20px;
+    margin-top: 1rem;
   }
 
   .main-content {
@@ -221,41 +256,41 @@ footer {
 /* 태블릿 (세로 모드) */
 @media only screen and (min-width: 601px) and (max-width: 900px) {
   body {
-    font-size: 16px;
+    font-size: 1rem;
   }
 
   .sidebar-right {
-    width: 250px;
+    width: 16rem;
   }
 
   .main-content {
-    margin-right: 270px;
+    margin-right: 18rem;
   }
 }
 
 /* 작은 랩톱 화면 */
 @media only screen and (min-width: 901px) and (max-width: 1200px) {
   body {
-    font-size: 18px;
+    font-size: 1.125rem;
   }
 
   .sidebar-right {
-    width: 280px;
+    width: 18rem;
   }
 
   .main-content {
-    margin-right: 300px;
+    margin-right: 20rem;
   }
 }
 
 /* 큰 화면 */
 @media only screen and (min-width: 1201px) {
   body {
-    font-size: 20px;
+    font-size: 1.25rem;
   }
 
   .main-content {
-    margin-right: 330px;
+    margin-right: 21rem;
   }
 }
 
