@@ -36,6 +36,7 @@
   padding-right: 40px; /* 콘텐츠 내부 여백 */
   margin-right: 340px; /* 사이드바와의 간격 조정 */
   box-sizing: border-box;
+  overflow: hidden; /* 오버플로우 문제 해결 */
 }
 
 /* 사이드바 */
