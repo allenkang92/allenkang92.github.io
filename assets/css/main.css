@@ -38,13 +38,14 @@
   position: fixed;
   right: 0; /* 사이드바를 오른쪽에 고정 */
   top: 20px; /* 화면 상단에서의 여백 */
-  width: 300px; /* 사이드바의 너비 */
+  width: 250px; /* 사이드바의 너비 */
   background-color: #fefefe;
-  border-left: 4px solid #A8E1DB; /* 왼쪽 테두리 */
+  border-right: 4px solid #A8E1DB; /* 오른쪽 테두리 */
   padding: 20px;
   z-index: 1000; /* 다른 요소보다 위에 위치하도록 설정 */
 }
 
+/* 사이드바 내부 요소 간격 */
 .sidebar-right .blog-title,
 .sidebar-right .profile,
 .sidebar-right nav,
@@ -54,7 +55,8 @@
 
 /* 메인 콘텐츠 영역 */
 .main-content {
-  margin-right: 320px; /* 사이드바의 너비만큼 콘텐츠에 여백 추가 */
+  margin-right: 270px; /* 사이드바의 너비만큼 콘텐츠에 여백 추가 */
+  overflow: hidden; /* 사이드바와 겹치지 않도록 콘텐츠 숨김 */
 }
 
 /* 공통 스타일 */
@@ -212,7 +214,7 @@ footer {
     position: static;
     width: 100%;
     height: auto;
-    border-left: none;
+    border-right: none;
     border-top: 2px solid #A8E1DB;
     margin-top: 20px;
   }
@@ -263,7 +265,7 @@ footer {
   }
 
   .main-content {
-    margin-right: 320px; /* 큰 화면에서의 사이드바 여백 */
+    margin-right: 270px; /* 큰 화면에서의 사이드바 여백 */
   }
 }
 
@@ -280,7 +282,7 @@ footer {
   }
 
   .sidebar-right {
-    border-left: 2px solid #A8E1DB; /* 다크 모드의 왼쪽 테두리 */
+    border-right: 4px solid #A8E1DB; /* 다크 모드의 오른쪽 테두리 */
   }
 
   h1, h2, h3 {
