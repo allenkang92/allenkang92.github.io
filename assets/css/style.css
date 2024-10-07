@@ -33,10 +33,9 @@
 }
 
 /* 메인 콘텐츠 영역 */
-main {
+.main-content {
   margin-right: 220px; /* 사이드바의 너비만큼 콘텐츠에 여백 추가 */
 }
-
 
 /* 공통 스타일 */
 body {
@@ -44,7 +43,7 @@ body {
   line-height: 1.6;
   color: #A8E1DB; /* 본문 텍스트 색상 */
   background-color: #fefefe; /* 배경색 */
-  max-width: 800px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
   image-rendering: pixelated; /* 이미지 픽셀화 */
@@ -202,8 +201,8 @@ footer {
     font-size: 12px;
   }
 
-  main {
-    margin-right: 220px; /* 사이드바 너비만큼 마진 추가 */
+  .main-content {
+    margin-right: 0; /* 모바일에서 사이드바의 마진 제거 */
   }
 }
 
@@ -217,7 +216,7 @@ footer {
     width: 250px;
   }
 
-  main {
+  .main-content {
     margin-right: 270px; /* 태블릿에서의 사이드바 여백 */
   }
 }
@@ -232,7 +231,7 @@ footer {
     width: 280px;
   }
 
-  main {
+  .main-content {
     margin-right: 300px; /* 작은 랩톱 화면에서의 사이드바 여백 */
   }
 }
@@ -243,11 +242,10 @@ footer {
     font-size: 20px;
   }
 
-  main {
+  .main-content {
     margin-right: 220px; /* 큰 화면에서의 사이드바 여백 */
   }
 }
-
 
 /* 다크 모드 */
 @media (prefers-color-scheme: dark) {
@@ -285,7 +283,6 @@ footer {
     border-color: #A8E1DB;
   }
 }
-
 
 /* 고해상도 화면 */
 @media only screen and (-webkit-min-device-pixel-ratio: 2),
