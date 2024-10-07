@@ -22,23 +22,33 @@
 
 /* 레이아웃 컨테이너 */
 .layout-container {
-  display: grid;
-  grid-template-columns: 1fr 280px; /* 메인 콘텐츠와 사이드바의 열 비율 */
-  gap: 20px; /* 사이드바와 메인 콘텐츠 간격 */
-  max-width: 1200px; /* 전체 최대 너비 */
+  display: flex;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
+  box-sizing: border-box;
+  gap: 20px;
+  justify-content: space-between; /* 양쪽 정렬 */
+}
+
+/* 메인 콘텐츠 */
+.main-content {
+  flex: 1;
+  padding-right: 20px;
   box-sizing: border-box;
 }
 
 /* 사이드바 */
 .sidebar-right {
-  grid-column: 2; /* 두 번째 열에 사이드바를 위치 */
+  width: 280px;
   background-color: #fefefe;
-  border: 2px solid #A8E1DB; /* 상하좌우 테두리 */
+  border: 2px solid #A8E1DB;
   padding: 20px;
   box-sizing: border-box;
   color: #A8E1DB;
+  position: sticky;
+  top: 20px;
+  align-self: flex-start; /* 사이드바를 오른쪽에 고정 */
 }
 
 /* 사이드바 내부 텍스트와 링크 색상 */
@@ -53,13 +63,6 @@
   color: #C1B3F2;
 }
 
-/* 메인 콘텐츠 */
-.main-content {
-  grid-column: 1; /* 첫 번째 열에 메인 콘텐츠를 위치 */
-  padding: 20px;
-  box-sizing: border-box;
-}
-
 /* 전체 텍스트 스타일 */
 body {
   font-family: 'PFStardust', monospace;
@@ -67,7 +70,6 @@ body {
   color: #A8E1DB;
   background-color: #fefefe;
   image-rendering: pixelated;
-  margin: 0;
 }
 
 /* 프로필 스타일 */
@@ -114,7 +116,7 @@ h1, h2, h3 {
 
 /* 카테고리 드롭다운 스타일 */
 .categories select {
-  width: 180px; /* 드롭다운 너비 조정 */
+  width: 150px;
   padding: 5px;
   border: 1px solid #A8E1DB;
   background-color: #fefefe;
@@ -213,12 +215,19 @@ footer {
 /* 모바일 기기 (세로 모드) */
 @media only screen and (max-width: 600px) {
   .layout-container {
-    grid-template-columns: 1fr; /* 한 열로 변경 */
+    flex-direction: column;
   }
-  
+
   .sidebar-right {
-    grid-column: 1; /* 사이드바와 메인 콘텐츠를 같은 열에 위치 */
-    margin-left: 0;
+    position: static;
+    width: 100%;
+    margin: 0;
+    height: auto;
+  }
+
+  .main-content {
+    margin-right: 0;
+    padding-right: 0;
   }
 }
 
@@ -227,12 +236,31 @@ footer {
   .sidebar-right {
     width: 220px;
   }
+
+  .main-content {
+    margin-right: 240px;
+  }
 }
 
 /* 작은 랩톱 화면 */
 @media only screen and (min-width: 901px) and (max-width: 1200px) {
   .sidebar-right {
     width: 240px;
+  }
+
+  .main-content {
+    margin-right: 260px;
+  }
+}
+
+/* 큰 화면 */
+@media only screen and (min-width: 1201px) {
+  .sidebar-right {
+    width: 280px;
+  }
+
+  .main-content {
+    margin-right: 300px;
   }
 }
 
