@@ -20,36 +20,33 @@
   font-style: normal;
 }
 
-/* 레이아웃 컨테이너 */
+/* 전체 레이아웃 */
 .layout-container {
-  display: flex;
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
   box-sizing: border-box;
-  gap: 40px; /* 간격을 늘려 충분한 공간 확보 */
 }
 
 /* 메인 콘텐츠 */
 .main-content {
-  flex: 1;
+  float: left;
+  width: calc(100% - 340px); /* 사이드바를 제외한 너비 */
   padding-right: 20px; /* 내부 여백 */
-  margin-right: 340px; /* 사이드바와의 간격 조정 */
   box-sizing: border-box;
-  overflow: hidden; /* 텍스트 겹침 방지 */
 }
 
 /* 사이드바 */
 .sidebar-right {
+  float: right;
   width: 280px;
-  position: fixed;
-  right: 20px;
-  top: 20px;
   background-color: #fefefe;
   border: 2px solid #A8E1DB;
   padding: 20px;
   box-sizing: border-box;
   color: #A8E1DB;
+  position: sticky;
+  top: 20px; /* 상단에 고정되는 위치 */
   height: calc(100vh - 40px);
   overflow-y: auto;
   z-index: 1000;
@@ -122,28 +119,28 @@ h1, h2, h3 {
 .categories select {
   width: 180px; /* 드롭다운 너비 조정 */
   padding: 8px;
-  border: 2px solid #A8E1DB !important; /* 테두리 색상 */
-  background-color: #fefefe !important;
-  color: #A8E1DB !important;
-  font-family: 'PFStardust', monospace !important;
-  outline: none !important;
-  border-radius: 5px !important;
-  appearance: none !important;
-  -webkit-appearance: none !important;
-  -moz-appearance: none !important;
-  cursor: pointer !important;
+  border: 2px solid #A8E1DB; /* 테두리 색상 */
+  background-color: #fefefe;
+  color: #A8E1DB;
+  font-family: 'PFStardust', monospace;
+  outline: none;
+  border-radius: 5px; /* 둥근 테두리 추가 */
+  appearance: none; /* 기본 브라우저 스타일 제거 */
+  -webkit-appearance: none; /* 사파리 브라우저 지원 */
+  -moz-appearance: none; /* 파이어폭스 브라우저 지원 */
+  cursor: pointer; /* 커서 모양 변경 */
 }
 
 /* 드롭다운 화살표 스타일 추가 (선택적으로) */
 .categories select::-ms-expand {
-  display: none !important; /* IE/엣지 브라우저에서 기본 화살표 제거 */
+  display: none; /* IE/엣지 브라우저에서 기본 화살표 제거 */
 }
 
 /* 드롭다운 옵션 스타일 */
 .categories option {
-  background-color: #fefefe !important;
-  color: #A8E1DB !important;
-  font-family: 'PFStardust', monospace !important;
+  background-color: #fefefe;
+  color: #A8E1DB;
+  font-family: 'PFStardust', monospace;
 }
 
 /* 드롭다운 호버 스타일 */
@@ -246,20 +243,17 @@ footer {
 
 /* 모바일 기기 (세로 모드) */
 @media only screen and (max-width: 600px) {
-  .layout-container {
-    flex-direction: column;
+  .main-content {
+    float: none;
+    width: 100%;
   }
 
   .sidebar-right {
     position: static;
     width: 100%;
+    float: none;
     margin: 0;
     height: auto;
-  }
-
-  .main-content {
-    margin-right: 0;
-    padding-right: 0;
   }
 }
 
@@ -270,7 +264,7 @@ footer {
   }
 
   .main-content {
-    margin-right: 240px;
+    width: calc(100% - 240px);
   }
 }
 
@@ -281,7 +275,7 @@ footer {
   }
 
   .main-content {
-    margin-right: 260px;
+    width: calc(100% - 260px);
   }
 }
 
@@ -292,7 +286,7 @@ footer {
   }
 
   .main-content {
-    margin-right: 320px;
+    width: calc(100% - 320px);
   }
 }
 
