@@ -22,33 +22,23 @@
 
 /* 레이아웃 컨테이너 */
 .layout-container {
-  display: flex;
-  max-width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 280px; /* 메인 콘텐츠와 사이드바의 열 비율 */
+  gap: 20px; /* 사이드바와 메인 콘텐츠 간격 */
+  max-width: 1200px; /* 전체 최대 너비 */
   margin: 0 auto;
   padding: 20px;
   box-sizing: border-box;
-  gap: 20px;
-}
-
-/* 메인 콘텐츠 */
-.main-content {
-  flex: 1;
-  padding-right: 20px; /* 콘텐츠 내부 여백 */
-  box-sizing: border-box;
-  margin-right: 20px; /* 사이드바와의 간격 */
 }
 
 /* 사이드바 */
 .sidebar-right {
-  width: 280px; /* 사이드바의 고정 너비 */
+  grid-column: 2; /* 두 번째 열에 사이드바를 위치 */
   background-color: #fefefe;
   border: 2px solid #A8E1DB; /* 상하좌우 테두리 */
   padding: 20px;
   box-sizing: border-box;
   color: #A8E1DB;
-  flex-shrink: 0; /* 사이드바의 너비가 줄어들지 않도록 설정 */
-  position: sticky; /* 스크롤 시에도 사이드바를 고정 */
-  top: 20px; /* 상단에 고정되는 위치 */
 }
 
 /* 사이드바 내부 텍스트와 링크 색상 */
@@ -63,6 +53,13 @@
   color: #C1B3F2;
 }
 
+/* 메인 콘텐츠 */
+.main-content {
+  grid-column: 1; /* 첫 번째 열에 메인 콘텐츠를 위치 */
+  padding: 20px;
+  box-sizing: border-box;
+}
+
 /* 전체 텍스트 스타일 */
 body {
   font-family: 'PFStardust', monospace;
@@ -70,6 +67,7 @@ body {
   color: #A8E1DB;
   background-color: #fefefe;
   image-rendering: pixelated;
+  margin: 0;
 }
 
 /* 프로필 스타일 */
@@ -116,7 +114,7 @@ h1, h2, h3 {
 
 /* 카테고리 드롭다운 스타일 */
 .categories select {
-  width: 150px; /* 드롭다운 너비 조정 */
+  width: 180px; /* 드롭다운 너비 조정 */
   padding: 5px;
   border: 1px solid #A8E1DB;
   background-color: #fefefe;
@@ -215,19 +213,12 @@ footer {
 /* 모바일 기기 (세로 모드) */
 @media only screen and (max-width: 600px) {
   .layout-container {
-    flex-direction: column;
+    grid-template-columns: 1fr; /* 한 열로 변경 */
   }
-
+  
   .sidebar-right {
-    position: static;
-    width: 100%;
-    margin: 0;
-    height: auto;
-  }
-
-  .main-content {
-    margin-right: 0;
-    padding-right: 0;
+    grid-column: 1; /* 사이드바와 메인 콘텐츠를 같은 열에 위치 */
+    margin-left: 0;
   }
 }
 
@@ -235,11 +226,6 @@ footer {
 @media only screen and (min-width: 601px) and (max-width: 900px) {
   .sidebar-right {
     width: 220px;
-    margin-left: 20px;
-  }
-
-  .main-content {
-    margin-right: 260px;
   }
 }
 
@@ -247,22 +233,6 @@ footer {
 @media only screen and (min-width: 901px) and (max-width: 1200px) {
   .sidebar-right {
     width: 240px;
-    margin-left: 20px;
-  }
-
-  .main-content {
-    margin-right: 280px;
-  }
-}
-
-/* 큰 화면 */
-@media only screen and (min-width: 1201px) {
-  .sidebar-right {
-    width: 280px;
-  }
-
-  .main-content {
-    margin-right: 320px;
   }
 }
 
