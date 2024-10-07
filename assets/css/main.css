@@ -109,17 +109,21 @@ footer {
   max-width: 300px;
   margin-left: auto;
   margin-right: auto;
+  border: none; /* 컨테이너 테두리 제거 */
+  padding: 0; /* 패딩 초기화 */
 }
 
 #search-input {
   width: 100%;
   padding: 10px;
-  border: 2px solid #A8E1DB;
+  border: 2px solid #A8E1DB; /* 검색창 테두리 */
   background-color: #fefefe;
   color: #A8E1DB;
   font-family: 'PFStardust', monospace;
-  font-size: 14px;
+  font-size: 17px;
+  box-sizing: border-box; /* 검색창의 전체 너비를 제대로 설정 */
 }
+
 
 #search-results {
   position: absolute;
