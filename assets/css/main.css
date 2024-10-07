@@ -27,6 +27,15 @@
   margin: 0 auto;
   padding: 20px;
   box-sizing: border-box;
+  gap: 20px;
+}
+
+/* 메인 콘텐츠 */
+.main-content {
+  flex: 1;
+  padding-right: 20px; /* 콘텐츠 내부 여백 */
+  box-sizing: border-box;
+  margin-right: 20px; /* 사이드바와의 간격 */
 }
 
 /* 사이드바 */
@@ -36,13 +45,10 @@
   border: 2px solid #A8E1DB; /* 상하좌우 테두리 */
   padding: 20px;
   box-sizing: border-box;
-  z-index: 1000;
   color: #A8E1DB;
-  margin-left: 20px; /* 메인 콘텐츠와 간격 */
-  position: fixed; /* 고정 위치 */
-  right: 20px; /* 오른쪽에 고정 */
-  top: 20px;
-  height: calc(100vh - 40px); /* 상하 간격 고려한 높이 */
+  flex-shrink: 0; /* 사이드바의 너비가 줄어들지 않도록 설정 */
+  position: sticky; /* 스크롤 시에도 사이드바를 고정 */
+  top: 20px; /* 상단에 고정되는 위치 */
 }
 
 /* 사이드바 내부 텍스트와 링크 색상 */
@@ -55,14 +61,6 @@
 /* 링크 호버 시 색상 */
 .sidebar-right a:hover {
   color: #C1B3F2;
-}
-
-/* 메인 콘텐츠 */
-.main-content {
-  flex: 1;
-  margin-right: 320px; /* 사이드바의 너비 + 간격 확보 */
-  padding-right: 20px; /* 콘텐츠 내부 여백 */
-  box-sizing: border-box;
 }
 
 /* 전체 텍스트 스타일 */
@@ -118,7 +116,7 @@ h1, h2, h3 {
 
 /* 카테고리 드롭다운 스타일 */
 .categories select {
-  width: 180px; /* 드롭다운 너비 조정 */
+  width: 150px; /* 드롭다운 너비 조정 */
   padding: 5px;
   border: 1px solid #A8E1DB;
   background-color: #fefefe;
