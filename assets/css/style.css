@@ -20,6 +20,13 @@
   font-style: normal;
 }
 
+/* clearfix 처리 */
+.layout-container::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
 /* 전체 레이아웃 */
 .layout-container {
   max-width: 1200px;
@@ -182,6 +189,7 @@ footer {
   border-top: 1px solid #A8E1DB;
   text-align: center;
   font-size: 0.9em;
+  clear: both;
 }
 
 /* 검색 결과 스타일 */
