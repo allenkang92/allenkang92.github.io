@@ -20,6 +20,24 @@
   font-style: normal;
 }
 
+/* 오른쪽 사이드바 */
+.sidebar-right {
+  position: fixed;
+  right: 0; /* 사이드바를 오른쪽에 고정 */
+  top: 20px; /* 화면 상단에서의 여백 */
+  width: 200px; /* 사이드바의 너비 */
+  background-color: #fefefe;
+  border-left: 2px solid #A8E1DB; /* 왼쪽 테두리 */
+  padding: 20px;
+  z-index: 1000; /* 다른 요소보다 위에 위치하도록 설정 */
+}
+
+/* 메인 콘텐츠 영역 */
+main {
+  margin-right: 220px; /* 사이드바의 너비만큼 콘텐츠에 여백 추가 */
+}
+
+
 /* 공통 스타일 */
 body {
   font-family: 'PFStardust', monospace;
@@ -180,13 +198,12 @@ footer {
     margin-top: 20px;
   }
 
-  .sidebar-right .profile img {
-    width: 80px;
-    height: 80px;
-  }
-
   #search-input {
     font-size: 12px;
+  }
+
+  main {
+    margin-right: 220px; /* 사이드바 너비만큼 마진 추가 */
   }
 }
 
@@ -199,6 +216,10 @@ footer {
   .sidebar-right {
     width: 250px;
   }
+
+  main {
+    margin-right: 270px; /* 태블릿에서의 사이드바 여백 */
+  }
 }
 
 /* 작은 랩톱 화면 */
@@ -210,6 +231,10 @@ footer {
   .sidebar-right {
     width: 280px;
   }
+
+  main {
+    margin-right: 300px; /* 작은 랩톱 화면에서의 사이드바 여백 */
+  }
 }
 
 /* 큰 화면 */
@@ -217,7 +242,12 @@ footer {
   body {
     font-size: 20px;
   }
+
+  main {
+    margin-right: 220px; /* 큰 화면에서의 사이드바 여백 */
+  }
 }
+
 
 /* 다크 모드 */
 @media (prefers-color-scheme: dark) {
@@ -228,6 +258,11 @@ footer {
 
   header, .sidebar-right, #search-input, #search-results, #toc {
     background-color: #2a2a2a;
+    border-color: #A8E1DB;
+  }
+
+  .sidebar-right {
+    border-left: 2px solid #A8E1DB; /* 다크 모드의 왼쪽 테두리 */
   }
 
   h1, h2, h3 {
@@ -250,6 +285,7 @@ footer {
     border-color: #A8E1DB;
   }
 }
+
 
 /* 고해상도 화면 */
 @media only screen and (-webkit-min-device-pixel-ratio: 2),
