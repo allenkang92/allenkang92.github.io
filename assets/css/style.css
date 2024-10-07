@@ -118,9 +118,9 @@ h1, h2, h3 {
 
 /* 카테고리 드롭다운 스타일 */
 .categories select {
-  width: 150px; /* 드롭다운 너비 조정 */
+  width: 180px; /* 드롭다운 너비 조정 */
   padding: 8px;
-  border: 2px solid #A8E1DB;
+  border: 2px solid #A8E1DB; /* 테두리 색상 */
   background-color: #fefefe;
   color: #A8E1DB;
   font-family: 'PFStardust', monospace;
@@ -129,11 +129,30 @@ h1, h2, h3 {
   appearance: none; /* 기본 브라우저 스타일 제거 */
   -webkit-appearance: none; /* 사파리 브라우저 지원 */
   -moz-appearance: none; /* 파이어폭스 브라우저 지원 */
+  cursor: pointer; /* 커서 모양 변경 */
 }
 
 /* 드롭다운 화살표 스타일 추가 (선택적으로) */
 .categories select::-ms-expand {
   display: none; /* IE/엣지 브라우저에서 기본 화살표 제거 */
+}
+
+/* 드롭다운 옵션 스타일 */
+.categories option {
+  background-color: #fefefe;
+  color: #A8E1DB;
+  font-family: 'PFStardust', monospace;
+}
+
+/* 드롭다운 호버 스타일 */
+.categories select:hover {
+  border-color: #C1B3F2;
+}
+
+/* 드롭다운 포커스 스타일 */
+.categories select:focus {
+  border-color: #FFCBDF;
+  outline: none;
 }
 
 /* 링크 스타일 */
