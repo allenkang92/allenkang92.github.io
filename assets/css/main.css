@@ -24,7 +24,7 @@
 .layout-container {
   display: grid;
   grid-template-columns: 1fr 300px; /* 메인 콘텐츠와 사이드바의 비율 */
-  gap: 20px; /* 간격 */
+  gap: 20px;
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
@@ -33,9 +33,9 @@
 
 /* 메인 콘텐츠 */
 .main-content {
-  overflow: hidden; /* 텍스트 겹침 방지 */
-  padding-right: 20px;
+  padding: 20px;
   box-sizing: border-box;
+  overflow: hidden;
 }
 
 /* 사이드바 */
@@ -46,10 +46,10 @@
   padding: 20px;
   box-sizing: border-box;
   color: #A8E1DB;
+  flex-shrink: 0; /* 사이드바의 너비가 줄어들지 않도록 설정 */
   position: sticky; /* 스크롤 시에도 사이드바를 고정 */
   top: 20px; /* 상단에 고정되는 위치 */
   height: fit-content; /* 사이드바 내용에 맞게 높이 조정 */
-  align-self: flex-start;
 }
 
 /* 사이드바 내부 텍스트와 링크 색상 */
@@ -231,7 +231,6 @@ footer {
 @media only screen and (min-width: 601px) and (max-width: 900px) {
   .sidebar-right {
     width: 220px;
-    margin-left: 20px;
   }
 }
 
@@ -239,7 +238,6 @@ footer {
 @media only screen and (min-width: 901px) and (max-width: 1200px) {
   .sidebar-right {
     width: 240px;
-    margin-left: 20px;
   }
 }
 
