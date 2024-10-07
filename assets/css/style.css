@@ -20,6 +20,19 @@
   font-style: normal;
 }
 
+.profile {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.profile-pic {
+  width: 100px; /* 원하는 크기로 조정 */
+  height: 100px; /* 원하는 크기로 조정 */
+  border-radius: 50%; /* 둥근 이미지 */
+  border: 2px solid #A8E1DB;
+}
+
+
 /* 오른쪽 사이드바 */
 .sidebar-right {
   position: fixed;
