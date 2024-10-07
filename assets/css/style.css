@@ -30,8 +30,8 @@
   height: 100px; /* 원하는 크기로 조정 */
   border-radius: 50%; /* 둥근 이미지 */
   border: 2px solid #A8E1DB;
+  margin-bottom: 15px;
 }
-
 
 /* 오른쪽 사이드바 */
 .sidebar-right {
@@ -45,9 +45,16 @@
   z-index: 1000; /* 다른 요소보다 위에 위치하도록 설정 */
 }
 
+.sidebar-right .blog-title,
+.sidebar-right .profile,
+.sidebar-right nav,
+.sidebar-right .search-container {
+  margin-bottom: 20px;
+}
+
 /* 메인 콘텐츠 영역 */
 .main-content {
-  margin-right: 220px; /* 사이드바의 너비만큼 콘텐츠에 여백 추가 */
+  margin-right: 240px; /* 사이드바의 너비만큼 콘텐츠에 여백 추가 */
 }
 
 /* 공통 스타일 */
@@ -256,7 +263,7 @@ footer {
   }
 
   .main-content {
-    margin-right: 220px; /* 큰 화면에서의 사이드바 여백 */
+    margin-right: 240px; /* 큰 화면에서의 사이드바 여백 */
   }
 }
 
