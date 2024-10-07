@@ -38,7 +38,7 @@
   position: fixed;
   right: 0; /* 사이드바를 오른쪽에 고정 */
   top: 20px; /* 화면 상단에서의 여백 */
-  width: 300px; /* 사이드바의 너비 */
+  width: 350px; /* 사이드바의 너비를 더욱 넓게 */
   background-color: #fefefe;
   border-left: 2px solid #A8E1DB; /* 왼쪽 테두리 */
   padding: 20px;
@@ -54,7 +54,8 @@
 
 /* 메인 콘텐츠 영역 */
 .main-content {
-  margin-right: 340px; /* 사이드바의 너비만큼 콘텐츠에 여백 추가 */
+  margin-right: 380px; /* 사이드바의 너비만큼 콘텐츠에 여백 추가 */
+  overflow: hidden; /* 콘텐츠 겹침 방지 */
 }
 
 /* 공통 스타일 */
@@ -112,7 +113,7 @@ footer {
   position: relative;
   margin-top: 10px;
   width: 100%;
-  max-width: 280px;
+  max-width: 300px;
   margin-left: auto;
   margin-right: auto;
 }
@@ -131,7 +132,7 @@ footer {
   position: absolute;
   background: #fefefe;
   width: 100%;
-  max-width: 280px;
+  max-width: 300px;
   border: 2px solid #A8E1DB;
   border-top: none;
   z-index: 1000;
@@ -263,7 +264,7 @@ footer {
   }
 
   .main-content {
-    margin-right: 340px; /* 큰 화면에서의 사이드바 여백 */
+    margin-right: 380px; /* 큰 화면에서의 사이드바 여백 */
   }
 }
 
