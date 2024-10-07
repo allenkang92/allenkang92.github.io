@@ -38,7 +38,7 @@
 /* 메인 콘텐츠 */
 .main-content {
   float: left;
-  width: calc(100% - 340px); /* 사이드바를 제외한 너비 */
+  width: calc(100% - 360px); /* 사이드바와의 간격 조정 */
   padding-right: 20px; /* 내부 여백 */
   box-sizing: border-box;
 }
@@ -54,7 +54,7 @@
   color: #A8E1DB;
   position: sticky;
   top: 20px; /* 상단에 고정되는 위치 */
-  height: calc(100vh - 40px);
+  height: auto; /* 높이 고정하지 않음 */
   overflow-y: auto;
   z-index: 1000;
 }
@@ -124,51 +124,51 @@ h1, h2, h3 {
 
 /* 카테고리 드롭다운 스타일 */
 .categories select {
-  width: 180px; /* 드롭다운 너비 조정 */
-  padding: 8px;
-  border: 2px solid #A8E1DB; /* 테두리 색상 */
-  background-color: #fefefe;
-  color: #A8E1DB;
-  font-family: 'PFStardust', monospace;
-  outline: none;
-  border-radius: 5px; /* 둥근 테두리 추가 */
-  appearance: none; /* 기본 브라우저 스타일 제거 */
-  -webkit-appearance: none; /* 사파리 브라우저 지원 */
-  -moz-appearance: none; /* 파이어폭스 브라우저 지원 */
-  cursor: pointer; /* 커서 모양 변경 */
+  width: 180px !important; /* 드롭다운 너비 */
+  padding: 8px !important;
+  border: 2px solid #A8E1DB !important; /* 테두리 색상 */
+  background-color: #fefefe !important;
+  color: #A8E1DB !important;
+  font-family: 'PFStardust', monospace !important;
+  outline: none !important;
+  border-radius: 5px !important; /* 둥근 테두리 추가 */
+  appearance: none !important; /* 기본 브라우저 스타일 제거 */
+  -webkit-appearance: none !important; /* 사파리 브라우저 지원 */
+  -moz-appearance: none !important; /* 파이어폭스 브라우저 지원 */
+  cursor: pointer !important; /* 커서 모양 변경 */
 }
 
 /* 드롭다운 화살표 스타일 추가 (선택적으로) */
 .categories select::-ms-expand {
-  display: none; /* IE/엣지 브라우저에서 기본 화살표 제거 */
+  display: none !important; /* IE/엣지 브라우저에서 기본 화살표 제거 */
 }
 
 /* 드롭다운 옵션 스타일 */
 .categories option {
-  background-color: #fefefe;
-  color: #A8E1DB;
-  font-family: 'PFStardust', monospace;
+  background-color: #fefefe !important;
+  color: #A8E1DB !important;
+  font-family: 'PFStardust', monospace !important;
 }
 
 /* 드롭다운 호버 스타일 */
 .categories select:hover {
-  border-color: #C1B3F2;
+  border-color: #C1B3F2 !important;
 }
 
 /* 드롭다운 포커스 스타일 */
 .categories select:focus {
-  border-color: #FFCBDF;
-  outline: none;
+  border-color: #FFCBDF !important;
+  outline: none !important;
 }
 
 /* 링크 스타일 */
 a {
-  color: #FFCBDF;
-  text-decoration: none;
+  color: #FFCBDF !important;
+  text-decoration: none !important;
 }
 
 a:hover {
-  color: #C1B3F2;
+  color: #C1B3F2 !important;
 }
 
 /* 포스트 목록 스타일 */
@@ -178,73 +178,73 @@ a:hover {
 }
 
 .post-meta {
-  color: #FFCBDF;
-  font-size: 0.9em;
+  color: #FFCBDF !important;
+  font-size: 0.9em !important;
 }
 
 /* 푸터 스타일 */
 footer {
-  margin-top: 40px;
-  padding-top: 20px;
-  border-top: 1px solid #A8E1DB;
-  text-align: center;
-  font-size: 0.9em;
-  clear: both;
+  clear: both !important;
+  margin-top: 40px !important;
+  padding-top: 20px !important;
+  border-top: 1px solid #A8E1DB !important;
+  text-align: center !important;
+  font-size: 0.9em !important;
 }
 
 /* 검색 결과 스타일 */
 #search-results {
-  position: absolute;
-  background: #fefefe;
-  width: 100%;
-  max-width: 300px;
-  border: 2px solid #A8E1DB;
-  border-top: none;
-  z-index: 1000;
-  max-height: 300px;
-  overflow-y: auto;
-  display: none;
+  position: absolute !important;
+  background: #fefefe !important;
+  width: 100% !important;
+  max-width: 300px !important;
+  border: 2px solid #A8E1DB !important;
+  border-top: none !important;
+  z-index: 1000 !important;
+  max-height: 300px !important;
+  overflow-y: auto !important;
+  display: none !important;
 }
 
 #search-results ul {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
+  list-style-type: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
 }
 
 #search-results li {
-  padding: 10px;
-  border-bottom: 1px solid #A8E1DB;
+  padding: 10px !important;
+  border-bottom: 1px solid #A8E1DB !important;
 }
 
 #search-results a {
-  color: #FFCBDF;
-  text-decoration: none;
+  color: #FFCBDF !important;
+  text-decoration: none !important;
 }
 
 #search-results a:hover {
-  color: #C1B3F2;
+  color: #C1B3F2 !important;
 }
 
 #search-results mark {
-  background-color: #C1B3F2;
-  color: #EAF4FB;
-  padding: 2px;
+  background-color: #C1B3F2 !important;
+  color: #EAF4FB !important;
+  padding: 2px !important;
 }
 
 /* 카테고리와 태그 스타일 */
 .category, .tags {
-  font-size: 0.8em;
-  color: #FFCBDF;
-  display: block;
-  margin-top: 5px;
+  font-size: 0.8em !important;
+  color: #FFCBDF !important;
+  display: block !important;
+  margin-top: 5px !important;
 }
 
 #toc {
-  background-color: #fefefe;
-  border: 2px solid #A8E1DB;
-  padding: 15px;
-  margin-bottom: 20px;
+  background-color: #fefefe !important;
+  border: 2px solid #A8E1DB !important;
+  padding: 15px !important;
+  margin-bottom: 20px !important;
 }
 
 /* 미디어 쿼리 시작 */
@@ -252,73 +252,73 @@ footer {
 /* 모바일 기기 (세로 모드) */
 @media only screen and (max-width: 600px) {
   .main-content {
-    float: none;
-    width: 100%;
+    float: none !important;
+    width: 100% !important;
   }
 
   .sidebar-right {
-    position: static;
-    width: 100%;
-    float: none;
-    margin: 0;
-    height: auto;
+    position: static !important;
+    width: 100% !important;
+    float: none !important;
+    margin: 0 !important;
+    height: auto !important;
   }
 }
 
 /* 태블릿 (세로 모드) */
 @media only screen and (min-width: 601px) and (max-width: 900px) {
   .sidebar-right {
-    width: 220px;
+    width: 220px !important;
   }
 
   .main-content {
-    width: calc(100% - 240px);
+    width: calc(100% - 240px) !important;
   }
 }
 
 /* 작은 랩톱 화면 */
 @media only screen and (min-width: 901px) and (max-width: 1200px) {
   .sidebar-right {
-    width: 240px;
+    width: 240px !important;
   }
 
   .main-content {
-    width: calc(100% - 260px);
+    width: calc(100% - 260px) !important;
   }
 }
 
 /* 큰 화면 */
 @media only screen and (min-width: 1201px) {
   .sidebar-right {
-    width: 280px;
+    width: 280px !important;
   }
 
   .main-content {
-    width: calc(100% - 320px);
+    width: calc(100% - 320px) !important;
   }
 }
 
 /* 다크 모드 */
 @media (prefers-color-scheme: dark) {
   body, .sidebar-right {
-    background-color: #1a1a1a;
-    color: #fefefe;
+    background-color: #1a1a1a !important;
+    color: #fefefe !important;
   }
 
   header {
-    background-color: #2a2a2a;
-    border-color: #A8E1DB;
+    background-color: #2a2a2a !important;
+    border-color: #A8E1DB !important;
   }
 
   h1, h2, h3 {
-    color: #C1B3F2;
+    color: #C1B3F2 !important;
   }
 
   a {
-    color: #FFCBDF;
+    color: #FFCBDF !important;
   }
 
   a:hover {
-    color: #C1B3F2;
+    color: #C1B3F2 !important;
   }
 }
