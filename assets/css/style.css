@@ -29,17 +29,17 @@
 
 /* 전체 레이아웃 */
 .layout-container {
-  max-width: 1200px;
-  margin: 20px auto; /* 모든 방향으로 여백 동일하게 적용 */
-  padding: 20px;
-  box-sizing: border-box;
+  max-width: 1200px !important;
+  margin: 40px auto !important; /* 여백 조정 */
+  padding: 20px !important;
+  box-sizing: border-box !important;
 }
 
 /* 메인 콘텐츠 */
 .main-content {
   float: left !important;
-  width: calc(100% - 340px) !important; /* 사이드바를 제외한 너비 */
-  padding-right: 20px !important; /* 내부 여백 */
+  width: calc(100% - 320px) !important; /* 사이드바를 제외한 너비 */
+  padding: 20px !important; /* 모든 방향으로 동일한 내부 여백 */
   box-sizing: border-box !important;
 }
 
@@ -73,7 +73,7 @@
 
 /* 전체 텍스트 스타일 */
 body {
-  font-family: 'PFStardust', monospace;
+  font-family: 'PFStardust', monospace !important;
   line-height: 1.6 !important;
   color: #A8E1DB !important;
   background-color: #fefefe !important;
@@ -82,7 +82,7 @@ body {
 
 /* 프로필 스타일 */
 .profile {
-  text-align: center;
+  text-align: center !important;
   margin-bottom: 20px !important;
 }
 
