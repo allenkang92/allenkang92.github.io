@@ -120,12 +120,20 @@ h1, h2, h3 {
 .categories select {
   width: 150px; /* 드롭다운 너비 조정 */
   padding: 8px;
-  border: 1px solid #A8E1DB;
+  border: 2px solid #A8E1DB; /* 테두리 색상 */
   background-color: #fefefe;
   color: #A8E1DB;
   font-family: 'PFStardust', monospace;
   outline: none;
   border-radius: 5px; /* 둥근 테두리 추가 */
+  appearance: none; /* 기본 브라우저 스타일 제거 */
+  -webkit-appearance: none; /* 사파리 브라우저 지원 */
+  -moz-appearance: none; /* 파이어폭스 브라우저 지원 */
+}
+
+/* 드롭다운 화살표 스타일 추가 (선택적으로) */
+.categories select::-ms-expand {
+  display: none; /* IE/엣지 브라우저에서 기본 화살표 제거 */
 }
 
 /* 링크 스타일 */
