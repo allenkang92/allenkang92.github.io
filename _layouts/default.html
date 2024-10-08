@@ -5,16 +5,25 @@
     <title>{{ page.title }} - Allen's Blog</title>
 </head>
 <body>
-    <!-- 헤더 포함 -->
-    {% include header.html %}
-    
-    <!-- 페이지 콘텐츠 -->
-    <main>
-        {{ content }}
-    </main>
-
-    <!-- 푸터 포함 -->
-    {% include footer.html %}
+    <div class="layout-container">
+        <aside class="sidebar-right">
+            {% include sidebar.html %}
+        </aside>
+        
+        <div class="content-wrapper">
+            <header>
+                {% include header.html %}
+            </header>
+            
+            <main class="main-content" role="main">
+                {{ content }}
+            </main>
+            
+            <footer>
+                {% include footer.html %}
+            </footer>
+        </div>
+    </div>
     
     <!-- 검색 및 필터링 스크립트 -->
     <script>
