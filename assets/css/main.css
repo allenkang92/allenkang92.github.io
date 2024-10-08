@@ -32,36 +32,36 @@ body {
 }
 
 .layout-container {
-  display: grid;
-  grid-template-columns: 1fr 280px;
+  display: flex;
   max-width: 1200px;
   margin: 0 auto;
-  gap: 20px;
   padding: 20px;
   box-sizing: border-box;
 }
 
 /* 메인 콘텐츠 */
 .main-content {
-  grid-column: 1 / 2;
+  flex: 1;
   padding: 20px;
+  margin-right: 300px; /* 사이드바 너비 + 여백 */
+  box-sizing: border-box;
   background-color: #fefefe;
-  border: 2px solid #A8E1DB;
-  overflow: auto;
+  z-index: 1;
 }
 
 /* 사이드바 */
 .sidebar-right {
-  grid-column: 2 / 3;
   width: 280px;
   background-color: #fefefe;
   border: 2px solid #A8E1DB;
   padding: 20px;
   box-sizing: border-box;
-  position: sticky;
+  position: fixed;
   top: 20px;
+  right: calc((100% - 1200px) / 2 + 20px);
   height: calc(100vh - 40px);
   overflow-y: auto;
+  z-index: 2;
 }
 
 /* 사이드바 내부 스타일 */
@@ -175,12 +175,12 @@ a:hover {
 
 /* 푸터 스타일 */
 footer {
-  grid-column: 1 / -1;
   margin-top: 40px;
   padding-top: 20px;
   border-top: 1px solid #A8E1DB;
   text-align: center;
   font-size: 0.9em;
+  clear: both;
 }
 
 /* 검색 결과 스타일 */
@@ -191,10 +191,10 @@ footer {
   max-width: 280px;
   border: 2px solid #A8E1DB;
   border-top: none;
+  z-index: 1001;
   max-height: 300px;
   overflow-y: auto;
   display: none;
-  z-index: 1000;
 }
 
 #search-results ul {
@@ -239,27 +239,40 @@ footer {
 }
 
 /* 미디어 쿼리 */
-@media only screen and (max-width: 1024px) {
+@media only screen and (max-width: 1240px) {
   .layout-container {
-    grid-template-columns: 1fr;
+    padding: 10px;
   }
 
   .sidebar-right {
-    grid-column: 1 / 2;
-    position: static;
-    width: 100%;
-    height: auto;
-    margin-bottom: 20px;
+    right: 10px;
   }
 
   .main-content {
-    grid-column: 1 / 2;
+    margin-right: 290px;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .layout-container {
+    flex-direction: column;
+  }
+
+  .main-content {
+    margin-right: 0;
+  }
+
+  .sidebar-right {
+    position: static;
+    width: 100%;
+    height: auto;
+    margin-top: 20px;
   }
 }
 
 /* 다크 모드 */
 @media (prefers-color-scheme: dark) {
-  body, .main-content, .sidebar-right {
+  body {
     background-color: #1a1a1a;
     color: #fefefe;
   }
