@@ -45,8 +45,6 @@ body {
   padding: 20px;
   margin-right: 300px; /* 사이드바 너비 + 여백 */
   box-sizing: border-box;
-  background-color: #fefefe;
-  z-index: 1;
 }
 
 /* 사이드바 */
@@ -61,7 +59,6 @@ body {
   right: calc((100% - 1200px) / 2 + 20px);
   height: calc(100vh - 40px);
   overflow-y: auto;
-  z-index: 2;
 }
 
 /* 사이드바 내부 스타일 */
