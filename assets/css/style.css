@@ -45,7 +45,7 @@ body {
   flex: 1;
   padding: 20px;
   box-sizing: border-box;
-  margin-right: 40px; /* 사이드바와의 간격 */
+  margin-right: 320px; /* 사이드바 너비 + 여백 */
 }
 
 /* 사이드바 */
@@ -56,9 +56,10 @@ body {
   padding: 20px;
   box-sizing: border-box;
   color: #A8E1DB;
-  position: sticky;
-  top: 20px;
-  height: calc(100vh - 40px);
+  position: fixed;
+  top: 40px;
+  right: calc((100% - 1200px) / 2 + 20px);
+  height: calc(100vh - 80px);
   overflow-y: auto;
   z-index: 1000;
 }
@@ -190,7 +191,7 @@ footer {
   max-width: 300px;
   border: 2px solid #A8E1DB;
   border-top: none;
-  z-index: 1000;
+  z-index: 1001;
   max-height: 300px;
   overflow-y: auto;
   display: none;
@@ -238,6 +239,12 @@ footer {
 }
 
 /* 미디어 쿼리 */
+@media only screen and (max-width: 1240px) {
+  .sidebar-right {
+    right: 20px;
+  }
+}
+
 @media only screen and (max-width: 768px) {
   .layout-container {
     flex-direction: column;
@@ -249,9 +256,10 @@ footer {
   }
 
   .sidebar-right {
-    width: 100%;
     position: static;
+    width: 100%;
     height: auto;
+    margin-top: 20px;
   }
 }
 
@@ -287,4 +295,14 @@ footer {
   a:hover, .sidebar-right a:hover {
     color: #C1B3F2;
   }
+}
+
+/* 겹침 방지를 위한 추가 스타일 */
+.main-content > * {
+  position: relative;
+  z-index: 1;
+}
+
+.sidebar-right {
+  z-index: 2;
 }
