@@ -1,4 +1,4 @@
-/* "PF스타더스트" 폰트 정의 */
+/* 폰트 정의 */
 @font-face {
   font-family: 'PFStardust';
   src: url('/assets/fonts/PFStardust 3.0.ttf') format('truetype');
@@ -45,7 +45,9 @@ body {
   flex: 1;
   padding: 20px;
   box-sizing: border-box;
+  margin-left: 20px; /* 왼쪽 여백 추가 */
   margin-right: 320px; /* 사이드바 너비 + 여백 */
+  margin-top: 20px; /* 위쪽 여백 추가 */
 }
 
 /* 사이드바 */
@@ -243,18 +245,19 @@ footer {
   .sidebar-right {
     right: 20px;
   }
+  .main-content {
+    margin-right: 300px;
+  }
 }
 
 @media only screen and (max-width: 768px) {
   .layout-container {
     flex-direction: column;
   }
-
   .main-content {
     margin-right: 0;
-    margin-bottom: 20px;
+    margin-left: 0;
   }
-
   .sidebar-right {
     position: static;
     width: 100%;
@@ -298,9 +301,10 @@ footer {
 }
 
 /* 겹침 방지를 위한 추가 스타일 */
-.main-content > * {
+.main-content {
   position: relative;
   z-index: 1;
+  background-color: #fefefe;
 }
 
 .sidebar-right {
