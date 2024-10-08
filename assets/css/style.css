@@ -32,41 +32,36 @@ body {
 }
 
 .layout-container {
+  display: grid;
+  grid-template-columns: 1fr 280px;
   max-width: 1200px;
-  margin: 40px auto;
+  margin: 0 auto;
+  gap: 20px;
   padding: 20px;
   box-sizing: border-box;
-  display: flex;
-  justify-content: space-between;
 }
 
 /* 메인 콘텐츠 */
 .main-content {
-  flex: 1;
+  grid-column: 1 / 2;
   padding: 20px;
-  box-sizing: border-box;
-  margin-left: 20px; /* 왼쪽 여백 추가 */
-  margin-right: 320px; /* 사이드바 너비 + 여백 */
-  margin-top: 20px; /* 위쪽 여백 추가 */
-  position: relative;
-  z-index: 1;
   background-color: #fefefe;
+  border: 2px solid #A8E1DB;
+  overflow: auto;
 }
 
 /* 사이드바 */
 .sidebar-right {
+  grid-column: 2 / 3;
   width: 280px;
   background-color: #fefefe;
   border: 2px solid #A8E1DB;
   padding: 20px;
   box-sizing: border-box;
-  color: #A8E1DB;
-  position: fixed;
-  top: 40px;
-  right: calc((100% - 1200px) / 2 + 20px);
-  height: calc(100vh - 80px);
+  position: sticky;
+  top: 20px;
+  height: calc(100vh - 40px);
   overflow-y: auto;
-  z-index: 2;
 }
 
 /* 사이드바 내부 스타일 */
@@ -124,7 +119,7 @@ h1, h2, h3 {
 
 /* 카테고리 드롭다운 스타일 */
 .category-filter select {
-  width: auto;
+  width: 100%;
   padding: 8px;
   border: 2px solid #A8E1DB;
   background-color: #fefefe;
@@ -180,12 +175,12 @@ a:hover {
 
 /* 푸터 스타일 */
 footer {
+  grid-column: 1 / -1;
   margin-top: 40px;
   padding-top: 20px;
   border-top: 1px solid #A8E1DB;
   text-align: center;
   font-size: 0.9em;
-  clear: both;
 }
 
 /* 검색 결과 스타일 */
@@ -193,13 +188,13 @@ footer {
   position: absolute;
   background: #fefefe;
   width: 100%;
-  max-width: 300px;
+  max-width: 280px;
   border: 2px solid #A8E1DB;
   border-top: none;
-  z-index: 1001;
   max-height: 300px;
   overflow-y: auto;
   display: none;
+  z-index: 1000;
 }
 
 #search-results ul {
@@ -244,34 +239,27 @@ footer {
 }
 
 /* 미디어 쿼리 */
-@media only screen and (max-width: 1240px) {
-  .sidebar-right {
-    right: 20px;
-  }
-  .main-content {
-    margin-right: 300px;
-  }
-}
-
-@media only screen and (max-width: 768px) {
+@media only screen and (max-width: 1024px) {
   .layout-container {
-    flex-direction: column;
+    grid-template-columns: 1fr;
   }
-  .main-content {
-    margin-right: 0;
-    margin-left: 0;
-  }
+
   .sidebar-right {
+    grid-column: 1 / 2;
     position: static;
     width: 100%;
     height: auto;
-    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+
+  .main-content {
+    grid-column: 1 / 2;
   }
 }
 
 /* 다크 모드 */
 @media (prefers-color-scheme: dark) {
-  body {
+  body, .main-content, .sidebar-right {
     background-color: #1a1a1a;
     color: #fefefe;
   }
