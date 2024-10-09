@@ -34,6 +34,7 @@ body {
 
 .layout-container {
   display: flex;
+  flex-direction: row-reverse;
   min-height: 100vh;
   width: 100%;
 }
@@ -120,7 +121,7 @@ h1, h2, h3 {
 }
 
 /* 카테고리 드롭다운 스타일 */
-.categories select {
+.categories select, .category-filter select {
   width: 100%;
   padding: 8px;
   border: 2px solid #A8E1DB;
@@ -139,18 +140,20 @@ h1, h2, h3 {
   background-position-y: 50%;
 }
 
-.categories select::-ms-expand {
+.categories select::-ms-expand, .category-filter select::-ms-expand {
   display: none;
 }
 
-.categories option {
+.categories option, .category-filter option {
   background-color: #fefefe;
   color: #A8E1DB;
   font-family: 'PFStardust', monospace;
 }
 
 .categories select:hover,
-.categories select:focus {
+.categories select:focus,
+.category-filter select:hover,
+.category-filter select:focus {
   border-color: #FFCBDF;
 }
 
@@ -240,7 +243,36 @@ footer {
 }
 
 /* 미디어 쿼리 */
-@media only screen and (max-width: 1024px) {
+@media only screen and (min-width: 1200px) {
+  .content-wrapper {
+    padding: 40px;
+  }
+}
+
+@media only screen and (min-width: 992px) and (max-width: 1199px) {
+  .sidebar-right {
+    width: 250px;
+  }
+  
+  .content-wrapper {
+    margin-right: 250px;
+    width: calc(100% - 250px);
+  }
+}
+
+@media only screen and (min-width: 768px) and (max-width: 991px) {
+  .sidebar-right {
+    width: 220px;
+  }
+  
+  .content-wrapper {
+    margin-right: 220px;
+    width: calc(100% - 220px);
+    padding: 15px;
+  }
+}
+
+@media only screen and (max-width: 767px) {
   .layout-container {
     flex-direction: column-reverse;
   }
@@ -264,6 +296,16 @@ footer {
   }
 }
 
+@media only screen and (max-width: 575px) {
+  .content-wrapper {
+    padding: 10px;
+  }
+  
+  .sidebar-right {
+    padding: 10px;
+  }
+}
+
 /* 다크 모드 */
 @media (prefers-color-scheme: dark) {
   body {
@@ -275,13 +317,15 @@ footer {
   header,
   #search-input,
   .categories select,
+  .category-filter select,
   #search-results,
   #toc {
     background-color: #2a2a2a;
     border-color: #A8E1DB;
   }
 
-  .categories option {
+  .categories option,
+  .category-filter option {
     background-color: #2a2a2a;
   }
 
