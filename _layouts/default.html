@@ -7,14 +7,10 @@
 <body>
     <div class="layout-container">
         <aside class="sidebar-right">
-            {% include sidebar.html %}
+            {% include header.html %}
         </aside>
         
         <div class="content-wrapper">
-            <header>
-                {% include header.html %}
-            </header>
-            
             <main class="main-content" role="main">
                 {{ content }}
             </main>

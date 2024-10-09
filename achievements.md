@@ -3,6 +3,7 @@ layout: default
 title: Achievements
 ---
 
+<div class="main-content">
 # My Achievements
 
 Welcome to my achievements page. Here you can find information about my certificates, education, awards, publications, and projects.
@@ -59,3 +60,4 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 </script>
+</div>
