@@ -6,20 +6,20 @@
 </head>
 <body>
     <div class="layout-container">
-        <aside class="sidebar-right">
-            {% include header.html %}
-        </aside>
-        
         <div class="content-wrapper">
             <main class="main-content" role="main">
                 {{ content }}
             </main>
         
-        </div>    
-          <footer>
-              {% include footer.html %}
-          </footer>
-    </div>
+            <footer>
+                {% include footer.html %}
+            </footer>
+        </div>
+    
+          <aside class="sidebar-right">
+        {% include header.html %}
+    </aside>
+  </div>
     
     <!-- 검색 및 필터링 스크립트 -->
     <script>
