@@ -60,6 +60,15 @@ body {
   padding-bottom: 40px; /* 푸터와의 간격 */
 }
 
+/* 이미지 스타일 */
+.post-content img {
+  max-width: 100%;
+  height: auto;
+  border: 2px solid #A8E1DB; /* 이미지 테두리 색상 */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* 이미지 그림자 */
+}
+
+/* 사이드바 스타일 */
 .sidebar-right {
   width: 280px;
   background-color: #FFFFFF; /* 사이드바 배경색 */
@@ -166,14 +175,14 @@ h1, h2, h3 {
   color: #000000; /* 드롭다운 텍스트 색상 */
   font-family: 'PFStardust', monospace;
   outline: none;
-  border-radius: 5px;
+  border-radius: 0;
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
   cursor: pointer;
-  background-image: url("data:image/svg+xml;utf8,<svg fill='%23A8E1DB' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+  background-image: url("data:image/svg+xml;utf8,<svg fill='%23A8E1DB' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
   background-repeat: no-repeat;
-  background-position-x: 95%;
+  background-position-x: calc(100% - 10px);
   background-position-y: 50%;
 }
 
@@ -456,5 +465,13 @@ footer {
     background-color: #A8E1DB;
     color: #1A1A1A;
     padding: 2px;
+  }
+}
+
+/* 이미지 스타일 - 다크 모드 */
+@media (prefers-color-scheme: dark) {
+  .post-content img {
+    border: 2px solid #A8E1DB; /* 이미지 테두리 색상 */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.5); /* 이미지 그림자 */
   }
 }
