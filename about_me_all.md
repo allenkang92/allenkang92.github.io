@@ -17,6 +17,13 @@
 | **![Specific Interests](https://img.shields.io/badge/Specific%20Interests-EAF4FB?style=flat-square)** | ![Brain-Computer Interface](https://img.shields.io/badge/Brain--Computer%20Interface-A8E1DB?style=flat-square) ![Human Behavior Research](https://img.shields.io/badge/Human%20Behavior%20Research-C1B3F2?style=flat-square) ![Human-Computer Interaction](https://img.shields.io/badge/Human--Computer%20Interaction-C1B3F2?style=flat-square) ![Quantum Computing](https://img.shields.io/badge/Quantum%20Computing-FFCBDF?style=flat-square) ![Bioinformatics](https://img.shields.io/badge/Bioinformatics-FFCBDF?style=flat-square) ![Environmental Issues](https://img.shields.io/badge/Environmental%20Issues-EAF4FB?style=flat-square) ![Social Impact Studies](https://img.shields.io/badge/Social%20Impact%20Studies-EAF4FB?style=flat-square) ![Philosophy of Science](https://img.shields.io/badge/Philosophy%20of%20Science-EAF4FB?style=flat-square) |
 {:.custom-table}
 
+#### Professional Experiences
+
+| **Category** | **Details** |
+|--------------|-------------|
+| **![Professional Experiences](https://img.shields.io/badge/Professional%20Experiences-EAF4FB?style=flat-square)** | ![Startup Marketing team](https://img.shields.io/badge/Startup%20Marketing%20Team%-A8E1DB?style=flat-square) ![Financial Loan Officer](https://img.shields.io/badge/Financial%20Loan%20Officer-A8E1DB?style=flat-square) ![Chemical Engineering Researcher](https://img.shields.io/badge/Chemical%20Engineering%20Researcher-A8E1DB?style=flat-square) |
+{:.custom-table}
+
 ## Tech Stack
 
 | **Category** | **Technologies** |
