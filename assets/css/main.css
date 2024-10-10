@@ -165,43 +165,52 @@ h1, h2, h3 {
   color: #000000; /* 헤딩 색상 */
 }
 
-/* 카테고리 드롭다운 스타일 */
-.categories select,
-.category-filter select {
+/* 드롭다운 스타일 */
+select {
   width: 100%;
-  padding: 8px;
+  padding: 10px;
   border: 2px solid #A8E1DB; /* 드롭다운 테두리 색상 */
   background-color: #FFFFFF; /* 드롭다운 배경색 */
   color: #000000; /* 드롭다운 텍스트 색상 */
   font-family: 'PFStardust', monospace;
+  font-size: 16px;
   outline: none;
   border-radius: 0;
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
   cursor: pointer;
-  background-image: url("data:image/svg+xml;utf8,<svg fill='%23A8E1DB' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-image: url("data:image/svg+xml;utf8,<svg fill='%23005F5F' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
   background-repeat: no-repeat;
   background-position-x: calc(100% - 10px);
-  background-position-y: 50%;
+  background-position-y: center;
 }
 
-.categories select::-ms-expand,
-.category-filter select::-ms-expand {
+select::-ms-expand {
   display: none;
 }
 
-.categories option,
-.category-filter option {
-  background-color: #FFFFFF; /* 옵션 배경색 */
-  color: #000000; /* 옵션 텍스트 색상 */
+option {
   font-family: 'PFStardust', monospace;
+  color: #000000;
+  background-color: #FFFFFF;
 }
 
-.categories select:hover,
-.categories select:focus,
-.category-filter select:hover,
-.category-filter select:focus {
+/* 드롭다운 컨테이너 스타일 */
+.category-filter,
+#achievement-category-select {
+  margin-top: 20px;
+}
+
+.category-filter label,
+.achievement-page h2 {
+  font-weight: bold;
+  color: #000000;
+}
+
+/* 드롭다운 호버 및 포커스 스타일 */
+select:hover,
+select:focus {
   border-color: #005F5F; /* 드롭다운 호버/포커스 테두리 색상 */
 }
 
@@ -411,16 +420,14 @@ footer {
   .sidebar-right,
   header,
   #search-input,
-  .categories select,
-  .category-filter select,
+  select,
   #search-results,
   #toc {
     background-color: #2E2E2E; /* 다크 모드 요소 배경색 */
     border-color: #A8E1DB; /* 다크 모드 테두리 색상 */
   }
 
-  .categories option,
-  .category-filter option {
+  option {
     background-color: #2E2E2E; /* 다크 모드 옵션 배경색 */
     color: #FFFFFF; /* 다크 모드 옵션 텍스트 색상 */
   }
