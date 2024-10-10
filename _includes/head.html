@@ -12,10 +12,11 @@
   <!-- 성능 최적화 -->
   <link rel="preconnect" href="https://www.googletagmanager.com">
   <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link rel="preconnect" href="https://utteranc.es">
   <link rel="preload" href="{{ '/assets/css/style.css' | relative_url }}" as="style">
 
   <!-- 보안 개선 -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; img-src 'self' https://*; style-src 'self' 'unsafe-inline'; font-src 'self';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://utteranc.es; img-src 'self' https://*; style-src 'self' 'unsafe-inline'; font-src 'self'; frame-src https://utteranc.es;">
 
   <!-- 파비콘 및 앱 아이콘 -->
   <link rel="icon" href="/favicon.ico" sizes="any">
