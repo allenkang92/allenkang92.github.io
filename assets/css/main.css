@@ -24,8 +24,8 @@
 body {
   font-family: 'PFStardust', monospace;
   line-height: 1.6;
-  color: #A8E1DB;
-  background-color: #fefefe;
+  color: #A8E1DB; /* 기본 텍스트 색상 */
+  background-color: #fefefe; /* 배경색 */
   image-rendering: pixelated;
   margin: 0;
   padding: 0;
@@ -45,17 +45,22 @@ body {
   margin-right: 280px; /* 사이드바 너비 */
   width: calc(100% - 280px);
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
 .main-content {
+  flex: 1;
   max-width: 800px;
   margin: 0 auto;
+  padding-bottom: 40px; /* 푸터와의 간격 */
 }
 
 .sidebar-right {
   width: 280px;
-  background-color: #fefefe;
-  border-left: 2px solid #A8E1DB;
+  background-color: #fefefe; /* 사이드바 배경색 */
+  border-left: 2px solid #A8E1DB; /* 사이드바 테두리 색상 */
   padding: 20px;
   box-sizing: border-box;
   position: fixed;
@@ -70,11 +75,11 @@ body {
 .sidebar-right h1, 
 .sidebar-right p, 
 .sidebar-right a {
-  color: #A8E1DB;
+  color: #A8E1DB; /* 사이드바 텍스트 색상 */
 }
 
 .sidebar-right a:hover {
-  color: #C1B3F2;
+  color: #C1B3F2; /* 사이드바 링크 호버 색상 */
 }
 
 /* 프로필 스타일 */
@@ -87,7 +92,7 @@ body {
   width: 100px;
   height: 100px;
   border-radius: 50%;
-  border: 2px solid #A8E1DB;
+  border: 2px solid #A8E1DB; /* 프로필 이미지 테두리 색상 */
   margin-bottom: 15px;
 }
 
@@ -100,33 +105,57 @@ body {
 #search-input {
   width: 100%;
   padding: 10px;
-  border: 2px solid #A8E1DB;
-  background-color: #fefefe;
-  color: #A8E1DB;
+  border: 2px solid #A8E1DB; /* 검색창 테두리 색상 */
+  background-color: #fefefe; /* 검색창 배경색 */
+  color: #A8E1DB; /* 검색창 텍스트 색상 */
   box-sizing: border-box;
+  font-family: 'PFStardust', monospace;
+  font-size: 16px;
+}
+
+/* 플레이스홀더 스타일 */
+#search-input::placeholder {
+  color: #A8E1DB; /* 플레이스홀더 색상 */
+  opacity: 0.7;
+  font-family: 'PFStardust', monospace;
+}
+
+/* 웹킷 브라우저용 */
+#search-input::-webkit-input-placeholder {
+  font-family: 'PFStardust', monospace;
+}
+
+/* 파이어폭스용 */
+#search-input::-moz-placeholder {
+  font-family: 'PFStardust', monospace;
+}
+
+/* IE 10+용 */
+#search-input:-ms-input-placeholder {
+  font-family: 'PFStardust', monospace;
 }
 
 /* 메인 헤더 스타일 */
 header {
-  background-color: #fefefe;
+  background-color: #fefefe; /* 헤더 배경색 */
   padding: 20px;
   margin-bottom: 20px;
-  border-bottom: 2px solid #A8E1DB;
+  border-bottom: 2px solid #A8E1DB; /* 헤더 하단 테두리 색상 */
 }
 
 /* 헤딩 스타일 */
 h1, h2, h3 {
   font-weight: bold;
-  color: #C1B3F2;
+  color: #C1B3F2; /* 헤딩 색상 */
 }
 
 /* 카테고리 드롭다운 스타일 */
 .categories select, .category-filter select {
   width: 100%;
   padding: 8px;
-  border: 2px solid #A8E1DB;
-  background-color: #fefefe;
-  color: #A8E1DB;
+  border: 2px solid #A8E1DB; /* 드롭다운 테두리 색상 */
+  background-color: #fefefe; /* 드롭다운 배경색 */
+  color: #A8E1DB; /* 드롭다운 텍스트 색상 */
   font-family: 'PFStardust', monospace;
   outline: none;
   border-radius: 5px;
@@ -145,8 +174,8 @@ h1, h2, h3 {
 }
 
 .categories option, .category-filter option {
-  background-color: #fefefe;
-  color: #A8E1DB;
+  background-color: #fefefe; /* 옵션 배경색 */
+  color: #A8E1DB; /* 옵션 텍스트 색상 */
   font-family: 'PFStardust', monospace;
 }
 
@@ -154,17 +183,17 @@ h1, h2, h3 {
 .categories select:focus,
 .category-filter select:hover,
 .category-filter select:focus {
-  border-color: #FFCBDF;
+  border-color: #FFCBDF; /* 드롭다운 호버/포커스 테두리 색상 */
 }
 
 /* 링크 스타일 */
 a {
-  color: #FFCBDF;
+  color: #FFCBDF; /* 링크 색상 */
   text-decoration: none;
 }
 
 a:hover {
-  color: #C1B3F2;
+  color: #C1B3F2; /* 링크 호버 색상 */
 }
 
 /* 포스트 목록 스타일 */
@@ -174,15 +203,16 @@ a:hover {
 }
 
 .post-meta {
-  color: #FFCBDF;
+  color: #FFCBDF; /* 포스트 메타 정보 색상 */
   font-size: 0.9em;
 }
 
 /* 푸터 스타일 */
 footer {
-  margin-top: 40px;
-  padding-top: 20px;
-  border-top: 1px solid #A8E1DB;
+  margin-top: auto; /* 푸터를 항상 하단에 위치 */
+  padding: 20px;
+  background-color: #fefefe; /* 푸터 배경색 */
+  border-top: 1px solid #A8E1DB; /* 푸터 상단 테두리 색상 */
   text-align: center;
   font-size: 0.9em;
 }
@@ -190,10 +220,10 @@ footer {
 /* 검색 결과 스타일 */
 #search-results {
   position: absolute;
-  background: #fefefe;
+  background: #fefefe; /* 검색 결과 배경색 */
   width: 100%;
   max-width: 280px;
-  border: 2px solid #A8E1DB;
+  border: 2px solid #A8E1DB; /* 검색 결과 테두리 색상 */
   border-top: none;
   z-index: 1001;
   max-height: 300px;
@@ -209,35 +239,35 @@ footer {
 
 #search-results li {
   padding: 10px;
-  border-bottom: 1px solid #A8E1DB;
+  border-bottom: 1px solid #A8E1DB; /* 검색 결과 항목 구분선 색상 */
 }
 
 #search-results a {
-  color: #FFCBDF;
+  color: #FFCBDF; /* 검색 결과 링크 색상 */
   text-decoration: none;
 }
 
 #search-results a:hover {
-  color: #C1B3F2;
+  color: #C1B3F2; /* 검색 결과 링크 호버 색상 */
 }
 
 #search-results mark {
-  background-color: #C1B3F2;
-  color: #EAF4FB;
+  background-color: #C1B3F2; /* 검색 결과 하이라이트 배경색 */
+  color: #EAF4FB; /* 검색 결과 하이라이트 텍스트 색상 */
   padding: 2px;
 }
 
 /* 카테고리와 태그 스타일 */
 .category, .tags {
   font-size: 0.8em;
-  color: #FFCBDF;
+  color: #FFCBDF; /* 카테고리/태그 색상 */
   display: block;
   margin-top: 5px;
 }
 
 #toc {
-  background-color: #fefefe;
-  border: 2px solid #A8E1DB;
+  background-color: #fefefe; /* 목차 배경색 */
+  border: 2px solid #A8E1DB; /* 목차 테두리 색상 */
   padding: 15px;
   margin-bottom: 20px;
 }
@@ -309,8 +339,8 @@ footer {
 /* 다크 모드 */
 @media (prefers-color-scheme: dark) {
   body {
-    background-color: #1a1a1a;
-    color: #fefefe;
+    background-color: #1a1a1a; /* 다크 모드 배경색 */
+    color: #fefefe; /* 다크 모드 텍스트 색상 */
   }
 
   .sidebar-right,
@@ -320,24 +350,24 @@ footer {
   .category-filter select,
   #search-results,
   #toc {
-    background-color: #2a2a2a;
-    border-color: #A8E1DB;
+    background-color: #2a2a2a; /* 다크 모드 요소 배경색 */
+    border-color: #A8E1DB; /* 다크 모드 테두리 색상 */
   }
 
   .categories option,
   .category-filter option {
-    background-color: #2a2a2a;
+    background-color: #2a2a2a; /* 다크 모드 옵션 배경색 */
   }
 
   h1, h2, h3 {
-    color: #C1B3F2;
+    color: #C1B3F2; /* 다크 모드 헤딩 색상 */
   }
 
   a, .sidebar-right a {
-    color: #FFCBDF;
+    color: #FFCBDF; /* 다크 모드 링크 색상 */
   }
 
   a:hover, .sidebar-right a:hover {
-    color: #C1B3F2;
+    color: #C1B3F2; /* 다크 모드 링크 호버 색상 */
   }
 }
