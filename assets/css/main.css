@@ -21,28 +21,32 @@
 }
 
 /* 전체 레이아웃 */
+html, body {
+  height: 100%; /* 추가 */
+  margin: 0;
+  padding: 0;
+}
+
 body {
   font-family: 'PFStardust', monospace;
   line-height: 1.6;
   color: #A8E1DB; /* 기본 텍스트 색상 */
   background-color: #fefefe; /* 배경색 */
   image-rendering: pixelated;
-  margin: 0;
-  padding: 0;
   overflow-x: hidden;
 }
 
 .layout-container {
   display: flex;
   flex-direction: row-reverse;
-  min-height: 100vh;
   width: 100%;
+  /* min-height: 100vh; */ /* 제거 */
 }
 
 .content-wrapper {
   display: flex; /* 추가 */
   flex-direction: column; /* 추가 */
-  min-height: 100vh; /* 추가 */
+  height: 100%; /* 변경: min-height에서 height로 */
   flex: 1;
   padding: 20px;
   margin-right: 280px; /* 사이드바 너비 */
@@ -311,6 +315,7 @@ footer {
     width: 100%;
     margin-right: 0;
     padding: 20px;
+    height: auto; /* 모바일에서는 height 조정 */
   }
 
   .sidebar-right {
