@@ -40,18 +40,18 @@ body {
 }
 
 .content-wrapper {
+  display: flex; /* 추가 */
+  flex-direction: column; /* 추가 */
+  min-height: 100vh; /* 추가 */
   flex: 1;
   padding: 20px;
   margin-right: 280px; /* 사이드바 너비 */
   width: calc(100% - 280px);
   box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
 }
 
 .main-content {
-  flex: 1;
+  flex: 1; /* 추가 */
   max-width: 800px;
   margin: 0 auto;
   padding-bottom: 40px; /* 푸터와의 간격 */
