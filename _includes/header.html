@@ -8,7 +8,9 @@
   <div class="blog-title">
     <h1>{{ site.title }}</h1>
     {% if site.description %}
-      <p>{{ site.description }}</p>
+      <p>{{ site.description | newline_to_br }}</p>
+      <!-- 또는, newline_to_br 필터가 작동하지 않을 경우 -->
+      <!-- <p>{{ site.description | replace: '\n', '<br>' }}</p> -->
     {% endif %}
   </div>
   
