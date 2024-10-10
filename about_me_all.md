@@ -21,7 +21,7 @@
 
 | **Category** | **Details** |
 |--------------|-------------|
-| **![Professional Experiences](https://img.shields.io/badge/Professional%20Experiences-EAF4FB?style=flat-square)** | ![Startup Marketing team](https://img.shields.io/badge/Startup%20Marketing%20Team%-A8E1DB?style=flat-square) ![Financial Loan Officer](https://img.shields.io/badge/Financial%20Loan%20Officer-A8E1DB?style=flat-square) ![Chemical Engineering Researcher](https://img.shields.io/badge/Chemical%20Engineering%20Researcher-A8E1DB?style=flat-square) |
+| **![Professional Experiences](https://img.shields.io/badge/Professional%20Experiences-EAF4FB?style=flat-square)** | ![Startup Marketer](https://img.shields.io/badge/Startup%20Marketer-A8E1DB?style=flat-square) ![Financial Loan Officer](https://img.shields.io/badge/Financial%20Loan%20Officer-A8E1DB?style=flat-square) ![Chemical Engineering Researcher](https://img.shields.io/badge/Chemical%20Engineering%20Researcher-A8E1DB?style=flat-square) |
 {:.custom-table}
 
 ## Tech Stack
