@@ -1,33 +1,26 @@
+
 ## Knowledge Domains
 
 #### My Majors & Planned Majors
 
-<div class="custom-table">
-
 | **Category** | **Details** |
-|------------|-------------|
+|--------------|-------------|
 | **![My Majors](https://img.shields.io/badge/My%20Majors-EAF4FB?style=flat-square)** | ![Sports Science](https://img.shields.io/badge/Sports%20Science-A8E1DB?style=flat-square) ![Anthropology](https://img.shields.io/badge/Anthropology-A8E1DB?style=flat-square) ![Law](https://img.shields.io/badge/Law-A8E1DB?style=flat-square) ![Intellectual Property](https://img.shields.io/badge/Intellectual%20Property-A8E1DB?style=flat-square) ![Computer Engineering](https://img.shields.io/badge/Computer%20Engineering-C1B3F2?style=flat-square) |
 | **![Planned Majors](https://img.shields.io/badge/Planned%20Majors-EAF4FB?style=flat-square)** | ![Mechanical Engineering](https://img.shields.io/badge/Mechanical%20Engineering-FFCBDF?style=flat-square) ![Atmospheric Science](https://img.shields.io/badge/Atmospheric%20Science-FFCBDF?style=flat-square) ![Psychology](https://img.shields.io/badge/Psychology-FFCBDF?style=flat-square) |
-
-</div>
+{:.custom-table}
 
 #### Areas of Interest & Specific Interests
 
-<div class="custom-table">
-
 | **Category** | **Details** |
-|------------|-------------|
+|--------------|-------------|
 | **![Areas of Interest](https://img.shields.io/badge/Areas%20of%20Interest-EAF4FB?style=flat-square)** | ![Physics](https://img.shields.io/badge/Physics-A8E1DB?style=flat-square) ![Chemistry](https://img.shields.io/badge/Chemistry-A8E1DB?style=flat-square) ![Life Science](https://img.shields.io/badge/Life%20Science-A8E1DB?style=flat-square) ![Mathematics](https://img.shields.io/badge/Mathematics-A8E1DB?style=flat-square) ![Cognitive Science](https://img.shields.io/badge/Cognitive%20Science-C1B3F2?style=flat-square) ![Neuroscience](https://img.shields.io/badge/Neuroscience-C1B3F2?style=flat-square) ![Human Factors Engineering](https://img.shields.io/badge/Human%20Factors%20Engineering-C1B3F2?style=flat-square) ![Cognitive Psychology](https://img.shields.io/badge/Cognitive%20Psychology-C1B3F2?style=flat-square) ![Data Engineering](https://img.shields.io/badge/Data%20Engineering-EAF4FB?style=flat-square) ![Data Science](https://img.shields.io/badge/Data%20Science-EAF4FB?style=flat-square) |
 
-| **![Specific Interests](https://img.shields.io/badge/Specific%20Interests-EAF4FB?style=flat-square)** | ![Brain-Computer Interface](https://img.shields.io/badge/Brain--Computer%20Interface-A8E1DB?style=flat-square) ![Human Behavior Research](https://img.shields.io/badge/Human%20Behavior%20Research-C1B3F2?style=flat-square)  ![Human-Computer Interaction](https://img.shields.io/badge/Human--Computer%20Interaction-C1B3F2?style=flat-square) ![Quantum Computing](https://img.shields.io/badge/Quantum%20Computing-FFCBDF?style=flat-square) ![Bioinformatics](https://img.shields.io/badge/Bioinformatics-FFCBDF?style=flat-square) ![Environmental Issues](https://img.shields.io/badge/Environmental%20Issues-EAF4FB?style=flat-square) ![Social Impact Studies](https://img.shields.io/badge/Social%20Impact%20Studies-EAF4FB?style=flat-square) ![Philosophy of Science](https://img.shields.io/badge/Philosophy%20of%20Science-EAF4FB?style=flat-square) |
-
-</div>
+| **![Specific Interests](https://img.shields.io/badge/Specific%20Interests-EAF4FB?style=flat-square)** | ![Brain-Computer Interface](https://img.shields.io/badge/Brain--Computer%20Interface-A8E1DB?style=flat-square) ![Human Behavior Research](https://img.shields.io/badge/Human%20Behavior%20Research-C1B3F2?style=flat-square) ![Human-Computer Interaction](https://img.shields.io/badge/Human--Computer%20Interaction-C1B3F2?style=flat-square) ![Quantum Computing](https://img.shields.io/badge/Quantum%20Computing-FFCBDF?style=flat-square) ![Bioinformatics](https://img.shields.io/badge/Bioinformatics-FFCBDF?style=flat-square) ![Environmental Issues](https://img.shields.io/badge/Environmental%20Issues-EAF4FB?style=flat-square) ![Social Impact Studies](https://img.shields.io/badge/Social%20Impact%20Studies-EAF4FB?style=flat-square) ![Philosophy of Science](https://img.shields.io/badge/Philosophy%20of%20Science-EAF4FB?style=flat-square) |
+{:.custom-table}
 
 ---
 
 ## Tech Stack
-
-<div class="custom-table">
 
 | **Category** | **Technologies** |
 |--------------|-------------------|
@@ -51,5 +44,5 @@
 | **![Message Brokers](https://img.shields.io/badge/Message%20Brokers-EAF4FB?style=flat-square)** | ![Apache Kafka](https://img.shields.io/badge/Apache%20Kafka-FFCBDF?style=flat-square&logo=Apache-Kafka&logoColor=black) |
 | **![Bioinformatics Tools](https://img.shields.io/badge/Bioinformatics%20Tools-EAF4FB?style=flat-square)** | ![BioPython](https://img.shields.io/badge/BioPython-FFCBDF?style=flat-square&logo=Biopython&logoColor=black) |
 | **![IDE](https://img.shields.io/badge/IDE-EAF4FB?style=flat-square)** | ![VSCode](https://img.shields.io/badge/VSCode-A8E1DB?style=flat-square&logo=Visual-Studio-Code&logoColor=black) ![IntelliJ IDEA](https://img.shields.io/badge/IntelliJ%20IDEA-FFCBDF?style=flat-square&logo=IntelliJ-IDEA&logoColor=black) |
+{:.custom-table}
 
-</div>
