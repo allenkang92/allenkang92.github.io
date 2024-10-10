@@ -439,16 +439,10 @@ footer {
 
   header,
   #search-input,
-  select,
   #search-results,
   #toc {
     background-color: #2E2E2E; /* 다크 모드 요소 배경색 */
     border-color: #A8E1DB; /* 다크 모드 테두리 색상 */
-  }
-
-  option {
-    background-color: #2E2E2E; /* 다크 모드 옵션 배경색 */
-    color: #FFFFFF; /* 다크 모드 옵션 텍스트 색상 */
   }
 
   h1, h2, h3 {
@@ -461,6 +455,36 @@ footer {
 
   a:hover {
     color: #EAF4FB; /* 다크 모드 링크 호버 색상 */
+  }
+
+  /* 드롭다운 스타일 */
+  select {
+    background-color: #FFFFFF; /* 다크 모드 드롭다운 배경색을 흰색으로 변경 */
+    color: #000000; /* 드롭다운 텍스트 색상 */
+    border: 2px solid #A8E1DB;
+    font-family: 'PFStardust', monospace;
+    font-size: 16px;
+    outline: none;
+    border-radius: 0;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml;utf8,<svg fill='%23005F5F' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+    background-repeat: no-repeat;
+    background-position-x: calc(100% - 10px);
+    background-position-y: center;
+  }
+
+  option {
+    background-color: #FFFFFF; /* 다크 모드 옵션 배경색을 흰색으로 변경 */
+    color: #000000; /* 옵션 텍스트 색상 */
+  }
+
+  /* 드롭다운 호버 및 포커스 스타일 */
+  select:hover,
+  select:focus {
+    border-color: #005F5F; /* 드롭다운 호버/포커스 테두리 색상 */
   }
 
   /* 버튼 스타일 */
