@@ -85,7 +85,8 @@ body {
 
 /* 사이드바 내부 스타일 */
 .sidebar-right h1,
-.sidebar-right p {
+.sidebar-right p,
+.sidebar-right li {
   color: #000000; /* 사이드바 텍스트 색상 */
 }
 
@@ -417,7 +418,25 @@ footer {
     color: #FFFFFF; /* 다크 모드 텍스트 색상 */
   }
 
-  .sidebar-right,
+  .sidebar-right {
+    background-color: #2A2A2A; /* 사이드바 배경색 조정 */
+    border-color: #A8E1DB;
+  }
+
+  .sidebar-right h1,
+  .sidebar-right p,
+  .sidebar-right li {
+    color: #FFFFFF; /* 사이드바 텍스트 색상 */
+  }
+
+  .sidebar-right a {
+    color: #A8E1DB; /* 다크 모드 링크 색상 */
+  }
+
+  .sidebar-right a:hover {
+    color: #EAF4FB; /* 다크 모드 링크 호버 색상 */
+  }
+
   header,
   #search-input,
   select,
@@ -436,11 +455,11 @@ footer {
     color: #FFFFFF; /* 다크 모드 헤딩 색상 */
   }
 
-  a, .sidebar-right a {
+  a {
     color: #A8E1DB; /* 다크 모드 링크 색상 */
   }
 
-  a:hover, .sidebar-right a:hover {
+  a:hover {
     color: #EAF4FB; /* 다크 모드 링크 호버 색상 */
   }
 
@@ -473,12 +492,38 @@ footer {
     color: #1A1A1A;
     padding: 2px;
   }
-}
 
-/* 이미지 스타일 - 다크 모드 */
-@media (prefers-color-scheme: dark) {
+  /* 푸터 스타일 */
+  footer {
+    background-color: #2E2E2E; /* 다크 모드 푸터 배경색 */
+    color: #FFFFFF; /* 다크 모드 푸터 텍스트 색상 */
+    border-top: 1px solid #A8E1DB; /* 푸터 상단 테두리 색상 */
+  }
+
+  /* 이미지 스타일 - 다크 모드 */
   .post-content img {
     border: 2px solid #A8E1DB; /* 이미지 테두리 색상 */
     box-shadow: 0 2px 4px rgba(0,0,0,0.5); /* 이미지 그림자 */
+  }
+
+  /* 테이블 스타일 */
+  .custom-table {
+    background-color: #2E2E2E;
+  }
+
+  .custom-table table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .custom-table th,
+  .custom-table td {
+    border: 1px solid #A8E1DB;
+    padding: 8px;
+    color: #FFFFFF;
+  }
+
+  .custom-table th {
+    background-color: #3A3A3A;
   }
 }
