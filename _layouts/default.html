@@ -10,16 +10,16 @@
             <main class="main-content" role="main">
                 {{ content }}
             </main>
+            <!-- footer를 content-wrapper 안으로 이동 -->
+            <footer>
+                {% include footer.html %}
+            </footer>
         </div>
     
         <aside class="sidebar-right">
             {% include header.html %}
         </aside>
     </div>
-
-    <footer>
-        {% include footer.html %}
-    </footer>
     
     <!-- 검색 및 필터링 스크립트 -->
     <script>
