@@ -2,12 +2,18 @@
 
 #### My Majors & Planned Majors
 
+<div class="custom-table">
+
 | **Category** | **Details** |
 |------------|-------------|
 | **![My Majors](https://img.shields.io/badge/My%20Majors-EAF4FB?style=flat-square)** | ![Sports Science](https://img.shields.io/badge/Sports%20Science-A8E1DB?style=flat-square) ![Anthropology](https://img.shields.io/badge/Anthropology-A8E1DB?style=flat-square) ![Law](https://img.shields.io/badge/Law-A8E1DB?style=flat-square) ![Intellectual Property](https://img.shields.io/badge/Intellectual%20Property-A8E1DB?style=flat-square) ![Computer Engineering](https://img.shields.io/badge/Computer%20Engineering-C1B3F2?style=flat-square) |
 | **![Planned Majors](https://img.shields.io/badge/Planned%20Majors-EAF4FB?style=flat-square)** | ![Mechanical Engineering](https://img.shields.io/badge/Mechanical%20Engineering-FFCBDF?style=flat-square) ![Atmospheric Science](https://img.shields.io/badge/Atmospheric%20Science-FFCBDF?style=flat-square) ![Psychology](https://img.shields.io/badge/Psychology-FFCBDF?style=flat-square) |
 
+</div>
+
 #### Areas of Interest & Specific Interests
+
+<div class="custom-table">
 
 | **Category** | **Details** |
 |------------|-------------|
@@ -15,29 +21,35 @@
 
 | **![Specific Interests](https://img.shields.io/badge/Specific%20Interests-EAF4FB?style=flat-square)** | ![Brain-Computer Interface](https://img.shields.io/badge/Brain--Computer%20Interface-A8E1DB?style=flat-square) ![Human Behavior Research](https://img.shields.io/badge/Human%20Behavior%20Research-C1B3F2?style=flat-square)  ![Human-Computer Interaction](https://img.shields.io/badge/Human--Computer%20Interaction-C1B3F2?style=flat-square) ![Quantum Computing](https://img.shields.io/badge/Quantum%20Computing-FFCBDF?style=flat-square) ![Bioinformatics](https://img.shields.io/badge/Bioinformatics-FFCBDF?style=flat-square) ![Environmental Issues](https://img.shields.io/badge/Environmental%20Issues-EAF4FB?style=flat-square) ![Social Impact Studies](https://img.shields.io/badge/Social%20Impact%20Studies-EAF4FB?style=flat-square) ![Philosophy of Science](https://img.shields.io/badge/Philosophy%20of%20Science-EAF4FB?style=flat-square) |
 
+</div>
 
+---
 
 ## Tech Stack
 
+<div class="custom-table">
+
 | **Category** | **Technologies** |
 |--------------|-------------------|
-| **![Programming Languages](https://img.shields.io/badge/Programming%20Languages-EAF4FB?style=flat-square)** | ![Python](https://img.shields.io/badge/Python-A8E1DB?style=flat-square&logo=Python&logoColor=white) ![Java](https://img.shields.io/badge/Java-C1B3F2?style=flat-square&logo=Java&logoColor=white) ![C](https://img.shields.io/badge/C-FFCBDF?style=flat-square&logo=C&logoColor=white) |
-| **![Design Tools](https://img.shields.io/badge/Design%20Tools-EAF4FB?style=flat-square)** | ![Photoshop](https://img.shields.io/badge/Photoshop-A8E1DB?style=flat-square&logo=Adobe-Photoshop&logoColor=white) ![Illustrator](https://img.shields.io/badge/Illustrator-A8E1DB?style=flat-square&logo=Adobe-Illustrator&logoColor=white) ![Figma](https://img.shields.io/badge/Figma-A8E1DB?style=flat-square&logo=Figma&logoColor=white) |
-| **![Web Technologies](https://img.shields.io/badge/Web%20Technologies-EAF4FB?style=flat-square)** | ![HTML](https://img.shields.io/badge/HTML-A8E1DB?style=flat-square&logo=HTML5&logoColor=white) ![CSS](https://img.shields.io/badge/CSS-A8E1DB?style=flat-square&logo=CSS3&logoColor=white) |
-| **![Web Frameworks](https://img.shields.io/badge/Web%20Frameworks-EAF4FB?style=flat-square)** | ![FastAPI](https://img.shields.io/badge/FastAPI-C1B3F2?style=flat-square&logo=FastAPI&logoColor=white) |
-| **![Web Crawling](https://img.shields.io/badge/Web%20Crawling-EAF4FB?style=flat-square)** | ![Selenium](https://img.shields.io/badge/Selenium-FFCBDF?style=flat-square&logo=Selenium&logoColor=white) |
-| **![Data Processing Tools](https://img.shields.io/badge/Data%20Processing%20Tools-EAF4FB?style=flat-square)** | ![Apache Spark](https://img.shields.io/badge/Apache%20Spark-A8E1DB?style=flat-square&logo=Apache-Spark&logoColor=white) |
-| **![Statistics](https://img.shields.io/badge/Statistics-EAF4FB?style=flat-square)** | ![SciPy](https://img.shields.io/badge/SciPy-FFCBDF?style=flat-square&logo=SciPy&logoColor=white) |
-| **![Data Analysis Tools](https://img.shields.io/badge/Data%20Analysis%20Tools-EAF4FB?style=flat-square)** | ![NumPy](https://img.shields.io/badge/NumPy-A8E1DB?style=flat-square&logo=NumPy&logoColor=white) ![Pandas](https://img.shields.io/badge/Pandas-C1B3F2?style=flat-square&logo=Pandas&logoColor=white) ![Jupyter](https://img.shields.io/badge/Jupyter-A8E1DB?style=flat-square&logo=Jupyter&logoColor=white) |
-| **![Cloud Services](https://img.shields.io/badge/Cloud%20Services-EAF4FB?style=flat-square)** | ![AWS](https://img.shields.io/badge/AWS-A8E1DB?style=flat-square&logo=amazonwebservices&logoColor=white) |
-| **![ETL Tools](https://img.shields.io/badge/ETL%20Tools-EAF4FB?style=flat-square)** | ![Apache Airflow](https://img.shields.io/badge/Apache%20Airflow-C1B3F2?style=flat-square&logo=Apache-Airflow&logoColor=white) |
-| **![Databases](https://img.shields.io/badge/Databases-EAF4FB?style=flat-square)** | ![SQLite](https://img.shields.io/badge/Sqlite-A8E1DB?style=flat-square&logo=SQLite&logoColor=white) ![MySQL](https://img.shields.io/badge/MySQL-A8E1DB?style=flat-square&logo=MySQL&logoColor=white) ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-FFCBDF?style=flat-square&logo=PostgreSQL&logoColor=white) |
-| **![Machine Learning and Deep Learning](https://img.shields.io/badge/Machine%20Learning%20and%20Deep%20Learning-EAF4FB?style=flat-square)** | ![Scikit-learn](https://img.shields.io/badge/Scikit--learn-FFCBDF?style=flat-square&logo=Scikit-learn&logoColor=white) ![PyTorch](https://img.shields.io/badge/PyTorch-C1B3F2?style=flat-square&logo=PyTorch&logoColor=white) |
-| **![Data Visualization](https://img.shields.io/badge/Data%20Visualization-EAF4FB?style=flat-square)** | ![Tableau](https://img.shields.io/badge/Tableau-FFCBDF?style=flat-square&logo=Tableau&logoColor=white) |
-| **![Monitoring and Logging](https://img.shields.io/badge/Monitoring%20and%20Logging-EAF4FB?style=flat-square)** | ![ELK](https://img.shields.io/badge/ELK-A8E1DB?style=flat-square&logo=Elastic-Stack&logoColor=white) |
-| **![Version Control](https://img.shields.io/badge/Version%20Control-EAF4FB?style=flat-square)** | ![GitHub](https://img.shields.io/badge/GitHub-A8E1DB?style=flat-square&logo=GitHub&logoColor=white) |
-| **![CI/CD Tools ](https://img.shields.io/badge/CI/CD%20Tools-EAF4FB?style=flat-square)** | ![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-C1B3F2?style=flat-square&logo=GitHub-Actions&logoColor=white) |
-| **![Containers and Orchestration](https://img.shields.io/badge/Containers%20and%20Orchestration-EAF4FB?style=flat-square)** | ![Docker](https://img.shields.io/badge/Docker-A8E1DB?style=flat-square&logo=Docker&logoColor=white) ![Kubernetes](https://img.shields.io/badge/Kubernetes-FFCBDF?style=flat-square&logo=Kubernetes&logoColor=white) |
-| **![Message Brokers](https://img.shields.io/badge/Message%20Brokers-EAF4FB?style=flat-square)** | ![Apache Kafka](https://img.shields.io/badge/Apache%20Kafka-FFCBDF?style=flat-square&logo=Apache-Kafka&logoColor=white) |
-| **![Bioinformatics Tools](https://img.shields.io/badge/Bioinformatics%20Tools-EAF4FB?style=flat-square)** | ![BioPython](https://img.shields.io/badge/BioPython-FFCBDF?style=flat-square&logo=Biopython&logoColor=white) |
-| **![IDE](https://img.shields.io/badge/IDE-EAF4FB?style=flat-square)**| ![VSCode](https://img.shields.io/badge/VSCode-A8E1DB?style=flat-square&logo=Visual-Studio-Code&logoColor=130613) ![IntelliJ](https://img.shields.io/badge/IntelliJ-FFCBDF?style=flat-square&logo=IntelliJ-IDEA&logoColor=white) |
+| **![Programming Languages](https://img.shields.io/badge/Programming%20Languages-EAF4FB?style=flat-square)** | ![Python](https://img.shields.io/badge/Python-A8E1DB?style=flat-square&logo=Python&logoColor=black) ![Java](https://img.shields.io/badge/Java-C1B3F2?style=flat-square&logo=Java&logoColor=black) ![C](https://img.shields.io/badge/C-FFCBDF?style=flat-square&logo=C&logoColor=black) |
+| **![Design Tools](https://img.shields.io/badge/Design%20Tools-EAF4FB?style=flat-square)** | ![Photoshop](https://img.shields.io/badge/Photoshop-A8E1DB?style=flat-square&logo=Adobe-Photoshop&logoColor=black) ![Illustrator](https://img.shields.io/badge/Illustrator-A8E1DB?style=flat-square&logo=Adobe-Illustrator&logoColor=black) ![Figma](https://img.shields.io/badge/Figma-A8E1DB?style=flat-square&logo=Figma&logoColor=black) |
+| **![Web Technologies](https://img.shields.io/badge/Web%20Technologies-EAF4FB?style=flat-square)** | ![HTML](https://img.shields.io/badge/HTML-A8E1DB?style=flat-square&logo=HTML5&logoColor=black) ![CSS](https://img.shields.io/badge/CSS-A8E1DB?style=flat-square&logo=CSS3&logoColor=black) |
+| **![Web Frameworks](https://img.shields.io/badge/Web%20Frameworks-EAF4FB?style=flat-square)** | ![FastAPI](https://img.shields.io/badge/FastAPI-C1B3F2?style=flat-square&logo=FastAPI&logoColor=black) |
+| **![Web Crawling](https://img.shields.io/badge/Web%20Crawling-EAF4FB?style=flat-square)** | ![Selenium](https://img.shields.io/badge/Selenium-FFCBDF?style=flat-square&logo=Selenium&logoColor=black) |
+| **![Data Processing Tools](https://img.shields.io/badge/Data%20Processing%20Tools-EAF4FB?style=flat-square)** | ![Apache Spark](https://img.shields.io/badge/Apache%20Spark-A8E1DB?style=flat-square&logo=Apache-Spark&logoColor=black) |
+| **![Statistics](https://img.shields.io/badge/Statistics-EAF4FB?style=flat-square)** | ![SciPy](https://img.shields.io/badge/SciPy-FFCBDF?style=flat-square&logo=Scipy&logoColor=black) |
+| **![Data Analysis Tools](https://img.shields.io/badge/Data%20Analysis%20Tools-EAF4FB?style=flat-square)** | ![NumPy](https://img.shields.io/badge/NumPy-A8E1DB?style=flat-square&logo=NumPy&logoColor=black) ![Pandas](https://img.shields.io/badge/Pandas-C1B3F2?style=flat-square&logo=Pandas&logoColor=black) ![Jupyter](https://img.shields.io/badge/Jupyter-A8E1DB?style=flat-square&logo=Jupyter&logoColor=black) |
+| **![Cloud Services](https://img.shields.io/badge/Cloud%20Services-EAF4FB?style=flat-square)** | ![AWS](https://img.shields.io/badge/AWS-A8E1DB?style=flat-square&logo=Amazon-AWS&logoColor=black) |
+| **![ETL Tools](https://img.shields.io/badge/ETL%20Tools-EAF4FB?style=flat-square)** | ![Apache Airflow](https://img.shields.io/badge/Apache%20Airflow-C1B3F2?style=flat-square&logo=Apache-Airflow&logoColor=black) |
+| **![Databases](https://img.shields.io/badge/Databases-EAF4FB?style=flat-square)** | ![SQLite](https://img.shields.io/badge/SQLite-A8E1DB?style=flat-square&logo=SQLite&logoColor=black) ![MySQL](https://img.shields.io/badge/MySQL-A8E1DB?style=flat-square&logo=MySQL&logoColor=black) ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-FFCBDF?style=flat-square&logo=PostgreSQL&logoColor=black) |
+| **![Machine Learning and Deep Learning](https://img.shields.io/badge/Machine%20Learning%20and%20Deep%20Learning-EAF4FB?style=flat-square)** | ![Scikit-learn](https://img.shields.io/badge/Scikit--learn-FFCBDF?style=flat-square&logo=scikit-learn&logoColor=black) ![PyTorch](https://img.shields.io/badge/PyTorch-C1B3F2?style=flat-square&logo=PyTorch&logoColor=black) |
+| **![Data Visualization](https://img.shields.io/badge/Data%20Visualization-EAF4FB?style=flat-square)** | ![Tableau](https://img.shields.io/badge/Tableau-FFCBDF?style=flat-square&logo=Tableau&logoColor=black) |
+| **![Monitoring and Logging](https://img.shields.io/badge/Monitoring%20and%20Logging-EAF4FB?style=flat-square)** | ![ELK Stack](https://img.shields.io/badge/ELK%20Stack-A8E1DB?style=flat-square&logo=Elastic-Stack&logoColor=black) |
+| **![Version Control](https://img.shields.io/badge/Version%20Control-EAF4FB?style=flat-square)** | ![GitHub](https://img.shields.io/badge/GitHub-A8E1DB?style=flat-square&logo=GitHub&logoColor=black) |
+| **![CI/CD Tools](https://img.shields.io/badge/CI%2FCD%20Tools-EAF4FB?style=flat-square)** | ![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-C1B3F2?style=flat-square&logo=GitHub-Actions&logoColor=black) |
+| **![Containers and Orchestration](https://img.shields.io/badge/Containers%20and%20Orchestration-EAF4FB?style=flat-square)** | ![Docker](https://img.shields.io/badge/Docker-A8E1DB?style=flat-square&logo=Docker&logoColor=black) ![Kubernetes](https://img.shields.io/badge/Kubernetes-FFCBDF?style=flat-square&logo=Kubernetes&logoColor=black) |
+| **![Message Brokers](https://img.shields.io/badge/Message%20Brokers-EAF4FB?style=flat-square)** | ![Apache Kafka](https://img.shields.io/badge/Apache%20Kafka-FFCBDF?style=flat-square&logo=Apache-Kafka&logoColor=black) |
+| **![Bioinformatics Tools](https://img.shields.io/badge/Bioinformatics%20Tools-EAF4FB?style=flat-square)** | ![BioPython](https://img.shields.io/badge/BioPython-FFCBDF?style=flat-square&logo=Biopython&logoColor=black) |
+| **![IDE](https://img.shields.io/badge/IDE-EAF4FB?style=flat-square)** | ![VSCode](https://img.shields.io/badge/VSCode-A8E1DB?style=flat-square&logo=Visual-Studio-Code&logoColor=black) ![IntelliJ IDEA](https://img.shields.io/badge/IntelliJ%20IDEA-FFCBDF?style=flat-square&logo=IntelliJ-IDEA&logoColor=black) |
+
+</div>
