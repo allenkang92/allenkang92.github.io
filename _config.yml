@@ -12,7 +12,7 @@ email: ksw8841@knou.ac.kr
 # Build settings
 markdown: kramdown
 theme: minima
-future: true  # 이 줄을 추가합니다.
+future: true
 plugins:
   - jekyll-feed
   - jekyll-seo-tag
@@ -204,27 +204,25 @@ category_structure:
   daily_life:
     title: Daily Life
     subcategories:
-      - personal  # 개인적인 일상
-      - travel  # 여행
-      - hobbies  # 취미
-      - reflections  # 생각 및 회고
-      - work  # 업무 및 생산성
-      - self_improvement  # 자기 계발
-      - tech_experiences  # 기술 사용 경험
-      - social_life  # 사회생활 및 모임
-      - entertainment  # 여가 및 취미 생활
-      - food  # 음식 및 요리
-      - fitness  # 운동 및 건강 관리
-      - relationships  # 인간관계 및 사회생활
-      - education  # 교육 및 학습
-      - culture  # 문화 및 예술
-      - politics  # 정치 및 사회 문제
-      - environment  # 환경 및 지속가능성
-      - media  # 미디어 및 방송
-      - literature  # 문학 및 작품
-      - music  # 음악 및 연주
-
-
+      - personal
+      - travel
+      - hobbies
+      - reflections
+      - work
+      - self_improvement
+      - tech_experiences
+      - social_life
+      - entertainment
+      - food
+      - fitness
+      - relationships
+      - education
+      - culture
+      - politics
+      - environment
+      - media
+      - literature
+      - music
 
 # _config.yml 파일의 마지막에 추가
 defaults:
@@ -257,3 +255,6 @@ webrick:
       frame-ancestors 'self';
       form-action 'self';
       base-uri 'self'
+
+# 추가된 설정
+destination: ./_site

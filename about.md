@@ -8,6 +8,6 @@ title: About
   {{ my_include | markdownify }}
 </div>
 
-<div id="skill-chart"></div>
+<div id="skill-chart" style="width: 100%; height: 400px;"></div>
 
 <script src="{{ '/assets/js/bundle.js' | relative_url }}"></script>
