@@ -29,7 +29,7 @@ const SkillRadarChart = () => {
   return (
     <div style={{ width: '100%', height: '100%', minHeight: '500px', maxWidth: '700px', margin: '0 auto' }}>
       <ResponsiveContainer width="100%" height="100%">
-        <RadarChart outerRadius="80%" data={data}>  {/* outerRadius 값을 85%로 설정 */}
+        <RadarChart outerRadius="75%" data={data}>  
           <PolarGrid />
           <PolarAngleAxis 
             dataKey="subject" 
