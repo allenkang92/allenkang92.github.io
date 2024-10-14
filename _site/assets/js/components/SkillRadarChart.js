@@ -31,7 +31,7 @@ const SkillRadarChart = () => {
             name="Skills" 
             dataKey="value" 
             stroke="#A8E1DB" 
-            fill="#000000" 
+            fill="#A8E1DB"
             fillOpacity={0.6} // 레이더 색상 및 투명도 설정
           />
           <Legend />
