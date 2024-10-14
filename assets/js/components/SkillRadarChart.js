@@ -17,9 +17,9 @@ const renderCustomTick = ({ payload, x, y }) => {
   const lines = payload.value.split(' '); // 띄어쓰기 기준으로 두 줄로 나눔
   const padding = 15;  // 패딩 값 추가
   return (
-    <text x={x} y={y - padding} textAnchor="middle" fill="#000000" fontSize="12px">  {/* 글꼴 크기 설정 및 패딩 반영 */}
+    <text x={x} y={y - padding} textAnchor="middle" fill="#000000" fontSize="11px">  {/* 글꼴 크기 설정 및 패딩 반영 */}
       {lines.map((line, index) => (
-        <tspan x={x} dy={index * 15} key={index}>{line}</tspan> // 두 줄로 나누어 출력, 줄 간격도 조정 가능
+        <tspan x={x} dy={index * 13} key={index}>{line}</tspan> // 두 줄로 나누어 출력, 줄 간격도 조정 가능
       ))}
     </text>
   );
@@ -39,7 +39,7 @@ const SkillRadarChart = () => {
           <PolarRadiusAxis 
             angle={45} 
             domain={[0, 100]} 
-            tick={{ fontSize: '7px', fill: '#000000', fontWeight: 'bold' }}  
+            tick={{ fontSize: '5px', fill: '#000000', fontWeight: 'bold' }}  
           />
           <Radar 
             name="Skills" 
