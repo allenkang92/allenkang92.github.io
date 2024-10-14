@@ -47,7 +47,7 @@ const SkillRadarChart = () => {
             fill="#A8E1DB" 
             fillOpacity={0.6} // 레이더 색상 및 투명도 설정
           />
-          <Legend />
+          <Legend wrapperStyle={{ marginTop: '20px' }} />  {/* 범례와 차트 사이의 간격 조정 */}
         </RadarChart>
       </ResponsiveContainer>
     </div>
