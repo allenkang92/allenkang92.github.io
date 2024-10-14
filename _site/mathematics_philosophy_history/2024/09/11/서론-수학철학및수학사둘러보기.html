@@ -434,6 +434,34 @@ document.addEventListener('DOMContentLoaded', function() {
         </aside>
     </div>
 
+    <!-- 블로그 소개 모달 -->
+    <div id="blog-info-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>About This Blog</h2>
+            <section>
+                <h3>Purpose</h3>
+                <!-- Content -->
+            </section>
+            <section>
+                <h3>Main Topics</h3>
+                <!-- Content -->
+            </section>
+            <section>
+                <h3>Blog Structure</h3>
+                <!-- Categories, subcategories explanation -->
+            </section>
+            <section>
+                <h3>Tools Page</h3>
+                <!-- Description -->
+            </section>
+            <section>
+                <h3>Series Collection</h3>
+                <!-- Description -->
+            </section>
+        </div>
+    </div>
+
     <!-- 검색 및 필터링 스크립트 -->
     <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -446,6 +474,29 @@ document.addEventListener('DOMContentLoaded', function() {
 
       if (achievementCategorySelect) {
         achievementCategorySelect.addEventListener('change', filterAchievements);
+      }
+
+      // 블로그 소개 모달 스크립트
+      var modal = document.getElementById("blog-info-modal");
+      var btn = document.getElementById("blog-info-btn");
+      var span = document.getElementsByClassName("close")[0];
+
+      if (btn) {
+        btn.onclick = function() {
+          modal.style.display = "block";
+        }
+      }
+
+      if (span) {
+        span.onclick = function() {
+          modal.style.display = "none";
+        }
+      }
+
+      window.onclick = function(event) {
+        if (event.target == modal) {
+          modal.style.display = "none";
+        }
       }
     });
 
