@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import SkillRadarChart from './SkillRadarChart';
+import SkillRadarChart from './components/SkillRadarChart';
 
 document.addEventListener('DOMContentLoaded', () => {
   const chartContainer = document.getElementById('skill-chart');
