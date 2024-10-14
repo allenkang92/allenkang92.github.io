@@ -20,12 +20,12 @@ const SkillRadarChart = () => {
           <PolarGrid />
           <PolarAngleAxis 
             dataKey="subject" 
-            tick={{ fontSize: '10px', fill: '#A8E1DB' }} // 텍스트 색상 변경
+            tick={{ fontSize: '12px', fill: '#000000' }} // 텍스트 색상 변경
           />
           <PolarRadiusAxis 
             angle={45} 
             domain={[0, 100]} 
-            tick={{ fontSize: '13px', fill: '#000000', fontWeight: 'bold' }}  // 텍스트 색상 및 볼드 처리
+            tick={{ fontSize: '11px', fill: '#000000', fontWeight: 'bold' }}  // 텍스트 색상 및 볼드 처리
           />
           <Radar 
             name="Skills" 
