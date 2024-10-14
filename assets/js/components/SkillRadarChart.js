@@ -2,14 +2,14 @@ import React from 'react';
 import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ResponsiveContainer, Legend } from 'recharts';
 
 const data = [
-  { subject: 'Scientific Knowledge', value: 80, fullMark: 100 },
-  { subject: 'Interdisciplinary Research', value: 80, fullMark: 100 },
+  { subject: ['Scientific', 'Knowledge'], value: 80, fullMark: 100 },
+  { subject: ['Interdisciplinary', 'Research'], value: 80, fullMark: 100 },
   { subject: 'Data Analysis', value: 55, fullMark: 100 },
-  { subject: 'Data Management', value: 70, fullMark: 100 }, // Data Processing + Databases 통합
-  { subject: 'Programming Languages', value: 55, fullMark: 100 },
+  { subject: 'Data Management', value: 70, fullMark: 100 },
+  { subject: ['Programming', 'Languages'], value: 55, fullMark: 100 },
   { subject: 'MLOps', value: 60, fullMark: 100 },
-  { subject: 'Science Communication', value: 80, fullMark: 100 },
-  { subject: 'Data Visualization', value: 75, fullMark: 100 },
+  { subject: ['Science', 'Communication'], value: 80, fullMark: 100 },
+  { subject: ['Data', 'Visualization'], value: 75, fullMark: 100 },
 ];
 
 const SkillRadarChart = () => {
@@ -20,19 +20,20 @@ const SkillRadarChart = () => {
           <PolarGrid />
           <PolarAngleAxis 
             dataKey="subject" 
-            tick={{ fontSize: '13px', fill: '#000000' }} // 텍스트 색상 변경
+            tick={{ fontSize: '10px', fill: '#A8E1DB' }} 
+            tickMargin={20}  // 축과 글씨 사이 간격
           />
           <PolarRadiusAxis 
             angle={45} 
             domain={[0, 100]} 
-            tick={{ fontSize: '6px', fill: '#000000', fontWeight: 'bold' }}  // 텍스트 색상 및 볼드 처리
+            tick={{ fontSize: '13px', fill: '#000000', fontWeight: 'bold' }}  // 텍스트 색상 및 볼드 처리
           />
           <Radar 
             name="Skills" 
             dataKey="value" 
             stroke="#A8E1DB" 
-            fill="#A8E1DB"
-            fillOpacity={0.6} // 레이더 색상 및 투명도 설정
+            fill="#A8E1DB" 
+            fillOpacity={0.6}  // 민트색으로 채우기
           />
           <Legend />
         </RadarChart>
