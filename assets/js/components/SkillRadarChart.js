@@ -18,7 +18,7 @@ const renderCustomTick = ({ payload, x, y }) => {
   return (
     <text x={x} y={y} textAnchor="middle" fill="#000000" fontSize="12px"> 
       {lines.map((line, index) => (
-        <tspan x={x} dy={index * 16} key={index}>{line}</tspan> 
+        <tspan x={x} dy={index * 20} key={index}>{line}</tspan> 
       ))}
     </text>
   );
@@ -28,13 +28,12 @@ const SkillRadarChart = () => {
   return (
     <div style={{ width: '100%', height: '100%', minHeight: '300px', maxWidth: '600px', margin: '0 auto' }}>
       <ResponsiveContainer width="100%" height="100%">
-        <RadarChart outerRadius="60%" data={data}>  {/* outerRadius 줄임 */}
+        <RadarChart outerRadius="50%" data={data}>  {/* outerRadius 더 줄임 */}
           <PolarGrid />
           <PolarAngleAxis 
             dataKey="subject" 
             tick={renderCustomTick} 
-            tickMargin={100} // tickMargin을 크게 설정
-            padding={30} // 추가 여백
+            tickMargin={120} // tickMargin 값 극대화
           />
           <PolarRadiusAxis 
             angle={45} 
