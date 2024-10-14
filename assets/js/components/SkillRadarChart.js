@@ -16,7 +16,7 @@ const data = [
 const renderCustomTick = ({ payload, x, y }) => {
   const lines = payload.value.split(' '); // 띄어쓰기 기준으로 두 줄로 나눔
   return (
-    <text x={x} y={y} textAnchor="middle" fill="#A8E1DB">  {/* 가운데 정렬 및 텍스트 색상 설정 */}
+    <text x={x} y={y} textAnchor="middle" fill="#000000">  {/* 가운데 정렬 및 텍스트 색상 설정 */}
       {lines.map((line, index) => (
         <tspan x={x} dy={index * 12} key={index}>{line}</tspan> // 두 줄로 나누어 출력
       ))}
@@ -33,7 +33,7 @@ const SkillRadarChart = () => {
           <PolarAngleAxis 
             dataKey="subject" 
             tick={renderCustomTick} // 커스텀 tick 사용 (두 줄로 나누기 및 색상 설정)
-            tickMargin={20} // 축과 텍스트 간의 간격 조정
+            tickMargin={40} // 축과 텍스트 간의 간격 조정
           />
           <PolarRadiusAxis 
             angle={45} 
