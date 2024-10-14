@@ -365,6 +365,19 @@ footer {
   }
 }
 
+@media (max-width: 768px) {
+  body {
+    font-size: 14px; /* 모바일에서 글씨 크기 조정 */
+  }
+
+  /* 사이드바 및 기타 요소들을 모바일에서 적절히 표시 */
+  .sidebar-right {
+    width: 100%;
+    height: auto;
+    position: relative;
+  }
+}
+
 @media only screen and (min-width: 768px) and (max-width: 991px) {
   .sidebar-right {
     width: 220px;

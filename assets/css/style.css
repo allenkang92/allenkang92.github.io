@@ -116,6 +116,7 @@ body {
 /* 검색창 스타일 */
 .search-container {
   margin-top: 20px;
+  z-index: 1000;
   position: relative;
 }
 
@@ -361,6 +362,19 @@ footer {
   .content-wrapper {
     margin-right: 250px;
     width: calc(100% - 250px);
+  }
+}
+
+@media (max-width: 768px) {
+  body {
+    font-size: 14px; /* 모바일에서 글씨 크기 조정 */
+  }
+
+  /* 사이드바 및 기타 요소들을 모바일에서 적절히 표시 */
+  .sidebar-right {
+    width: 100%;
+    height: auto;
+    position: relative;
   }
 }
 

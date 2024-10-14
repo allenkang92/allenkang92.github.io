@@ -240,3 +240,20 @@ assets:
 
 # JavaScript processing
 js_dir: assets/js
+
+# WebRick configuration for Content Security Policy
+webrick:
+  headers:
+    Content-Security-Policy: >-
+      default-src 'self';
+      script-src 'self' 'unsafe-inline' 'unsafe-eval';
+      style-src 'self' 'unsafe-inline';
+      img-src 'self' https://* data:;
+      font-src 'self';
+      connect-src 'self';
+      media-src 'self';
+      object-src 'none';
+      child-src 'self';
+      frame-ancestors 'self';
+      form-action 'self';
+      base-uri 'self'
