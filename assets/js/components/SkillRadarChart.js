@@ -14,15 +14,16 @@ const data = [
 
 const SkillRadarChart = () => {
   return (
-    <ResponsiveContainer width="100%" height={500}>
-      <RadarChart cx="50%" cy="50%" outerRadius="80%" data={data}>
-        <PolarGrid />
-        <PolarAngleAxis dataKey="subject" />
-        <PolarRadiusAxis angle={30} domain={[0, 100]} />
-        <Radar name="Skills" dataKey="value" stroke="#A8E1DB" fill="#A8E1DB" fillOpacity={0.6} />
-        <Legend />
-      </RadarChart>
-    </ResponsiveContainer>
+    <div style={{ width: '100%', height: '100%', minHeight: '300px', maxWidth: '600px', margin: '0 auto' }}>
+      <ResponsiveContainer width="100%" height="100%">
+        <RadarChart outerRadius="80%" data={data}>
+          <PolarGrid />
+          <PolarAngleAxis dataKey="subject" tick={{ fontSize: '10px', fill: '#666' }} />
+          <PolarRadiusAxis angle={30} domain={[0, 100]} tick={{ fontSize: '10px' }} />
+          <Radar name="Skills" dataKey="A" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
+        </RadarChart>
+      </ResponsiveContainer>
+    </div>
   );
 };
 

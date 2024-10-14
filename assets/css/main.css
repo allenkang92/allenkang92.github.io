@@ -116,6 +116,7 @@ body {
 /* 검색창 스타일 */
 .search-container {
   margin-top: 20px;
+  z-index: 1000;
   position: relative;
 }
 
