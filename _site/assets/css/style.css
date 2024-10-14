@@ -565,3 +565,55 @@ footer {
     background-color: #FFFFFF;
   }
 }
+
+#blog-info-btn {
+  background-color: #005F5F;
+  color: #EAF4FB;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+#blog-info-btn:hover {
+  background-color: #003F3F;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+  background-color: #EAF4FB;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #C1B3F2;
+  width: 80%;
+  max-width: 600px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.close {
+  color: #005F5F;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+  color: #003F3F;
+  text-decoration: none;
+}
