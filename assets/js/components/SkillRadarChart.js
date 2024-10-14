@@ -39,7 +39,7 @@ const SkillRadarChart = () => {
           <PolarRadiusAxis 
             angle={45} 
             domain={[0, 100]} 
-            tick={{ fontSize: '5px', fill: '#000000', fontWeight: 'bold' }}  
+            tick={{ fontSize: '7px', fill: '#000000', fontWeight: 'bold' }}  
           />
           <Radar 
             name="Skills" 
