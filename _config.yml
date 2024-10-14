@@ -34,6 +34,13 @@ exclude:
   - vendor/cache/
   - vendor/gems/
   - vendor/ruby/
+  - assets/js/webpack.config.js
+  - package.json
+  - package-lock.json
+
+# Include specific files
+include:
+  - assets/js/bundle.js
 
 # Navigation menu
 navigation:
@@ -220,3 +227,11 @@ defaults:
       path: "_data/achievement_categories.yml"
     values:
       layout: achievement
+
+# Assets
+assets:
+  sources:
+    - assets/js
+
+# JavaScript processing
+js_dir: assets/js
