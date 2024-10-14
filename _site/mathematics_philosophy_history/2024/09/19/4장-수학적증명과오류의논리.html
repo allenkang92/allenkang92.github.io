@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0", shrink-to-fit=no">
+  <meta name="description" content="서론 수학적 증명은 수학에서 진리성을 확인하고 지식을 구축하는 핵심 도구입니다. 그러나 모든 증명이 항상 정확한 것은 아니며, 역사적으로 잘못된 증명이나 오류로 인해 수학의 발전이 이뤄진 사례도 많습니다. 이번 장에서는 수학적 증명의 다양한 유형을 살펴보고, 유명한 수학적 오류들을...">
+  <meta property="og:title" content="4장: 수학적 증명과 오류의 논리">
+  <meta property="og:description" content="서론 수학적 증명은 수학에서 진리성을 확인하고 지식을 구축하는 핵심 도구입니다. 그러나 모든 증명이 항상 정확한 것은 아니며, 역사적으로 잘못된 증명이나 오류로 인해 수학의 발전이 이뤄진 사례도 많습니다. 이번 장에서는 수학적 증명의 다양한 유형을 살펴보고, 유명한 수학적 오류들을...">
+  <meta property="og:url" content="https://allenkang92.github.io/mathematics_philosophy_history/2024/09/19/4%EC%9E%A5-%EC%88%98%ED%95%99%EC%A0%81%EC%A6%9D%EB%AA%85%EA%B3%BC%EC%98%A4%EB%A5%98%EC%9D%98%EB%85%BC%EB%A6%AC.html">
+  <link rel="canonical" href="https://allenkang92.github.io/mathematics_philosophy_history/2024/09/19/4%EC%9E%A5-%EC%88%98%ED%95%99%EC%A0%81%EC%A6%9D%EB%AA%85%EA%B3%BC%EC%98%A4%EB%A5%98%EC%9D%98%EB%85%BC%EB%A6%AC.html">
+  <meta property="og:image" content="https://allenkang92.github.io/assets/images/default.jpg">
+  <meta name="robots" content="index, follow">
+
+  <!-- 성능 최적화 -->
+  <link rel="preconnect" href="https://www.googletagmanager.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link rel="preconnect" href="https://utteranc.es">
+  <link rel="preload" href="/assets/css/style.css" as="style">
+
+  <!-- 보안 개선 -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://utteranc.es; img-src 'self' https://*; style-src 'self' 'unsafe-inline'; font-src 'self'; frame-src https://utteranc.es;">
+
+  <!-- 파비콘 및 앱 아이콘 -->
+  <link rel="icon" href="/favicon.ico" sizes="any">
+
+  <!-- 언어 설정 -->
+  <meta http-equiv="content-language" content="ko">
+
+  <!-- 저자 정보 -->
+  <meta name="author" content="Allen Kang">
+
+  <!-- 구글 애널리틱스 -->
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-C2BXF21DKW"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-C2BXF21DKW');
+  </script>
+  
+  <!-- 메인 스타일 시트 링크 -->
+  <link rel="stylesheet" href="/assets/css/style.css">
+
+  <!-- JSON-LD 구조화된 데이터 -->
+  <script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "WebSite",
+    "name": "Allen's Blog",
+    "url": "https://allenkang92.github.io"
+  }
+  </script>
+</head>
+    <title>4장: 수학적 증명과 오류의 논리 - Allen's Blog</title>
+</head>
+<body>
+    <div class="layout-container">
+        <div class="content-wrapper">
+            <main class="main-content" role="main">
+                <article>
+  <h1>4장: 수학적 증명과 오류의 논리</h1>
+  
+  <div class="post-categories">
+    카테고리:
+    
+    <span class="nes-text is-warning">mathematics_philosophy_history</span>
+    
+    
+  </div>
+
+  <div class="post-date">
+    작성일: 2024-09-19
+  </div>
+
+  <!-- 목차 추가 -->
+  <div id="toc"></div>
+
+  <div class="post-content">
+    <h2 id="서론">서론</h2>
+<p>수학적 증명은 수학에서 진리성을 확인하고 지식을 구축하는 핵심 도구입니다. 그러나 모든 증명이 항상 정확한 것은 아니며, 역사적으로 잘못된 증명이나 오류로 인해 수학의 발전이 이뤄진 사례도 많습니다. 이번 장에서는 수학적 증명의 다양한 유형을 살펴보고, 유명한 수학적 오류들을 통해 오류의 논리를 이해하며, 이를 극복하는 방법을 탐구해보겠습니다.</p>
+
+<h2 id="수학적-증명의-유형">수학적 증명의 유형</h2>
+<h3 id="1-직접-증명">1) 직접 증명</h3>
+<p><strong>직접 증명(Direct Proof)</strong>은 가정에서 출발하여 논리적인 추론을 통해 결론을 직접적으로 도출하는 방법입니다.</p>
+
+<p>특징:</p>
+
+<ul>
+  <li>명제 $P→Q$에서 $P$가 참임을 가정하고 $Q$를 도출</li>
+  <li>주로 정의, 공리, 이미 증명된 정리를 활용</li>
+</ul>
+
+<p>예시:</p>
+
+<p>짝수의 합은 짝수이다.</p>
+
+<p>증명: 두 짝수 $2m$과 $2n$의 합은 $2m+2n=2(m+n)$로, 이는 $2$의 배수이므로 짝수이다.</p>
+
+<h3 id="2-간접-증명">2) 간접 증명</h3>
+<p><strong>간접 증명(Indirect Proof)</strong>은 결론의 부정을 가정하여 모순을 유도함으로써 원래 명제가 참임을 증명하는 방법입니다.</p>
+
+<p>특징:</p>
+
+<ul>
+  <li><strong>귀류법(Reduction to Absurdity)</strong>이라고도 함</li>
+  <li>$¬Q$를 가정하고 모순을 발견</li>
+</ul>
+
+<p>예시:</p>
+
+<p>$\sqrt{2}$는 무리수이다.</p>
+
+<p>증명: $\sqrt{2}$가 유리수라고 가정하면, 서로소인 정수 $a,b$에 대해 $\sqrt{2}=\frac{a}{b}$가 성립함. 양변을 제곱하면 $2b^2=a^2$. 따라서 $a^2$는 짝수이므로 $a$는 짝수. $a=2k$로 두면 $2b^2=(2k)^2=4k^2$, 따라서 $b^2=2k^2$이므로 $b$도 짝수. 이는 $a$와 $b$가 모두 짝수여야 함을 의미하여 서로소라는 가정에 모순. 따라서 $\sqrt{2}$는 무리수이다.</p>
+
+<h3 id="3-수학적-귀납법">3) 수학적 귀납법</h3>
+<p><strong>수학적 귀납법(Mathematical Induction)</strong>은 자연수에 대한 명제를 증명할 때 사용되는 방법으로, 기초 단계와 귀납 단계를 통해 명제의 참을 확인합니다.</p>
+
+<p>특징:</p>
+
+<ul>
+  <li>기초 단계(Base Case): $n=1$에서 명제가 참임을 확인</li>
+  <li>귀납 단계(Inductive Step): $n=k$에서 참이라고 가정하고 $n=k+1$에서도 참임을 증명</li>
+</ul>
+
+<p>예시:</p>
+
+<p>자연수 $n$에 대해, $1+2+⋯+n=\frac{n(n+1)}{2}$이다.</p>
+
+<p>증명:</p>
+
+<p>기초 단계: $n=1$일 때, 좌변은 $1$, 우변은 $\frac{1(1+1)}{2}=1$로 같으므로 참.</p>
+
+<p>귀납 단계: $n=k$에서 참이라고 가정하면 $1+2+⋯+k=\frac{k(k+1)}{2}$. $n=k+1$일 때,</p>
+
+<p>$1+2+⋯+k+(k+1)=\frac{k(k+1)}{2}+(k+1)=\frac{k(k+1)+2(k+1)}{2}=\frac{(k+1)(k+2)}{2}$</p>
+
+<p>이는 $n=k+1$에서 성립하므로, 모든 자연수 $n$에 대해 명제가 참이다.</p>
+
+<h3 id="4-반례를-통한-증명">4) 반례를 통한 증명</h3>
+<p><strong>반례(Counterexample)</strong>는 일반적으로 참이라고 여겨지는 명제의 거짓임을 하나의 예를 통해 증명하는 방법입니다.</p>
+
+<p>특징:</p>
+
+<ul>
+  <li>명제의 반례를 제시하여 명제가 거짓임을 증명</li>
+  <li>모든 경우가 아니라 하나의 사례로 충분</li>
+</ul>
+
+<p>예시:</p>
+
+<p><strong>“모든 소수는 홀수이다.”</strong>라는 명제의 반례는 $2$이다. $2$는 짝수이지만 소수이므로 명제는 거짓이다.</p>
+
+<h2 id="유명한-수학적-오류들">유명한 수학적 오류들</h2>
+<h3 id="1-12의-잘못된-증명">1) 1=2의 잘못된 증명</h3>
+<p>잘못된 증명을 통해 $1=2$를 도출하는 사례는 수학적 오류의 고전적인 예입니다.</p>
+
+<p>증명 시도:</p>
+
+<ol>
+  <li>$a=b$라고 가정</li>
+  <li>양변에 $a$를 곱하면 $a^2=ab$</li>
+  <li>양변에서 $b^2$를 빼면 $a^2-b^2=ab-b^2$</li>
+  <li>좌변은 $(a-b)(a+b)$, 우변은 $b(a-b)$</li>
+  <li>따라서 $(a-b)(a+b)=b(a-b)$</li>
+  <li>$a-b$로 양변을 나누면 $a+b=b$</li>
+  <li>$a=b$이므로 $b+b=b$, 따라서 $2b=b$</li>
+  <li>양변에서 $b$를 소거하면 $2=1$</li>
+</ol>
+
+<p>오류 분석:</p>
+
+<ul>
+  <li>오류는 6단계에서 발생: $a-b=0$이므로 $0$으로 나누는 것은 정의되지 않음.</li>
+  <li>0으로 나누는 연산은 허용되지 않으므로, 증명은 잘못되었다.</li>
+</ul>
+
+<h3 id="2-사영-기하학의-모순">2) 사영 기하학의 모순</h3>
+<p>사영 기하학에서 무한원점을 도입하면서 발생하는 모순 사례입니다.</p>
+
+<p>주장:</p>
+
+<ul>
+  <li>평행선은 무한원점에서 만난다.</li>
+  <li>따라서 모든 직선은 한 점에서 만난다.</li>
+</ul>
+
+<p>오류 분석:</p>
+
+<ul>
+  <li>사영 기하학에서는 무한원점을 도입하여 평행선을 교차시키지만, 이는 새로운 정의에 따른 것이며, 유클리드 기하학과는 다른 체계이다.</li>
+  <li>기하학 체계의 공리와 정의를 혼동하여 모순이 발생한 사례이다.</li>
+</ul>
+
+<h3 id="3-오일러의-항등식에-대한-오해">3) 오일러의 항등식에 대한 오해</h3>
+<p><strong>오일러의 항등식(Euler’s Identity)</strong>은 아름다운 공식으로 유명하지만, 이를 잘못 해석하여 오류를 범하는 경우가 있습니다.</p>
+
+<p>오일러의 항등식:</p>
+
+<p>$e^{iπ}+1=0$</p>
+
+<p>잘못된 해석:</p>
+
+<p>$e^{iπ}=-1$이므로, 로그를 취해 $ln(-1)=iπ$라고 주장
+그러나 실수 범위에서 로그는 음수를 취할 수 없으므로, 복소수 범위에서의 로그 정의를 명확히 해야 함</p>
+
+<p>오류 분석:</p>
+
+<ul>
+  <li>복소 로그 함수는 다가 함수이며, 분지(branch)에 따라 값이 달라짐</li>
+  <li>복소수 연산에서의 함수를 다룰 때에는 정의域과 값域을 엄밀히 고려해야 함</li>
+</ul>
+
+<h2 id="오류의-논리와-그-극복">오류의 논리와 그 극복</h2>
+<h3 id="1-오류의-원인-분석">1) 오류의 원인 분석</h3>
+<p>수학적 오류는 다양한 원인에서 발생합니다:</p>
+
+<ul>
+  <li>정의의 미흡: 개념이나 연산의 정의를 정확히 이해하지 못함</li>
+  <li>논리적 비약: 추론 과정에서 논리적 비약이나 생략이 발생</li>
+  <li>엄밀성 부족: 직관이나 경험에 의존하여 엄밀한 증명을 소홀히 함</li>
+  <li>계산 실수: 단순한 산술 오류나 부주의</li>
+</ul>
+
+<h3 id="2-엄밀한-증명의-중요성">2) 엄밀한 증명의 중요성</h3>
+<ul>
+  <li>엄밀한 증명은 수학적 진리성을 확보하기 위해 필수적입니다.</li>
+  <li>모든 단계에서 정의와 공리를 준수하고, 논리적 추론을 따라야 합니다.</li>
+  <li>특히 고등 수학에서는 추상적 개념과 복잡한 구조를 다루므로, 엄밀성이 더욱 요구됩니다.</li>
+</ul>
+
+<h3 id="3-비형식적-직관의-한계">3) 비형식적 직관의 한계</h3>
+<ul>
+  <li>직관은 수학적 발견에 중요한 역할을 하지만, 직관에만 의존하면 오류를 범할 수 있습니다.</li>
+  <li>예를 들어, 무한의 개념이나 고차원 기하학에서는 우리의 직관이 현실과 맞지 않을 수 있습니다.</li>
+  <li>따라서 형식 논리와 증명을 통해 직관의 한계를 보완해야 합니다.</li>
+</ul>
+
+<h2 id="결론">결론</h2>
+<p>수학적 증명은 논리와 엄밀성에 기반하여 수학적 진리를 구축하는 도구입니다. 그러나 잘못된 증명이나 오류는 수학적 사고의 함정을 보여주며, 이를 극복하기 위해서는 정의와 공리를 정확히 이해하고 논리적 추론을 엄격히 따라야 합니다. 오류의 분석은 수학의 발전에 기여하며, 수학적 사고력을 향상시키는 데 도움을 줍니다.</p>
+
+<h2 id="생각해보기">생각해보기</h2>
+<ol>
+  <li>
+    <p>왜 0으로 나누는 것이 허용되지 않을까요?</p>
+  </li>
+  <li>
+    <p>수학에서 직관과 엄밀성은 어떤 관계에 있을까요?</p>
+  </li>
+  <li>
+    <p>잘못된 증명이 수학 발전에 미친 영향은 무엇일까요?</p>
+  </li>
+</ol>
+
+  </div>
+
+  
+    
+    <div class="series-navigation">
+      <h3>Mathematics-Philosophy-History 시리즈:</h3>
+      <ol>
+      
+        <li>
+          
+            <a href="/mathematics_philosophy_history/2024/09/11/%EC%84%9C%EB%A1%A0-%EC%88%98%ED%95%99%EC%B2%A0%ED%95%99%EB%B0%8F%EC%88%98%ED%95%99%EC%82%AC%EB%91%98%EB%9F%AC%EB%B3%B4%EA%B8%B0.html">서론: 수학철학 및 수학사 둘러보기</a>
+          
+        </li>
+      
+        <li>
+          
+            <a href="/mathematics_philosophy_history/2024/09/19/1%EC%9E%A5-%EC%8B%9C%EB%8C%80%EC%99%80%EC%A7%80%EC%97%AD%EC%97%90%EB%94%B0%EB%A5%B8%EC%88%98%ED%95%99%EB%B0%9C%EC%A0%84.html">1장: 시대와 지역에 따른 수학 발전</a>
+          
+        </li>
+      
+        <li>
+          
+            <a href="/mathematics_philosophy_history/2024/09/19/2%EC%9E%A5-%EC%88%98%ED%95%99%EA%B3%BC%EB%AC%B4%ED%95%9C.html">2장: 수학과 무한</a>
+          
+        </li>
+      
+        <li>
+          
+            <a href="/mathematics_philosophy_history/2024/09/19/3%EC%9E%A5-%EC%88%98%ED%95%99%EC%97%90%EC%84%9C%EC%9D%98%EB%85%BC%EB%A6%AC%EC%B2%B4%EA%B3%84.html">3장: 수학에서의 논리 체계</a>
+          
+        </li>
+      
+        <li>
+          
+            4장: 수학적 증명과 오류의 논리 (현재 글)
+          
+        </li>
+      
+        <li>
+          
+            <a href="/mathematics_philosophy_history/2024/09/19/5%EC%9E%A5-%ED%99%95%EB%A5%A0%EA%B3%BC%ED%86%B5%EA%B3%84%EC%9D%98%EC%B2%A0%ED%95%99%EC%A0%81%EC%9D%98%EB%AF%B8.html">5장: 확률과 통계의 철학적 의미</a>
+          
+        </li>
+      
+        <li>
+          
+            <a href="/mathematics_philosophy_history/2024/09/19/6%EC%9E%A5-%EC%88%98%ED%95%99%EC%A0%81%EC%A1%B4%EC%9E%AC%EB%A1%A0.html">6장: 수학적 존재론</a>
+          
+        </li>
+      
+        <li>
+          
+            <a href="/mathematics_philosophy_history/2024/09/19/7%EC%9E%A5-%EC%88%98%ED%95%99%EA%B3%BC%ED%98%84%EC%8B%A4%EC%9D%98%EA%B4%80%EA%B3%84.html">7장: 수학과 현실의 관계</a>
+          
+        </li>
+      
+        <li>
+          
+            <a href="/mathematics_philosophy_history/2024/09/19/8%EC%9E%A5-%EC%88%98%ED%95%99%EC%9D%98%ED%98%84%EB%8C%80%EC%A0%81%EC%88%98%EC%9A%A9.html">8장: 수학의 현대적 수용</a>
+          
+        </li>
+      
+        <li>
+          
+            <a href="/mathematics_philosophy_history/2024/09/19/9%EC%9E%A5-%EC%88%98%ED%95%99%EC%B2%A0%ED%95%99%EA%B3%BC%EC%88%98%ED%95%99%EC%82%AC%EC%9D%98%EC%A2%85%ED%95%A9%EC%A0%81%EA%B3%A0%EC%B0%B0.html">결론: 수학 철학과 수학사의 종합적 고찰</a>
+          
+        </li>
+      
+      </ol>
+    </div>
+  
+
+  <div class="related-posts">
+    <h3>관련 포스트:</h3>
+    <ul>
+    
+    
+
+    
+      
+        
+          <li><a href="/mathematics_philosophy_history/2024/09/19/9%EC%9E%A5-%EC%88%98%ED%95%99%EC%B2%A0%ED%95%99%EA%B3%BC%EC%88%98%ED%95%99%EC%82%AC%EC%9D%98%EC%A2%85%ED%95%A9%EC%A0%81%EA%B3%A0%EC%B0%B0.html">결론: 수학 철학과 수학사의 종합적 고찰</a></li>
+          
+          
+        
+      
+    
+      
+        
+          <li><a href="/mathematics_philosophy_history/2024/09/19/8%EC%9E%A5-%EC%88%98%ED%95%99%EC%9D%98%ED%98%84%EB%8C%80%EC%A0%81%EC%88%98%EC%9A%A9.html">8장: 수학의 현대적 수용</a></li>
+          
+          
+        
+      
+    
+      
+        
+          <li><a href="/mathematics_philosophy_history/2024/09/19/7%EC%9E%A5-%EC%88%98%ED%95%99%EA%B3%BC%ED%98%84%EC%8B%A4%EC%9D%98%EA%B4%80%EA%B3%84.html">7장: 수학과 현실의 관계</a></li>
+          
+          
+        
+      
+    
+      
+        
+      
+    
+      
+        
+          <li><a href="/mathematics_philosophy_history/2024/09/19/6%EC%9E%A5-%EC%88%98%ED%95%99%EC%A0%81%EC%A1%B4%EC%9E%AC%EB%A1%A0.html">6장: 수학적 존재론</a></li>
+          
+          
+            
+    </ul>
+  </div>
+
+  <div id="comments">
+    <script src="https://utteranc.es/client.js"
+            repo="allenkang92/allenkang92.github.io"
+            issue-term="pathname"
+            theme="boxy-light"
+            crossorigin="anonymous"
+            async>
+    </script>
+  </div>
+</article>
+
+<!-- 목차 생성을 위한 JavaScript 추가 -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var headings = document.querySelectorAll('.post-content h2, .post-content h3, .post-content h4, .post-content h5, .post-content h6');
+  var tocDiv = document.getElementById('toc');
+  
+  if (headings.length > 0) {
+    tocDiv.innerHTML = '<h2>목차</h2><ul>';
+    
+    headings.forEach(function(heading, index) {
+      var anchor = 'toc-' + index;
+      heading.id = anchor;
+      var li = document.createElement('li');
+      li.innerHTML = '<a href="#' + anchor + '">' + heading.textContent + '</a>';
+      tocDiv.querySelector('ul').appendChild(li);
+    });
+    
+    tocDiv.innerHTML += '</ul>';
+  } else {
+    tocDiv.style.display = 'none';
+  }
+});
+</script>
+            </main>
+            <!-- footer를 content-wrapper 안으로 이동 -->
+            <footer>
+                <!-- footer.html -->
+<p>&copy; 2024 Allen's Blog. All rights reserved.</p>
+
+            </footer>
+        </div>
+
+        <aside class="sidebar-right">
+            <aside class="sidebar-right">
+  <!-- 프로필 이미지 추가 -->
+  <div class="profile">
+    <img src="/assets/images/allen_logo.png" alt="Allen's profile picture" class="profile-pic">
+  </div>
+  
+  <!-- 블로그 제목 및 설명 -->
+  <div class="blog-title">
+    <h1>Allen's Blog</h1>
+    
+      <p>Aspirant in Cognitive Science and Neuroscience |<br />
+Physics Imp |<br />
+Future Science Communicator |<br />
+</p>
+      <!-- 또는, newline_to_br 필터가 작동하지 않을 경우 -->
+      <!-- <p>Aspirant in Cognitive Science and Neuroscience |
+Physics Imp |
+Future Science Communicator |
+</p> -->
+    
+  </div>
+  
+  <!-- 내비게이션 메뉴 -->
+  <nav>
+    <ul>
+      
+        <li><a href="/">Home</a></li>
+      
+        <li><a href="/posts.html">Posts</a></li>
+      
+        <li><a href="/achievements.html">Achievements</a></li>
+      
+        <li><a href="/tools.html">Tools</a></li>
+      
+        <li><a href="/about.html">About</a></li>
+      
+    </ul>
+  </nav>
+
+  <!-- 검색 필드 -->
+  <div class="search-container">
+    <input type="text" id="search-input" placeholder="검색어를 입력하세요">
+    <div id="search-results"></div>
+  </div>
+
+  <!-- 카테고리 선택 -->
+  
+</aside>
+
+        </aside>
+    </div>
+
+    <!-- 검색 및 필터링 스크립트 -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var categorySelect = document.getElementById('category-select');
+      var achievementCategorySelect = document.getElementById('achievement-category-select');
+
+      if (categorySelect) {
+        categorySelect.addEventListener('change', filterCategories);
+      }
+
+      if (achievementCategorySelect) {
+        achievementCategorySelect.addEventListener('change', filterAchievements);
+      }
+    });
+
+    function filterCategories() {
+      var select = document.getElementById('category-select');
+      var selectedCategory = select.value;
+      var posts = document.getElementsByClassName('post-preview');
+      
+      for (var i = 0; i < posts.length; i++) {
+        if (selectedCategory === 'all' || posts[i].getAttribute('data-category') === selectedCategory) {
+          posts[i].style.display = 'block';
+        } else {
+          posts[i].style.display = 'none';
+        }
+      }
+    }
+
+    function filterAchievements() {
+      var select = document.getElementById('achievement-category-select');
+      var selectedCategory = select.value;
+      var categories = document.getElementsByClassName('achievement-category');
+
+      for (var i = 0; i < categories.length; i++) {
+        if (selectedCategory === 'all' || categories[i].getAttribute('data-category') === selectedCategory) {
+          categories[i].style.display = 'block';
+        } else {
+          categories[i].style.display = 'none';
+        }
+      }
+    }
+    </script>
+
+    <!-- 검색 스크립트 -->
+    <script src="/assets/js/search.js"></script>
+</body>
+</html>
