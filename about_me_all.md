@@ -46,4 +46,5 @@
 | **![Containers and Orchestration](https://img.shields.io/badge/Containers%20and%20Orchestration-EAF4FB?style=flat-square)** | ![Docker](https://img.shields.io/badge/Docker-A8E1DB?style=flat-square&logo=Docker&logoColor=EAF4FB) ![Kubernetes](https://img.shields.io/badge/Kubernetes-FFCBDF?style=flat-square&logo=Kubernetes&logoColor=EAF4FB) |
 | **![Message Brokers](https://img.shields.io/badge/Message%20Brokers-EAF4FB?style=flat-square)** | ![Apache Kafka](https://img.shields.io/badge/Apache%20Kafka-FFCBDF?style=flat-square&logo=Apache-Kafka&logoColor=EAF4FB) |
 | **![Bioinformatics Tools](https://img.shields.io/badge/Bioinformatics%20Tools-EAF4FB?style=flat-square)** | ![BioPython](https://img.shields.io/badge/BioPython-FFCBDF?style=flat-square&logo=Biopython&logoColor=EAF4FB) |
+{:.custom-table}
 
