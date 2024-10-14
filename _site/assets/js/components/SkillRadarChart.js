@@ -14,11 +14,11 @@ const data = [
 
 // 커스텀 tick 컴포넌트 생성 (두 줄로 나누기)
 const renderCustomTick = ({ payload, x, y }) => {
-  const lines = payload.value.split(' '); // 띄어쓰기 기준으로 두 줄로 나눔
+  const lines = payload.value.split(' ');
   return (
-    <text x={x} y={y} textAnchor="middle" fill="#000000" fontSize="12px">  {/* 글꼴 크기 설정 */}
+    <text x={x} y={y} textAnchor="middle" fill="#000000" fontSize="12px">
       {lines.map((line, index) => (
-        <tspan x={x} dy={index * 20} key={index}>{line}</tspan> // 두 줄로 나누어 출력, 줄 간격 늘림
+        <tspan x={x} dy={index * 20} key={index}>{line}</tspan>  // 줄 간격 늘림
       ))}
     </text>
   );
@@ -32,22 +32,22 @@ const SkillRadarChart = () => {
           <PolarGrid />
           <PolarAngleAxis 
             dataKey="subject" 
-            tick={renderCustomTick} // 커스텀 tick 사용 (두 줄로 나누기 및 색상 설정)
+            tick={renderCustomTick} 
             tickMargin={60} // 축과 텍스트 간의 간격 조정
           />
           <PolarRadiusAxis 
             angle={45} 
             domain={[0, 100]} 
-            tick={{ fontSize: '7px', fill: '#000000', fontWeight: 'bold' }}  // 텍스트 색상 및 볼드 처리
+            tick={{ fontSize: '7px', fill: '#000000', fontWeight: 'bold' }}  
           />
           <Radar 
             name="Skills" 
             dataKey="value" 
             stroke="#A8E1DB" 
             fill="#A8E1DB" 
-            fillOpacity={0.6} // 레이더 색상 및 투명도 설정
+            fillOpacity={0.6} 
           />
-          <Legend wrapperStyle={{ marginTop: '20px' }} />  {/* 범례와 차트 사이의 간격 조정 */}
+          <Legend wrapperStyle={{ paddingTop: '40px' }} />  {/* 범례와 차트 사이의 간격 크게 설정 */}
         </RadarChart>
       </ResponsiveContainer>
     </div>
