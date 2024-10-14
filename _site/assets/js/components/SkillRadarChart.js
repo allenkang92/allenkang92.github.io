@@ -54,3 +54,5 @@ const SkillRadarChart = () => {
     </div>
   );
 };
+
+export default SkillRadarChart;

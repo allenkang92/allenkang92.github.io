@@ -694,3 +694,12 @@ footer {
     height: auto;
   }
 }
+
+.recharts-wrapper {
+  position: relative;
+  margin-bottom: 100px;  /* 푸터와 간격 추가 */
+}
+
+footer {
+  margin-top: 50px;  /* 푸터 상단 간격 추가 */
+}
