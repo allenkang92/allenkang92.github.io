@@ -568,7 +568,7 @@ footer {
 
 #blog-info-btn {
   background-color: #A8E1DB; /* 기존 색상 유지 */
-  color: #f8f8f8;
+  color: #ffffff;
   border: none;
   padding: 8px 12px;
   border-radius: 4px;
@@ -640,7 +640,7 @@ footer {
 
 .modal-footer button {
   background-color: #A8E1DB; /* 기존 색상 유지 */
-  color: #fcfcfc;
+  color: #ffffff;
   border: none;
   padding: 8px 12px;
   border-radius: 4px;
