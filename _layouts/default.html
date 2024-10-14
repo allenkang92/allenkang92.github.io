@@ -21,11 +21,42 @@
         </aside>
     </div>
 
+    <!-- 블로그 소개 모달 -->
+    <div id="blog-info-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>About This Blog</h2>
+            <section>
+                <h3>Purpose</h3>
+                <p>This blog aims to share knowledge and insights on various topics including cognitive science, neuroscience, physics, and data science.</p>
+            </section>
+            <section>
+                <h3>Main Topics</h3>
+                <p>Cognitive Science, Neuroscience, Physics, Data Science, Programming, and more.</p>
+            </section>
+            <section>
+                <h3>Blog Structure</h3>
+                <p>The blog is organized into main categories and subcategories for easy navigation.</p>
+            </section>
+            <section>
+                <h3>Tools Page</h3>
+                <p>Explore various tools and resources related to the blog's topics.</p>
+            </section>
+            <section>
+                <h3>Series Collection</h3>
+                <p>Find interconnected posts organized into series for in-depth exploration of specific topics.</p>
+            </section>
+        </div>
+    </div>
+
     <!-- 검색 및 필터링 스크립트 -->
     <script>
     document.addEventListener('DOMContentLoaded', function() {
       var categorySelect = document.getElementById('category-select');
       var achievementCategorySelect = document.getElementById('achievement-category-select');
+      var modal = document.getElementById("blog-info-modal");
+      var btn = document.getElementById("blog-info-btn");
+      var span = document.getElementsByClassName("close")[0];
 
       if (categorySelect) {
         categorySelect.addEventListener('change', filterCategories);
@@ -33,6 +64,24 @@
 
       if (achievementCategorySelect) {
         achievementCategorySelect.addEventListener('change', filterAchievements);
+      }
+
+      if (btn) {
+        btn.onclick = function() {
+          modal.style.display = "block";
+        }
+      }
+
+      if (span) {
+        span.onclick = function() {
+          modal.style.display = "none";
+        }
+      }
+
+      window.onclick = function(event) {
+        if (event.target == modal) {
+          modal.style.display = "none";
+        }
       }
     });
 
