@@ -16,9 +16,9 @@ const data = [
 const renderCustomTick = ({ payload, x, y }) => {
   const lines = payload.value.split(' '); // 띄어쓰기 기준으로 두 줄로 나눔
   return (
-    <text x={x} y={y} textAnchor="middle" fontSize="12px">  {/* 텍스트 색상 건드리지 않음 */}
+    <text x={x} y={y} textAnchor="middle" fontSize="12px" fill="#000000">  {/* 텍스트 색상 및 폰트 크기 설정 */}
       {lines.map((line, index) => (
-        <tspan x={x} dy={index * 20} key={index}>{line}</tspan> // 두 줄로 나누어 출력, 줄 간격 조정
+        <tspan x={x} dy={index * 18} key={index}>{line}</tspan> // 두 줄로 나누어 출력, 줄 간격 더 늘림
       ))}
     </text>
   );
@@ -33,7 +33,7 @@ const SkillRadarChart = () => {
           <PolarAngleAxis 
             dataKey="subject" 
             tick={renderCustomTick} // 커스텀 tick 사용
-            tickMargin={30} // 축과 텍스트 간의 간격 조정
+            tickMargin={35} // 축과 텍스트 간의 간격 추가 조정
           />
           <PolarRadiusAxis 
             angle={45} 

@@ -377,7 +377,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <footer>
                 <!-- footer.html -->
 <p>&copy; 2024 Allen's Blog. All rights reserved.</p>
-
+<button id="blog-info-btn">About This Blog</button>
             </footer>
         </div>
 
@@ -432,26 +432,18 @@ document.addEventListener('DOMContentLoaded', function() {
     <div id="blog-info-modal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
-            <h2>About This Blog</h2>
+            <h2>블로그 소개</h2>
             <section>
-                <h3>Purpose</h3>
-                <!-- Content -->
+                <h3>목적</h3>
+                <p>제 블로그는 다양한 분야의 지식과 통찰 같은 것들을 열심히 공유하는 것이 목표이긴 해요!</p>
             </section>
             <section>
-                <h3>Main Topics</h3>
-                <!-- Content -->
+                <h3>주요 주제</h3>
+                <p>인지과학, 신경과학, 물리학, 프로그래밍 등 다양한 분야를 다뤄보려고 노력할 생각입니다..!</p>
             </section>
             <section>
-                <h3>Blog Structure</h3>
-                <!-- Categories, subcategories explanation -->
-            </section>
-            <section>
-                <h3>Tools Page</h3>
-                <!-- Description -->
-            </section>
-            <section>
-                <h3>Series Collection</h3>
-                <!-- Description -->
+                <h3>시리즈 연재</h3>
+                <p>특정 주제에 대해 깊이 있게 둘러볼 수 있도록 포스트들을 시리즈로 구성하려고 구상하고 있어요.</p>
             </section>
         </div>
     </div>
@@ -461,6 +453,9 @@ document.addEventListener('DOMContentLoaded', function() {
     document.addEventListener('DOMContentLoaded', function() {
       var categorySelect = document.getElementById('category-select');
       var achievementCategorySelect = document.getElementById('achievement-category-select');
+      var modal = document.getElementById("blog-info-modal");
+      var btn = document.getElementById("blog-info-btn");
+      var span = document.getElementsByClassName("close")[0];
 
       if (categorySelect) {
         categorySelect.addEventListener('change', filterCategories);
@@ -469,11 +464,6 @@ document.addEventListener('DOMContentLoaded', function() {
       if (achievementCategorySelect) {
         achievementCategorySelect.addEventListener('change', filterAchievements);
       }
-
-      // 블로그 소개 모달 스크립트
-      var modal = document.getElementById("blog-info-modal");
-      var btn = document.getElementById("blog-info-btn");
-      var span = document.getElementsByClassName("close")[0];
 
       if (btn) {
         btn.onclick = function() {
