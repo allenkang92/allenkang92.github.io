@@ -567,7 +567,7 @@ footer {
 }
 
 #blog-info-btn {
-  background-color: #005F5F; /* 기존 색상 유지 */
+  background-color: #A8E1DB; /* 기존 색상 유지 */
   color: #EAF4FB;
   border: none;
   padding: 8px 12px;
@@ -579,7 +579,7 @@ footer {
 }
 
 #blog-info-btn:hover {
-  background-color: #003F3F; /* 호버시 색상 유지 */
+  background-color: #ace2dd; /* 호버시 색상 유지 */
 }
 
 .modal {
@@ -607,7 +607,7 @@ footer {
 }
 
 .close {
-  color: #005F5F;
+  color: #a1e3dc;
   float: right;
   font-size: 28px;
   font-weight: bold;
@@ -616,20 +616,20 @@ footer {
 
 .close:hover,
 .close:focus {
-  color: #003F3F;
+  color: #93cfc9;
   text-decoration: none;
 }
 
 .modal-header {
   font-size: 18px;
   font-weight: bold;
-  color: #005F5F;
+  color: #93cfc9;
   margin-bottom: 10px;
 }
 
 .modal-body {
   font-size: 14px;
-  color: #333333;
+  color: #93cfc9;
   line-height: 1.6;
 }
 
@@ -639,7 +639,7 @@ footer {
 }
 
 .modal-footer button {
-  background-color: #005F5F; /* 기존 색상 유지 */
+  background-color: #A8E1DB; /* 기존 색상 유지 */
   color: #EAF4FB;
   border: none;
   padding: 8px 12px;
@@ -649,5 +649,5 @@ footer {
 }
 
 .modal-footer button:hover {
-  background-color: #003F3F; /* 호버시 색상 */
+  background-color: #A8E1DB; /* 호버시 색상 */
 }
