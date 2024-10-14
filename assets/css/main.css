@@ -574,7 +574,7 @@ footer {
   border-radius: 4px;
   cursor: pointer;
   font-size: 14px;
-  font-family: 'DungGeunMo', sans-serif; /* 둥근모 폰트 적용 */
+  font-family: 'PFStardust', monospace; /* 'PFStardust' 폰트 적용 */
   transition: background-color 0.3s;
 }
 
@@ -603,7 +603,7 @@ footer {
   max-width: 600px;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(169, 202, 221, 0.2); /* 그림자 강화 */
-  font-family: 'DungGeunMo', sans-serif; /* 둥근모 폰트 적용 */
+  font-family: 'PFStardust', monospace; /* 'PFStardust' 폰트 적용 */
 }
 
 .close {
