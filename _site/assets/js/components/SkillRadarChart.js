@@ -2,15 +2,27 @@ import React from 'react';
 import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ResponsiveContainer, Legend } from 'recharts';
 
 const data = [
-  { subject: ['Scientific', 'Knowledge'], value: 80, fullMark: 100 },
-  { subject: ['Interdisciplinary', 'Research'], value: 80, fullMark: 100 },
+  { subject: 'Scientific Knowledge', value: 80, fullMark: 100 },
+  { subject: 'Interdisciplinary Research', value: 80, fullMark: 100 },
   { subject: 'Data Analysis', value: 55, fullMark: 100 },
   { subject: 'Data Management', value: 70, fullMark: 100 },
-  { subject: ['Programming', 'Languages'], value: 55, fullMark: 100 },
+  { subject: 'Programming Languages', value: 55, fullMark: 100 },
   { subject: 'MLOps', value: 60, fullMark: 100 },
-  { subject: ['Science', 'Communication'], value: 80, fullMark: 100 },
-  { subject: ['Data', 'Visualization'], value: 75, fullMark: 100 },
+  { subject: 'Science Communication', value: 80, fullMark: 100 },
+  { subject: 'Data Visualization', value: 75, fullMark: 100 },
 ];
+
+// 커스텀 tick 컴포넌트 생성 (두 줄로 나누기)
+const renderCustomTick = ({ payload, x, y, textAnchor }) => {
+  const lines = payload.value.split(' '); // 띄어쓰기 기준으로 두 줄로 나눔
+  return (
+    <text x={x} y={y} textAnchor={textAnchor} fill="#A8E1DB">
+      {lines.map((line, index) => (
+        <tspan x={x} dy={index * 12} key={index}>{line}</tspan> // 두 줄로 나누어 출력
+      ))}
+    </text>
+  );
+};
 
 const SkillRadarChart = () => {
   return (
@@ -20,20 +32,20 @@ const SkillRadarChart = () => {
           <PolarGrid />
           <PolarAngleAxis 
             dataKey="subject" 
-            tick={{ fontSize: '10px', fill: '#A8E1DB' }} 
-            tickMargin={20}  // 축과 글씨 사이 간격
+            tick={renderCustomTick} // 커스텀 tick 사용 (두 줄로 나누기)
+            tickMargin={20} // 축과 텍스트 간의 간격 조정
           />
           <PolarRadiusAxis 
             angle={45} 
             domain={[0, 100]} 
-            tick={{ fontSize: '13px', fill: '#000000', fontWeight: 'bold' }}  // 텍스트 색상 및 볼드 처리
+            tick={{ fontSize: '13px', fill: '#000000', fontWeight: 'bold' }} // 텍스트 색상 및 볼드 처리
           />
           <Radar 
             name="Skills" 
             dataKey="value" 
             stroke="#A8E1DB" 
             fill="#A8E1DB" 
-            fillOpacity={0.6}  // 민트색으로 채우기
+            fillOpacity={0.6} // 레이더 색상 및 투명도 설정
           />
           <Legend />
         </RadarChart>
