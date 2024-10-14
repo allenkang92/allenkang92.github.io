@@ -568,7 +568,7 @@ footer {
 
 #blog-info-btn {
   background-color: #A8E1DB; /* 기존 색상 유지 */
-  color: #EAF4FB;
+  color: #ffffff;
   border: none;
   padding: 8px 12px;
   border-radius: 4px;
@@ -595,7 +595,7 @@ footer {
 }
 
 .modal-content {
-  background-color: #7edff3; /* 배경색 유지 */
+  background-color: #A8E1DB; /* 배경색 유지 */
   margin: 10% auto; /* 모달창이 중앙에 위치 */
   padding: 20px;
   border: 2px solid #ece9f6; /* 테두리 두께를 2px로 조금 두껍게 */
@@ -640,7 +640,7 @@ footer {
 
 .modal-footer button {
   background-color: #A8E1DB; /* 기존 색상 유지 */
-  color: #fcfcfc;
+  color: #ffffff;
   border: none;
   padding: 8px 12px;
   border-radius: 4px;

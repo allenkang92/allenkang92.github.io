@@ -12,13 +12,14 @@ const data = [
   { subject: 'Data Visualization', value: 75, fullMark: 100 },
 ];
 
-// 커스텀 tick 컴포넌트 생성
+// 커스텀 tick 컴포넌트 생성 (두 줄로 나누기 및 패딩 추가)
 const renderCustomTick = ({ payload, x, y }) => {
-  const lines = payload.value.split(' ');
+  const lines = payload.value.split(' '); // 띄어쓰기 기준으로 두 줄로 나눔
+  const padding = 15;  // 패딩 값 추가
   return (
-    <text x={x} y={y} textAnchor="middle" fill="#000000" fontSize="12px"> 
+    <text x={x} y={y - padding} textAnchor="middle" fill="#000000" fontSize="12px">  {/* 글꼴 크기 설정 및 패딩 반영 */}
       {lines.map((line, index) => (
-        <tspan x={x} dy={index * 20} key={index}>{line}</tspan> 
+        <tspan x={x} dy={index * 15} key={index}>{line}</tspan> // 두 줄로 나누어 출력, 줄 간격도 조정 가능
       ))}
     </text>
   );
@@ -26,14 +27,14 @@ const renderCustomTick = ({ payload, x, y }) => {
 
 const SkillRadarChart = () => {
   return (
-    <div style={{ width: '100%', height: '100%', minHeight: '300px', maxWidth: '600px', margin: '0 auto' }}>
+    <div style={{ width: '100%', height: '100%', minHeight: '500px', maxWidth: '700px', margin: '0 auto' }}>
       <ResponsiveContainer width="100%" height="100%">
-        <RadarChart outerRadius="50%" data={data}>  {/* outerRadius 더 줄임 */}
+        <RadarChart outerRadius="85%" data={data}>  {/* outerRadius 값을 85%로 설정 */}
           <PolarGrid />
           <PolarAngleAxis 
             dataKey="subject" 
             tick={renderCustomTick} 
-            tickMargin={120} // tickMargin 값 극대화
+            tickMargin={30} 
           />
           <PolarRadiusAxis 
             angle={45} 
