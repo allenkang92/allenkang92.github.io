@@ -35,8 +35,13 @@ exclude:
   - vendor/gems/
   - vendor/ruby/
   - assets/js/webpack.config.js
+  - assets/js/index.js
+  - assets/js/App.js
+  - assets/js/SkillRadarChart.js
   - package.json
   - package-lock.json
+  - webpack.config.js
+  - .babelrc
 
 # Include specific files
 include:

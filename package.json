@@ -3,20 +3,20 @@
     "version": "1.0.0",
     "description": "Allen's personal blog with React components",
     "scripts": {
-      "build": "webpack --mode production",
-      "watch": "webpack --mode development --watch"
+        "build": "webpack --config webpack.config.js --mode production",
+        "watch": "webpack --config webpack.config.js --mode development --watch"
     },
     "dependencies": {
-      "react": "^17.0.2",
-      "react-dom": "^17.0.2",
-      "recharts": "^2.1.9"
+        "react": "^17.0.2",
+        "react-dom": "^17.0.2",
+        "recharts": "^2.1.9"
     },
     "devDependencies": {
-      "@babel/core": "^7.15.0",
-      "@babel/preset-env": "^7.15.0",
-      "@babel/preset-react": "^7.14.5",
-      "babel-loader": "^8.2.2",
-      "webpack": "^5.50.0",
-      "webpack-cli": "^4.8.0"
+        "@babel/core": "^7.25.8",
+        "@babel/preset-env": "^7.25.8",
+        "@babel/preset-react": "^7.25.7",
+        "babel-loader": "^8.4.1",
+        "webpack": "^5.95.0",
+        "webpack-cli": "^4.10.0"
     }
-  }
+}
