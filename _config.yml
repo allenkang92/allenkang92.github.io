@@ -209,8 +209,6 @@ category_structure:
       - culture  # 문화 및 예술
       - politics  # 정치 및 사회 문제
       - environment  # 환경 및 지속가능성
-      - pets  # 애완동물 및 반려동물
-      - shopping  # 쇼핑 및 소비
       - media  # 미디어 및 방송
       - literature  # 문학 및 작품
       - music  # 음악 및 연주
