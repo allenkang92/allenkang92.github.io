@@ -4,7 +4,8 @@ title: About
 ---
 
 <div id="about-content">
-  {% include_relative about_me_all.md %}
+  {% capture my_include %}{% include_relative about_me_all.md %}{% endcapture %}
+  {{ my_include | markdownify }}
 </div>
 
 <div id="skill-chart"></div>
