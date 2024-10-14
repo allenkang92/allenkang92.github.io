@@ -596,14 +596,14 @@ footer {
 
 .modal-content {
   background-color: #A8E1DB;
-  margin: 10% auto;
+  margin: 5% auto; /* 반응형을 위해 여유 공간을 줌 */
   padding: 20px;
   border: 2px solid #ece9f6;
-  width: 80%;
+  width: 80%; /* 기본 크기 */
   max-width: 600px;
+  min-width: 300px; /* 최소 크기 지정 */
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(169, 202, 221, 0.2);
-  font-family: 'PFStardust', monospace;
 }
 
 /* 반응형: 화면 너비가 768px 이하일 때 */
@@ -615,12 +615,12 @@ footer {
 }
 
 /* 반응형: 화면 너비가 576px 이하일 때 */
-@media only screen and (max-width: 576px) {
+@media (max-width: 576px) {
   .modal-content {
-    width: 95%;  /* 너비를 95%로 설정하여 더 작은 화면에서도 맞도록 조정 */
-    max-width: 300px;  /* 최대 너비를 더 작게 설정 */
-    padding: 15px;  /* padding도 화면에 맞게 조정 */
+    width: 90%; /* 작은 화면에서는 더 작은 크기로 조정 */
+    padding: 15px; /* 패딩 축소 */
   }
+}
 
   .modal-body {
     font-size: 12px;  /* 작은 화면에서는 글씨 크기 조정 */
