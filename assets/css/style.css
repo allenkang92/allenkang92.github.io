@@ -865,7 +865,7 @@ th {
 
 .tabs {
   display: grid;
-  grid-template-columns: repeat(4, 1fr); /* 4개의 탭을 균등 배치 */
+  grid-template-columns: repeat(4, 1fr); /* 4개의 열을 동일한 비율로 분배 */
   gap: 8px;
   margin-bottom: 20px;
 }
@@ -892,6 +892,7 @@ th {
   border-radius: 4px;
   text-align: center;
   transition: background-color 0.3s ease;
+  width: 100%; /* 모든 버튼이 같은 너비를 가짐 */
 }
 
 .tabs-trigger:hover {
@@ -919,15 +920,16 @@ th {
   }
 }
 
+/* 작은 화면에서 탭의 너비 조정 */
 @media (max-width: 768px) {
-  .card-container {
-    grid-template-columns: repeat(2, 1fr); /* 작은 화면에서는 2칸 */
+  .tabs {
+    grid-template-columns: repeat(2, 1fr); /* 모바일에서는 2개씩 */
   }
 }
 
 @media (max-width: 576px) {
-  .card-container {
-    grid-template-columns: 1fr; /* 모바일에서는 1칸 */
+  .tabs {
+    grid-template-columns: 1fr; /* 작은 화면에서는 한 줄로 */
   }
 }
 
