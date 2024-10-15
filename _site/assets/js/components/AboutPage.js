@@ -59,67 +59,60 @@ const techStackMarkdown = `
 `;
 
 const AboutPage = () => {
-  const [activeTab, setActiveTab] = useState("all");
-
-  return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-6">About Me</h1>
-
-      <Tabs defaultValue="all" className="w-full">
-        <TabsList className="grid w-full grid-cols-3 mb-6">
-          <TabsTrigger value="all" onClick={() => setActiveTab("all")}>All</TabsTrigger>
-          <TabsTrigger value="knowledge-domains" onClick={() => setActiveTab("knowledge-domains")}>Knowledge Domains</TabsTrigger>
-          <TabsTrigger value="tech-stack" onClick={() => setActiveTab("tech-stack")}>Tech Stack</TabsTrigger>
-        </TabsList>
-
-        {/* Knowledge Domains Tab: 지식 도메인 + 레이더 차트 */}
-        <TabsContent value="knowledge-domains">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              {/* <h2 className="text-2xl font-semibold mb-4">Knowledge Domains Overview</h2> */}
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>{knowledgeDomainsMarkdown}</ReactMarkdown>
+    const [activeTab, setActiveTab] = useState("knowledge-domains"); // 기본 탭을 "knowledge-domains"로 설정
+  
+    return (
+      <div className="container mx-auto p-4">
+        <h1 className="text-3xl font-bold mb-6">About Me</h1>
+  
+        <Tabs defaultValue="knowledge-domains" className="w-full">
+          <TabsList className="grid w-full grid-cols-3 mb-6">
+            <TabsTrigger className="tabs-trigger" value="knowledge-domains" onClick={() => setActiveTab("knowledge-domains")}>Knowledge Domains</TabsTrigger>
+            <TabsTrigger className="tabs-trigger" value="tech-stack" onClick={() => setActiveTab("tech-stack")}>Tech Stack</TabsTrigger>
+            <TabsTrigger className="tabs-trigger" value="all" onClick={() => setActiveTab("all")}>All</TabsTrigger>
+          </TabsList>
+  
+          {/* Knowledge Domains Tab: 지식 도메인 + 레이더 차트 */}
+          <TabsContent value="knowledge-domains">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>{knowledgeDomainsMarkdown}</ReactMarkdown>
+              </div>
+              <div>
+                <SkillRadarChart />
+              </div>
             </div>
-            <div>
-              {/* <h2 className="text-2xl font-semibold mb-4">Skills Overview</h2> */}
-              <SkillRadarChart />
+          </TabsContent>
+  
+          {/* Tech Stack Tab: 기술 스택 + 레이더 차트 */}
+          <TabsContent value="tech-stack">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>{techStackMarkdown}</ReactMarkdown>
+              </div>
+              <div>
+                <SkillRadarChart />
+              </div>
             </div>
-          </div>
-        </TabsContent>
-
-        {/* Tech Stack Tab: 기술 스택 + 레이더 차트 */}
-        <TabsContent value="tech-stack">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              {/* <h2 className="text-2xl font-semibold mb-4">Tech Stack</h2> */}
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>{techStackMarkdown}</ReactMarkdown>
+          </TabsContent>
+  
+          {/* All Tab: 지식 도메인 + 기술 스택 + 레이더 차트 */}
+          <TabsContent value="all">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>{knowledgeDomainsMarkdown}</ReactMarkdown>
+              </div>
+              <div>
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>{techStackMarkdown}</ReactMarkdown>
+              </div>
+              <div>
+                <SkillRadarChart />
+              </div>
             </div>
-            <div>
-              {/* <h2 className="text-2xl font-semibold mb-4">Skills Overview</h2> */}
-              <SkillRadarChart />
-            </div>
-          </div>
-        </TabsContent>
-
-        {/* All Tab: 지식 도메인 + 기술 스택 + 레이더 차트 */}
-        <TabsContent value="all">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              {/* <h2 className="text-2xl font-semibold mb-4">Knowledge Domains Overview</h2> */}
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>{knowledgeDomainsMarkdown}</ReactMarkdown>
-            </div>
-            <div>
-              {/* <h2 className="text-2xl font-semibold mb-4">Tech Stack</h2> */}
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>{techStackMarkdown}</ReactMarkdown>
-            </div>
-            <div>
-              {/* <h2 className="text-2xl font-semibold mb-4">Skills Overview</h2> */}
-              <SkillRadarChart />
-            </div>
-          </div>
-        </TabsContent>
-      </Tabs>
-    </div>
-  );
-};
-
-export default AboutPage;
+          </TabsContent>
+        </Tabs>
+      </div>
+    );
+  };
+  
+  export default AboutPage;
