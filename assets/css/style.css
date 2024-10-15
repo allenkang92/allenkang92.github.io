@@ -865,20 +865,22 @@ th {
 
 .tabs {
   display: grid;
-  grid-template-columns: repeat(4, 1fr); /* 4개의 열을 동일한 비율로 분배 */
+  grid-template-columns: repeat(4, 1fr);
   gap: 8px;
   margin-bottom: 20px;
+  max-width: 1000px; /* 탭 최대 너비 설정 */
+  margin: 0 auto; /* 가운데 정렬 */
 }
 
 @media (max-width: 768px) {
   .tabs {
-    grid-template-columns: repeat(2, 1fr); /* 모바일에서는 2개씩 배치 */
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media (max-width: 576px) {
   .tabs {
-    grid-template-columns: 1fr; /* 작은 화면에서는 한 줄 배치 */
+    grid-template-columns: 1fr;
   }
 }
 
@@ -892,44 +894,20 @@ th {
   border-radius: 4px;
   text-align: center;
   transition: background-color 0.3s ease;
-  width: 100%; /* 모든 버튼이 같은 너비를 가짐 */
 }
 
 .tabs-trigger:hover {
   background-color: #c9f3ef;
 }
 
-.tabs-trigger[aria-selected="true"] {
-  background-color: #c9f3ef;
-}
-
 /* 카드 컨테이너 */
 .card-container {
   display: grid;
-  grid-template-columns: repeat(1, 1fr); /* 카드 열 개수는 필요에 따라 조정 */
+  grid-template-columns: 1fr; /* 한 줄에 하나의 카드 */
   gap: 16px;
+  max-width: 1000px; /* 탭과 카드 컨테이너 너비 맞춤 */
+  margin: 0 auto; /* 카드 컨테이너 가운데 정렬 */
   padding: 20px;
-}
-
-
-/* 반응형 조정 */
-@media (max-width: 1024px) {
-  .card-container {
-    grid-template-columns: repeat(3, 1fr); /* 중간 화면에서는 3칸 */
-  }
-}
-
-/* 작은 화면에서 탭의 너비 조정 */
-@media (max-width: 768px) {
-  .tabs {
-    grid-template-columns: repeat(2, 1fr); /* 모바일에서는 2개씩 */
-  }
-}
-
-@media (max-width: 576px) {
-  .tabs {
-    grid-template-columns: 1fr; /* 작은 화면에서는 한 줄로 */
-  }
 }
 
 /* 카드 스타일 */
@@ -938,7 +916,6 @@ th {
   border: 2px solid #A8E1DB;
   border-radius: 8px;
   padding: 20px;
-  width: 100%; /* 카드를 화면 너비에 맞춰 확장 */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  margin: 0 auto;
+  width: 100%;
 }

@@ -46,4 +46,13 @@ function showCategory(category) {
 document.addEventListener('DOMContentLoaded', function() {
   showCategory('certificates');
 });
+
+// 탭 너비를 기준으로 카드 컨테이너 너비 맞춤
+document.addEventListener('DOMContentLoaded', function() {
+  const tabsContainer = document.querySelector('.tabs');
+  const cardContainer = document.querySelector('.card-container');
+  const tabsWidth = tabsContainer.offsetWidth;
+
+  cardContainer.style.width = `${tabsWidth}px`;  // 탭 너비를 카드 컨테이너에 맞춤
+});
 </script>
