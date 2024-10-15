@@ -906,12 +906,11 @@ th {
 /* 카드 컨테이너 */
 .card-container {
   display: grid;
-  grid-template-columns: repeat(4, 1fr); /* 4개의 칸을 균등 배치 */
+  grid-template-columns: repeat(1, 1fr); /* 카드 열 개수는 필요에 따라 조정 */
   gap: 16px;
-  max-width: 100%; /* 너비 제한을 없앰 */
-  width: 100%; /* 화면 크기에 따라 너비 확장 */
   padding: 20px;
 }
+
 
 /* 반응형 조정 */
 @media (max-width: 1024px) {
@@ -940,7 +939,6 @@ th {
   border-radius: 8px;
   padding: 20px;
   width: 100%; /* 카드를 화면 너비에 맞춰 확장 */
-  max-width: 100%; /* 카드 최대 너비 제한 해제 */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  margin: 20px auto;
+  margin: 0 auto;
 }
