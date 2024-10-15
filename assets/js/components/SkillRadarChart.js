@@ -1,5 +1,5 @@
 import React from 'react';
-import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ResponsiveContainer, Legend } from 'recharts';
+import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ResponsiveContainer } from 'recharts';
 
 const data = [
   { subject: 'Scientific Knowledge', value: 80, fullMark: 100 },
@@ -48,7 +48,6 @@ const SkillRadarChart = () => {
             fill="#A8E1DB" 
             fillOpacity={0.6} 
           />
-          <Legend />
         </RadarChart>
       </ResponsiveContainer>
     </div>
