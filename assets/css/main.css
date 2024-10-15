@@ -909,7 +909,7 @@ th {
   gap: 16px;
   max-width: 1000px; /* 탭과 카드 컨테이너 너비 맞춤 */
   margin: 0 auto; /* 카드 컨테이너 가운데 정렬 */
-  padding: 20px;
+  padding: 0px;
 }
 
 /* 카드 스타일 */
@@ -919,5 +919,5 @@ th {
   border-radius: 8px;
   padding: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  width: 90%;
+  width: 100%;
 }
