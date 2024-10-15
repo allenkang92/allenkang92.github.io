@@ -929,3 +929,8 @@ th {
   max-width: 100%; /* 최대 너비 제한 해제 */
   box-sizing: border-box; /* 카드가 패딩과 함께 너비를 정확히 계산하도록 설정 */
 }
+
+.tabs-trigger[aria-selected="true"] {
+  background-color: #c9f3ef;
+  color: #ffffff;
+}

@@ -40,6 +40,16 @@ function showCategory(category) {
       items[i].style.display = 'none';
     }
   }
+
+  // 선택된 탭에 'aria-selected' 속성 추가
+  var tabs = document.getElementsByClassName('tabs-trigger');
+  for (var i = 0; i < tabs.length; i++) {
+    if (tabs[i].innerText.toLowerCase() === category) {
+      tabs[i].setAttribute('aria-selected', 'true');
+    } else {
+      tabs[i].removeAttribute('aria-selected');
+    }
+  }
 }
 
 // 페이지 로드 시 기본으로 첫 번째 탭 (Certificates) 카테고리만 보여줌
