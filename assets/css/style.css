@@ -239,10 +239,10 @@ a:hover {
 
 /* 푸터 스타일 */
 footer {
-  margin-top: auto;
+  margin-top: 50px; /* 푸터와 차트 사이의 간격 */
   padding: 20px;
-  background-color: #FFFFFF; /* 푸터 배경색 */
-  border-top: 1px solid #A8E1DB; /* 푸터 상단 테두리 색상 */
+  background-color: #FFFFFF;
+  border-top: 1px solid #A8E1DB;
   text-align: center;
   font-size: 0.9em;
 }

@@ -27,7 +27,7 @@ const renderCustomTick = ({ payload, x, y }) => {
 
 const SkillRadarChart = () => {
   return (
-    <div style={{ width: '100%', height: '100%', minHeight: '600px', maxWidth: '700px', margin: '0 auto', paddingBottom: '100px' }}>
+    <div style={{ width: '100%', height: '100%', minHeight: '600px', maxWidth: '700px', margin: '0 auto', paddingBottom: '150px' }}>
       <ResponsiveContainer width="100%" height="100%">
         <RadarChart outerRadius="75%" data={data}>  
           <PolarGrid />
