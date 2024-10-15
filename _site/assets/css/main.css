@@ -728,10 +728,10 @@ th {
 }
 
 .tabs-trigger {
-  background-color: #eaf4fb;
-  color: #000;
-  font-family: 'DungGeunMo', sans-serif;
-  border: 1px solid #000;
+  background-color: #A8E1DB; /* 통일된 기본 색상 */
+  color: #ffffff;
+  font-family: 'PFStardust', monospace; /* 'PFStardust' 폰트 적용 */
+  border: none;
   padding: 8px 16px;
   margin-right: 4px;
   border-radius: 4px;
@@ -740,11 +740,10 @@ th {
 }
 
 .tabs-trigger:hover {
-  background-color: #c1b3f2;
-  color: #fff;
+  background-color: #c9f3ef; /* Hover 시 조금 더 짙은 색상 */
 }
 
 .tabs-trigger[aria-selected="true"] {
-  background-color: #a8e1db;
-  color: #fff;
+  background-color: #c9f3ef; /* 선택된 상태일 때 색상 */
+  color: #ffffff;
 }

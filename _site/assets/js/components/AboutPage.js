@@ -72,24 +72,6 @@ const AboutPage = () => {
           <TabsTrigger value="tech-stack" onClick={() => setActiveTab("tech-stack")}>Tech Stack</TabsTrigger>
         </TabsList>
 
-        {/* All Tab: 지식 도메인 + 기술 스택 + 레이더 차트 */}
-        <TabsContent value="all">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              {/* <h2 className="text-2xl font-semibold mb-4">Knowledge Domains Overview</h2> */}
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>{knowledgeDomainsMarkdown}</ReactMarkdown>
-            </div>
-            <div>
-              {/* <h2 className="text-2xl font-semibold mb-4">Tech Stack</h2> */}
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>{techStackMarkdown}</ReactMarkdown>
-            </div>
-            <div>
-              {/* <h2 className="text-2xl font-semibold mb-4">Skills Overview</h2> */}
-              <SkillRadarChart />
-            </div>
-          </div>
-        </TabsContent>
-
         {/* Knowledge Domains Tab: 지식 도메인 + 레이더 차트 */}
         <TabsContent value="knowledge-domains">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -107,6 +89,24 @@ const AboutPage = () => {
         {/* Tech Stack Tab: 기술 스택 + 레이더 차트 */}
         <TabsContent value="tech-stack">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              {/* <h2 className="text-2xl font-semibold mb-4">Tech Stack</h2> */}
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>{techStackMarkdown}</ReactMarkdown>
+            </div>
+            <div>
+              {/* <h2 className="text-2xl font-semibold mb-4">Skills Overview</h2> */}
+              <SkillRadarChart />
+            </div>
+          </div>
+        </TabsContent>
+
+        {/* All Tab: 지식 도메인 + 기술 스택 + 레이더 차트 */}
+        <TabsContent value="all">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              {/* <h2 className="text-2xl font-semibold mb-4">Knowledge Domains Overview</h2> */}
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>{knowledgeDomainsMarkdown}</ReactMarkdown>
+            </div>
             <div>
               {/* <h2 className="text-2xl font-semibold mb-4">Tech Stack</h2> */}
               <ReactMarkdown remarkPlugins={[remarkGfm]}>{techStackMarkdown}</ReactMarkdown>
