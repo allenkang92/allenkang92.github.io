@@ -598,8 +598,8 @@ footer {
 
 .modal-content {
   background-color: #A8E1DB;
-  margin: 5% auto; /* 반응형을 위해 여유 공간을 줌 */
-  padding: 20px;
+  margin: auto; /* 반응형을 위해 여유 공간을 줌 */
+  padding: 0px;
   border: 2px solid #ece9f6;
   width: 80%; /* 기본 크기 */
   max-width: 600px;
