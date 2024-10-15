@@ -12,7 +12,6 @@ const data = [
   { subject: 'Data Visualization', value: 75, fullMark: 100 },
 ];
 
-// 커스텀 tick 컴포넌트 생성 (두 줄로 나누기 및 패딩 추가)
 const renderCustomTick = ({ payload, x, y }) => {
   const lines = payload.value.split(' ');
   const padding = 15;
@@ -27,9 +26,15 @@ const renderCustomTick = ({ payload, x, y }) => {
 
 const SkillRadarChart = () => {
   return (
-    <div style={{ width: '100%', height: '100%', minHeight: '700px', maxWidth: '700px', margin: '0 auto', paddingBottom: '200px' }}>
+    <div style={{ 
+      width: '100%', 
+      height: '600px', 
+      maxWidth: '600px', 
+      margin: '0 auto', 
+      paddingBottom: '100px' 
+    }}>
       <ResponsiveContainer width="100%" height="100%">
-        <RadarChart outerRadius="75%" data={data}>  
+        <RadarChart outerRadius="70%" data={data}>  
           <PolarGrid />
           <PolarAngleAxis 
             dataKey="subject" 
@@ -39,7 +44,7 @@ const SkillRadarChart = () => {
           <PolarRadiusAxis 
             angle={45} 
             domain={[0, 100]} 
-            tick={{ fontSize: '7px', fill: '#000000', fontWeight: 'bold' }}  
+            tick={{ fontSize: '8px', fill: '#000000', fontWeight: 'bold' }}  
           />
           <Radar 
             name="Skills" 

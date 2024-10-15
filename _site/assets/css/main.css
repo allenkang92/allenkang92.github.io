@@ -239,12 +239,14 @@ a:hover {
 
 /* 푸터 스타일 */
 footer {
-  margin-top: 100px; /* 푸터와 차트 사이의 간격을 늘림 */
+  margin-top: 50px; /* 푸터와 차트 사이의 간격 유지 */
   padding: 20px;
   background-color: #FFFFFF;
   border-top: 1px solid #A8E1DB;
   text-align: center;
   font-size: 0.9em;
+  position: relative; /* 위치 지정 */
+  z-index: 10; /* 레이더 차트 위에 표시되도록 z-index 설정 */
 }
 
 /* 검색 결과 스타일 */
@@ -702,4 +704,10 @@ footer {
 
 footer {
   margin-top: 50px;  /* 푸터 상단 간격 추가 */
+}
+
+
+/* 레이더 차트를 포함하는 컨테이너에 적용할 스타일 */
+#skill-chart {
+  margin-bottom: 70px; /* 푸터와의 간격 확보 */
 }
