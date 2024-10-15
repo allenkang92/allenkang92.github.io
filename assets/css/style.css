@@ -711,3 +711,18 @@ footer {
 #skill-chart {
   margin-bottom: 70px; /* 푸터와의 간격 확보 */
 }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 10px;
+  text-align: left;
+  border: 1px solid #000000;
+}
+
+th {
+  background-color: #ffffff;
+}
