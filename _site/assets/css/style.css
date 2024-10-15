@@ -711,3 +711,40 @@ footer {
 #skill-chart {
   margin-bottom: 70px; /* 푸터와의 간격 확보 */
 }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 10px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
+th {
+  background-color: #ffffff;
+}
+
+.tabs-trigger {
+  background-color: #eaf4fb;
+  color: #000;
+  font-family: 'DungGeunMo', sans-serif;
+  border: 1px solid #000;
+  padding: 8px 16px;
+  margin-right: 4px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.tabs-trigger:hover {
+  background-color: #c1b3f2;
+  color: #fff;
+}
+
+.tabs-trigger[aria-selected="true"] {
+  background-color: #a8e1db;
+  color: #fff;
+}

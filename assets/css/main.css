@@ -726,3 +726,24 @@ th, td {
 th {
   background-color: #ffffff;
 }
+
+.tabs-trigger {
+  background-color: #A8E1DB; /* 통일된 기본 색상 */
+  color: #ffffff;
+  font-family: 'PFStardust', monospace; /* 'PFStardust' 폰트 적용 */
+  border: none;
+  padding: 8px 16px;
+  margin-right: 4px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.tabs-trigger:hover {
+  background-color: #C1B3F2; /* Hover 시 조금 더 짙은 색상 */
+}
+
+.tabs-trigger[aria-selected="true"] {
+  background-color: #FFCBDF; /* 선택된 상태일 때 색상 */
+  color: #ffffff;
+}
