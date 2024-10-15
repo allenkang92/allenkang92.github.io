@@ -857,3 +857,89 @@ th {
 .tabs-trigger[aria-selected="true"] {
   background-color: #c9f3ef;
 }
+
+/* 탭 스타일링 */
+.tabs {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 768px) {
+  .tabs {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 576px) {
+  .tabs {
+    grid-template-columns: 1fr;
+  }
+}
+
+.tabs-trigger {
+  background-color: #A8E1DB;
+  color: #ffffff;
+  border: none;
+  padding: 10px;
+  font-family: 'PFStardust', monospace;
+  cursor: pointer;
+  border-radius: 4px;
+  text-align: center;
+  transition: background-color 0.3s ease;
+}
+
+.tabs-trigger:hover {
+  background-color: #c9f3ef;
+}
+
+/* 카드 컨테이너 */
+.card-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 768px) {
+  .card-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 576px) {
+  .card-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 카드 스타일 */
+.achievement-card {
+  background-color: #fff;
+  border: 2px solid #A8E1DB;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.achievement-card h2 {
+  font-size: 18px;
+  color: #000;
+  margin-bottom: 10px;
+}
+
+.achievement-card p {
+  font-size: 14px;
+  color: #333;
+}
+
+/* 반응형 카드 스타일 */
+@media (max-width: 768px) {
+  .achievement-card h2 {
+    font-size: 16px;
+  }
+
+  .achievement-card p {
+    font-size: 12px;
+  }
+}
