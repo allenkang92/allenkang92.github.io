@@ -585,7 +585,7 @@ footer {
 }
 
 .modal {
-  display: none;
+  display: none; /* 모달이 보이지 않도록 기본 설정 */
   position: fixed;
   z-index: 1000;
   left: 0;
@@ -594,12 +594,17 @@ footer {
   height: 100%;
   overflow: auto;
   background-color: rgba(0, 0, 0, 0.5); /* 배경 어둡게 조정 */
+  
+  /* Flexbox를 사용하여 모달을 화면 중앙에 배치 */
+  display: flex;
+  justify-content: center; /* 가로축 중앙 정렬 */
+  align-items: center;     /* 세로축 중앙 정렬 */
 }
 
 .modal-content {
   background-color: #A8E1DB;
-  margin: auto; /* 반응형을 위해 여유 공간을 줌 */
-  padding: 0px;
+  margin: auto; /* 중앙 정렬을 위한 마진 자동 설정 */
+  padding: 20px;
   border: 2px solid #ece9f6;
   width: 80%; /* 기본 크기 */
   max-width: 600px;
