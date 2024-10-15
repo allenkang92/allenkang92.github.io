@@ -7,55 +7,44 @@ title: Achievements
 
 Welcome to my achievements page. Here you can find information about my certificates, education, awards, publications, and projects.
 
-<div class="category-filter">
-  <label for="achievement-category-select">Filter by category:</label>
-  <select id="achievement-category-select" onchange="filterAchievements()">
-    <option value="all">All Categories</option>
+<div class="tabs-container">
+  <div class="tabs">
+    <button class="tabs-trigger" onclick="showCategory('certificates')">Certificates</button>
+    <button class="tabs-trigger" onclick="showCategory('education')">Education</button>
+    <button class="tabs-trigger" onclick="showCategory('awards')">Awards</button>
+    <button class="tabs-trigger" onclick="showCategory('publications')">Publications</button>
+    <button class="tabs-trigger" onclick="showCategory('projects')">Projects</button>
+    <button class="tabs-trigger" onclick="showCategory('volunteering')">Volunteering</button>
+    <button class="tabs-trigger" onclick="showCategory('leadership')">Leadership</button>
+    <button class="tabs-trigger" onclick="showCategory('personal_development')">Personal Development</button>
+    <button class="tabs-trigger" onclick="showCategory('all')">All</button>
+  </div>
+
+  <div id="achievement-content" class="card-container">
+    <!-- All categories will be displayed here -->
     {% for achievement in site.achievements %}
-      <option value="{{ achievement.category }}">{{ achievement.title }}</option>
+      <div class="achievement-card" data-category="{{ achievement.category }}">
+        <h2>{{ achievement.title }}</h2>
+        <p>{{ achievement.content }}</p>
+      </div>
     {% endfor %}
-  </select>
+  </div>
 </div>
 
-{% for achievement in site.achievements %}
-  <div class="achievement-category" data-category="{{ achievement.category }}">
-    <h2>{{ achievement.title }}</h2>
-    {{ achievement.content }}
-    
-    {% assign subcategories = site.data.achievement_categories[achievement.category].subcategories %}
-    {% if subcategories %}
-      <h3>Subcategories:</h3>
-      <ul>
-        {% for subcategory in subcategories %}
-          <li>{{ subcategory | capitalize | replace: '_', ' ' }}</li>
-        {% endfor %}
-      </ul>
-    {% endif %}
-  </div>
-{% endfor %}
-
 <script>
-function filterAchievements() {
-  var select = document.getElementById('achievement-category-select');
-  var selectedCategory = select.value;
-  var categories = document.getElementsByClassName('achievement-category');
-  
-  for (var i = 0; i < categories.length; i++) {
-    if (selectedCategory === 'all' || categories[i].getAttribute('data-category') === selectedCategory) {
-      categories[i].style.display = 'block';
+function showCategory(category) {
+  var items = document.getElementsByClassName('achievement-card');
+  for (var i = 0; i < items.length; i++) {
+    if (category === 'all' || items[i].getAttribute('data-category') === category) {
+      items[i].style.display = 'block';
     } else {
-      categories[i].style.display = 'none';
+      items[i].style.display = 'none';
     }
   }
 }
 
+// 페이지 로드 시 All 탭을 기본으로 보여줌
 document.addEventListener('DOMContentLoaded', function() {
-  var achievementCategorySelect = document.getElementById('achievement-category-select');
-  if (achievementCategorySelect) {
-    achievementCategorySelect.addEventListener('change', filterAchievements);
-    // 아래 3줄은 페이지 로드 시 자동 선택 및 필터링을 원하지 않으면 주석 처리하거나 제거하세요
-    // achievementCategorySelect.selectedIndex = 3;
-    // filterAchievements();
-  }
+  showCategory('all');
 });
 </script>

@@ -747,3 +747,113 @@ th {
   background-color: #c9f3ef; /* 선택된 상태일 때 색상 */
   color: #ffffff;
 }
+
+
+/* 성과 카드 스타일 */
+.achievement-card {
+  background-color: #FFFFFF;
+  border: 2px solid #A8E1DB;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(169, 202, 221, 0.2);
+}
+
+.achievement-card h2 {
+  font-family: 'PFStardust', monospace;
+  font-size: 1.5em;
+  color: #000;
+}
+
+.achievement-card p {
+  font-family: 'PFStardust', monospace;
+  font-size: 1.2em;
+  color: #555;
+}
+
+.achievement-category {
+  display: none; /* 기본적으로 숨김 */
+}
+
+.achievement-category h2 {
+  font-family: 'PFStardust', monospace;
+  font-size: 1.5em;
+  margin-top: 0;
+}
+
+.achievement-category p {
+  margin-bottom: 1em;
+}
+
+
+.achievement-card ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.achievement-card ul li {
+  font-family: 'PFStardust', monospace;
+  color: #000;
+}
+
+.card-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.achievement-card {
+  background-color: #FFFFFF;
+  border: 2px solid #A8E1DB;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.achievement-card h2 {
+  font-size: 1.5em;
+  margin-bottom: 10px;
+  color: #000000;
+}
+
+.achievement-card p {
+  font-size: 1em;
+  margin-bottom: 10px;
+  color: #555555;
+}
+
+.achievement-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* 탭 스타일은 그대로 유지 */
+.tabs-container {
+  margin-top: 20px;
+}
+
+.tabs {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.tabs-trigger {
+  background-color: #A8E1DB;
+  color: #ffffff;
+  font-family: 'PFStardust', monospace;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  border-radius: 4px;
+}
+
+.tabs-trigger:hover {
+  background-color: #c9f3ef;
+}
+
+.tabs-trigger[aria-selected="true"] {
+  background-color: #c9f3ef;
+}

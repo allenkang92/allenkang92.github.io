@@ -63,33 +63,25 @@
 
 <p>Welcome to my achievements page. Here you can find information about my certificates, education, awards, publications, and projects.</p>
 
-<div class="category-filter">
-  <label for="achievement-category-select">Filter by category:</label>
-  <select id="achievement-category-select" onchange="filterAchievements()">
-    <option value="all">All Categories</option>
-    
-      <option value="awards">Awards</option>
-    
-      <option value="certificates">Certificates</option>
-    
-      <option value="education">Education</option>
-    
-      <option value="leadership">Leadership</option>
-    
-      <option value="personal_development">Personal Development</option>
-    
-      <option value="projects">Projects</option>
-    
-      <option value="publications">Publications</option>
-    
-      <option value="volunteering">Volunteering</option>
-    
-  </select>
-</div>
+<div class="tabs-container">
+  <div class="tabs">
+    <button class="tabs-trigger" onclick="showCategory('certificates')">Certificates</button>
+    <button class="tabs-trigger" onclick="showCategory('education')">Education</button>
+    <button class="tabs-trigger" onclick="showCategory('awards')">Awards</button>
+    <button class="tabs-trigger" onclick="showCategory('publications')">Publications</button>
+    <button class="tabs-trigger" onclick="showCategory('projects')">Projects</button>
+    <button class="tabs-trigger" onclick="showCategory('volunteering')">Volunteering</button>
+    <button class="tabs-trigger" onclick="showCategory('leadership')">Leadership</button>
+    <button class="tabs-trigger" onclick="showCategory('personal_development')">Personal Development</button>
+    <button class="tabs-trigger" onclick="showCategory('all')">All</button>
+  </div>
 
-<div class="achievement-category" data-category="awards">
-    <h2>Awards</h2>
-    <p>This is a placeholder for the awards category. Here you will find professional and academic awards.</p>
+  <div id="achievement-content" class="card-container">
+    <!-- All categories will be displayed here -->
+    
+      <div class="achievement-card" data-category="awards">
+        <h2>Awards</h2>
+        <p><p>This is a placeholder for the awards category. Here you will find professional and academic awards.</p>
 
 <h2 id="professional-awards">Professional Awards</h2>
 <ul>
@@ -100,15 +92,12 @@
 <ul>
   <li>Best Research Paper Award</li>
 </ul>
-
+</p>
+      </div>
     
-    
-    
-  </div>
-
-<div class="achievement-category" data-category="certificates">
-    <h2>Certificates</h2>
-    <p>This is a placeholder for the certificates category. Here you will find professional and academic certificates.</p>
+      <div class="achievement-card" data-category="certificates">
+        <h2>Certificates</h2>
+        <p><p>This is a placeholder for the certificates category. Here you will find professional and academic certificates.</p>
 
 <h2 id="professional-certificates">Professional Certificates</h2>
 <ul>
@@ -120,15 +109,12 @@
 <ul>
   <li>Master’s Degree in Computer Science</li>
 </ul>
-
+</p>
+      </div>
     
-    
-    
-  </div>
-
-<div class="achievement-category" data-category="education">
-    <h2>Education</h2>
-    <p>This is a placeholder for the education category. Here you will find courses and workshops.</p>
+      <div class="achievement-card" data-category="education">
+        <h2>Education</h2>
+        <p><p>This is a placeholder for the education category. Here you will find courses and workshops.</p>
 
 <h2 id="courses">Courses</h2>
 <ul>
@@ -139,15 +125,12 @@
 <ul>
   <li>Leadership in Technology</li>
 </ul>
-
+</p>
+      </div>
     
-    
-    
-  </div>
-
-<div class="achievement-category" data-category="leadership">
-    <h2>Leadership</h2>
-    <p>This is a placeholder for the leadership category. Here you will find information about my leadership roles and experiences.</p>
+      <div class="achievement-card" data-category="leadership">
+        <h2>Leadership</h2>
+        <p><p>This is a placeholder for the leadership category. Here you will find information about my leadership roles and experiences.</p>
 
 <h2 id="leadership-roles">Leadership Roles</h2>
 <ul>
@@ -158,15 +141,12 @@
 <ul>
   <li>[Add your leadership experiences here]</li>
 </ul>
-
+</p>
+      </div>
     
-    
-    
-  </div>
-
-<div class="achievement-category" data-category="personal_development">
-    <h2>Personal Development</h2>
-    <p>This is a placeholder for the personal development category. Here you will find information about my personal growth and skill development.</p>
+      <div class="achievement-card" data-category="personal_development">
+        <h2>Personal Development</h2>
+        <p><p>This is a placeholder for the personal development category. Here you will find information about my personal growth and skill development.</p>
 
 <h2 id="skills-acquired">Skills Acquired</h2>
 <ul>
@@ -182,33 +162,24 @@
 <ul>
   <li>[Add any self-improvement activities or achievements here]</li>
 </ul>
-
+</p>
+      </div>
     
+      <div class="achievement-card" data-category="projects">
+        <h2>Projects</h2>
+        <p><p>This is a placeholder for the projects category. Here you will find example projects.</p>
+</p>
+      </div>
     
+      <div class="achievement-card" data-category="publications">
+        <h2>Publications</h2>
+        <p><p>This is a placeholder for the publications category. List of publications will be shown here.</p>
+</p>
+      </div>
     
-  </div>
-
-<div class="achievement-category" data-category="projects">
-    <h2>Projects</h2>
-    <p>This is a placeholder for the projects category. Here you will find example projects.</p>
-
-    
-    
-    
-  </div>
-
-<div class="achievement-category" data-category="publications">
-    <h2>Publications</h2>
-    <p>This is a placeholder for the publications category. List of publications will be shown here.</p>
-
-    
-    
-    
-  </div>
-
-<div class="achievement-category" data-category="volunteering">
-    <h2>Volunteering</h2>
-    <p>This is a placeholder for the volunteering category. Here you will find information about my volunteer activities and community service.</p>
+      <div class="achievement-card" data-category="volunteering">
+        <h2>Volunteering</h2>
+        <p><p>This is a placeholder for the volunteering category. Here you will find information about my volunteer activities and community service.</p>
 
 <h2 id="volunteer-activities">Volunteer Activities</h2>
 <ul>
@@ -219,35 +190,27 @@
 <ul>
   <li>[Add your community service experiences here]</li>
 </ul>
-
-    
-    
+</p>
+      </div>
     
   </div>
+</div>
 
 <script>
-function filterAchievements() {
-  var select = document.getElementById('achievement-category-select');
-  var selectedCategory = select.value;
-  var categories = document.getElementsByClassName('achievement-category');
-  
-  for (var i = 0; i < categories.length; i++) {
-    if (selectedCategory === 'all' || categories[i].getAttribute('data-category') === selectedCategory) {
-      categories[i].style.display = 'block';
+function showCategory(category) {
+  var items = document.getElementsByClassName('achievement-card');
+  for (var i = 0; i < items.length; i++) {
+    if (category === 'all' || items[i].getAttribute('data-category') === category) {
+      items[i].style.display = 'block';
     } else {
-      categories[i].style.display = 'none';
+      items[i].style.display = 'none';
     }
   }
 }
 
+// 페이지 로드 시 All 탭을 기본으로 보여줌
 document.addEventListener('DOMContentLoaded', function() {
-  var achievementCategorySelect = document.getElementById('achievement-category-select');
-  if (achievementCategorySelect) {
-    achievementCategorySelect.addEventListener('change', filterAchievements);
-    // 아래 3줄은 페이지 로드 시 자동 선택 및 필터링을 원하지 않으면 주석 처리하거나 제거하세요
-    // achievementCategorySelect.selectedIndex = 3;
-    // filterAchievements();
-  }
+  showCategory('all');
 });
 </script>
 
