@@ -17,6 +17,8 @@ module.exports = {
   },
   resolve: {
     extensions: ['.js', '.jsx'],
-    modules: [path.resolve(__dirname, 'assets/js'), 'node_modules'],
+    alias: {
+      '@': path.resolve(__dirname, 'assets/js'),  // '@' 별칭을 assets/js로 설정
+    },
   },
 };
