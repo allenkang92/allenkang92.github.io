@@ -239,7 +239,7 @@ a:hover {
 
 /* 푸터 스타일 */
 footer {
-  margin-top: 50px; /* 푸터와 차트 사이의 간격 */
+  margin-top: 100px; /* 푸터와 차트 사이의 간격을 늘림 */
   padding: 20px;
   background-color: #FFFFFF;
   border-top: 1px solid #A8E1DB;
