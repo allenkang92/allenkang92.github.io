@@ -598,8 +598,8 @@ footer {
 
 .modal-content {
   background-color: #A8E1DB;
-  margin: 5% auto; /* 반응형을 위해 여유 공간을 줌 */
-  padding: 20px;
+  margin: auto; /* 반응형을 위해 여유 공간을 줌 */
+  padding: 0px;
   border: 2px solid #ece9f6;
   width: 80%; /* 기본 크기 */
   max-width: 600px;
@@ -681,8 +681,10 @@ footer {
 
 /* 차트 관련 스타일 */
 .chart-container {
-  padding: 40px;
+  padding: 40px 0; /* 상단과 하단 간격 조정 */
   text-align: center;
+  margin-top: 20px; /* 상단에 추가적인 간격 추가 */
+  margin-bottom: 40px; /* 하단에 추가적인 간격 추가 */
 }
 
 .chart {
@@ -703,7 +705,7 @@ footer {
 }
 
 footer {
-  margin-top: 50px;  /* 푸터 상단 간격 추가 */
+  margin-top: 20px;  /* 푸터 상단 간격 추가 */
 }
 
 
@@ -865,20 +867,22 @@ th {
 
 .tabs {
   display: grid;
-  grid-template-columns: repeat(4, 1fr); /* 4개의 열을 동일한 비율로 분배 */
+  grid-template-columns: repeat(4, 1fr);
   gap: 8px;
   margin-bottom: 20px;
+  max-width: 1000px; /* 탭 최대 너비 설정 */
+  margin: 0 auto; /* 가운데 정렬 */
 }
 
 @media (max-width: 768px) {
   .tabs {
-    grid-template-columns: repeat(2, 1fr); /* 모바일에서는 2개씩 배치 */
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media (max-width: 576px) {
   .tabs {
-    grid-template-columns: 1fr; /* 작은 화면에서는 한 줄 배치 */
+    grid-template-columns: 1fr;
   }
 }
 
@@ -892,45 +896,23 @@ th {
   border-radius: 4px;
   text-align: center;
   transition: background-color 0.3s ease;
-  width: 100%; /* 모든 버튼이 같은 너비를 가짐 */
 }
 
 .tabs-trigger:hover {
   background-color: #c9f3ef;
 }
 
-.tabs-trigger[aria-selected="true"] {
-  background-color: #c9f3ef;
-}
-
 /* 카드 컨테이너 */
 .card-container {
   display: grid;
-  grid-template-columns: repeat(1, 1fr); /* 카드 열 개수는 필요에 따라 조정 */
+  grid-template-columns: 1fr; /* 한 줄에 하나의 카드 */
   gap: 16px;
-  padding: 20px;
+  max-width: 100%; /* 카드 컨테이너 너비를 화면에 맞춤 */
+  width: 100%; /* 탭과 동일한 너비로 설정 */
+  margin: 20px auto 0 auto; /* 카드와 탭 사이에 20px 간격 추가 */
+  padding: 0px;
 }
 
-
-/* 반응형 조정 */
-@media (max-width: 1024px) {
-  .card-container {
-    grid-template-columns: repeat(3, 1fr); /* 중간 화면에서는 3칸 */
-  }
-}
-
-/* 작은 화면에서 탭의 너비 조정 */
-@media (max-width: 768px) {
-  .tabs {
-    grid-template-columns: repeat(2, 1fr); /* 모바일에서는 2개씩 */
-  }
-}
-
-@media (max-width: 576px) {
-  .tabs {
-    grid-template-columns: 1fr; /* 작은 화면에서는 한 줄로 */
-  }
-}
 
 /* 카드 스타일 */
 .achievement-card {
@@ -938,7 +920,8 @@ th {
   border: 2px solid #A8E1DB;
   border-radius: 8px;
   padding: 20px;
-  width: 100%; /* 카드를 화면 너비에 맞춰 확장 */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  margin: 0 auto;
+  width: 100%; /* 카드가 컨테이너 너비에 맞춰지도록 설정 */
+  max-width: 100%; /* 최대 너비 제한 해제 */
+  box-sizing: border-box; /* 카드가 패딩과 함께 너비를 정확히 계산하도록 설정 */
 }
