@@ -80,12 +80,12 @@ const AboutPage = () => {
               <ReactMarkdown remarkPlugins={[remarkGfm]}>{knowledgeDomainsMarkdown}</ReactMarkdown>
             </div>
             <div>
-              {/* <h2 className="text-2xl font-semibold mb-4">Skills Overview</h2> */}
-              <SkillRadarChart />
-            </div>
-            <div>
               {/* <h2 className="text-2xl font-semibold mb-4">Tech Stack</h2> */}
               <ReactMarkdown remarkPlugins={[remarkGfm]}>{techStackMarkdown}</ReactMarkdown>
+            </div>
+            <div>
+              {/* <h2 className="text-2xl font-semibold mb-4">Skills Overview</h2> */}
+              <SkillRadarChart />
             </div>
           </div>
         </TabsContent>
