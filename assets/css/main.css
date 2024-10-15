@@ -728,7 +728,7 @@ th {
 }
 
 .tabs-trigger {
-  background-color: #A8E1DB; /* 통일된 기본 색상 */
+  background-color: #c9f3ef; /* 통일된 기본 색상 */
   color: #ffffff;
   font-family: 'PFStardust', monospace; /* 'PFStardust' 폰트 적용 */
   border: none;
@@ -740,7 +740,7 @@ th {
 }
 
 .tabs-trigger:hover {
-  background-color: #c9f3ef; /* Hover 시 조금 더 짙은 색상 */
+  background-color: #A8E1DB; /* Hover 시 조금 더 짙은 색상 */
 }
 
 .tabs-trigger[aria-selected="true"] {
