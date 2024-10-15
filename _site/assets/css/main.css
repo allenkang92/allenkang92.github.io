@@ -859,22 +859,26 @@ th {
 }
 
 /* 탭 스타일링 */
+.tabs-container {
+  margin-top: 20px;
+}
+
 .tabs {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, 1fr); /* 4개의 탭을 균등 배치 */
   gap: 8px;
   margin-bottom: 20px;
 }
 
 @media (max-width: 768px) {
   .tabs {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr); /* 모바일에서는 2개씩 배치 */
   }
 }
 
 @media (max-width: 576px) {
   .tabs {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr; /* 작은 화면에서는 한 줄 배치 */
   }
 }
 
@@ -894,22 +898,36 @@ th {
   background-color: #c9f3ef;
 }
 
+.tabs-trigger[aria-selected="true"] {
+  background-color: #c9f3ef;
+}
+
 /* 카드 컨테이너 */
 .card-container {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, 1fr); /* 4개의 칸을 균등 배치 */
   gap: 16px;
+  max-width: 100%; /* 너비 제한을 없앰 */
+  width: 100%; /* 화면 크기에 따라 너비 확장 */
+  padding: 20px;
+}
+
+/* 반응형 조정 */
+@media (max-width: 1024px) {
+  .card-container {
+    grid-template-columns: repeat(3, 1fr); /* 중간 화면에서는 3칸 */
+  }
 }
 
 @media (max-width: 768px) {
   .card-container {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr); /* 작은 화면에서는 2칸 */
   }
 }
 
 @media (max-width: 576px) {
   .card-container {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr; /* 모바일에서는 1칸 */
   }
 }
 
@@ -919,27 +937,8 @@ th {
   border: 2px solid #A8E1DB;
   border-radius: 8px;
   padding: 20px;
+  width: 100%; /* 카드를 화면 너비에 맞춰 확장 */
+  max-width: 100%; /* 카드 최대 너비 제한 해제 */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.achievement-card h2 {
-  font-size: 18px;
-  color: #000;
-  margin-bottom: 10px;
-}
-
-.achievement-card p {
-  font-size: 14px;
-  color: #333;
-}
-
-/* 반응형 카드 스타일 */
-@media (max-width: 768px) {
-  .achievement-card h2 {
-    font-size: 16px;
-  }
-
-  .achievement-card p {
-    font-size: 12px;
-  }
+  margin: 20px auto;
 }
