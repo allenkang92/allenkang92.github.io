@@ -681,8 +681,10 @@ footer {
 
 /* 차트 관련 스타일 */
 .chart-container {
-  padding: 40px;
+  padding: 40px 0; /* 상단과 하단 간격 조정 */
   text-align: center;
+  margin-top: 20px; /* 상단에 추가적인 간격 추가 */
+  margin-bottom: 40px; /* 하단에 추가적인 간격 추가 */
 }
 
 .chart {
