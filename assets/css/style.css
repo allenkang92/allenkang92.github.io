@@ -720,7 +720,7 @@ table {
 th, td {
   padding: 10px;
   text-align: left;
-  border: 1px solid #000000;
+  border: 1px solid #ddd;
 }
 
 th {
