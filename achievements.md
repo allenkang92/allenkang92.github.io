@@ -17,11 +17,10 @@ Welcome to my achievements page. Here you can find information about my certific
     <button class="tabs-trigger" onclick="showCategory('volunteering')">Volunteering</button>
     <button class="tabs-trigger" onclick="showCategory('leadership')">Leadership</button>
     <button class="tabs-trigger" onclick="showCategory('personal_development')">Personal Development</button>
-    <button class="tabs-trigger" onclick="showCategory('all')">All</button>
   </div>
 
   <div id="achievement-content" class="card-container">
-    <!-- All categories will be displayed here -->
+    <!-- 각 카테고리에 해당하는 성취 항목들 -->
     {% for achievement in site.achievements %}
       <div class="achievement-card" data-category="{{ achievement.category }}">
         <h2>{{ achievement.title }}</h2>
@@ -43,8 +42,8 @@ function showCategory(category) {
   }
 }
 
-// 페이지 로드 시 All 탭을 기본으로 보여줌
+// 페이지 로드 시 기본으로 첫 번째 탭 (Certificates) 카테고리만 보여줌
 document.addEventListener('DOMContentLoaded', function() {
-  showCategory('all');
+  showCategory('certificates');
 });
 </script>
