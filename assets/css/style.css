@@ -902,6 +902,10 @@ th {
   background-color: #c9f3ef;
 }
 
+.tabs-trigger[aria-selected="true"] {
+  background-color: #c9f3ef;
+}
+
 /* 카드 컨테이너 */
 .card-container {
   display: grid;
