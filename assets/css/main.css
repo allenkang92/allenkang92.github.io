@@ -740,10 +740,10 @@ th {
 }
 
 .tabs-trigger:hover {
-  background-color: #C1B3F2; /* Hover 시 조금 더 짙은 색상 */
+  background-color: #c9f3ef; /* Hover 시 조금 더 짙은 색상 */
 }
 
 .tabs-trigger[aria-selected="true"] {
-  background-color: #FFCBDF; /* 선택된 상태일 때 색상 */
+  background-color: #c9f3ef; /* 선택된 상태일 때 색상 */
   color: #ffffff;
 }
