@@ -1,17 +1,18 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import SkillRadarChart from './components/SkillRadarChart'; // 컴포넌트 경로 지정
-import AboutPage from './components/AboutPage'; // AboutPage도 추가
+import AboutPage from './components/AboutPage';
+import SkillRadarChart from './components/SkillRadarChart';
 
 document.addEventListener('DOMContentLoaded', () => {
-  const chartContainer = document.getElementById('skill-chart');
-  const aboutContainer = document.getElementById('about-page');
-
-  if (chartContainer) {
-    ReactDOM.render(<SkillRadarChart />, chartContainer); // SkillRadarChart를 특정 컨테이너에 렌더링
+  // AboutPage 컴포넌트 렌더링
+  const aboutPageContainer = document.getElementById('about-page');
+  if (aboutPageContainer) {
+    ReactDOM.render(<AboutPage />, aboutPageContainer);
   }
 
-  if (aboutContainer) {
-    ReactDOM.render(<AboutPage />, aboutContainer); // AboutPage를 특정 컨테이너에 렌더링
+  // SkillRadarChart 컴포넌트 렌더링
+  const skillChartContainer = document.getElementById('skill-chart');
+  if (skillChartContainer) {
+    ReactDOM.render(<SkillRadarChart />, skillChartContainer);
   }
 });
