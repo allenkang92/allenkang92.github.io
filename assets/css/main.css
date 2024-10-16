@@ -753,9 +753,27 @@ th {
   box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
 }
 
-/* 탭 스타일은 그대로 유지 */
+/* 통일된 flexbox 레이아웃 적용 */
 .tabs-container {
-  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px; /* 간격 조정 */
+}
+
+.tab-content {
+  display: flex;
+  justify-content: space-between;
+  width: 100%; /* 동일한 너비 설정 */
+}
+
+/* 일관된 padding, margin 적용 */
+.category-table {
+  margin: 20px 0;
+  padding: 10px;
+  width: 100%; /* 표의 너비를 동일하게 설정 */
+  box-sizing: border-box;
 }
 
 .tabs {
