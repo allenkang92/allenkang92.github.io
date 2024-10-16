@@ -594,6 +594,7 @@ footer {
   height: 100%;
   overflow: auto;
   background-color: rgba(0, 0, 0, 0.5); /* 배경 어둡게 조정 */
+  display: flex;
   justify-content: center;
   align-items: center;
   
@@ -629,7 +630,6 @@ footer {
     width: 90%; /* 작은 화면에서는 더 작은 크기로 조정 */
     padding: 15px; /* 패딩 축소 */
   }
-}
 
   .modal-body {
     font-size: 12px;  /* 작은 화면에서는 글씨 크기 조정 */
