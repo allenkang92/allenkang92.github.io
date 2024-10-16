@@ -594,6 +594,8 @@ footer {
   height: 100%;
   overflow: auto;
   background-color: rgba(0, 0, 0, 0.5); /* 배경 어둡게 조정 */
+  justify-content: center;
+  align-items: center;
   
   /* Flexbox를 사용하여 모달을 화면 중앙에 배치 */
   display: flex;
