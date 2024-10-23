@@ -9,6 +9,34 @@ title: Home
   }
 </style>
 
+<!-- Modal -->
+<div id="myModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <div class="modal-header">About This Blog</div>
+    <div class="modal-body">
+      <p>This blog is created with Jekyll and GitHub Pages.</p>
+      <h3>Tech Stack:</h3>
+      <ul>
+        <li>Static Site Generator: Jekyll</li>
+        <li>Hosting: GitHub Pages</li>
+        <li>Frontend: HTML5, CSS3, JavaScript</li>
+        <li>Version Control: Git</li>
+      </ul>
+      <h3>Features:</h3>
+      <ul>
+        <li>Retro pixel art design</li>
+        <li>Responsive layout</li>
+        <li>Category system</li>
+        <li>Search functionality</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Button -->
+<button id="blog-info-btn">My Blog Info</button>
+
 <div class="main-content">
 <main class="main-content">
   <!-- 메인 콘텐츠 -->
@@ -37,3 +65,35 @@ title: Home
   </div>
 </main>
 </div>
+
+<script>
+  // 모달 요소 가져오기
+  var btn = document.getElementById("blog-info-btn");
+  var modal = document.getElementById("myModal");
+  var span = document.getElementsByClassName("close")[0];
+  
+  // 버튼 클릭시 모달 표시
+  if (btn) {
+    btn.onclick = function() {
+      if (modal) {
+        modal.style.display = "block";
+      }
+    }
+  }
+  
+  // X 클릭시 모달 닫기
+  if (span) {
+    span.onclick = function() {
+      if (modal) {
+        modal.style.display = "none";
+      }
+    }
+  }
+  
+  // 모달 외부 클릭시 닫기
+  window.onclick = function(event) {
+    if (event.target == modal) {
+      modal.style.display = "none";
+    }
+  }
+  </script>
