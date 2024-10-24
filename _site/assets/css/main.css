@@ -430,141 +430,57 @@ footer {
 /* 다크 모드 */
 @media (prefers-color-scheme: dark) {
   body {
-    background-color: #1A1A1A; /* 다크 모드 배경색 */
-    color: #FFFFFF; /* 다크 모드 텍스트 색상 */
+    background-color: #FFFFFF; /* 화이트 모드 배경 */
+    color: #000000; /* 화이트 모드 텍스트 */
   }
 
-  .sidebar-right {
-    background-color: #2A2A2A; /* 사이드바 배경색 조정 */
+  .sidebar-right, header, footer {
+    background-color: #FFFFFF;
+    color: #000000;
     border-color: #A8E1DB;
   }
 
-  .sidebar-right h1,
-  .sidebar-right p,
-  .sidebar-right li {
-    color: #FFFFFF; /* 사이드바 텍스트 색상 */
-  }
-
-  .sidebar-right a {
-    color: #A8E1DB; /* 다크 모드 링크 색상 */
-  }
-
-  .sidebar-right a:hover {
-    color: #EAF4FB; /* 다크 모드 링크 호버 색상 */
-  }
-
-  header,
-  #search-input,
-  #search-results,
-  #toc {
-    background-color: #2E2E2E; /* 다크 모드 요소 배경색 */
-    border-color: #A8E1DB; /* 다크 모드 테두리 색상 */
-  }
-
-  h1, h2, h3 {
-    color: #FFFFFF; /* 다크 모드 헤딩 색상 */
-  }
-
   a {
-    color: #A8E1DB; /* 다크 모드 링크 색상 */
+    color: #A8E1DB;
   }
 
   a:hover {
-    color: #EAF4FB; /* 다크 모드 링크 호버 색상 */
+    color: #005F5F;
   }
 
-  /* 드롭다운 스타일 */
-  select {
-    background-color: #FFFFFF; /* 다크 모드 드롭다운 배경색을 흰색으로 변경 */
-    color: #000000; /* 드롭다운 텍스트 색상 */
+  .modal-content {
+    background-color: #FFFFFF;
+    color: #000000;
     border: 2px solid #A8E1DB;
-    font-family: 'PFStardust', monospace;
-    font-size: 16px;
-    outline: none;
-    border-radius: 0;
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    cursor: pointer;
-    background-image: url("data:image/svg+xml;utf8,<svg fill='%23005F5F' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
-    background-repeat: no-repeat;
-    background-position-x: calc(100% - 10px);
-    background-position-y: center;
   }
 
-  option {
-    background-color: #FFFFFF; /* 다크 모드 옵션 배경색을 흰색으로 변경 */
-    color: #000000; /* 옵션 텍스트 색상 */
+  .input-pixel {
+    background-color: #FFFFFF;
+    color: #000000;
+    border: 2px solid #A8E1DB;
   }
 
-  /* 드롭다운 호버 및 포커스 스타일 */
-  select:hover,
-  select:focus {
-    border-color: #005F5F; /* 드롭다운 호버/포커스 테두리 색상 */
-  }
-
-  /* 버튼 스타일 */
   .btn-pixel {
-    background-color: #2E2E2E;
-    color: #FFFFFF;
+    background-color: #FFFFFF;
+    color: #000000;
     border: 2px solid #A8E1DB;
   }
 
   .btn-pixel:hover {
     background-color: #A8E1DB;
-    color: #2E2E2E;
-  }
-
-  /* 입력 필드 스타일 */
-  .input-pixel {
-    background-color: #2E2E2E;
     color: #FFFFFF;
-    border: 2px solid #A8E1DB;
-  }
-
-  .input-pixel:focus {
-    border-color: #EAF4FB;
-  }
-
-  /* 검색 결과 하이라이트 스타일 */
-  #search-results mark {
-    background-color: #A8E1DB;
-    color: #1A1A1A;
-    padding: 2px;
-  }
-
-  /* 푸터 스타일 */
-  footer {
-    background-color: #1A1A1A !important; /* 다크 모드 푸터 배경색 */
-    color: #FFFFFF; /* 다크 모드 푸터 텍스트 색상 */
-    border-top: 1px solid #A8E1DB; /* 푸터 상단 테두리 색상 */
-  }
-
-  /* 이미지 스타일 - 다크 모드 */
-  .post-content img {
-    border: 2px solid #A8E1DB; /* 이미지 테두리 색상 */
-    box-shadow: 0 2px 4px #FFFFFF; /* 이미지 그림자 */
-  }
-
-  /* 테이블 스타일 */
-  .custom-table {
-    background-color: #FFFFFF;
-  }
-
-  .custom-table table {
-    width: 100%;
-    border-collapse: collapse;
   }
 
   .custom-table th,
   .custom-table td {
-    border: 1px solid #A8E1DB;
-    padding: 8px;
-    color: #2E2E2E;
+    background-color: #FFFFFF;
+    color: #000000;
   }
 
-  .custom-table th {
+  #search-results {
     background-color: #FFFFFF;
+    color: #000000;
+    border-color: #A8E1DB;
   }
 }
 
@@ -594,6 +510,7 @@ footer {
   height: 100%;
   overflow: auto;
   background-color: rgba(0, 0, 0, 0.5); /* 배경 어둡게 조정 */
+  display: flex;
   justify-content: center;
   align-items: center;
   
@@ -629,7 +546,6 @@ footer {
     width: 90%; /* 작은 화면에서는 더 작은 크기로 조정 */
     padding: 15px; /* 패딩 축소 */
   }
-}
 
   .modal-body {
     font-size: 12px;  /* 작은 화면에서는 글씨 크기 조정 */
@@ -837,9 +753,27 @@ th {
   box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
 }
 
-/* 탭 스타일은 그대로 유지 */
+/* 통일된 flexbox 레이아웃 적용 */
 .tabs-container {
-  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px; /* 간격 조정 */
+}
+
+.tab-content {
+  display: flex;
+  justify-content: space-between;
+  width: 100%; /* 동일한 너비 설정 */
+}
+
+/* 일관된 padding, margin 적용 */
+.category-table {
+  margin: 20px 0;
+  padding: 10px;
+  width: 100%; /* 표의 너비를 동일하게 설정 */
+  box-sizing: border-box;
 }
 
 .tabs {
