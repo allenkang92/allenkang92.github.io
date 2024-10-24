@@ -1,2 +1,30 @@
 <p>&copy; {{ site.time | date: '%Y' }} Allen's Blog. All rights reserved.</p>
 <button id="blog-info-btn" class="modal-button">My Blog Info</button>
+
+{% include blog-info-modal.html %}
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var modal = document.getElementById("blog-info-modal");  // 수정: 실제 모달 ID로 변경
+    var btn = document.getElementById("blog-info-btn");
+    var span = document.querySelector(".modal-close");       // 수정: 실제 닫기 버튼 클래스로 변경
+
+    if(btn) {
+        btn.onclick = function() {
+            modal.style.display = "flex";
+        }
+    }
+
+    if(span) {
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+    }
+
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+});
+</script>
