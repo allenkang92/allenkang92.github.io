@@ -2,14 +2,28 @@
 layout: null
 ---
 [
-  {% for post in site.posts %}
+  {% assign posts = site.posts | sort: 'date' | reverse %}
+  {% for post in posts %}
+    {% assign series_index = nil %}
+    {% if post.series %}
+      {% assign series_posts = site.posts | where: "series", post.series | sort: "date" %}
+      {% for series_post in series_posts %}
+        {% if series_post.url == post.url %}
+          {% assign series_index = forloop.index %}
+          {% break %}
+        {% endif %}
+      {% endfor %}
+    {% endif %}
     {
-      "title"    : {{ post.title | jsonify }},
-      "category" : {{ post.categories | first | jsonify }},
-      "tags"     : {{ post.tags | jsonify }},
-      "url"      : {{ site.baseurl | append: post.url | jsonify }},
-      "date"     : {{ post.date | date: "%B %d, %Y" | jsonify }},
-      "content"  : {{ post.content | strip_html | truncatewords: 50 | jsonify }}
-    } {% unless forloop.last %},{% endunless %}
+      "title": {{ post.title | jsonify }},
+      "category": {{ post.categories | first | default: "미분류" | jsonify }},
+      "tags": {% if post.tags %}{{ post.tags | jsonify }}{% else %}[]{% endif %},
+      "url": {{ site.baseurl | append: post.url | jsonify }},
+      "date": {{ post.date | date: "%Y-%m-%d" | jsonify }},
+      "content": {{ post.content | strip_html | strip_newlines | truncatewords: 50 | jsonify }},
+      "series": {% if post.series %}{{ post.series | jsonify }}{% else %}null{% endif %},
+      "series_description": {% if post.series_description %}{{ post.series_description | jsonify }}{% else %}null{% endif %},
+      "series_index": {% if series_index %}{{ series_index }}{% else %}null{% endif %}
+    }{% unless forloop.last %},{% endunless %}
   {% endfor %}
 ]

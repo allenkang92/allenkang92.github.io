@@ -7,9 +7,9 @@
   <meta name="description" content="Striving for a better tomorrow, together with you.">
   <meta property="og:title" content="Tools">
   <meta property="og:description" content="Striving for a better tomorrow, together with you.">
-  <meta property="og:url" content="https://allenkang92.github.io/tools.html">
-  <link rel="canonical" href="https://allenkang92.github.io/tools.html">
-  <meta property="og:image" content="https://allenkang92.github.io/assets/images/default.jpg">
+  <meta property="og:url" content="http://localhost:4000/tools.html">
+  <link rel="canonical" href="http://localhost:4000/tools.html">
+  <meta property="og:image" content="http://localhost:4000/assets/images/default.jpg">
   <meta name="robots" content="index, follow">
 
   <!-- 성능 최적화 -->
@@ -49,7 +49,7 @@
     "@context": "http://schema.org",
     "@type": "WebSite",
     "name": "Allen's Blog",
-    "url": "https://allenkang92.github.io"
+    "url": "http://localhost:4000"
   }
   </script>
 </head>
@@ -59,22 +59,110 @@
     <div class="layout-container">
         <div class="content-wrapper">
             <main class="main-content" role="main">
-                <main class="main-content">
-  <!-- 메인 콘텐츠 -->
+                <link rel="stylesheet" href="/assets/css/tools.css">
+
+<main class="main-content">
   <div class="tools">
     <h1>Tools</h1>
 
-    <section class="calculator">
-      <h2>Simple Calculator</h2>
-      <!-- 여기에 계산기 HTML과 JavaScript를 추가할 수 있다 -->
-      <p>Calculator functionality coming soon...</p>
-    </section>
+    <div class="calculator-container">
+      <div class="tab-container">
+        <button class="tab-button active" onclick="switchTab('basic')">기본 계산기</button>
+        <button class="tab-button" onclick="switchTab('physics')">물리량 계산기</button>
+        <button class="tab-button" onclick="switchTab('unit')">단위 변환기</button>
+      </div>
 
-    <!-- 추가 도구들을 여기에 넣을 수 있다 -->
+      <div id="basic-calculator" class="calculator-tab active">
+        <div class="calculator">
+          <h2>기본 계산기</h2>
+          <input type="text" class="calculator-screen" value="0" disabled />
+          <div class="calculator-keys">
+            <button class="clear" value="clear">C</button>
+            <button class="operator" value="/">&divide;</button>
+            <button class="operator" value="*">&times;</button>
+            <button value="7">7</button>
+            <button value="8">8</button>
+            <button value="9">9</button>
+            <button class="operator" value="-">-</button>
+            <button value="4">4</button>
+            <button value="5">5</button>
+            <button value="6">6</button>
+            <button class="operator" value="+">+</button>
+            <button value="1">1</button>
+            <button value="2">2</button>
+            <button value="3">3</button>
+            <button value="0">0</button>
+            <button value=".">.</button>
+            <button class="equal" value="=">=</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="physics-calculator" class="calculator-tab">
+        <div class="physics-calculator">
+          <h2>물리량 계산기</h2>
+          
+          <select id="physics-formula" onchange="updatePhysicsInputs()">
+            <option value="">물리량 선택</option>
+            <option value="velocity">속도 계산 (v = d/t)</option>
+            <option value="acceleration">가속도 계산 (a = Δv/t)</option>
+            <option value="force">힘 계산 (F = ma)</option>
+            <option value="kinetic">운동에너지 계산 (K = ½mv²)</option>
+            <option value="potential">위치에너지 계산 (U = mgh)</option>
+          </select>
+
+          <div id="physics-inputs"></div>
+          <div id="physics-formula-display" class="formula"></div>
+          <button onclick="calculatePhysics()">계산하기</button>
+          <div id="physics-result" class="result"></div>
+        </div>
+      </div>
+
+      <div id="unit-calculator" class="calculator-tab">
+        <div class="unit-converter">
+          <h2>단위 변환기</h2>
+          
+          <div class="converter-form">
+            <div class="input-group">
+              <label for="unit-category">단위 종류:</label>
+              <select id="unit-category" onchange="updateUnitOptions()">
+                <option value="">단위 종류 선택</option>
+              </select>
+            </div>
+
+            <div class="input-group">
+              <label for="unit-value">값:</label>
+              <input type="number" id="unit-value" placeholder="변환할 값 입력">
+            </div>
+
+            <div class="conversion-units">
+              <div class="input-group">
+                <label for="from-unit">변환 전 단위:</label>
+                <select id="from-unit">
+                  <option value="">단위 선택</option>
+                </select>
+              </div>
+
+              <div class="arrow">→</div>
+
+              <div class="input-group">
+                <label for="to-unit">변환 후 단위:</label>
+                <select id="to-unit">
+                  <option value="">단위 선택</option>
+                </select>
+              </div>
+            </div>
+
+            <button onclick="performConversion()" class="convert-button">변환하기</button>
+            <div id="unit-result" class="result"></div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </main>
 
-<script src="/assets/js/tools.js"></script>
+<script src="/assets/js/dist/calculators.bundle.js"></script>
 
             </main>
             <!-- footer를 content-wrapper 안으로 이동 -->

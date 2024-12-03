@@ -1,174 +1,494 @@
 [
   
-    {
-      "title"    : "결론: 수학 철학과 수학사의 종합적 고찰",
-      "category" : "mathematics_philosophy_history",
-      "tags"     : [],
-      "url"      : "/mathematics_philosophy_history/2024/09/19/9%EC%9E%A5-%EC%88%98%ED%95%99%EC%B2%A0%ED%95%99%EA%B3%BC%EC%88%98%ED%95%99%EC%82%AC%EC%9D%98%EC%A2%85%ED%95%A9%EC%A0%81%EA%B3%A0%EC%B0%B0.html",
-      "date"     : "September 19, 2024",
-      "content"  : "서론 지금까지 수학 철학과 수학사에 대한 다양한 주제들을 살펴보았습니다. 수학의 본질부터 그 역사적 발전, 현대 사회에서의 역할까지 광범위한 내용을 다루며 수학이 단순한 숫자와 공식의 집합이 아니라 인류 문명의 핵심적인 요소임을 확인하였습니다. 이번 결론에서는 그동안 다룬 내용들을 종합적으로 정리하고, 수학이 우리에게 어떤 의미를 지니는지 고찰해보겠습니다. 수학 철학의 주요 흐름 1) 논리주의,..."
-    } ,
   
+    
+    
+      
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+          
+          
+    
     {
-      "title"    : "8장: 수학의 현대적 수용",
-      "category" : "mathematics_philosophy_history",
-      "tags"     : [],
-      "url"      : "/mathematics_philosophy_history/2024/09/19/8%EC%9E%A5-%EC%88%98%ED%95%99%EC%9D%98%ED%98%84%EB%8C%80%EC%A0%81%EC%88%98%EC%9A%A9.html",
-      "date"     : "September 19, 2024",
-      "content"  : "서론 현대 사회에서 수학은 기술과 과학의 핵심적인 역할을 담당하고 있습니다. 컴퓨터 과학, 인공지능, 데이터 분석 등 다양한 분야에서 수학적 지식은 필수적입니다. 이번 장에서는 수학이 현대에 어떻게 수용되고 있는지, 그리고 그에 따른 윤리적, 철학적 논의는 무엇인지 살펴보겠습니다. 수학과 컴퓨터 과학의 관계 1) 알고리즘과 복잡도 이론 알고리즘은 문제를 해결하기 위한 명확한 절차나..."
-    } ,
+      "title": "결론: 수학 철학과 수학사의 종합적 고찰",
+      "category": "mathematics_philosophy_history",
+      "tags": [],
+      "url": "/mathematics_philosophy_history/2024/09/19/9%EC%9E%A5-%EC%88%98%ED%95%99%EC%B2%A0%ED%95%99%EA%B3%BC%EC%88%98%ED%95%99%EC%82%AC%EC%9D%98%EC%A2%85%ED%95%A9%EC%A0%81%EA%B3%A0%EC%B0%B0.html",
+      "date": "2024-09-19",
+      "content": "서론지금까지 수학 철학과 수학사에 대한 다양한 주제들을 살펴보았습니다. 수학의 본질부터 그 역사적 발전, 현대 사회에서의 역할까지 광범위한 내용을 다루며 수학이 단순한 숫자와 공식의 집합이 아니라 인류 문명의 핵심적인 요소임을 확인하였습니다. 이번 결론에서는 그동안 다룬 내용들을 종합적으로 정리하고, 수학이 우리에게 어떤 의미를 지니는지 고찰해보겠습니다.수학 철학의 주요 흐름1) 논리주의, 형식주의, 직관주의수학 철학에서...",
+      "series": "Mathematics-Philosophy-History",
+      "series_description": null,
+      "series_index": 10
+    },
   
+    
+    
+      
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+          
+          
+    
     {
-      "title"    : "7장: 수학과 현실의 관계",
-      "category" : "mathematics_philosophy_history",
-      "tags"     : [],
-      "url"      : "/mathematics_philosophy_history/2024/09/19/7%EC%9E%A5-%EC%88%98%ED%95%99%EA%B3%BC%ED%98%84%EC%8B%A4%EC%9D%98%EA%B4%80%EA%B3%84.html",
-      "date"     : "September 19, 2024",
-      "content"  : "서론 수학은 현실 세계를 이해하고 설명하는 데 필수적인 도구로 사용되어 왔습니다. 그러나 수학적 진리가 현실을 어떻게 반영하는가에 대한 질문은 여전히 철학적 논의의 핵심 주제입니다. 이번 장에서는 수학과 현실의 관계를 탐구하고, 수학적 모델과 이론이 현실에 어떻게 적용되는지, 그리고 이에 대한 철학적 관점은 무엇인지 살펴보겠습니다. 수학적 진리와 현실의 반영 1) 수학적 모델의..."
-    } ,
+      "title": "8장: 수학의 현대적 수용",
+      "category": "mathematics_philosophy_history",
+      "tags": [],
+      "url": "/mathematics_philosophy_history/2024/09/19/8%EC%9E%A5-%EC%88%98%ED%95%99%EC%9D%98%ED%98%84%EB%8C%80%EC%A0%81%EC%88%98%EC%9A%A9.html",
+      "date": "2024-09-19",
+      "content": "서론현대 사회에서 수학은 기술과 과학의 핵심적인 역할을 담당하고 있습니다. 컴퓨터 과학, 인공지능, 데이터 분석 등 다양한 분야에서 수학적 지식은 필수적입니다. 이번 장에서는 수학이 현대에 어떻게 수용되고 있는지, 그리고 그에 따른 윤리적, 철학적 논의는 무엇인지 살펴보겠습니다.수학과 컴퓨터 과학의 관계1) 알고리즘과 복잡도 이론알고리즘은 문제를 해결하기 위한 명확한 절차나 단계의 집합이며, 수학적 논리에...",
+      "series": "Mathematics-Philosophy-History",
+      "series_description": null,
+      "series_index": 9
+    },
   
+    
+    
+      
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+          
+          
+    
     {
-      "title"    : "웹 접근성 및 CSS 심화, 호환성 이슈",
-      "category" : "web_technologies",
-      "tags"     : [],
-      "url"      : "/web_technologies/2024/09/19/%EC%9B%B9%EC%A0%91%EA%B7%BC%EC%84%B1.html",
-      "date"     : "September 19, 2024",
-      "content"  : "웹 접근성 및 CSS 심화, 호환성 이슈 1. HTML 및 CSS 심화 학습 이번 글에서는 웹 접근성(Accessibility), CSS의 심화 내용(Flexbox와 Grid Layout), 그리고 브라우저 호환성 이슈에 대해 다루어 보겠습니다. 이전 글에서 다룬 HTML과 CSS의 기본 개념을 토대로, 웹 개발에서 중요한 추가적인 내용들을 살펴보겠습니다. 2. 웹 접근성(Accessibility) 2.1 웹 접근성이란? 웹..."
-    } ,
+      "title": "7장: 수학과 현실의 관계",
+      "category": "mathematics_philosophy_history",
+      "tags": [],
+      "url": "/mathematics_philosophy_history/2024/09/19/7%EC%9E%A5-%EC%88%98%ED%95%99%EA%B3%BC%ED%98%84%EC%8B%A4%EC%9D%98%EA%B4%80%EA%B3%84.html",
+      "date": "2024-09-19",
+      "content": "서론수학은 현실 세계를 이해하고 설명하는 데 필수적인 도구로 사용되어 왔습니다. 그러나 수학적 진리가 현실을 어떻게 반영하는가에 대한 질문은 여전히 철학적 논의의 핵심 주제입니다. 이번 장에서는 수학과 현실의 관계를 탐구하고, 수학적 모델과 이론이 현실에 어떻게 적용되는지, 그리고 이에 대한 철학적 관점은 무엇인지 살펴보겠습니다.수학적 진리와 현실의 반영1) 수학적 모델의 역할수학적 모델은 현실...",
+      "series": "Mathematics-Philosophy-History",
+      "series_description": null,
+      "series_index": 8
+    },
   
+    
+    
+      
+      
+        
+      
+        
+      
+        
+          
+          
+    
     {
-      "title"    : "6장: 수학적 존재론",
-      "category" : "mathematics_philosophy_history",
-      "tags"     : [],
-      "url"      : "/mathematics_philosophy_history/2024/09/19/6%EC%9E%A5-%EC%88%98%ED%95%99%EC%A0%81%EC%A1%B4%EC%9E%AC%EB%A1%A0.html",
-      "date"     : "September 19, 2024",
-      "content"  : "서론 수학적 대상, 특히 수(數)는 우리의 일상과 과학에서 필수적인 역할을 합니다. 그러나 이러한 수학적 대상들이 실제로 어떻게 존재하는가에 대한 질문은 철학자들과 수학자들 사이에서 오랜 논쟁의 대상이 되어 왔습니다. 이번 장에서는 수의 존재론적 지위를 탐구하고, 플라톤주의와 형식주의 사이의 논쟁을 중심으로 수학적 존재론에 대한 다양한 관점을 살펴보겠습니다. 수의 존재론적 지위 수학적 존재론은..."
-    } ,
+      "title": "웹 접근성 및 CSS 심화, 호환성 이슈",
+      "category": "web_technologies",
+      "tags": [],
+      "url": "/web_technologies/2024/09/19/%EC%9B%B9%EC%A0%91%EA%B7%BC%EC%84%B1.html",
+      "date": "2024-09-19",
+      "content": "웹 접근성 및 CSS 심화, 호환성 이슈1. HTML 및 CSS 심화 학습이번 글에서는 웹 접근성(Accessibility), CSS의 심화 내용(Flexbox와 Grid Layout), 그리고 브라우저 호환성 이슈에 대해 다루어 보겠습니다. 이전 글에서 다룬 HTML과 CSS의 기본 개념을 토대로, 웹 개발에서 중요한 추가적인 내용들을 살펴보겠습니다.2. 웹 접근성(Accessibility)2.1 웹 접근성이란?웹 접근성(Web Accessibility)은 장애를 가진 사람을...",
+      "series": "Web_Technologies",
+      "series_description": null,
+      "series_index": 3
+    },
   
+    
+    
+      
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+          
+          
+    
     {
-      "title"    : "5장: 확률과 통계의 철학적 의미",
-      "category" : "mathematics_philosophy_history",
-      "tags"     : [],
-      "url"      : "/mathematics_philosophy_history/2024/09/19/5%EC%9E%A5-%ED%99%95%EB%A5%A0%EA%B3%BC%ED%86%B5%EA%B3%84%EC%9D%98%EC%B2%A0%ED%95%99%EC%A0%81%EC%9D%98%EB%AF%B8.html",
-      "date"     : "September 19, 2024",
-      "content"  : "서론 확률과 통계는 불확실성과 변이를 다루는 수학의 분야로서, 과학적 탐구와 의사결정에 필수적인 도구입니다. 그러나 확률이 무엇을 의미하는지, 확률적 진술이 어떻게 해석되어야 하는지는 철학적 논쟁의 대상이 되어 왔습니다. 이번 장에서는 확률론과 귀납법의 관계를 탐구하고, 철학적 확률론의 발전과 그 의미를 살펴보겠습니다. 확률론과 귀납법의 관계 1) 귀납적 추론과 확률 귀납적 추론(Inductive Reasoning)은 개별적인..."
-    } ,
+      "title": "6장: 수학적 존재론",
+      "category": "mathematics_philosophy_history",
+      "tags": [],
+      "url": "/mathematics_philosophy_history/2024/09/19/6%EC%9E%A5-%EC%88%98%ED%95%99%EC%A0%81%EC%A1%B4%EC%9E%AC%EB%A1%A0.html",
+      "date": "2024-09-19",
+      "content": "서론수학적 대상, 특히 수(數)는 우리의 일상과 과학에서 필수적인 역할을 합니다. 그러나 이러한 수학적 대상들이 실제로 어떻게 존재하는가에 대한 질문은 철학자들과 수학자들 사이에서 오랜 논쟁의 대상이 되어 왔습니다. 이번 장에서는 수의 존재론적 지위를 탐구하고, 플라톤주의와 형식주의 사이의 논쟁을 중심으로 수학적 존재론에 대한 다양한 관점을 살펴보겠습니다.수의 존재론적 지위수학적 존재론은 수학적 대상들이 실제로...",
+      "series": "Mathematics-Philosophy-History",
+      "series_description": null,
+      "series_index": 7
+    },
   
+    
+    
+      
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+          
+          
+    
     {
-      "title"    : "4장: 수학적 증명과 오류의 논리",
-      "category" : "mathematics_philosophy_history",
-      "tags"     : [],
-      "url"      : "/mathematics_philosophy_history/2024/09/19/4%EC%9E%A5-%EC%88%98%ED%95%99%EC%A0%81%EC%A6%9D%EB%AA%85%EA%B3%BC%EC%98%A4%EB%A5%98%EC%9D%98%EB%85%BC%EB%A6%AC.html",
-      "date"     : "September 19, 2024",
-      "content"  : "서론 수학적 증명은 수학에서 진리성을 확인하고 지식을 구축하는 핵심 도구입니다. 그러나 모든 증명이 항상 정확한 것은 아니며, 역사적으로 잘못된 증명이나 오류로 인해 수학의 발전이 이뤄진 사례도 많습니다. 이번 장에서는 수학적 증명의 다양한 유형을 살펴보고, 유명한 수학적 오류들을 통해 오류의 논리를 이해하며, 이를 극복하는 방법을 탐구해보겠습니다. 수학적 증명의 유형 1) 직접..."
-    } ,
+      "title": "5장: 확률과 통계의 철학적 의미",
+      "category": "mathematics_philosophy_history",
+      "tags": [],
+      "url": "/mathematics_philosophy_history/2024/09/19/5%EC%9E%A5-%ED%99%95%EB%A5%A0%EA%B3%BC%ED%86%B5%EA%B3%84%EC%9D%98%EC%B2%A0%ED%95%99%EC%A0%81%EC%9D%98%EB%AF%B8.html",
+      "date": "2024-09-19",
+      "content": "서론확률과 통계는 불확실성과 변이를 다루는 수학의 분야로서, 과학적 탐구와 의사결정에 필수적인 도구입니다. 그러나 확률이 무엇을 의미하는지, 확률적 진술이 어떻게 해석되어야 하는지는 철학적 논쟁의 대상이 되어 왔습니다. 이번 장에서는 확률론과 귀납법의 관계를 탐구하고, 철학적 확률론의 발전과 그 의미를 살펴보겠습니다.확률론과 귀납법의 관계1) 귀납적 추론과 확률귀납적 추론(Inductive Reasoning)은 개별적인 관찰이나 실험 결과로부터 일반적인...",
+      "series": "Mathematics-Philosophy-History",
+      "series_description": null,
+      "series_index": 6
+    },
   
+    
+    
+      
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+          
+          
+    
     {
-      "title"    : "3장: 수학에서의 논리 체계",
-      "category" : "mathematics_philosophy_history",
-      "tags"     : [],
-      "url"      : "/mathematics_philosophy_history/2024/09/19/3%EC%9E%A5-%EC%88%98%ED%95%99%EC%97%90%EC%84%9C%EC%9D%98%EB%85%BC%EB%A6%AC%EC%B2%B4%EA%B3%84.html",
-      "date"     : "September 19, 2024",
-      "content"  : "서론 수학은 논리적 추론에 기반한 학문으로, 엄밀한 논리 체계를 통해 명제를 증명하고 지식을 확장합니다. 이번 장에서는 수학에서 사용되는 논리 체계에 대해 알아보고, 형식 논리와 비형식 논리의 차이점, 그리고 주요 논리적 기호와 용어를 살펴보겠습니다. 이를 통해 수학적 증명의 기초를 이해하고, 수학이 어떻게 논리적으로 전개되는지 알아보겠습니다. 형식 논리와 비형식 논리 1) 형식..."
-    } ,
+      "title": "4장: 수학적 증명과 오류의 논리",
+      "category": "mathematics_philosophy_history",
+      "tags": [],
+      "url": "/mathematics_philosophy_history/2024/09/19/4%EC%9E%A5-%EC%88%98%ED%95%99%EC%A0%81%EC%A6%9D%EB%AA%85%EA%B3%BC%EC%98%A4%EB%A5%98%EC%9D%98%EB%85%BC%EB%A6%AC.html",
+      "date": "2024-09-19",
+      "content": "서론수학적 증명은 수학에서 진리성을 확인하고 지식을 구축하는 핵심 도구입니다. 그러나 모든 증명이 항상 정확한 것은 아니며, 역사적으로 잘못된 증명이나 오류로 인해 수학의 발전이 이뤄진 사례도 많습니다. 이번 장에서는 수학적 증명의 다양한 유형을 살펴보고, 유명한 수학적 오류들을 통해 오류의 논리를 이해하며, 이를 극복하는 방법을 탐구해보겠습니다.수학적 증명의 유형1) 직접 증명직접 증명(Direct Proof)은...",
+      "series": "Mathematics-Philosophy-History",
+      "series_description": null,
+      "series_index": 5
+    },
   
+    
+    
+      
+      
+        
+      
+        
+      
+        
+      
+        
+          
+          
+    
     {
-      "title"    : "2장: 수학과 무한",
-      "category" : "mathematics_philosophy_history",
-      "tags"     : [],
-      "url"      : "/mathematics_philosophy_history/2024/09/19/2%EC%9E%A5-%EC%88%98%ED%95%99%EA%B3%BC%EB%AC%B4%ED%95%9C.html",
-      "date"     : "September 19, 2024",
-      "content"  : "서론 무한(無限)은 수학에서 가장 깊고 복잡한 개념 중 하나입니다. 무한의 개념은 고대부터 철학자와 수학자들에게 큰 관심을 받아왔으며, 칸토어(Georg Cantor)의 집합론을 통해 현대 수학에서 엄밀하게 다루어지게 되었습니다. 이번 장에서는 무한의 개념과 칸토어의 업적, 그리고 무한에 대한 철학적 논의를 살펴보겠습니다. 무한의 개념 1) 잠재적 무한과 실제적 무한 무한은 크게 잠재적 무한과 실제적..."
-    } ,
+      "title": "3장: 수학에서의 논리 체계",
+      "category": "mathematics_philosophy_history",
+      "tags": [],
+      "url": "/mathematics_philosophy_history/2024/09/19/3%EC%9E%A5-%EC%88%98%ED%95%99%EC%97%90%EC%84%9C%EC%9D%98%EB%85%BC%EB%A6%AC%EC%B2%B4%EA%B3%84.html",
+      "date": "2024-09-19",
+      "content": "서론수학은 논리적 추론에 기반한 학문으로, 엄밀한 논리 체계를 통해 명제를 증명하고 지식을 확장합니다. 이번 장에서는 수학에서 사용되는 논리 체계에 대해 알아보고, 형식 논리와 비형식 논리의 차이점, 그리고 주요 논리적 기호와 용어를 살펴보겠습니다. 이를 통해 수학적 증명의 기초를 이해하고, 수학이 어떻게 논리적으로 전개되는지 알아보겠습니다.형식 논리와 비형식 논리1) 형식 논리형식 논리(Formal Logic)는...",
+      "series": "Mathematics-Philosophy-History",
+      "series_description": null,
+      "series_index": 4
+    },
   
+    
+    
+      
+      
+        
+      
+        
+      
+        
+          
+          
+    
     {
-      "title"    : "1장: 시대와 지역에 따른 수학 발전",
-      "category" : "mathematics_philosophy_history",
-      "tags"     : [],
-      "url"      : "/mathematics_philosophy_history/2024/09/19/1%EC%9E%A5-%EC%8B%9C%EB%8C%80%EC%99%80%EC%A7%80%EC%97%AD%EC%97%90%EB%94%B0%EB%A5%B8%EC%88%98%ED%95%99%EB%B0%9C%EC%A0%84.html",
-      "date"     : "September 19, 2024",
-      "content"  : "서론 수학은 인류 문명의 발전과 함께 다양한 문화권에서 독자적으로 발전해 왔습니다. 각 지역의 수학은 그들의 문화, 필요성, 그리고 철학적 관점에 따라 독특한 특징을 지니고 있습니다. 이번 장에서는 고대 이집트, 바빌로니아, 중국, 인도의 수학을 살펴보고, 이들이 현대 수학에 어떤 영향을 미쳤는지 알아보겠습니다. 고대 이집트의 수학 1) 10진법과 단위 분수 고대 이집트인은..."
-    } ,
+      "title": "2장: 수학과 무한",
+      "category": "mathematics_philosophy_history",
+      "tags": [],
+      "url": "/mathematics_philosophy_history/2024/09/19/2%EC%9E%A5-%EC%88%98%ED%95%99%EA%B3%BC%EB%AC%B4%ED%95%9C.html",
+      "date": "2024-09-19",
+      "content": "서론무한(無限)은 수학에서 가장 깊고 복잡한 개념 중 하나입니다. 무한의 개념은 고대부터 철학자와 수학자들에게 큰 관심을 받아왔으며, 칸토어(Georg Cantor)의 집합론을 통해 현대 수학에서 엄밀하게 다루어지게 되었습니다. 이번 장에서는 무한의 개념과 칸토어의 업적, 그리고 무한에 대한 철학적 논의를 살펴보겠습니다.무한의 개념1) 잠재적 무한과 실제적 무한무한은 크게 잠재적 무한과 실제적 무한으로 구분됩니다.잠재적 무한(Potential Infinity):...",
+      "series": "Mathematics-Philosophy-History",
+      "series_description": null,
+      "series_index": 3
+    },
   
+    
+    
+      
+      
+        
+      
+        
+          
+          
+    
     {
-      "title"    : "서론: 수학철학 및 수학사 둘러보기",
-      "category" : "mathematics_philosophy_history",
-      "tags"     : [],
-      "url"      : "/mathematics_philosophy_history/2024/09/11/%EC%84%9C%EB%A1%A0-%EC%88%98%ED%95%99%EC%B2%A0%ED%95%99%EB%B0%8F%EC%88%98%ED%95%99%EC%82%AC%EB%91%98%EB%9F%AC%EB%B3%B4%EA%B8%B0.html",
-      "date"     : "September 11, 2024",
-      "content"  : "서론 수학은 우리 삶의 모든 측면에 깊숙이 스며들어 있습니다.ㅋㅋ 우리는 수학을 통해 세상을 이해하고, 기술을 발전시키며, 복잡한 문제를 해결합니다. 하지만 수학 자체의 본질은 대체 무엇인지 궁금하지 않나요? 아님 말고요. 수학적 개념들은 어떻게 존재하며, 우리는 그것들을 어떻게 인식할 수 있을까요? 이러한 질문들에 답하고자 하는 학문이 바로 수학철학입니다. 수학철학의 정의 수학철학은 수학의..."
-    } ,
+      "title": "1장: 시대와 지역에 따른 수학 발전",
+      "category": "mathematics_philosophy_history",
+      "tags": [],
+      "url": "/mathematics_philosophy_history/2024/09/19/1%EC%9E%A5-%EC%8B%9C%EB%8C%80%EC%99%80%EC%A7%80%EC%97%AD%EC%97%90%EB%94%B0%EB%A5%B8%EC%88%98%ED%95%99%EB%B0%9C%EC%A0%84.html",
+      "date": "2024-09-19",
+      "content": "서론수학은 인류 문명의 발전과 함께 다양한 문화권에서 독자적으로 발전해 왔습니다. 각 지역의 수학은 그들의 문화, 필요성, 그리고 철학적 관점에 따라 독특한 특징을 지니고 있습니다. 이번 장에서는 고대 이집트, 바빌로니아, 중국, 인도의 수학을 살펴보고, 이들이 현대 수학에 어떤 영향을 미쳤는지 알아보겠습니다.고대 이집트의 수학1) 10진법과 단위 분수고대 이집트인은 10진법을 사용하여 수를 표현하였습니다....",
+      "series": "Mathematics-Philosophy-History",
+      "series_description": null,
+      "series_index": 2
+    },
   
+    
+    
+      
+      
+        
+          
+          
+    
     {
-      "title"    : "1장 우주의 기본 구조 : 현대 물리학의 도전과 미래",
-      "category" : "science_philosophy_history",
-      "tags"     : [],
-      "url"      : "/science_philosophy_history/2024/09/09/1%EC%9E%A5-%ED%98%84%EB%8C%80-%EB%AC%BC%EB%A6%AC%ED%95%99%EC%9D%98-%EB%8F%84%EC%A0%84%EA%B3%BC-%EB%AF%B8%EB%9E%98.html",
-      "date"     : "September 09, 2024",
-      "content"  : "6. 현대 물리학의 도전과 미래 지금까지 우리는 현대 물리학이 우주의 기본 구조와 진화에 대해 어떻게 이해하고 있는지 살펴봤는데요. 여전히 많이 해결해야 할 문제들이 많이 남아 있어요. 물론 해결하기 위해서 물리학자들이 많은 노력을 기울이고 있죠. 이 장에서는 현대 물리학의 주요 도전 과제와 미래 연구 방향에 대해서 얘기해보고자 해요. 6.1 양자중력 이론을..."
-    } ,
+      "title": "서론: 수학철학 및 수학사 둘러보기",
+      "category": "mathematics_philosophy_history",
+      "tags": [],
+      "url": "/mathematics_philosophy_history/2024/09/11/%EC%84%9C%EB%A1%A0-%EC%88%98%ED%95%99%EC%B2%A0%ED%95%99%EB%B0%8F%EC%88%98%ED%95%99%EC%82%AC%EB%91%98%EB%9F%AC%EB%B3%B4%EA%B8%B0.html",
+      "date": "2024-09-11",
+      "content": "서론수학은 우리 삶의 모든 측면에 깊숙이 스며들어 있습니다.ㅋㅋ 우리는 수학을 통해 세상을 이해하고, 기술을 발전시키며, 복잡한 문제를 해결합니다. 하지만 수학 자체의 본질은 대체 무엇인지 궁금하지 않나요? 아님 말고요. 수학적 개념들은 어떻게 존재하며, 우리는 그것들을 어떻게 인식할 수 있을까요? 이러한 질문들에 답하고자 하는 학문이 바로 수학철학입니다.수학철학의 정의수학철학은 수학의 기초, 방법론, 그리고...",
+      "series": "Mathematics-Philosophy-History",
+      "series_description": null,
+      "series_index": 1
+    },
   
+    
+    
+      
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+          
+          
+    
     {
-      "title"    : "1장 우주의 기본 구조 : 표준 모형: 현대 물리학의 종합",
-      "category" : "science_philosophy_history",
-      "tags"     : [],
-      "url"      : "/science_philosophy_history/2024/09/09/1%EC%9E%A5-%ED%91%9C%EC%A4%80-%EB%AA%A8%ED%98%95-%ED%98%84%EB%8C%80%EB%AC%BC%EB%A6%AC%ED%95%99%EC%9D%98%EC%A2%85%ED%95%A9.html",
-      "date"     : "September 09, 2024",
-      "content"  : "1장 우주의 기본 구조: 표준 모형 4. 표준 모형: 현대 물리학의 종합 표준 모형은 현대 물리학의 가장 큰 성과 중 하나라고 할 수 있으며, 기본 입자들과 그들 사이의 상호작용을 설명하는 포괄적인 이론입니다! 강한 핵력, 약한 핵력, 전자기력을 통합적으로 설명하며, 지금까지 알려진 모든 실험 결과와 놀라울 정도로 잘 일치해요. 표준 모형은..."
-    } ,
+      "title": "1장 우주의 기본 구조 : 표준 모형: 현대 물리학의 종합",
+      "category": "science_philosophy_history",
+      "tags": [],
+      "url": "/science_philosophy_history/2024/09/09/1%EC%9E%A5-%ED%91%9C%EC%A4%80-%EB%AA%A8%ED%98%95-%ED%98%84%EB%8C%80%EB%AC%BC%EB%A6%AC%ED%95%99%EC%9D%98%EC%A2%85%ED%95%A9.html",
+      "date": "2024-09-09",
+      "content": "1장 우주의 기본 구조: 표준 모형4. 표준 모형: 현대 물리학의 종합표준 모형은 현대 물리학의 가장 큰 성과 중 하나라고 할 수 있으며, 기본 입자들과 그들 사이의 상호작용을 설명하는 포괄적인 이론입니다! 강한 핵력, 약한 핵력, 전자기력을 통합적으로 설명하며, 지금까지 알려진 모든 실험 결과와 놀라울 정도로 잘 일치해요. 표준 모형은 중력을 제외한...",
+      "series": "Science_Philosophy_History",
+      "series_description": null,
+      "series_index": 5
+    },
   
+    
+    
+      
+      
+        
+      
+        
+      
+        
+      
+        
+          
+          
+    
     {
-      "title"    : "1장 우주의 기본 구조 : 자연계의 4대 힘",
-      "category" : "science_philosophy_history",
-      "tags"     : [],
-      "url"      : "/science_philosophy_history/2024/09/09/1%EC%9E%A5-%EC%9E%90%EC%97%B0%EA%B3%84%EC%9D%984%EB%8C%80%ED%9E%98.html",
-      "date"     : "September 09, 2024",
-      "content"  : "3. 자연계의 4대 힘 우주에서 일어나는 모든 상호작용은 네 가지 기본적인 힘으로 설명할 수 있어요. 중력, 전자기력, 강한 핵력, 약한 핵력은 자연계의 4대 힘을 구성하고 있어요. 이 칭구들은 물리적 현상의 근본적인 원리를 설명하는 데 중요한 역할을 합니다. 이 힘들은 각각 다른 성질을 가지고 있으며, 우주와 물질의 구조와 형성을 설명하는데 매우매우매우..."
-    } ,
+      "title": "1장 우주의 기본 구조 : 현대 물리학의 도전과 미래",
+      "category": "science_philosophy_history",
+      "tags": [],
+      "url": "/science_philosophy_history/2024/09/09/1%EC%9E%A5-%ED%98%84%EB%8C%80-%EB%AC%BC%EB%A6%AC%ED%95%99%EC%9D%98-%EB%8F%84%EC%A0%84%EA%B3%BC-%EB%AF%B8%EB%9E%98.html",
+      "date": "2024-09-09",
+      "content": "6. 현대 물리학의 도전과 미래지금까지 우리는 현대 물리학이 우주의 기본 구조와 진화에 대해 어떻게 이해하고 있는지 살펴봤는데요. 여전히 많이 해결해야 할 문제들이 많이 남아 있어요. 물론 해결하기 위해서 물리학자들이 많은 노력을 기울이고 있죠.이 장에서는 현대 물리학의 주요 도전 과제와 미래 연구 방향에 대해서 얘기해보고자 해요.6.1 양자중력 이론을 향한 노력물리학의 가장...",
+      "series": "Science_Philosophy_History",
+      "series_description": null,
+      "series_index": 4
+    },
   
+    
+    
+      
+      
+        
+      
+        
+      
+        
+          
+          
+    
     {
-      "title"    : "HTML 및 CSS 기초와 시맨틱 마크업_02",
-      "category" : "web_technologies",
-      "tags"     : [],
-      "url"      : "/web_technologies/2024/09/09/css%EC%A0%95%EB%A6%AC.html",
-      "date"     : "September 09, 2024",
-      "content"  : "4. CSS 이해하기 1) CSS 소개 CSS(Cascading Style Sheets)는 HTML을 시각적으로 꾸며줄 수 있는 언어. 목적: 웹 페이지의 레이아웃과 스타일 정의 특징: HTML과 분리되어 스타일 정보만을 담당 비유: HTML이 건물의 구조라면, CSS는 인테리어와 같은 역할 CSS의 중요성 HTML 문서의 시각적 표현 담당 다양하고 독창적인 디자인 가능 하나의 CSS로 여러 HTML..."
-    } ,
+      "title": "1장 우주의 기본 구조 : 자연계의 4대 힘",
+      "category": "science_philosophy_history",
+      "tags": [],
+      "url": "/science_philosophy_history/2024/09/09/1%EC%9E%A5-%EC%9E%90%EC%97%B0%EA%B3%84%EC%9D%984%EB%8C%80%ED%9E%98.html",
+      "date": "2024-09-09",
+      "content": "3. 자연계의 4대 힘우주에서 일어나는 모든 상호작용은 네 가지 기본적인 힘으로 설명할 수 있어요. 중력, 전자기력, 강한 핵력, 약한 핵력은 자연계의 4대 힘을 구성하고 있어요. 이 칭구들은 물리적 현상의 근본적인 원리를 설명하는 데 중요한 역할을 합니다. 이 힘들은 각각 다른 성질을 가지고 있으며, 우주와 물질의 구조와 형성을 설명하는데 매우매우매우 중요한...",
+      "series": "Science_Philosophy_History",
+      "series_description": null,
+      "series_index": 3
+    },
   
+    
+    
+      
+      
+        
+      
+        
+          
+          
+    
     {
-      "title"    : "HTML 및 CSS 기초와 시맨틱 마크업_01",
-      "category" : "web_technologies",
-      "tags"     : [],
-      "url"      : "/web_technologies/2024/09/09/html%EC%A0%95%EB%A6%AC.html",
-      "date"     : "September 09, 2024",
-      "content"  : "1. HTML 이해하기 HTML 소개 HTML(Hyper Text Markup Language)은 웹 페이지를 만드는 데 사용되는 기본적인 마크업 언어입니다. 목적: 웹에서 정보를 구조화하고 표현 특징: 태그를 사용하여 문서 구조를 정의 역사: 1990년대 팀 버너스리가 개발 HTML 문법 - 태그 HTML의 기본 구성 요소는 태그입니다. &lt;태그명&gt;내용&lt;/태그명&gt; 시작 태그: &lt;태그명&gt; 종료 태그: &lt;/태그명&gt; 내용:..."
-    } ,
+      "title": "HTML 및 CSS 기초와 시맨틱 마크업_02",
+      "category": "web_technologies",
+      "tags": [],
+      "url": "/web_technologies/2024/09/09/css%EC%A0%95%EB%A6%AC.html",
+      "date": "2024-09-09",
+      "content": "4. CSS 이해하기1) CSS 소개CSS(Cascading Style Sheets)는 HTML을 시각적으로 꾸며줄 수 있는 언어. 목적: 웹 페이지의 레이아웃과 스타일 정의 특징: HTML과 분리되어 스타일 정보만을 담당 비유: HTML이 건물의 구조라면, CSS는 인테리어와 같은 역할CSS의 중요성 HTML 문서의 시각적 표현 담당 다양하고 독창적인 디자인 가능 하나의 CSS로 여러 HTML 페이지 스타일 지정...",
+      "series": "Web_Technologies",
+      "series_description": null,
+      "series_index": 2
+    },
   
+    
+    
+      
+      
+        
+          
+          
+    
     {
-      "title"    : "1장 우주의 기본 구조 : 입자의 세계",
-      "category" : "science_philosophy_history",
-      "tags"     : [],
-      "url"      : "/science_philosophy_history/2024/09/09/1%EC%9E%A5-%EC%9E%85%EC%9E%90%EC%9D%98%EC%84%B8%EA%B3%84.html",
-      "date"     : "September 09, 2024",
-      "content"  : "우주의 기본 구조와 입자의 세계 1. 기본 입자와 상호작용 우리가 일상에서 보고 만지는 모든 물질들은 말이죠. 책상, 의자, 컴퓨터, 심지어 우리 자신들까지 모두 작은 구성 요소로 이루어져 있어요. 물질은 분자로, 분자는 원자로, 원자가 매우 작지만서도 원자보다도 더 작은 기본 입자로 이루어져 있습니다. 놀랍죠? 신기하고 매우 놀랍다고 해주솀;; 구성 요소를 계속..."
-    } ,
+      "title": "HTML 및 CSS 기초와 시맨틱 마크업_01",
+      "category": "web_technologies",
+      "tags": [],
+      "url": "/web_technologies/2024/09/09/html%EC%A0%95%EB%A6%AC.html",
+      "date": "2024-09-09",
+      "content": "1. HTML 이해하기HTML 소개HTML(Hyper Text Markup Language)은 웹 페이지를 만드는 데 사용되는 기본적인 마크업 언어입니다. 목적: 웹에서 정보를 구조화하고 표현 특징: 태그를 사용하여 문서 구조를 정의 역사: 1990년대 팀 버너스리가 개발HTML 문법 - 태그HTML의 기본 구성 요소는 태그입니다.&lt;태그명&gt;내용&lt;/태그명&gt; 시작 태그: &lt;태그명&gt; 종료 태그: &lt;/태그명&gt; 내용: 태그 사이에 위치 요소: 시작...",
+      "series": "Web_Technologies",
+      "series_description": null,
+      "series_index": 1
+    },
   
+    
+    
+      
+      
+        
+      
+        
+          
+          
+    
     {
-      "title"    : "서론: 과학철학 및 과학사 둘러보기",
-      "category" : "science_philosophy_history",
-      "tags"     : [],
-      "url"      : "/science_philosophy_and_history_category/2024/09/09/서론-과학철학-및-과학사-둘러보기.html",
-      "date"     : "September 09, 2024",
-      "content"  : "과학의 언어와 탐구 방법 우리는 과학기술의 시대에 살고 있어요. 주위를 둘러보면 바로 스마트폰이 보이고, 뉴스에서 보이거나 많이 들리고 있는 인공지능도 있습니다. 그 외의 유전자 치료 등 과학기술의 산물들이 우리의 일상을 변화시키고 있구요. 하지만 이런 기술들에게는 긍정적인 면만 있는 것은 아닙니다. 인공지능의 윤리적 문제나 유전자 치료의 부작용 등, 우리는 과학의 발전이..."
-    } ,
+      "title": "1장 우주의 기본 구조 : 입자의 세계",
+      "category": "science_philosophy_history",
+      "tags": [],
+      "url": "/science_philosophy_history/2024/09/09/1%EC%9E%A5-%EC%9E%85%EC%9E%90%EC%9D%98%EC%84%B8%EA%B3%84.html",
+      "date": "2024-09-09",
+      "content": "우주의 기본 구조와 입자의 세계1. 기본 입자와 상호작용우리가 일상에서 보고 만지는 모든 물질들은 말이죠. 책상, 의자, 컴퓨터, 심지어 우리 자신들까지 모두 작은 구성 요소로 이루어져 있어요. 물질은 분자로, 분자는 원자로, 원자가 매우 작지만서도 원자보다도 더 작은 기본 입자로 이루어져 있습니다. 놀랍죠? 신기하고 매우 놀랍다고 해주솀;; 구성 요소를 계속 나누다 보면,...",
+      "series": "Science_Philosophy_History",
+      "series_description": null,
+      "series_index": 2
+    },
   
+    
+    
+      
+      
+        
+          
+          
+    
     {
-      "title"    : "<자격증> 기업재난관리사 실무분야 합격 후기 & 정보글",
-      "category" : "daily_life",
-      "tags"     : ["personal"],
-      "url"      : "/daily_life/2021/01/28/%EA%B8%B0%EC%97%85%EC%9E%AC%EB%82%9C%EA%B4%80%EB%A6%AC%EC%82%AC%EC%8B%A4%EB%AC%B4%EB%B6%84%EC%95%BC%ED%95%A9%EA%B2%A9%ED%9B%84%EA%B8%B0&%EC%A0%95%EB%B3%B4%EA%B8%80.html",
-      "date"     : "January 28, 2021",
-      "content"  : "기존에 적어놨던 네이버 블로그 포스팅 마이그레이션 하는 중입니다..! 미리보기로 띄워드릴게용. 아래를 봐주세요! 하하하하하\n\n\n    PDF를 보려면 [여기를 클릭](/assets/2021-01-28-기업재난관리사실무분야합격후기&amp;정보글.pdf)하세요.\n\n"
-    } 
+      "title": "서론: 과학철학 및 과학사 둘러보기",
+      "category": "science_philosophy_history",
+      "tags": [],
+      "url": "/science_philosophy_and_history_category/2024/09/09/서론-과학철학-및-과학사-둘러보기.html",
+      "date": "2024-09-09",
+      "content": "과학의 언어와 탐구 방법우리는 과학기술의 시대에 살고 있어요. 주위를 둘러보면 바로 스마트폰이 보이고, 뉴스에서 보이거나 많이 들리고 있는 인공지능도 있습니다. 그 외의 유전자 치료 등 과학기술의 산물들이 우리의 일상을 변화시키고 있구요. 하지만 이런 기술들에게는 긍정적인 면만 있는 것은 아닙니다. 인공지능의 윤리적 문제나 유전자 치료의 부작용 등, 우리는 과학의 발전이 불러올...",
+      "series": "Science_Philosophy_History",
+      "series_description": null,
+      "series_index": 1
+    },
+  
+    
+    
+    {
+      "title": "<자격증> 기업재난관리사 실무분야 합격 후기 & 정보글",
+      "category": "daily_life",
+      "tags": ["personal"],
+      "url": "/daily_life/2021/01/28/%EA%B8%B0%EC%97%85%EC%9E%AC%EB%82%9C%EA%B4%80%EB%A6%AC%EC%82%AC%EC%8B%A4%EB%AC%B4%EB%B6%84%EC%95%BC%ED%95%A9%EA%B2%A9%ED%9B%84%EA%B8%B0&%EC%A0%95%EB%B3%B4%EA%B8%80.html",
+      "date": "2021-01-28",
+      "content": "기존에 적어놨던 네이버 블로그 포스팅 마이그레이션 하는 중입니다..! 미리보기로 띄워드릴게용. 아래를 봐주세요! 하하하하하    PDF를 보려면 [여기를 클릭](/assets/2021-01-28-기업재난관리사실무분야합격후기&amp;정보글.pdf)하세요.",
+      "series": null,
+      "series_description": null,
+      "series_index": null
+    }
   
 ]

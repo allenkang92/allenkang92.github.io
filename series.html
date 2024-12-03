@@ -3,17 +3,48 @@ layout: default
 title: 시리즈 목록
 ---
 
-<h1>시리즈 목록</h1>
+<link rel="stylesheet" href="{{ '/assets/css/series.css' | relative_url }}">
 
-{% assign series_posts = site.posts | where_exp: "post", "post.series != nil" %}
-{% assign unique_series = series_posts | map: "series" | uniq | sort %}
+<div class="series-container">
+  <h1 class="series-title">시리즈 목록</h1>
 
-{% for series in unique_series %}
-  <h2>{{ series }}</h2>
-  <ul>
-    {% assign series_posts = site.posts | where: "series", series | sort: "date" %}
-    {% for post in series_posts %}
-      <li><a href="{{ post.url | relative_url }}">{{ post.title }}</a></li>
+  {% assign series_posts = site.posts | where_exp: "post", "post.series != nil" %}
+  {% assign unique_series = series_posts | map: "series" | uniq | sort %}
+
+  <ul class="series-list">
+    {% for series in unique_series %}
+      {% assign series_posts = site.posts | where: "series", series | sort: "date" %}
+      <li class="series-card">
+        <h2>{{ series }}</h2>
+        <div class="series-meta">
+          <span><i class="fas fa-book"></i> {{ series_posts.size }}개의 포스트</span>
+          <span><i class="fas fa-calendar-alt"></i> {{ series_posts.first.date | date: "%Y.%m.%d" }} ~ {{ series_posts.last.date | date: "%Y.%m.%d" }}</span>
+        </div>
+        {% assign series_description = series_posts.first.series_description %}
+        {% if series_description %}
+          <p class="series-description">{{ series_description }}</p>
+        {% endif %}
+        <ul class="post-list">
+          {% for post in series_posts %}
+            <li>
+              <a href="{{ post.url | relative_url }}">
+                {{ post.title }}
+                <span class="post-date">{{ post.date | date: "%Y.%m.%d" }}</span>
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      </li>
     {% endfor %}
   </ul>
-{% endfor %}
+</div>
+
+<script>
+  // 시리즈 카드에 지연 애니메이션 적용
+  document.addEventListener('DOMContentLoaded', function() {
+    const cards = document.querySelectorAll('.series-card');
+    cards.forEach((card, index) => {
+      card.style.animationDelay = `${index * 0.1}s`;
+    });
+  });
+</script>
