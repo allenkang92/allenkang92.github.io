@@ -43,3 +43,20 @@ Desktop.ini
 *.bak
 *~
 *.backup
+
+# Jekyll 관련 파일
+_site/
+.jekyll-cache/
+.jekyll-metadata
+.sass-cache/
+vendor/
+.bundle/
+
+# React/웹팩 빌드 결과물
+assets/js/dist/
+assets/js/bundle.js
+assets/js/*.bundle.js
+assets/js/*.bundle.js.map
+
+# Ruby 관련
+Gemfile.lock
