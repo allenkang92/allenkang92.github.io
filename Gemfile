@@ -11,7 +11,7 @@ end
 
 # Windows와 JRuby 플랫폼을 위한 의존성
 platforms :mingw, :x64_mingw, :mswin, :jruby do
-  gem "tzinfo", "~> 1.2"
+  gem "tzinfo", "~> 2.0"
   gem "tzinfo-data"
 end
 

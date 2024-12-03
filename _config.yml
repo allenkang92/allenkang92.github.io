@@ -14,9 +14,7 @@ plugins:
   - jekyll-feed
   - jekyll-seo-tag
   - jekyll-sitemap
-  - jekyll-lunr-js-search
   - jekyll-redirect-from
-  - jekyll-sitemap
 
 sass:
   sass_dir: _sass
@@ -31,18 +29,15 @@ exclude:
   - vendor/cache/
   - vendor/gems/
   - vendor/ruby/
-  - assets/js/webpack.config.js
-  - assets/js/index.js
-  - assets/js/App.js
-  - assets/js/SkillRadarChart.js
   - package.json
   - package-lock.json
   - webpack.config.js
   - .babelrc
+  - README.md
 
 # Include specific files
 include:
-  - assets/js/bundle.js
+  - assets/js/dist/
 
 # Navigation menu
 navigation:
@@ -241,17 +236,10 @@ webrick:
   headers:
     Content-Security-Policy: >-
       default-src 'self';
-      script-src 'self' 'unsafe-inline' 'unsafe-eval';
-      style-src 'self' 'unsafe-inline';
-      img-src 'self' https://* data:;
-      font-src 'self';
-      connect-src 'self';
-      media-src 'self';
-      object-src 'none';
-      child-src 'self';
-      frame-ancestors 'self';
-      form-action 'self';
-      base-uri 'self'
-
+      script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com;
+      style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+      font-src 'self' https://fonts.gstatic.com;
+      img-src 'self' data: https:;
+      connect-src 'self' https:;
 # 추가된 설정
 destination: ./_site

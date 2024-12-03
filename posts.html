@@ -3,117 +3,24 @@ layout: default
 title: 전체 글
 ---
 
-<div class="main-content">
-  <div class="posts-page">
-    <h1>전체 글 목록</h1>
-
-    <div class="posts-filter">
-      <input type="text" id="posts-search" placeholder="글 검색..." aria-label="글 검색">
-      <div class="filter-options">
-        <label for="category-select">카테고리:</label>
-        <select id="category-select">
-          <option value="all">전체</option>
-          {% assign categories = site.categories | sort %}
-          {% for category in categories %}
-            <option value="{{ category[0] }}">{{ category[0] }}</option>
-          {% endfor %}
-        </select>
-      </div>
-    </div>
-
-    <div class="posts-list">
+<div id="posts-root"></div>
+<script>
+  window.site = {
+    posts: [
       {% assign posts = site.posts | sort: 'date' | reverse %}
       {% for post in posts %}
-        <article class="post-preview" 
-                data-category="{{ post.categories | first | default: '미분류' }}"
-                data-series="{{ post.series | default: '' }}"
-                data-tags="{{ post.tags | join: ',' }}">
-          <h2>
-            <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
-          </h2>
-          <div class="post-meta">
-            <time class="post-date" datetime="{{ post.date | date_to_xmlschema }}">
-              {{ post.date | date: "%Y년 %-m월 %-d일" }}
-            </time>
-            {% if post.series %}
-              <a href="{{ '/series' | relative_url }}#{{ post.series | url_encode }}" class="post-series">
-                {{ post.series }}
-                {% if post.series_index %}<span class="series-index">{{ post.series_index }}부</span>{% endif %}
-              </a>
-            {% endif %}
-            <span class="post-category">
-              <a href="{{ '/categories' | relative_url }}#{{ post.categories | first | default: '미분류' | url_encode }}">
-                {{ post.categories | first | default: "미분류" }}
-              </a>
-            </span>
-            {% if post.tags.size > 0 %}
-              <div class="post-tags">
-                {% for tag in post.tags %}
-                  <a href="{{ '/tags' | relative_url }}#{{ tag | url_encode }}" class="post-tag">
-                    #{{ tag }}
-                  </a>
-                {% endfor %}
-              </div>
-            {% endif %}
-          </div>
-          {% if post.excerpt %}
-            <div class="post-excerpt">
-              {{ post.excerpt | strip_html | truncatewords: 50 }}
-            </div>
-          {% endif %}
-        </article>
+        {
+          title: {{ post.title | jsonify }},
+          url: {{ post.url | relative_url | jsonify }},
+          date: {{ post.date | jsonify }},
+          series: {{ post.series | jsonify }},
+          series_index: {{ post.series_index | jsonify }},
+          category: {{ post.categories | first | default: '미분류' | jsonify }},
+          tags: {{ post.tags | jsonify }},
+          excerpt: {{ post.excerpt | strip_html | truncatewords: 50 | jsonify }}
+        }{% unless forloop.last %},{% endunless %}
       {% endfor %}
-    </div>
-  </div>
-</div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  const postsSearch = document.getElementById('posts-search');
-  const categorySelect = document.getElementById('category-select');
-  const posts = document.querySelectorAll('.post-preview');
-
-  function filterPosts() {
-    const searchTerm = postsSearch.value.toLowerCase();
-    const selectedCategory = categorySelect.value;
-
-    posts.forEach(post => {
-      const title = post.querySelector('h2').textContent.toLowerCase();
-      const category = post.dataset.category.toLowerCase();
-      const series = post.dataset.series.toLowerCase();
-      const tags = post.dataset.tags.toLowerCase();
-      const excerpt = post.querySelector('.post-excerpt')?.textContent.toLowerCase() || '';
-
-      const matchesSearch = !searchTerm || 
-        title.includes(searchTerm) || 
-        series.includes(searchTerm) || 
-        category.includes(searchTerm) || 
-        tags.includes(searchTerm) || 
-        excerpt.includes(searchTerm);
-
-      const matchesCategory = selectedCategory === 'all' || category === selectedCategory.toLowerCase();
-
-      post.style.display = matchesSearch && matchesCategory ? 'block' : 'none';
-    });
-  }
-
-  // 검색 이벤트
-  let debounceTimer;
-  postsSearch.addEventListener('input', () => {
-    clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(filterPosts, 300);
-  });
-
-  // 카테고리 필터 이벤트
-  categorySelect.addEventListener('change', filterPosts);
-
-  // URL 해시가 있으면 해당 포스트로 스크롤
-  if (window.location.hash) {
-    const targetPost = document.querySelector(window.location.hash);
-    if (targetPost) {
-      targetPost.scrollIntoView();
-      targetPost.classList.add('highlight');
-    }
-  }
-});
+    ]
+  };
 </script>
+<script src="{{ '/assets/js/dist/posts.bundle.js' | relative_url }}"></script>
