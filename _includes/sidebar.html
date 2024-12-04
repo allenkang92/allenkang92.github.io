@@ -1,0 +1,69 @@
+<!-- 사이드바 시작 -->
+<aside class="sidebar-right">
+  <!-- 프로필 섹션 -->
+  <div class="profile">
+    <img src="{{ site.avatar }}" alt="Profile Picture" class="profile-pic">
+  </div>
+
+  <!-- 블로그 제목 -->
+  <div class="blog-title">
+    <h1>{{ site.title }}</h1>
+    <p>{{ site.description }}</p>
+  </div>
+
+  <!-- 메인 네비게이션 -->
+  <nav class="main-nav" role="navigation" aria-label="Main navigation">
+    <ul class="nav-links">
+      <li><a href="{{ site.baseurl }}/" {% if page.url == "/" %}class="active"{% endif %}>Home</a></li>
+      <li><a href="{{ site.baseurl }}/posts" {% if page.url == "/posts/" %}class="active"{% endif %}>Posts</a></li>
+      <li><a href="{{ site.baseurl }}/about" {% if page.url == "/about/" %}class="active"{% endif %}>About</a></li>
+      <li><a href="{{ site.baseurl }}/blog" {% if page.url == "/blog/" %}class="active"{% endif %}>Blog</a></li>
+      <li><a href="{{ site.baseurl }}/projects" {% if page.url == "/projects/" %}class="active"{% endif %}>Projects</a></li>
+    </ul>
+  </nav>
+
+  <!-- 검색 필드 -->
+  <div class="search-container">
+    <label for="search-input" class="sr-only">Search posts</label>
+    <input type="search" id="search-input" placeholder="Search posts..." aria-label="Search posts">
+  </div>
+
+  <!-- 카테고리 필터 -->
+  <div class="filter-container">
+    <label for="category-select" class="sr-only">Filter by category</label>
+    <select id="category-select" aria-label="Filter by category">
+      <option value="">All Categories</option>
+      {% for category in site.categories %}
+        <option value="{{ category[0] }}">{{ category[0] }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <!-- 소셜 링크 -->
+  <div class="social-links">
+    <ul>
+      {% if site.github_username %}
+      <li>
+        <a href="https://github.com/{{ site.github_username }}" target="_blank" rel="noopener noreferrer" aria-label="GitHub Profile">
+          <i class="fab fa-github" aria-hidden="true"></i>
+        </a>
+      </li>
+      {% endif %}
+      {% if site.linkedin_username %}
+      <li>
+        <a href="https://linkedin.com/in/{{ site.linkedin_username }}" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn Profile">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+      {% endif %}
+      {% if site.twitter_username %}
+      <li>
+        <a href="https://twitter.com/{{ site.twitter_username }}" target="_blank" rel="noopener noreferrer" aria-label="Twitter Profile">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+      {% endif %}
+    </ul>
+  </div>
+</aside>
+<!-- 사이드바 끝 -->

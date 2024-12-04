@@ -2,23 +2,39 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0", shrink-to-fit=no">
   <meta name="description" content="{{ page.excerpt | default: site.description | strip_html | normalize_whitespace | truncate: 160 | escape }}">
-  <meta property="og:title" content="{{ page.title | escape }}">
-  <meta property="og:description" content="{{ page.excerpt | default: site.description | strip_html | normalize_whitespace | truncate: 160 | escape }}">
+  <meta name="author" content="{{ site.author }}">
+  <meta name="keywords" content="{{ page.keywords | default: site.keywords | join: ', ' }}">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
   <meta property="og:url" content="{{ page.url | replace:'index.html','' | absolute_url }}">
-  <link rel="canonical" href="{{ page.url | absolute_url }}">
-  <meta property="og:image" content="{{ page.image | default: '/assets/images/default.jpg' | absolute_url }}">
-  <meta name="robots" content="index, follow">
+  <meta property="og:title" content="{{ page.title | escape }} - {{ site.title | escape }}">
+  <meta property="og:description" content="{{ page.excerpt | default: site.description | strip_html | normalize_whitespace | truncate: 160 | escape }}">
+  <meta property="og:image" content="{{ page.image | default: site.default_image | absolute_url }}">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="{{ page.url | replace:'index.html','' | absolute_url }}">
+  <meta name="twitter:title" content="{{ page.title | escape }} - {{ site.title | escape }}">
+  <meta name="twitter:description" content="{{ page.excerpt | default: site.description | strip_html | normalize_whitespace | truncate: 160 | escape }}">
+  <meta name="twitter:image" content="{{ page.image | default: site.default_image | absolute_url }}">
 
   <!-- 성능 최적화 -->
   <link rel="preconnect" href="https://www.googletagmanager.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://utteranc.es">
-  <link rel="preload" href="{{ '/assets/css/style.css' | relative_url }}" as="style">
+  <link rel="preload" as="style" href="{{ '/assets/css/style.css' | relative_url }}">
+  <link rel="preload" as="style" href="{{ '/assets/css/theme.css' | relative_url }}">
+  <link rel="preload" as="script" href="{{ '/assets/js/theme.js' | relative_url }}">
 
-  <!-- 보안 개선 -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://utteranc.es; connect-src 'self' https://www.google-analytics.com; img-src 'self' https://*; style-src 'self' 'unsafe-inline'; font-src 'self'; frame-src https://utteranc.es;">
+  <!-- PWA 지원 -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="{{ site.theme_color }}">
 
   <!-- 파비콘 및 앱 아이콘 -->
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="icon" href="/favicon.ico" sizes="any">
 
   <!-- 언어 설정 -->
@@ -39,6 +55,8 @@
   
   <!-- 메인 스타일 시트 링크 -->
   <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
+  <link rel="stylesheet" href="{{ '/assets/css/theme.css' | relative_url }}">
+  <link rel="stylesheet" href="{{ '/assets/css/pages/posts.css' | relative_url }}">
 
   <!-- JSON-LD 구조화된 데이터 -->
   <script type="application/ld+json">

@@ -1,3 +1,15 @@
 User-agent: *
 Allow: /
+
+# 사이트맵 위치
 Sitemap: {{ site.url }}/sitemap.xml
+
+# 크롤링 제한
+Crawl-delay: 10
+
+# 제외할 디렉토리
+Disallow: /assets/
+Disallow: /_layouts/
+Disallow: /_includes/
+Disallow: /_data/
+Disallow: /404.html

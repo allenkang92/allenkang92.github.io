@@ -1,0 +1,123 @@
+<div class="error-message" role="alert" aria-live="polite" hidden>
+    <div class="error-content">
+        <svg class="error-icon" aria-hidden="true" viewBox="0 0 24 24">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+        </svg>
+        <div class="error-text">
+            <h3 class="error-title">{{ include.title | default: "오류가 발생했습니다" }}</h3>
+            <p class="error-description">{{ include.message }}</p>
+        </div>
+        <button class="error-close" aria-label="닫기">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+            </svg>
+        </button>
+    </div>
+</div>
+
+<style>
+.error-message {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    border-radius: 8px;
+    box-shadow: var(--shadow-md);
+    z-index: 1000;
+    max-width: 90%;
+    width: 400px;
+}
+
+.error-content {
+    display: flex;
+    align-items: flex-start;
+    padding: 1rem;
+    gap: 1rem;
+}
+
+.error-icon {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    fill: var(--error-color, #dc3545);
+}
+
+.error-text {
+    flex: 1;
+}
+
+.error-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0 0 0.25rem;
+    color: var(--text-color);
+}
+
+.error-description {
+    font-size: 0.875rem;
+    color: var(--text-color-light);
+    margin: 0;
+}
+
+.error-close {
+    background: none;
+    border: none;
+    padding: 0.25rem;
+    cursor: pointer;
+    color: var(--text-color-light);
+}
+
+.error-close svg {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+}
+
+.error-close:hover {
+    color: var(--text-color);
+}
+
+@media (max-width: 576px) {
+    .error-message {
+        bottom: 1rem;
+        width: calc(100% - 2rem);
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const errorMessage = {
+        element: document.querySelector('.error-message'),
+        show(title, message) {
+            this.element.querySelector('.error-title').textContent = title;
+            this.element.querySelector('.error-description').textContent = message;
+            this.element.hidden = false;
+            
+            // 자동으로 5초 후에 닫기
+            setTimeout(() => this.hide(), 5000);
+        },
+        hide() {
+            this.element.hidden = true;
+        }
+    };
+
+    // 닫기 버튼 이벤트 리스너
+    const closeButton = document.querySelector('.error-close');
+    if (closeButton) {
+        closeButton.addEventListener('click', () => errorMessage.hide());
+    }
+
+    // 전역 에러 핸들러
+    window.onerror = function(msg, url, line, col, error) {
+        errorMessage.show('오류가 발생했습니다', '페이지를 새로고침하거나 나중에 다시 시도해주세요.');
+        return false;
+    };
+
+    // Promise 에러 핸들러
+    window.addEventListener('unhandledrejection', function(event) {
+        errorMessage.show('오류가 발생했습니다', '페이지를 새로고침하거나 나중에 다시 시도해주세요.');
+    });
+});
+</script>

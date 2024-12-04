@@ -1,0 +1,101 @@
+/* 포스트 컨테이너 */
+.posts-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.page-title {
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  color: var(--text-color);
+}
+
+/* 포스트 목록 */
+.posts-list {
+  display: grid;
+  gap: 2rem;
+}
+
+/* 포스트 프리뷰 */
+.post-preview {
+  padding: 1.5rem;
+  background: var(--background-color);
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.post-preview:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.post-title {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.post-title a {
+  color: var(--text-color);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.post-title a:hover {
+  color: var(--primary-color);
+}
+
+/* 포스트 메타 정보 */
+.post-meta {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  color: var(--text-color-light);
+}
+
+.post-category {
+  padding: 0.25rem 0.75rem;
+  background: var(--primary-color-light);
+  border-radius: 999px;
+  color: var(--primary-color);
+}
+
+/* 포스트 설명 */
+.post-description {
+  margin-bottom: 1rem;
+  color: var(--text-color);
+  line-height: 1.6;
+}
+
+/* 태그 */
+.post-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.tag {
+  padding: 0.25rem 0.75rem;
+  background: var(--background-color-dark);
+  border-radius: 999px;
+  font-size: 0.8rem;
+  color: var(--text-color-light);
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .posts-container {
+    padding: 1rem;
+  }
+
+  .page-title {
+    font-size: 2rem;
+  }
+
+  .post-title {
+    font-size: 1.25rem;
+  }
+}
