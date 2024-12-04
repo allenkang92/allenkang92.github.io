@@ -1,7 +1,22 @@
+/* 테마 변수 */
+:root {
+  --primary-color: #007bff;
+  --secondary-color: #6c757d;
+  --success-color: #00C851;
+  --danger-color: #ff4444;
+  --accent-color: #007bff;
+  --background-color: #ffffff;
+  --content-bg: #f8f9fa;
+  --text-color: #212529;
+  --border-color: #dee2e6;
+  --hover-color: #0056b3;
+}
+
 /* 계산기 컨테이너 */
 .calculator-container {
   max-width: 600px;
   margin: 20px auto;
+  padding: 20px;
 }
 
 /* 탭 스타일링 */
@@ -10,6 +25,7 @@
   margin-bottom: 20px;
   border-radius: 5px;
   overflow: hidden;
+  gap: 10px;
 }
 
 .tab-button {
@@ -19,12 +35,14 @@
   background: var(--content-bg);
   color: var(--text-color);
   cursor: pointer;
-  transition: background-color 0.3s, color 0.3s;
+  transition: all 0.3s ease;
   font-weight: 500;
 }
 
 .tab-button:hover {
-  background: var(--hover-color, #f0f0f0);
+  transform: translateY(-2px);
+  background: var(--hover-color);
+  color: white;
 }
 
 .tab-button.active {
@@ -37,20 +55,27 @@
   background: var(--background-color);
   padding: 20px;
   border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .calculator-screen {
   width: 100%;
   height: 60px;
   background: var(--content-bg);
-  border: none;
+  border: 2px solid var(--border-color);
   padding: 10px;
   margin-bottom: 20px;
   font-size: 2em;
   text-align: right;
   color: var(--text-color);
   border-radius: 5px;
+  outline: none;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.calculator-screen:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
 }
 
 .calculator-keys {
@@ -67,11 +92,37 @@
   color: var(--text-color);
   font-size: 1.2em;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
+  user-select: none;
+  position: relative;
+  overflow: hidden;
 }
 
 .calculator button:hover {
-  background: var(--hover-color, #f0f0f0);
+  background: var(--hover-color);
+  color: white;
+}
+
+.calculator button:active {
+  transform: scale(0.95);
+}
+
+.calculator button::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.3s, height 0.3s;
+}
+
+.calculator button:active::after {
+  width: 100%;
+  height: 100%;
 }
 
 .calculator .operator {
@@ -80,12 +131,12 @@
 }
 
 .calculator .clear {
-  background: var(--danger-color, #ff4444);
+  background: var(--danger-color);
   color: white;
 }
 
 .calculator .equal {
-  background: var(--success-color, #00C851);
+  background: var(--success-color);
   color: white;
   grid-column: span 2;
 }
@@ -95,18 +146,27 @@
   background: var(--background-color);
   padding: 20px;
   border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .physics-calculator select,
 .physics-calculator input {
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   margin: 10px 0;
-  border: 1px solid var(--border-color, #ddd);
+  border: 2px solid var(--border-color);
   border-radius: 5px;
   background: var(--content-bg);
   color: var(--text-color);
+  font-size: 1.1em;
+  outline: none;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.physics-calculator select:focus,
+.physics-calculator input:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
 }
 
 .physics-calculator button {
@@ -118,28 +178,27 @@
   background: var(--accent-color);
   color: white;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
+  font-weight: 500;
 }
 
 .physics-calculator button:hover {
   background: var(--hover-color);
+  transform: translateY(-2px);
+}
+
+.physics-calculator button:active {
+  transform: translateY(0);
 }
 
 .physics-calculator .formula {
-  padding: 10px;
+  padding: 12px;
   margin: 10px 0;
   background: var(--content-bg);
   border-radius: 5px;
   text-align: center;
   font-family: monospace;
-}
-
-.physics-calculator .result {
-  margin-top: 15px;
-  padding: 15px;
-  background: var(--content-bg);
-  border-radius: 5px;
-  text-align: center;
+  border-left: 4px solid var(--accent-color);
 }
 
 /* 단위 변환기 스타일링 */
@@ -149,7 +208,7 @@
   padding: 20px;
   border-radius: 10px;
   background: var(--background-color);
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .unit-converter select,
@@ -157,10 +216,19 @@
   width: 100%;
   padding: 12px;
   margin: 5px 0;
-  border: 1px solid var(--border-color, #ddd);
+  border: 2px solid var(--border-color);
   border-radius: 5px;
   background: var(--content-bg);
   color: var(--text-color);
+  font-size: 1.1em;
+  outline: none;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.unit-converter select:focus,
+.unit-converter input:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
 }
 
 .unit-converter .input-group {
@@ -197,51 +265,91 @@
   background: var(--accent-color);
   color: white;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
   font-weight: 500;
 }
 
 .unit-converter button:hover {
   background: var(--hover-color);
+  transform: translateY(-2px);
 }
 
-.unit-converter .result {
+.unit-converter button:active {
+  transform: translateY(0);
+}
+
+/* 결과 표시 영역 */
+.result {
   margin-top: 20px;
   padding: 15px;
   background: var(--content-bg);
   border-radius: 5px;
   text-align: center;
   font-size: 1.1em;
+  border-left: 4px solid var(--accent-color);
+  animation: slideIn 0.3s ease-out;
 }
 
-/* 공통 스타일 */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 탭 전환 애니메이션 */
 .calculator-tab {
   display: none;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.3s, transform 0.3s;
 }
 
 .calculator-tab.active {
   display: block;
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /* 반응형 디자인 */
 @media (max-width: 600px) {
   .calculator-container {
     margin: 10px;
+    padding: 15px;
   }
   
-  .tab-container {
-    flex-direction: column;
-  }
-  
-  .tab-button {
-    margin-bottom: 5px;
+  .calculator button {
+    padding: 12px;
+    font-size: 1em;
   }
   
   .unit-converter .conversion-units {
     grid-template-columns: 1fr;
+    gap: 10px;
   }
   
   .unit-converter .arrow {
     transform: rotate(90deg);
+    margin: 5px 0;
+  }
+  
+  .tab-container {
+    flex-direction: column;
+    gap: 5px;
+  }
+}
+
+@media (max-width: 400px) {
+  .calculator-keys {
+    gap: 5px;
+  }
+  
+  .calculator button {
+    padding: 10px;
+    font-size: 0.9em;
   }
 }
