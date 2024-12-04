@@ -661,7 +661,7 @@ th {
   margin-right: 4px;
   border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s;
 }
 
 .tabs-trigger:hover {
@@ -725,133 +725,6 @@ th {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 20px;
-}
-
-.achievement-card {
-  background-color: #FFFFFF;
-  border: 2px solid #A8E1DB;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.achievement-card h2 {
-  font-size: 1.5em;
-  margin-bottom: 10px;
-  color: #000000;
-}
-
-.achievement-card p {
-  font-size: 1em;
-  margin-bottom: 10px;
-  color: #555555;
-}
-
-.achievement-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
-}
-
-/* 통일된 flexbox 레이아웃 적용 */
-.tabs-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 16px; /* 간격 조정 */
-}
-
-.tab-content {
-  display: flex;
-  justify-content: space-between;
-  width: 100%; /* 동일한 너비 설정 */
-}
-
-/* 일관된 padding, margin 적용 */
-.category-table {
-  margin: 20px 0;
-  padding: 10px;
-  width: 100%; /* 표의 너비를 동일하게 설정 */
-  box-sizing: border-box;
-}
-
-.tabs {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 20px;
-}
-
-.tabs-trigger {
-  background-color: #A8E1DB;
-  color: #ffffff;
-  font-family: 'PFStardust', monospace;
-  border: none;
-  padding: 10px 20px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  border-radius: 4px;
-}
-
-.tabs-trigger:hover {
-  background-color: #c9f3ef;
-}
-
-.tabs-trigger[aria-selected="true"] {
-  background-color: #c9f3ef;
-}
-
-/* 탭 스타일링 */
-.tabs-container {
-  margin-top: 20px;
-}
-
-.tabs {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-  margin-bottom: 20px;
-  max-width: 1000px; /* 탭 최대 너비 설정 */
-  margin: 0 auto; /* 가운데 정렬 */
-}
-
-@media (max-width: 768px) {
-  .tabs {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 576px) {
-  .tabs {
-    grid-template-columns: 1fr;
-  }
-}
-
-.tabs-trigger {
-  background-color: #A8E1DB;
-  color: #ffffff;
-  border: none;
-  padding: 10px;
-  font-family: 'PFStardust', monospace;
-  cursor: pointer;
-  border-radius: 4px;
-  text-align: center;
-  transition: background-color 0.3s ease;
-}
-
-.tabs-trigger:hover {
-  background-color: #c9f3ef;
-}
-
-.tabs-trigger[aria-selected="true"] {
-  background-color: #c9f3ef;
-}
-
-/* 카드 컨테이너 */
-.card-container {
-  display: grid;
-  grid-template-columns: 1fr; /* 한 줄에 하나의 카드 */
-  gap: 16px;
   max-width: 100%; /* 카드 컨테이너 너비를 화면에 맞춤 */
   width: 100%; /* 탭과 동일한 너비로 설정 */
   margin: 20px auto 0 auto; /* 카드와 탭 사이에 20px 간격 추가 */
@@ -874,4 +747,192 @@ th {
 .tabs-trigger[aria-selected="true"] {
   background-color: #c9f3ef;
   color: #ffffff;
+}
+
+/* 접근성 관련 스타일 */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-to-main {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--primary-color);
+  color: white;
+  padding: 8px;
+  z-index: 100;
+  transition: top 0.3s;
+}
+
+.skip-to-main:focus {
+  top: 0;
+}
+
+/* 키보드 포커스 스타일 */
+:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* 고대비 모드 지원 */
+@media (prefers-contrast: more) {
+  :root {
+    --primary-color: #000000;
+    --text-color: #000000;
+    --background-color: #ffffff;
+    --border-color: #000000;
+  }
+  
+  * {
+    text-shadow: none !important;
+    box-shadow: none !important;
+  }
+}
+
+/* 다크 모드 지원 */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background-color: #1a1a1a;
+    --text-color: #ffffff;
+    --border-color: #404040;
+  }
+}
+
+/* 모션 감소 설정 지원 */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* 텍스트 크기 조정 지원 */
+html {
+  font-size: 100%;
+}
+
+@media screen and (max-width: 768px) {
+  html {
+    font-size: 90%;
+  }
+}
+
+/* 링크 스타일 개선 */
+a {
+  color: var(--primary-color);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+a:hover, a:focus {
+  text-decoration: none;
+  background-color: rgba(168, 225, 219, 0.1);
+}
+
+/* 폼 요소 접근성 */
+input, select, textarea {
+  font-size: 1rem;
+  padding: 0.5em;
+  border: 2px solid var(--border-color);
+  border-radius: 4px;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px var(--focus-ring-color);
+}
+
+/* 버튼 접근성 */
+button {
+  padding: 0.5em 1em;
+  font-size: 1rem;
+  border: 2px solid transparent;
+  border-radius: 4px;
+  background-color: var(--primary-color);
+  color: white;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: var(--primary-hover);
+}
+
+button:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* 에러 메시지 스타일 */
+.error-message {
+  color: var(--error-color);
+  font-weight: bold;
+  padding: 0.5em;
+  margin-top: 0.5em;
+  border: 1px solid var(--error-color);
+  border-radius: 4px;
+}
+
+/* ARIA 라이브 리전 스타일 */
+[aria-live] {
+  border: 1px solid var(--border-color);
+  padding: 1em;
+  margin: 1em 0;
+  border-radius: 4px;
+}
+
+/* 모달 접근성 */
+.modal-container[aria-hidden="true"] {
+  display: none;
+}
+
+.modal-container[aria-hidden="false"] {
+  display: block;
+}
+
+/* 테이블 접근성 */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1em 0;
+}
+
+th {
+  text-align: left;
+  background-color: var(--primary-color);
+  color: white;
+  padding: 0.5em;
+}
+
+td {
+  padding: 0.5em;
+  border: 1px solid var(--border-color);
+}
+
+/* 반응형 이미지 */
+img {
+  max-width: 100%;
+  height: auto;
 }

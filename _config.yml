@@ -65,6 +65,34 @@ collections:
   achievements:
     output: true
     permalink: /achievements/:name/
+  projects:
+    output: true
+    permalink: /projects/:title/
+    hidden: true  # 직접 URL 접근 방지
+
+# Defaults
+defaults:
+  - scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: "post"
+      comments: true
+  - scope:
+      path: ""
+      type: "achievements"
+    values:
+      layout: "achievement"
+  - scope:
+      path: ""
+      type: "projects"
+    values:
+      layout: "project_detail"
+      hidden: true  # 프로젝트 페이지 숨김 처리
+  - scope:
+      path: "_data/achievement_categories.yml"
+    values:
+      layout: achievement
 
 # Category structure for the blog
 category_structure:
@@ -216,12 +244,34 @@ category_structure:
       - literature
       - music
 
-# _config.yml 파일의 마지막에 추가
-defaults:
-  - scope:
-      path: "_data/achievement_categories.yml"
-    values:
-      layout: achievement
+# 이미지 최적화 설정
+image_processing:
+  resize:
+    enable: true
+    width: 1200
+    height: 800
+    quality: 85
+  thumbnails:
+    enable: true
+    width: 400
+    height: 300
+    quality: 75
+
+# 성능 최적화 설정
+compress_html:
+  clippings: all
+  comments: all
+  endings: all
+  startings: [html, head, body]
+
+# 사이트 기능 설정
+features:
+  search: true
+  related_posts: true
+  image_lightbox: true
+  code_copy: true
+  math_equations: true
+  loading_animation: true
 
 # Assets
 assets:

@@ -1,0 +1,426 @@
+/* 공통 스타일 */
+:root {
+  --primary-color: #A8E1DB;
+  --primary-hover: #8CCCC5;
+  --error-color: #dc3545;
+  --success-color: #28a745;
+  --warning-color: #ffc107;
+  --text-color: #212529;
+  --text-light: #6c757d;
+  --background-color: #ffffff;
+  --border-color: #dee2e6;
+  --focus-ring-color: rgba(168, 225, 219, 0.25);
+  --button-bg: #f8f9fa;
+  --button-hover-bg: #e9ecef;
+  --focus-color: #A8E1DB;
+  --operator-bg: #A8E1DB;
+  --operator-color: #ffffff;
+  --clear-bg: var(--error-color);
+  --clear-color: white;
+  --equal-bg: #8CCCC5;
+  --equal-color: white;
+  --input-bg: #252525;
+  --input-color: white;
+}
+
+.tools {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.tools h1 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: var(--text-color);
+}
+
+/* 접근성 유틸리티 */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* 폼 스타일 */
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--text-color);
+  font-weight: 500;
+}
+
+.form-control {
+  display: block;
+  width: 100%;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--text-color);
+  background-color: var(--background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 0.25rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-control:focus {
+  border-color: var(--primary-color);
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem var(--focus-ring-color);
+}
+
+/* 오류 상태 */
+.error {
+  color: var(--error-color);
+  padding: 0.5rem;
+  margin-top: 0.5rem;
+  border-radius: 0.25rem;
+  background-color: rgba(220, 53, 69, 0.1);
+}
+
+.form-control.error {
+  border-color: var(--error-color);
+}
+
+.form-control.error:focus {
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+/* 탭 스타일 */
+.tab-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.tab-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #f0f0f0;
+  color: var(--text-color);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.tab-button:hover {
+  background-color: #e0e0e0;
+}
+
+.tab-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--focus-ring-color);
+}
+
+.tab-button.active {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.tab-button[aria-selected="true"]::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: currentColor;
+}
+
+/* 계산기 탭 스타일 */
+.calculator-tab {
+  display: none;
+  padding: 20px;
+  background-color: var(--background-color);
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.calculator-tab.active {
+  display: block;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 기본 계산기 스타일 */
+.calculator {
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.calculator-screen {
+  width: 100%;
+  padding: 15px;
+  margin-bottom: 15px;
+  font-size: 1.5rem;
+  text-align: right;
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  background-color: var(--input-bg);
+  color: var(--input-color);
+}
+
+.calculator-screen:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--focus-ring-color);
+}
+
+.calculator-keys {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  padding: 15px;
+}
+
+.calculator button {
+  padding: 15px;
+  border: 1px solid var(--border-color);
+  background-color: var(--button-bg);
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  border-radius: 5px;
+}
+
+.calculator button:hover {
+  background-color: var(--button-hover-bg);
+}
+
+.calculator button:focus {
+  outline: 2px solid var(--focus-color);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px var(--focus-ring-color);
+}
+
+.calculator .operator {
+  background-color: var(--operator-bg);
+  color: var(--operator-color);
+  font-weight: bold;
+}
+
+.calculator .operator:hover {
+  background-color: var(--primary-hover);
+}
+
+.calculator .clear {
+  background-color: var(--clear-bg);
+  color: var(--clear-color);
+}
+
+.calculator .equal-top,
+.calculator .equal-bottom {
+  background-color: var(--equal-bg);
+  color: var(--equal-color);
+  grid-row: span 1;
+  font-weight: bold;
+}
+
+.calculator .equal-top:hover,
+.calculator .equal-bottom:hover {
+  background-color: var(--primary-hover);
+}
+
+.calculator .zero {
+  grid-column: span 2;
+}
+
+/* 물리량 계산기 스타일 */
+.physics-calculator {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.physics-calculator select,
+.physics-calculator input {
+  width: 100%;
+  padding: 10px;
+  margin: 5px 0;
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.physics-calculator select:focus,
+.physics-calculator input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px var(--focus-ring-color);
+}
+
+.physics-calculator button {
+  width: 100%;
+  padding: 10px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.physics-calculator button:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-2px);
+}
+
+.physics-calculator button:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--focus-ring-color);
+}
+
+.physics-calculator button:active {
+  transform: translateY(1px);
+}
+
+.formula {
+  text-align: center;
+  font-size: 24px;
+  margin: 20px 0;
+  font-family: 'Times New Roman', serif;
+  color: var(--text-color);
+  padding: 10px;
+  background-color: #f8f9fa;
+  border-radius: 5px;
+  border-left: 4px solid var(--primary-color);
+}
+
+/* 단위 변환기 스타일 */
+.unit-converter {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.converter-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.conversion-units {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 10px;
+}
+
+.arrow {
+  font-size: 24px;
+  text-align: center;
+  color: var(--text-light);
+}
+
+.convert-button {
+  padding: 10px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.convert-button:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-2px);
+}
+
+.convert-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--focus-ring-color);
+}
+
+.convert-button:active {
+  transform: translateY(1px);
+}
+
+.result {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 18px;
+  transition: all 0.3s ease;
+}
+
+.result.error {
+  background-color: rgba(220, 53, 69, 0.1);
+  border-left: 4px solid var(--error-color);
+}
+
+/* 반응형 디자인 */
+@media (max-width: 600px) {
+  .tools {
+    padding: 10px;
+  }
+  
+  .tab-container {
+    flex-direction: column;
+  }
+  
+  .calculator-keys button {
+    height: 50px;
+    font-size: 16px;
+  }
+  
+  .conversion-units {
+    grid-template-columns: 1fr;
+  }
+  
+  .arrow {
+    transform: rotate(90deg);
+  }
+  
+  .formula {
+    font-size: 20px;
+  }
+}
+
+/* 고대비 모드 지원 */
+@media (prefers-contrast: high) {
+  :root {
+    --primary-color: #0000ff;
+    --primary-hover: #0000cc;
+    --error-color: #ff0000;
+    --success-color: #008000;
+    --warning-color: #808000;
+    --text-color: #000000;
+    --text-light: #404040;
+    --background-color: #ffffff;
+    --border-color: #000000;
+  }
+  
+  .calculator-screen {
+    background-color: #000000;
+    color: #ffffff;
+  }
+  
+  .tab-button {
+    border: 2px solid currentColor;
+  }
+}

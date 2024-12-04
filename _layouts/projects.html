@@ -1,0 +1,63 @@
+---
+layout: default
+---
+<div class="projects-container">
+  <header class="projects-header">
+    <h1>프로젝트</h1>
+    <p class="projects-description">
+      주요 프로젝트들을 소개합니다. 각 프로젝트를 클릭하면 상세 정보를 볼 수 있습니다.
+    </p>
+  </header>
+
+  <div class="projects-grid">
+    {% assign sorted_projects = site.projects | sort: 'date' | reverse %}
+    {% for project in sorted_projects %}
+      <article class="project-card">
+        {% if project.thumbnail %}
+          <div class="project-thumbnail">
+            <img src="{{ project.thumbnail }}" 
+                 alt="{{ project.title }} 썸네일" 
+                 loading="lazy">
+          </div>
+        {% endif %}
+        
+        <div class="project-content">
+          <h2 class="project-title">{{ project.title }}</h2>
+          
+          <div class="project-meta">
+            <time datetime="{{ project.date | date_to_xmlschema }}">
+              {{ project.date | date: "%Y년 %-m월 %-d일" }}
+            </time>
+            {% if project.status %}
+              <span class="project-status">• {{ project.status }}</span>
+            {% endif %}
+          </div>
+
+          {% if project.overview %}
+            <p class="project-overview">
+              {{ project.overview | strip_html | truncatewords: 30 }}
+            </p>
+          {% endif %}
+
+          {% if project.tech_stack %}
+            <ul class="project-tech-stack">
+              {% for tech in project.tech_stack limit:3 %}
+                <li class="tech-item">{{ tech }}</li>
+              {% endfor %}
+              {% if project.tech_stack.size > 3 %}
+                <li class="tech-more">+{{ project.tech_stack.size | minus: 3 }}</li>
+              {% endif %}
+            </ul>
+          {% endif %}
+        </div>
+
+        {% assign achievement = site.achievements | where: "project_detail", project.url | first %}
+        {% if achievement %}
+          <a href="{{ achievement.url }}" class="project-link" aria-label="{{ project.title }} 자세히 보기">
+            <span class="icon" aria-hidden="true">→</span>
+          </a>
+        {% endif %}
+      </article>
+    {% endfor %}
+  </div>
+</div>

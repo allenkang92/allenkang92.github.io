@@ -1,0 +1,223 @@
+/* 프로젝트 목록 페이지 스타일 */
+.projects-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.projects-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.projects-header h1 {
+  font-size: 2.5rem;
+  color: var(--text-color);
+  margin-bottom: 1rem;
+}
+
+.projects-description {
+  color: var(--text-color-light);
+  font-size: 1.1rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* 프로젝트 그리드 */
+.projects-grid {
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+}
+
+/* 프로젝트 카드 */
+.project-card {
+  background: var(--background-color);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 300px;
+}
+
+.project-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+
+/* 썸네일 */
+.project-thumbnail {
+  position: relative;
+  aspect-ratio: 16/9;
+  overflow: hidden;
+}
+
+.project-thumbnail img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.project-card:hover .project-thumbnail img {
+  transform: scale(1.05);
+}
+
+/* 프로젝트 내용 */
+.project-content {
+  padding: 1.5rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.project-title {
+  font-size: clamp(1.25rem, 2vw, 1.5rem);
+  color: var(--text-color);
+  margin-bottom: 0.5rem;
+}
+
+.project-meta {
+  color: var(--text-color-light);
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.project-status {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.project-overview {
+  color: var(--text-color);
+  font-size: clamp(0.875rem, 1.5vw, 1rem);
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+/* 기술 스택 */
+.project-tech-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  margin-top: auto;
+}
+
+.tech-item {
+  background: var(--card-background);
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: clamp(0.75rem, 1.25vw, 0.9rem);
+  color: var(--text-color-light);
+}
+
+.tech-more {
+  background: var(--primary-color-light);
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  color: var(--text-color);
+}
+
+/* 프로젝트 링크 */
+.project-link {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  background: var(--background-color);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.3s ease;
+}
+
+.project-link:hover {
+  transform: scale(1.1);
+}
+
+.project-link .icon {
+  color: var(--primary-color);
+  font-size: 1.2rem;
+}
+
+/* 모바일 최적화 */
+@media (max-width: 576px) {
+  .projects-container {
+    padding: 1rem;
+  }
+
+  .projects-header {
+    margin-bottom: 2rem;
+  }
+
+  .projects-header h1 {
+    font-size: 2rem;
+  }
+
+  .projects-grid {
+    gap: 1.5rem;
+  }
+
+  .project-card {
+    min-height: 250px;
+  }
+
+  .project-content {
+    padding: 1rem;
+  }
+
+  .project-tech-stack {
+    gap: 0.25rem;
+  }
+}
+
+/* 태블릿 최적화 */
+@media (min-width: 577px) and (max-width: 991px) {
+  .projects-container {
+    padding: 1.5rem;
+  }
+
+  .projects-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* 데스크톱 최적화 */
+@media (min-width: 992px) {
+  .projects-container {
+    padding: 2rem;
+  }
+
+  .projects-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .project-card:hover .project-thumbnail img {
+    transform: scale(1.05);
+  }
+}
+
+/* 대형 화면 최적화 */
+@media (min-width: 1400px) {
+  .projects-container {
+    max-width: var(--container-xl);
+  }
+
+  .projects-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}

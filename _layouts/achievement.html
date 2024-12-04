@@ -1,79 +1,142 @@
 ---
 layout: default
 ---
+<article class="achievement">
+  <header class="achievement-header">
+    <h1>{{ page.title }}</h1>
+    <time datetime="{{ page.date | date_to_xmlschema }}" class="achievement-date">
+      {{ page.date | date: "%Y년 %-m월 %-d일" }}
+    </time>
+  </header>
 
-<div class="achievement-page">
-  <h1>{{ page.title }}</h1>
+  <div class="achievement-content">
+    {% if page.certificate_image %}
+      <figure class="certificate">
+        <img src="{{ page.certificate_image }}" 
+             alt="{{ page.title }} 자격증/수료증" 
+             loading="lazy"
+             onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+        <figcaption class="image-error" style="display: none;" role="alert">
+          이미지를 불러올 수 없습니다
+        </figcaption>
+        {% if page.certificate_description %}
+          <figcaption class="certificate-description">
+            {{ page.certificate_description }}
+          </figcaption>
+        {% endif %}
+      </figure>
+    {% endif %}
 
-  {% if page.description %}
-    <p>{{ page.description }}</p>
-  {% endif %}
+    <div class="achievement-details">
+      {% if page.institution %}
+        <p class="institution">
+          <strong>발행 기관:</strong> {{ page.institution }}
+        </p>
+      {% endif %}
+      
+      {% if page.credential_id %}
+        <p class="credential">
+          <strong>자격증 번호:</strong> 
+          <span class="credential-id">{{ page.credential_id }}</span>
+        </p>
+      {% endif %}
+    </div>
 
-  {{ content }}
+    {{ content | replace: '<img src="', '<img loading="lazy" src="' }}
 
-  <!-- 성취 항목 리스트 출력 -->
-  {% assign achievement_items = site.achievements | where: "category", page.slug %}
-  {% if achievement_items.size > 0 %}
-    <h2>Achievements in this category</h2>
-    <ul class="achievement-list">
-      {% for achievement in achievement_items %}
-        <li class="achievement-category" data-category="{{ achievement.category }}">
-          <h3><a href="{{ achievement.url | relative_url }}">{{ achievement.title }}</a></h3>
-          {% if achievement.description %}
-            <p>{{ achievement.description }}</p>
-          {% endif %}
-        </li>
-      {% endfor %}
-    </ul>    
-  {% else %}
-    <p>No achievements in this category yet.</p>
-  {% endif %}
+    {% if page.project_detail %}
+      <div class="project-detail-link">
+        <a href="{{ page.project_detail }}" 
+           class="button project-button"
+           aria-label="{{ page.title }}의 상세 프로젝트 정보 보기">
+          상세 프로젝트 보기
+          <span class="icon" aria-hidden="true">→</span>
+        </a>
+      </div>
+    {% endif %}
 
-  <!-- 서브카테고리 리스트 출력 -->
-  {% assign current_category = site.data.achievement_categories[page.slug] %}
-  {% if current_category and current_category.subcategories %}
-    <h2>Subcategories</h2>
-    <ul class="subcategory-list">
-      {% for subcategory in current_category.subcategories %}
-        <li>
-          <a href="{{ site.baseurl }}/achievements/{{ page.slug }}/{{ subcategory | slugify }}/">
-            {{ subcategory | replace: '_', ' ' | capitalize }}
+    {% if page.skills %}
+      <section class="skills" aria-labelledby="skills-heading">
+        <h2 id="skills-heading">관련 기술</h2>
+        <ul class="skill-list">
+          {% for skill in page.skills %}
+            <li class="skill-item">{{ skill }}</li>
+          {% endfor %}
+        </ul>
+      </section>
+    {% endif %}
+
+    {% if page.related_achievements %}
+      <section class="related-achievements" aria-labelledby="related-heading">
+        <h2 id="related-heading">관련 성과</h2>
+        <ul class="achievement-list">
+          {% for achievement in site.achievements %}
+            {% if page.related_achievements contains achievement.title %}
+              <li class="achievement-item">
+                <a href="{{ achievement.url }}" class="achievement-link">
+                  <h3 class="achievement-title">{{ achievement.title }}</h3>
+                  <time datetime="{{ achievement.date | date_to_xmlschema }}" class="achievement-date">
+                    {{ achievement.date | date: "%Y년 %-m월 %-d일" }}
+                  </time>
+                  {% if achievement.description %}
+                    <p class="achievement-description">{{ achievement.description }}</p>
+                  {% endif %}
+                </a>
+              </li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+      </section>
+    {% endif %}
+  </div>
+
+  <nav class="achievement-navigation" aria-label="성과 탐색">
+    {% assign achievements = site.achievements | sort: 'date' | reverse %}
+    {% for achievement in achievements %}
+      {% if achievement.url == page.url %}
+        {% assign achievement_index = forloop.index0 %}
+        {% assign prev_index = achievement_index | plus: 1 %}
+        {% assign next_index = achievement_index | minus: 1 %}
+        
+        {% if prev_index < achievements.size %}
+          {% assign prev_achievement = achievements[prev_index] %}
+          <a href="{{ prev_achievement.url }}" class="prev" rel="prev">
+            <span aria-hidden="true">←</span>
+            이전 성과: {{ prev_achievement.title }}
           </a>
-        </li>
-      {% endfor %}
-    </ul>
-  {% endif %}
-
-  <!-- 카테고리 필터링 드롭다운 추가 -->
-  <h2>Filter by category</h2>
-  <select id="achievement-category-select">
-    <option value="all">All Categories</option>
-    {% for category in site.data.achievement_categories %}
-      <option value="{{ category[0] }}">{{ category[1].title }}</option>
+        {% endif %}
+        
+        {% if next_index >= 0 %}
+          {% assign next_achievement = achievements[next_index] %}
+          <a href="{{ next_achievement.url }}" class="next" rel="next">
+            다음 성과: {{ next_achievement.title }}
+            <span aria-hidden="true">→</span>
+          </a>
+        {% endif %}
+        
+        {% break %}
+      {% endif %}
     {% endfor %}
-  </select>
-
-</div>
+  </nav>
+</article>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    var achievementCategorySelect = document.getElementById('achievement-category-select');
-
-    if (achievementCategorySelect) {
-      achievementCategorySelect.addEventListener('change', filterAchievements);
+// 이미지 로딩 실패 처리
+document.addEventListener('DOMContentLoaded', function() {
+  const images = document.querySelectorAll('img');
+  images.forEach(img => {
+    if (!img.hasAttribute('alt')) {
+      img.alt = ''; // 데코레이티브 이미지
     }
-
-    function filterAchievements() {
-      var selectedCategory = achievementCategorySelect.value;
-      var achievementItems = document.getElementsByClassName('achievement-category');
-
-      for (var i = 0; i < achievementItems.length; i++) {
-        if (selectedCategory === 'all' || achievementItems[i].getAttribute('data-category') === selectedCategory) {
-          achievementItems[i].style.display = 'block';
-        } else {
-          achievementItems[i].style.display = 'none';
-        }
-      }
-    }
+    
+    img.addEventListener('error', function() {
+      this.alt = '이미지를 불러올 수 없습니다';
+      this.style.display = 'none';
+      const errorText = document.createElement('span');
+      errorText.textContent = '이미지를 불러올 수 없습니다';
+      errorText.className = 'image-error';
+      this.parentNode.insertBefore(errorText, this);
+    });
   });
+});
 </script>

@@ -1,0 +1,19 @@
+{% comment %}
+이미지 최적화를 위한 include 파일
+사용법: {% include image.html src="/path/to/image.jpg" alt="이미지 설명" %}
+{% endcomment %}
+
+<picture>
+    {% assign webp_image = include.src | replace: '.jpg', '.webp' | replace: '.png', '.webp' %}
+    <source srcset="{{ webp_image | relative_url }}" type="image/webp">
+    <source srcset="{{ include.src | relative_url }}" type="image/jpeg">
+    <img 
+        src="{{ include.src | relative_url }}" 
+        alt="{{ include.alt }}"
+        loading="lazy"
+        width="{{ include.width | default: 'auto' }}"
+        height="{{ include.height | default: 'auto' }}"
+        {% if include.class %}class="{{ include.class }}"{% endif %}
+        {% if include.style %}style="{{ include.style }}"{% endif %}
+    >
+</picture>

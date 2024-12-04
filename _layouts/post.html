@@ -1,97 +1,185 @@
 ---
 layout: default
 ---
-<article>
-  <h1>{{ page.title }}</h1>
-  
-  <div class="post-categories">
-    카테고리:
-    {% for category in page.categories %}
-    <span class="nes-text is-warning">{{ category }}</span>
-    {% unless forloop.last %}&nbsp;{% endunless %}
-    {% endfor %}
+<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">{{ page.title }}</h1>
+    <div class="post-meta">
+      <time datetime="{{ page.date | date_to_xmlschema }}" itemprop="datePublished">
+        {{ page.date | date: "%Y년 %-m월 %-d일" }}
+      </time>
+      {% if page.author %}
+        • <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <span itemprop="name">{{ page.author }}</span>
+          </span>
+      {% endif %}
+      {% if page.categories %}
+        • <span class="categories">
+            카테고리:
+            {% for category in page.categories %}
+              <a href="{{ site.baseurl }}/categories/{{ category | slugify }}">{{ category }}</a>
+              {% unless forloop.last %}, {% endunless %}
+            {% endfor %}
+          </span>
+      {% endif %}
+    </div>
+  </header>
+
+  {% if page.toc %}
+  <nav class="table-of-contents" aria-labelledby="toc-heading">
+    <h2 id="toc-heading">목차</h2>
+    <div id="toc"></div>
+  </nav>
+  {% endif %}
+
+  <div class="post-content" itemprop="articleBody">
+    {{ content | replace: '<img src="', '<img loading="lazy" src="' }}
   </div>
 
-  <div class="post-date">
-    작성일: {{ page.date | date: "%Y-%m-%d" }}
+  {% if page.comments %}
+  <div class="post-comments">
+    <h2>댓글</h2>
+    <!-- 댓글 시스템 -->
   </div>
-
-  <!-- 목차 추가 -->
-  <div id="toc"></div>
-
-  <div class="post-content">
-    {{ content }}
-  </div>
+  {% endif %}
 
   {% if page.series %}
     {% assign series_posts = site.posts | where: "series", page.series | sort: "date" %}
-    <div class="series-navigation">
-      <h3>{{ page.series }} 시리즈:</h3>
+    <nav class="series-navigation" aria-label="시리즈 탐색">
+      <h2>{{ page.series }} 시리즈:</h2>
       <ol>
       {% for post in series_posts %}
         <li>
           {% if post.url == page.url %}
-            {{ post.title }} (현재 글)
+            <span class="current-post" aria-current="true">{{ post.title }} (현재 글)</span>
           {% else %}
             <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
           {% endif %}
         </li>
       {% endfor %}
       </ol>
-    </div>
+    </nav>
   {% endif %}
 
-  <div class="related-posts">
-    <h3>관련 포스트:</h3>
+  <div class="post-navigation" aria-label="글 이동">
+    {% if page.previous.url %}
+    <a class="prev" href="{{page.previous.url}}" rel="prev" aria-label="이전 글: {{page.previous.title}}">
+      <span class="nav-label">이전 글</span>
+      <span class="nav-title">{{page.previous.title}}</span>
+    </a>
+    {% endif %}
+
+    {% if page.next.url %}
+    <a class="next" href="{{page.next.url}}" rel="next" aria-label="다음 글: {{page.next.title}}">
+      <span class="nav-label">다음 글</span>
+      <span class="nav-title">{{page.next.title}}</span>
+    </a>
+    {% endif %}
+  </div>
+
+  <aside class="related-posts" aria-labelledby="related-posts-heading">
+    <h2 id="related-posts-heading">관련 글</h2>
     <ul>
-    {% assign maxRelated = 4 %}
-    {% assign relatedCounter = 0 %}
-
-    {% for post in site.posts %}
-      {% if post.url != page.url %}
-        {% if post.categories == page.categories %}
-          <li><a href="{{ post.url | relative_url }}">{{ post.title }}</a></li>
-          {% assign relatedCounter = relatedCounter | plus: 1 %}
-          {% if relatedCounter >= maxRelated %}
-            {% break %}
-          {% endif %}
-        {% endif %}
-      {% endif %}
-    {% endfor %}
+      {% for post in site.related_posts limit:3 %}
+      <li>
+        <a href="{{ post.url }}">{{ post.title }}</a>
+        <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%Y년 %-m월 %-d일" }}</time>
+      </li>
+      {% endfor %}
     </ul>
-  </div>
-
-  <div id="comments">
-    <script src="https://utteranc.es/client.js"
-            repo="allenkang92/allenkang92.github.io"
-            issue-term="pathname"
-            theme="boxy-light"
-            crossorigin="anonymous"
-            async>
-    </script>
-  </div>
+  </aside>
 </article>
 
-<!-- 목차 생성을 위한 JavaScript 추가 -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-  var headings = document.querySelectorAll('.post-content h2, .post-content h3, .post-content h4, .post-content h5, .post-content h6');
+  // 목차 생성
+  var headings = document.querySelectorAll('.post-content h2, .post-content h3');
   var tocDiv = document.getElementById('toc');
   
-  if (headings.length > 0) {
-    tocDiv.innerHTML = '<h2>목차</h2><ul>';
+  if (tocDiv && headings.length > 0) {
+    var toc = document.createElement('ul');
+    var currentLevel = 0;
+    var currentList = toc;
+    var listStack = [toc];
     
     headings.forEach(function(heading, index) {
-      var anchor = 'toc-' + index;
-      heading.id = anchor;
-      var li = document.createElement('li');
-      li.innerHTML = '<a href="#' + anchor + '">' + heading.textContent + '</a>';
-      tocDiv.querySelector('ul').appendChild(li);
+      var level = parseInt(heading.tagName.charAt(1)) - 2;
+      var id = 'heading-' + index;
+      heading.id = id;
+      
+      var item = document.createElement('li');
+      var link = document.createElement('a');
+      link.href = '#' + id;
+      link.textContent = heading.textContent;
+      item.appendChild(link);
+      
+      if (level > currentLevel) {
+        var newList = document.createElement('ul');
+        listStack[listStack.length - 1].lastElementChild.appendChild(newList);
+        listStack.push(newList);
+        currentList = newList;
+      } else if (level < currentLevel) {
+        listStack.pop();
+        currentList = listStack[listStack.length - 1];
+      }
+      
+      currentList.appendChild(item);
+      currentLevel = level;
     });
     
-    tocDiv.innerHTML += '</ul>';
-  } else {
-    tocDiv.style.display = 'none';
+    tocDiv.appendChild(toc);
   }
+
+  // 수식 접근성
+  document.querySelectorAll('.math').forEach(function(math) {
+    var description = math.getAttribute('data-description');
+    if (description) {
+      math.setAttribute('aria-label', description);
+    }
+  });
+
+  // 코드 블록 접근성
+  document.querySelectorAll('pre code').forEach(function(code) {
+    var pre = code.parentElement;
+    var language = code.className.match(/language-(\w+)/);
+    if (language) {
+      pre.setAttribute('aria-label', language[1] + ' 코드');
+    }
+    
+    // 줄 번호 추가
+    var lines = code.textContent.split('\n');
+    var numbered = lines.map(function(line, index) {
+      return '<span class="line-number" aria-hidden="true">' + (index + 1) + '</span>' + line;
+    }).join('\n');
+    code.innerHTML = numbered;
+  });
+
+  // 이미지 오류 처리
+  document.querySelectorAll('img').forEach(function(img) {
+    if (!img.hasAttribute('alt')) {
+      if (img.classList.contains('latex')) {
+        // LaTeX 수식 이미지
+        var tex = img.getAttribute('data-tex');
+        if (tex) {
+          img.alt = '수식: ' + tex;
+        }
+      } else if (img.classList.contains('diagram')) {
+        // 도표 이미지
+        var caption = img.nextElementSibling;
+        if (caption && caption.tagName === 'FIGCAPTION') {
+          img.alt = caption.textContent;
+        }
+      }
+    }
+    
+    img.addEventListener('error', function() {
+      var errorMsg = document.createElement('div');
+      errorMsg.className = 'image-error';
+      errorMsg.setAttribute('role', 'alert');
+      errorMsg.textContent = '이미지를 불러올 수 없습니다';
+      this.parentNode.insertBefore(errorMsg, this.nextSibling);
+      this.style.display = 'none';
+    });
+  });
 });
 </script>

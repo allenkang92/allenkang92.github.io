@@ -1,0 +1,174 @@
+<main class="main-content" role="main">
+  <div class="tools">
+    <h1>Tools</h1>
+
+    <div class="calculator-container">
+      <div class="tab-container" role="tablist" aria-label="계산기 종류">
+        <button class="tab-button active" role="tab" aria-selected="true" aria-controls="basic-calculator" id="basic-tab" onclick="switchTab('basic')">기본 계산기</button>
+        <button class="tab-button" role="tab" aria-selected="false" aria-controls="physics-calculator" id="physics-tab" onclick="switchTab('physics')">물리량 계산기</button>
+        <button class="tab-button" role="tab" aria-selected="false" aria-controls="unit-calculator" id="unit-tab" onclick="switchTab('unit')">단위 변환기</button>
+      </div>
+
+      <div id="basic-calculator" class="calculator-tab active" role="tabpanel" aria-labelledby="basic-tab">
+        <div class="calculator" role="application" aria-label="기본 계산기">
+          <div class="calculator-display" role="textbox" aria-live="polite" aria-atomic="true">
+            <div class="previous-operand" aria-label="이전 계산"></div>
+            <div class="current-operand" aria-label="현재 입력"></div>
+          </div>
+          
+          <div class="calculator-grid">
+            <button class="span-two" data-action="clear" aria-label="모두 지우기">AC</button>
+            <button data-action="delete" aria-label="마지막 입력 지우기">DEL</button>
+            <button data-operation="÷" aria-label="나누기">÷</button>
+            
+            <button data-number="7" aria-label="7">7</button>
+            <button data-number="8" aria-label="8">8</button>
+            <button data-number="9" aria-label="9">9</button>
+            <button data-operation="×" aria-label="곱하기">×</button>
+            
+            <button data-number="4" aria-label="4">4</button>
+            <button data-number="5" aria-label="5">5</button>
+            <button data-number="6" aria-label="6">6</button>
+            <button data-operation="-" aria-label="빼기">-</button>
+            
+            <button data-number="1" aria-label="1">1</button>
+            <button data-number="2" aria-label="2">2</button>
+            <button data-number="3" aria-label="3">3</button>
+            <button data-operation="+" aria-label="더하기">+</button>
+            
+            <button data-number="0" aria-label="0">0</button>
+            <button data-number="." aria-label="소수점">.</button>
+            <button class="span-two" data-equals aria-label="계산하기">=</button>
+          </div>
+
+          <div class="calculator-error" role="alert" aria-live="assertive" style="display: none;">
+            오류가 발생했습니다. 입력을 확인해주세요.
+          </div>
+        </div>
+      </div>
+
+      <div id="physics-calculator" class="calculator-tab" role="tabpanel" aria-labelledby="physics-tab" hidden>
+        <div class="physics-calculator">
+          <h2>물리량 계산기</h2>
+          
+          <div class="form-group">
+            <label for="physics-formula">계산할 물리량 선택:</label>
+            <select id="physics-formula" onchange="updatePhysicsInputs()" aria-label="물리량 선택">
+              <option value="">물리량 선택</option>
+              <option value="velocity">속도 계산 (v = d/t)</option>
+              <option value="acceleration">가속도 계산 (a = Δv/t)</option>
+              <option value="force">힘 계산 (F = ma)</option>
+              <option value="kinetic">운동에너지 계산 (K = ½mv²)</option>
+              <option value="potential">위치에너지 계산 (U = mgh)</option>
+            </select>
+          </div>
+
+          <div id="physics-inputs" role="group" aria-label="물리량 입력값"></div>
+          <div id="physics-formula-display" class="formula" aria-live="polite"></div>
+          <button onclick="calculatePhysics()" aria-label="물리량 계산하기">계산하기</button>
+          <div id="physics-result" class="result" aria-live="polite"></div>
+        </div>
+      </div>
+
+      <div id="unit-calculator" class="calculator-tab" role="tabpanel" aria-labelledby="unit-tab" hidden>
+        <div class="unit-converter">
+          <h2>단위 변환기</h2>
+          
+          <div class="converter-form">
+            <div class="form-group">
+              <label for="unit-category">단위 종류:</label>
+              <select id="unit-category" onchange="updateUnitOptions()" aria-label="단위 종류 선택">
+                <option value="">단위 종류 선택</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="unit-value">값:</label>
+              <input type="number" id="unit-value" placeholder="변환할 값 입력" aria-label="변환할 값">
+            </div>
+
+            <div class="conversion-units">
+              <div class="form-group">
+                <label for="from-unit">변환 전 단위:</label>
+                <select id="from-unit" aria-label="변환 전 단위">
+                  <option value="">단위 선택</option>
+                </select>
+              </div>
+
+              <div class="arrow" aria-hidden="true">→</div>
+
+              <div class="form-group">
+                <label for="to-unit">변환 후 단위:</label>
+                <select id="to-unit" aria-label="변환 후 단위">
+                  <option value="">단위 선택</option>
+                </select>
+              </div>
+            </div>
+
+            <button onclick="performConversion()" class="convert-button" aria-label="단위 변환하기">변환하기</button>
+            <div id="unit-result" class="result" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // 키보드 접근성
+  const calculators = document.querySelectorAll('.calculator, .scientific-calculator');
+  
+  calculators.forEach(calculator => {
+    const buttons = calculator.querySelectorAll('button');
+    const display = calculator.querySelector('.current-operand');
+    
+    // 키보드 네비게이션
+    buttons.forEach((button, index) => {
+      button.addEventListener('keydown', function(e) {
+        switch(e.key) {
+          case 'ArrowRight':
+            if (index < buttons.length - 1) {
+              buttons[index + 1].focus();
+            }
+            break;
+          case 'ArrowLeft':
+            if (index > 0) {
+              buttons[index - 1].focus();
+            }
+            break;
+          case 'ArrowUp':
+            if (index >= 4) {
+              buttons[index - 4].focus();
+            }
+            break;
+          case 'ArrowDown':
+            if (index < buttons.length - 4) {
+              buttons[index + 4].focus();
+            }
+            break;
+        }
+      });
+    });
+
+    // 오류 처리
+    calculator.addEventListener('error', function(e) {
+      const errorDiv = calculator.querySelector('.calculator-error');
+      errorDiv.style.display = 'block';
+      errorDiv.textContent = e.detail || '오류가 발생했습니다. 입력을 확인해주세요.';
+      
+      setTimeout(() => {
+        errorDiv.style.display = 'none';
+      }, 3000);
+    });
+
+    // 계산 결과 알림
+    calculator.addEventListener('result', function(e) {
+      const result = e.detail;
+      if (result) {
+        display.setAttribute('aria-label', `계산 결과: ${result}`);
+      }
+    });
+  });
+});
+</script>

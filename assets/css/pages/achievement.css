@@ -1,0 +1,145 @@
+/* 성과 페이지 스타일 */
+.achievement {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.achievement-header {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.achievement-header h1 {
+  font-size: 2.5rem;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.achievement-date {
+  color: #666;
+  font-size: 1.1rem;
+}
+
+.achievement-content {
+  line-height: 1.6;
+}
+
+/* 프로젝트 상세 버튼 */
+.project-detail-link {
+  margin: 2rem 0;
+  text-align: center;
+}
+
+.project-button {
+  display: inline-flex;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: #A8E1DB;
+  color: #333;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.project-button:hover {
+  background-color: #8CD3CC;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.project-button .icon {
+  margin-left: 0.5rem;
+  transition: transform 0.3s ease;
+}
+
+.project-button:hover .icon {
+  transform: translateX(4px);
+}
+
+/* 스킬 목록 */
+.skill-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+}
+
+.skill-item {
+  background-color: #f5f5f5;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+}
+
+/* 관련 성과 */
+.achievement-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+}
+
+.achievement-item {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+}
+
+.achievement-item:hover {
+  background-color: #f0f0f0;
+}
+
+.achievement-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.achievement-title {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.achievement-description {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+/* 네비게이션 */
+.achievement-navigation {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+
+.achievement-navigation a {
+  text-decoration: none;
+  color: #666;
+  padding: 0.5rem 1rem;
+  transition: color 0.3s ease;
+}
+
+.achievement-navigation a:hover {
+  color: #333;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .achievement {
+    padding: 1rem;
+  }
+
+  .achievement-header h1 {
+    font-size: 2rem;
+  }
+
+  .project-button {
+    padding: 0.8rem 1.5rem;
+  }
+}

@@ -1,0 +1,139 @@
+---
+layout: default
+---
+<article class="project-detail">
+  <header class="project-header">
+    <h1 class="project-title">{{ page.title }}</h1>
+    <div class="project-meta">
+      <time datetime="{{ page.date | date_to_xmlschema }}" class="project-date">
+        {{ page.date | date: "%Y년 %-m월 %-d일" }}
+      </time>
+      {% if page.status %}
+        <span class="project-status">• {{ page.status }}</span>
+      {% endif %}
+    </div>
+  </header>
+
+  {% if page.thumbnail %}
+    <div class="project-thumbnail">
+      <img src="{{ page.thumbnail }}" 
+           alt="{{ page.title }} 프로젝트 대표 이미지" 
+           loading="lazy">
+    </div>
+  {% endif %}
+
+  <div class="project-content">
+    {% if page.overview %}
+      <section class="project-overview">
+        <h2>프로젝트 개요</h2>
+        {{ page.overview | markdownify }}
+      </section>
+    {% endif %}
+
+    {% if page.role %}
+      <section class="project-role">
+        <h2>담당 역할</h2>
+        {{ page.role | markdownify }}
+      </section>
+    {% endif %}
+
+    {% if page.tech_stack %}
+      <section class="project-tech">
+        <h2>사용 기술</h2>
+        <ul class="tech-list">
+          {% for tech in page.tech_stack %}
+            <li class="tech-item">{{ tech }}</li>
+          {% endfor %}
+        </ul>
+      </section>
+    {% endif %}
+
+    <section class="project-details">
+      {{ content }}
+    </section>
+
+    {% if page.achievements %}
+      <section class="project-achievements">
+        <h2>주요 성과</h2>
+        <ul class="achievements-list">
+          {% for achievement in page.achievements %}
+            <li class="achievement-item">{{ achievement }}</li>
+          {% endfor %}
+        </ul>
+      </section>
+    {% endif %}
+
+    {% if page.gallery %}
+      <section class="project-gallery" aria-label="프로젝트 갤러리">
+        <h2>갤러리</h2>
+        <div class="gallery-grid">
+          {% for image in page.gallery %}
+            <figure class="gallery-item">
+              <img src="{{ image.url }}" 
+                   alt="{{ image.alt }}" 
+                   loading="lazy"
+                   onclick="openGalleryModal(this)">
+              {% if image.caption %}
+                <figcaption>{{ image.caption }}</figcaption>
+              {% endif %}
+            </figure>
+          {% endfor %}
+        </div>
+      </section>
+    {% endif %}
+  </div>
+
+  {% if page.demo_url or page.github_url %}
+    <footer class="project-links">
+      {% if page.demo_url %}
+        <a href="{{ page.demo_url }}" 
+           class="demo-link" 
+           target="_blank" 
+           rel="noopener noreferrer">
+          데모 보기
+        </a>
+      {% endif %}
+      {% if page.github_url %}
+        <a href="{{ page.github_url }}" 
+           class="github-link" 
+           target="_blank" 
+           rel="noopener noreferrer">
+          GitHub 저장소
+        </a>
+      {% endif %}
+    </footer>
+  {% endif %}
+</article>
+
+<!-- 갤러리 모달 -->
+<div id="gallery-modal" class="modal" onclick="closeGalleryModal()">
+  <span class="modal-close" onclick="closeGalleryModal()">&times;</span>
+  <img id="modal-image" class="modal-content">
+  <div id="modal-caption"></div>
+</div>
+
+<script>
+function openGalleryModal(img) {
+  const modal = document.getElementById('gallery-modal');
+  const modalImg = document.getElementById('modal-image');
+  const captionText = document.getElementById('modal-caption');
+  const caption = img.nextElementSibling;
+
+  modal.style.display = "block";
+  modalImg.src = img.src;
+  if (caption) {
+    captionText.innerHTML = caption.innerHTML;
+  }
+}
+
+function closeGalleryModal() {
+  document.getElementById('gallery-modal').style.display = "none";
+}
+
+// ESC 키로 모달 닫기
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    closeGalleryModal();
+  }
+});
+</script>

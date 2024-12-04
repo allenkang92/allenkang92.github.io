@@ -1,0 +1,21 @@
+# 메인 네비게이션
+main:
+  - title: "Home"
+    url: "/"
+  - title: "Posts"
+    url: "/pages/posts"
+  - title: "Series"
+    url: "/pages/series"
+  - title: "Tools"
+    url: "/pages/tools"
+  - title: "About"
+    url: "/pages/about"
+  - title: "Achievements"
+    url: "/pages/achievements"
+
+# 푸터 네비게이션
+footer:
+  - title: "Search"
+    url: "/pages/search"
+  - title: "About"
+    url: "/pages/about"

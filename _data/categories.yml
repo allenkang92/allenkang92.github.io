@@ -1,0 +1,20 @@
+# 메인 카테고리
+main:
+  - name: "물리학"
+    description: "물리학 관련 포스트"
+    subcategories:
+      - "입자물리학"
+      - "양자역학"
+      - "상대성이론"
+  - name: "수학"
+    description: "수학 관련 포스트"
+    subcategories:
+      - "대수학"
+      - "기하학"
+      - "해석학"
+  - name: "프로그래밍"
+    description: "프로그래밍 관련 포스트"
+    subcategories:
+      - "웹개발"
+      - "알고리즘"
+      - "데이터구조"

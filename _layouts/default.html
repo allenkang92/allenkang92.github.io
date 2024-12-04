@@ -5,9 +5,10 @@
     <title>{{ page.title }} - Allen's Blog</title>
 </head>
 <body>
+    <a href="#main-content" class="skip-to-main">메인 콘텐츠로 바로가기</a>
     <div class="layout-container">
         <div class="content-wrapper">
-            <main class="main-content" role="main">
+            <main id="main-content" class="main-content" role="main">
                 {{ content }}
             </main>
             <!-- footer를 content-wrapper 안으로 이동 -->
@@ -88,5 +89,11 @@
 
     <!-- 검색 스크립트 -->
     <script src="{{ '/assets/js/features/search.js' | relative_url }}"></script>
+    <div id="modal-container" role="dialog" aria-modal="true" class="modal-container" hidden>
+      <div class="modal-content">
+        <button class="modal-close" aria-label="닫기">×</button>
+        <div class="modal-body"></div>
+      </div>
+    </div>
 </body>
 </html>
