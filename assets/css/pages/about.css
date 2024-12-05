@@ -1,0 +1,207 @@
+/* About 페이지 스타일 */
+.about-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.page-title {
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  color: var(--text-color);
+  text-align: center;
+}
+
+/* 프로필 섹션 */
+.profile-section {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.about-profile-pic {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  margin-bottom: 1rem;
+  border: 4px solid var(--primary-color);
+}
+
+.tagline {
+  color: var(--text-color-light);
+  font-size: 1.1rem;
+  margin-top: 0.5rem;
+}
+
+/* 소개 섹션 */
+.bio-section {
+  margin-bottom: 3rem;
+  line-height: 1.6;
+}
+
+.bio-section p {
+  color: var(--text-color);
+  font-size: 1.1rem;
+}
+
+/* 차트 섹션 */
+.charts-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.chart-container {
+  background: var(--background-color);
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+  min-height: 400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 스킬 섹션 */
+.skills-section {
+  margin-bottom: 3rem;
+}
+
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 2rem;
+  margin-top: 1.5rem;
+}
+
+.skill-category {
+  background: var(--background-color);
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+}
+
+.skill-category h4 {
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+}
+
+.skill-category ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.skill-category li {
+  margin-bottom: 0.5rem;
+  color: var(--text-color);
+}
+
+/* Tech Stack 섹션 */
+.tech-stack-section {
+  margin-top: 3rem;
+}
+
+.tech-stack-section h2 {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  text-align: center;
+  color: var(--text-color);
+}
+
+.tech-categories {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.tech-category {
+  background: var(--background-color);
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+}
+
+.tech-category h3 {
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+  text-align: center;
+}
+
+.tech-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.tech-badges img {
+  height: 20px;
+}
+
+/* 연락처 섹션 */
+.contact-section {
+  text-align: center;
+}
+
+.contact-list {
+  list-style: none;
+  padding: 0;
+  margin: 1.5rem 0;
+}
+
+.contact-list li {
+  margin-bottom: 1rem;
+}
+
+.contact-list a {
+  color: var(--text-color);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.contact-list a:hover {
+  color: var(--primary-color);
+}
+
+.contact-list i {
+  margin-right: 0.5rem;
+  color: var(--primary-color);
+}
+
+/* 섹션 제목 */
+h3 {
+  color: var(--text-color);
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .about-container {
+    padding: 1rem;
+  }
+
+  .page-title {
+    font-size: 2rem;
+  }
+
+  .charts-section {
+    grid-template-columns: 1fr;
+  }
+
+  .chart-container {
+    min-height: 300px;
+  }
+
+  .skills-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tech-categories {
+    grid-template-columns: 1fr;
+  }
+}
