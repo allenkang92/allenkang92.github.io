@@ -2,12 +2,12 @@
 main:
   - title: "Home"
     url: "/"
-  - title: "About"
-    url: "/about/"
+  - title: "Posts"
+    url: "/posts/"
   - title: "Achievements"
     url: "/achievements/"
-  - title: "Projects"
-    url: "/projects/"
+  - title: "About"
+    url: "/about/"
 
 # 푸터 네비게이션
 footer:

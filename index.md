@@ -4,18 +4,6 @@ title: Home
 description: Striving for a better tomorrow, together with you.
 ---
 
-# Welcome to Allen's Blog
-
-## About Me
-{: .profile}
-
-![Allen's profile picture](/assets/images/allen_logo_ver2.png){: .profile-pic}
-
-- Aspirant in Cognitive Science and Neuroscience
-- Physics Imp
-- Developing Patent Agent
-- Future Science Communicator
-
 ## Recent Posts
 {: .recent-posts}
 
