@@ -1,7 +1,14 @@
 ---
-layout: default
+layout: tools
 title: Tools
 description: Useful tools and resources
+styles:
+  - /assets/css/calculator.css
+scripts:
+  - /assets/js/features/BasicCalculator.js
+  - /assets/js/features/PhysicsCalculator.js
+  - /assets/js/features/UnitConverter.js
+  - /assets/js/features/calculators.js
 ---
 
 # Tools & Resources

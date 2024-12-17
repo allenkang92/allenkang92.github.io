@@ -1,7 +1,8 @@
 ---
-layout: default
+layout: series
 title: Series
 description: Browse blog posts by series
+permalink: /series/
 ---
 
 # Series

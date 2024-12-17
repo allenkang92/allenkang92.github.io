@@ -1,12 +1,12 @@
 ---
-layout: default
-title: Achievements
+layout: achievements
+title: 성과
 permalink: /achievements/
 ---
 
 <div class="achievements-container">
   <header class="achievements-header">
-    <h1>Achievements</h1>
+    <h1>성과</h1>
     <p class="achievements-description">A collection of my professional and academic achievements.</p>
   </header>
 

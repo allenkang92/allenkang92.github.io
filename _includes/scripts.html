@@ -19,38 +19,35 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    window.onclick = function(event) {
-        if (event.target == modal) {
-            modal.style.display = "none";
-        }
-    }
-
     // 카테고리 필터 (posts 페이지용)
     var categorySelect = document.getElementById('category-select');
     if (categorySelect) {
         categorySelect.addEventListener('change', function() {
             var selectedCategory = this.value;
-            var posts = document.getElementsByClassName('post-preview');
+            var posts = document.querySelectorAll('.post-item');
             
-            for (var i = 0; i < posts.length; i++) {
-                if (selectedCategory === 'all' || posts[i].getAttribute('data-category') === selectedCategory) {
-                    posts[i].style.display = 'block';
+            posts.forEach(function(post) {
+                if (selectedCategory === 'all' || post.dataset.category === selectedCategory) {
+                    post.style.display = 'block';
                 } else {
-                    posts[i].style.display = 'none';
+                    post.style.display = 'none';
                 }
-            }
+            });
         });
+    }
+
+    // 모달 외부 클릭 시 닫기
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
     }
 });
 </script>
 
-<!-- 검색 스크립트 -->
-<script src="{{ '/assets/js/features/search.js' | relative_url }}"></script>
-
-<!-- 모달 컨테이너 -->
-<div id="modal-container" role="dialog" aria-modal="true" class="modal-container" hidden>
-    <div class="modal-content">
-        <button class="modal-close" aria-label="닫기">×</button>
-        <div class="modal-body"></div>
-    </div>
-</div>
+<!-- 페이지별 추가 스크립트 -->
+{% if page.scripts %}
+  {% for script in page.scripts %}
+    <script src="{{ script | relative_url }}" defer></script>
+  {% endfor %}
+{% endif %}
