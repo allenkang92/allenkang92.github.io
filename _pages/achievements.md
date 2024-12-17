@@ -4,21 +4,15 @@ title: Achievements
 permalink: /achievements/
 ---
 
-# Achievements
-
-Welcome to my achievements page! Here you'll find a collection of my accomplishments, certifications, and notable projects.
-
 <div class="achievements-container">
   <header class="achievements-header">
     <h1>Achievements</h1>
     <p class="achievements-description">A collection of my professional and academic achievements.</p>
   </header>
 
-  <div class="achievements-timeline">
-    <!-- Education -->
+  <div class="achievements-grid">
     <div class="achievement-card">
       <div class="achievement-meta">
-        <span class="achievement-date">2024.03 - Present</span>
         <span class="achievement-category">Education</span>
       </div>
       <div class="achievement-content">
@@ -32,7 +26,6 @@ Welcome to my achievements page! Here you'll find a collection of my accomplishm
 
     <div class="achievement-card">
       <div class="achievement-meta">
-        <span class="achievement-date">2012.03 - 2019.02</span>
         <span class="achievement-category">Education</span>
       </div>
       <div class="achievement-content">
@@ -45,10 +38,8 @@ Welcome to my achievements page! Here you'll find a collection of my accomplishm
       </div>
     </div>
 
-    <!-- Work Experience -->
     <div class="achievement-card">
       <div class="achievement-meta">
-        <span class="achievement-date">2019.01 - 2023.12</span>
         <span class="achievement-category">Work</span>
       </div>
       <div class="achievement-content">
@@ -61,19 +52,18 @@ Welcome to my achievements page! Here you'll find a collection of my accomplishm
         <div class="achievement-tech">
           <h3>Tech Stack</h3>
           <ul class="tech-stack">
-            <li>Android</li>
-            <li>Java</li>
             <li>C++</li>
-            <li>Camera HAL</li>
+            <li>Java</li>
+            <li>Android Framework</li>
+            <li>Linux</li>
+            <li>Git</li>
           </ul>
         </div>
       </div>
     </div>
 
-    <!-- Awards & Certifications -->
     <div class="achievement-card">
       <div class="achievement-meta">
-        <span class="achievement-date">2018</span>
         <span class="achievement-category">Award</span>
       </div>
       <div class="achievement-content">
@@ -84,7 +74,6 @@ Welcome to my achievements page! Here you'll find a collection of my accomplishm
 
     <div class="achievement-card">
       <div class="achievement-meta">
-        <span class="achievement-date">2018</span>
         <span class="achievement-category">Certification</span>
       </div>
       <div class="achievement-content">
@@ -94,18 +83,6 @@ Welcome to my achievements page! Here you'll find a collection of my accomplishm
 
     <div class="achievement-card">
       <div class="achievement-meta">
-        <span class="achievement-date">2018</span>
-        <span class="achievement-category">Certification</span>
-      </div>
-      <div class="achievement-content">
-        <h2 class="achievement-title">TOEIC 960</h2>
-      </div>
-    </div>
-
-    <!-- Projects -->
-    <div class="achievement-card">
-      <div class="achievement-meta">
-        <span class="achievement-date">2023.12 - Present</span>
         <span class="achievement-category">Project</span>
       </div>
       <div class="achievement-content">
@@ -118,9 +95,9 @@ Welcome to my achievements page! Here you'll find a collection of my accomplishm
           <h3>Tech Stack</h3>
           <ul class="tech-stack">
             <li>Jekyll</li>
-            <li>HTML</li>
-            <li>CSS</li>
+            <li>HTML/CSS</li>
             <li>JavaScript</li>
+            <li>Markdown</li>
           </ul>
         </div>
       </div>
@@ -128,7 +105,6 @@ Welcome to my achievements page! Here you'll find a collection of my accomplishm
 
     <div class="achievement-card">
       <div class="achievement-meta">
-        <span class="achievement-date">2019 - 2023</span>
         <span class="achievement-category">Project</span>
       </div>
       <div class="achievement-content">
@@ -141,10 +117,10 @@ Welcome to my achievements page! Here you'll find a collection of my accomplishm
         <div class="achievement-tech">
           <h3>Tech Stack</h3>
           <ul class="tech-stack">
-            <li>Android</li>
             <li>C++</li>
-            <li>Java</li>
+            <li>Android Framework</li>
             <li>Camera HAL</li>
+            <li>Linux</li>
           </ul>
         </div>
       </div>

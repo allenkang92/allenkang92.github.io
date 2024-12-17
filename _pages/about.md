@@ -1,50 +1,51 @@
 ---
 layout: default
 title: About
-description: Learn more about Allen Kang and his journey
+permalink: /about/
 ---
 
-# About Me
+{% include_relative about_me_all.md %}
 
-## Professional Background
+<div id="skillRadarChart"></div>
 
-I am a passionate individual with diverse interests in:
-- Cognitive Science
-- Neuroscience
-- Physics
-- Patent Law
-- Science Communication
+<script src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/recharts/umd/Recharts.min.js"></script>
 
-## Education
+<script>
+const data = [
+  { subject: 'Data Analysis & Science', value: 85, fullMark: 100 },
+  { subject: 'Interdisciplinary Research', value: 80, fullMark: 100 },
+  { subject: 'Science Communication', value: 75, fullMark: 100 },
+  { subject: 'Databases', value: 70, fullMark: 100 },
+  { subject: 'Data Processing', value: 65, fullMark: 100 },
+  { subject: 'Programming Languages', value: 60, fullMark: 100 },
+  { subject: 'MLOps', value: 70, fullMark: 100 },
+  { subject: 'Scientific Knowledge', value: 85, fullMark: 100 },
+];
 
-- Korea National Open University (KNOU)
-  - Currently studying Physics
+const { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ResponsiveContainer, Legend } = Recharts;
 
-## Skills
+const SkillRadarChart = () => {
+  return React.createElement(ResponsiveContainer, { width: "100%", height: 500 },
+    React.createElement(RadarChart, { cx: "50%", cy: "50%", outerRadius: "80%", data: data },
+      React.createElement(PolarGrid),
+      React.createElement(PolarAngleAxis, { dataKey: "subject" }),
+      React.createElement(PolarRadiusAxis, { angle: 30, domain: [0, 100] }),
+      React.createElement(Radar, { 
+        name: "Skills", 
+        dataKey: "value", 
+        stroke: "#8884d8", 
+        fill: "#8884d8", 
+        fillOpacity: 0.6 
+      }),
+      React.createElement(Legend)
+    )
+  );
+};
 
-### Technical Skills
-- Programming Languages: Python, JavaScript
-- Web Development: HTML, CSS, Jekyll
-- Scientific Computing
-- Data Analysis
-
-### Professional Skills
-- Patent Analysis
-- Technical Writing
-- Research Methodology
-- Science Communication
-
-## Contact
-
-Feel free to reach out to me:
-- Email: {{ site.email }}
-- GitHub: [@{{ site.github_username }}](https://github.com/{{ site.github_username }})
-
-## Blog Purpose
-
-This blog serves as a platform to share knowledge and insights across various fields:
-- Latest developments in Cognitive Science and Neuroscience
-- Interesting Physics concepts and theories
-- Programming tutorials and tips
-- Patent-related discussions
-- Science communication articles
+ReactDOM.render(
+  React.createElement(SkillRadarChart),
+  document.getElementById('skillRadarChart')
+);
+</script>

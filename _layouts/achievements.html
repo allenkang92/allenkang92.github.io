@@ -3,9 +3,9 @@ layout: default
 ---
 <div class="achievements-container">
   <header class="achievements-header">
-    <h1>성과</h1>
+    <h1>Achievements</h1>
     <p class="achievements-description">
-      주요 프로젝트와 활동에서 이룬 성과들을 소개합니다.
+      Showcasing my key accomplishments and milestones in various projects and activities.
     </p>
   </header>
 
@@ -15,7 +15,7 @@ layout: default
       <article class="achievement-card">
         <div class="achievement-meta">
           <time datetime="{{ achievement.date | date_to_xmlschema }}" class="achievement-date">
-            {{ achievement.date | date: "%Y년 %-m월 %-d일" }}
+            {{ achievement.date | date: "%Y-%m-%d" }}
           </time>
           {% if achievement.category %}
             <span class="achievement-category">{{ achievement.category }}</span>
@@ -39,7 +39,7 @@ layout: default
 
           {% if achievement.tech_stack %}
             <div class="achievement-tech">
-              <h3>사용 기술</h3>
+              <h3>Tech Stack</h3>
               <ul class="tech-stack">
                 {% for tech in achievement.tech_stack %}
                   <li>{{ tech }}</li>
@@ -50,7 +50,7 @@ layout: default
 
           {% if achievement.project_detail %}
             <a href="{{ achievement.project_detail }}" class="project-detail-link">
-              상세 프로젝트 보기
+              View Project Details
               <span class="icon" aria-hidden="true">→</span>
             </a>
           {% endif %}
