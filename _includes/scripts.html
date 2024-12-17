@@ -1,0 +1,56 @@
+<!-- 검색 및 필터링 스크립트 -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // 모달 관련 요소
+    var modal = document.getElementById("blog-info-modal");
+    var btn = document.getElementById("blog-info-btn");
+    var span = document.querySelector(".modal-close");
+
+    // 모달 이벤트 리스너
+    if(btn) {
+        btn.onclick = function() {
+            modal.style.display = "flex";
+        }
+    }
+
+    if(span) {
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+    }
+
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+
+    // 카테고리 필터 (posts 페이지용)
+    var categorySelect = document.getElementById('category-select');
+    if (categorySelect) {
+        categorySelect.addEventListener('change', function() {
+            var selectedCategory = this.value;
+            var posts = document.getElementsByClassName('post-preview');
+            
+            for (var i = 0; i < posts.length; i++) {
+                if (selectedCategory === 'all' || posts[i].getAttribute('data-category') === selectedCategory) {
+                    posts[i].style.display = 'block';
+                } else {
+                    posts[i].style.display = 'none';
+                }
+            }
+        });
+    }
+});
+</script>
+
+<!-- 검색 스크립트 -->
+<script src="{{ '/assets/js/features/search.js' | relative_url }}"></script>
+
+<!-- 모달 컨테이너 -->
+<div id="modal-container" role="dialog" aria-modal="true" class="modal-container" hidden>
+    <div class="modal-content">
+        <button class="modal-close" aria-label="닫기">×</button>
+        <div class="modal-body"></div>
+    </div>
+</div>

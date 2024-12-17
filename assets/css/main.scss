@@ -3,28 +3,26 @@
 
 // Base styles
 @import "base/variables";
-@import "base/normalize";
-@import "base/typography";
-@import "base/layout";
 
-// Components
-@import "components/header";
-@import "components/footer";
-@import "components/sidebar";
-@import "components/search";
-@import "components/modal";
-@import "components/post-card";
-@import "components/project-card";
-@import "components/achievement-card";
+// Custom styles
+body {
+  font-family: $base-font-family;
+  line-height: $base-line-height;
+  color: $text-color;
+  background-color: $background-color;
+  margin: 0;
+  padding: 0;
+}
 
-// Pages
-@import "pages/home";
-@import "pages/post";
-@import "pages/about";
-@import "pages/projects";
-@import "pages/tools";
-@import "pages/achievements";
+.layout-container {
+  display: flex;
+  flex-direction: row-reverse;
+  width: 100%;
+}
 
-// Utilities
-@import "utilities/animations";
-@import "utilities/helpers";
+.content-wrapper {
+  flex: 1;
+  padding: $spacing-unit;
+  max-width: $content-width;
+  margin: 0 auto;
+}

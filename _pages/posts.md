@@ -10,8 +10,11 @@ description: Browse all blog posts by category
   <label for="category-select">Filter by Category:</label>
   <select id="category-select">
     <option value="all">All Categories</option>
-    {% for category in site.categories %}
-    <option value="{{ category[0] }}">{{ category[0] | capitalize }}</option>
+    {% assign categories = site.posts | map: "category" | uniq %}
+    {% for category in categories %}
+      {% if category %}
+        <option value="{{ category }}">{{ category | capitalize }}</option>
+      {% endif %}
     {% endfor %}
   </select>
 </div>

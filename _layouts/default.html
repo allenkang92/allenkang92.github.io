@@ -7,6 +7,30 @@
 <body>
     <a href="#main-content" class="skip-to-main">메인 콘텐츠로 바로가기</a>
     <div class="layout-container">
+        <aside class="sidebar-right" role="complementary" aria-label="사이드바">
+            <div class="profile">
+                <img src="{{ '/assets/images/allen_logo.png' | relative_url }}" alt="Allen's profile picture" class="profile-pic">
+            </div>
+            
+            <div class="blog-title">
+                <h1>Allen's Blog</h1>
+                <p>{{ site.description | newline_to_br }}</p>
+            </div>
+            
+            <nav role="navigation" aria-label="사이드바 메뉴">
+                <ul>
+                    {% for item in site.data.navigation.main %}
+                    <li><a href="{{ item.url | relative_url }}" {% if page.url == item.url %}class="active"{% endif %}>{{ item.title }}</a></li>
+                    {% endfor %}
+                </ul>
+            </nav>
+
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="검색어를 입력하세요" aria-label="검색어 입력">
+                <div id="search-results"></div>
+            </div>
+        </aside>
+
         <div class="content-wrapper">
             <main id="main-content" class="main-content" role="main">
                 {{ content }}
@@ -15,22 +39,8 @@
                 {% include footer.html %}
             </footer>
         </div>
-
-        <aside class="sidebar-right">
-            {% include header.html %}
-        </aside>
     </div>
 
-    <!-- JavaScript -->
-    <script src="{{ '/assets/js/features/search.js' | relative_url }}"></script>
-    <script src="{{ '/assets/js/features/modal.js' | relative_url }}"></script>
-    <script src="{{ '/assets/js/features/filter.js' | relative_url }}"></script>
-    
-    <div id="modal-container" role="dialog" aria-modal="true" class="modal-container" hidden>
-        <div class="modal-content">
-            <button class="modal-close" aria-label="닫기">×</button>
-            <div class="modal-body"></div>
-        </div>
-    </div>
+    {% include scripts.html %}
 </body>
 </html>
