@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     {% include head.html %}
-    <title>{{ page.title }} - Allen's Blog</title>
+    <title>{{ page.title }} - {{ site.title }}</title>
 </head>
 <body>
     <a href="#main-content" class="skip-to-main">메인 콘텐츠로 바로가기</a>
@@ -11,7 +11,6 @@
             <main id="main-content" class="main-content" role="main">
                 {{ content }}
             </main>
-            <!-- footer를 content-wrapper 안으로 이동 -->
             <footer>
                 {% include footer.html %}
             </footer>
@@ -22,78 +21,16 @@
         </aside>
     </div>
 
-    <!-- 검색 및 필터링 스크립트 -->
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      var categorySelect = document.getElementById('category-select');
-      var achievementCategorySelect = document.getElementById('achievement-category-select');
-      var modal = document.getElementById("blog-info-modal");
-      var btn = document.getElementById("blog-info-btn");
-      var span = document.getElementsByClassName("close")[0];
-
-      if (categorySelect) {
-        categorySelect.addEventListener('change', filterCategories);
-      }
-
-      if (achievementCategorySelect) {
-        achievementCategorySelect.addEventListener('change', filterAchievements);
-      }
-
-      if (btn) {
-        btn.onclick = function() {
-          modal.style.display = "block";
-        }
-      }
-
-      if (span) {
-        span.onclick = function() {
-          modal.style.display = "none";
-        }
-      }
-
-      window.onclick = function(event) {
-        if (event.target == modal) {
-          modal.style.display = "none";
-        }
-      }
-    });
-
-    function filterCategories() {
-      var select = document.getElementById('category-select');
-      var selectedCategory = select.value;
-      var posts = document.getElementsByClassName('post-preview');
-      
-      for (var i = 0; i < posts.length; i++) {
-        if (selectedCategory === 'all' || posts[i].getAttribute('data-category') === selectedCategory) {
-          posts[i].style.display = 'block';
-        } else {
-          posts[i].style.display = 'none';
-        }
-      }
-    }
-
-    function filterAchievements() {
-      var select = document.getElementById('achievement-category-select');
-      var selectedCategory = select.value;
-      var categories = document.getElementsByClassName('achievement-category');
-
-      for (var i = 0; i < categories.length; i++) {
-        if (selectedCategory === 'all' || categories[i].getAttribute('data-category') === selectedCategory) {
-          categories[i].style.display = 'block';
-        } else {
-          categories[i].style.display = 'none';
-        }
-      }
-    }
-    </script>
-
-    <!-- 검색 스크립트 -->
+    <!-- JavaScript -->
     <script src="{{ '/assets/js/features/search.js' | relative_url }}"></script>
+    <script src="{{ '/assets/js/features/modal.js' | relative_url }}"></script>
+    <script src="{{ '/assets/js/features/filter.js' | relative_url }}"></script>
+    
     <div id="modal-container" role="dialog" aria-modal="true" class="modal-container" hidden>
-      <div class="modal-content">
-        <button class="modal-close" aria-label="닫기">×</button>
-        <div class="modal-body"></div>
-      </div>
+        <div class="modal-content">
+            <button class="modal-close" aria-label="닫기">×</button>
+            <div class="modal-body"></div>
+        </div>
     </div>
 </body>
 </html>

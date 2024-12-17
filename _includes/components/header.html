@@ -1,38 +1,28 @@
 <aside class="sidebar-right" role="complementary" aria-label="사이드바">
   <!-- 프로필 이미지 추가 -->
   <div class="profile">
-    <img src="/assets/images/allen_logo.png" alt="Allen's profile picture" class="profile-pic">
+    <img src="{{ '/assets/images/allen_logo.png' | relative_url }}" alt="Allen's profile picture" class="profile-pic">
   </div>
   
   <!-- 블로그 제목 및 설명 -->
   <div class="blog-title">
     <h1>{{ site.title }}</h1>
-    {% if site.description %}
-      <p>{{ site.description | newline_to_br }}</p>
-      <!-- 또는, newline_to_br 필터가 작동하지 않을 경우 -->
-      <!-- <p>{{ site.description | replace: '\n', '<br>' }}</p> -->
-    {% endif %}
+    <p>{{ site.description }}</p>
   </div>
   
   <!-- 내비게이션 메뉴 -->
   <nav role="navigation" aria-label="사이드바 메뉴">
-    <ul>
+    <ul class="nav-links">
       {% for item in site.navigation %}
-        <li><a href="{{ site.baseurl }}{{ item.url }}" role="menuitem">{{ item.title }}</a></li>
+      <li>
+        <a href="{{ item.url | relative_url }}" {% if page.url == item.url %}class="active"{% endif %}>
+          {{ item.title }}
+        </a>
+      </li>
       {% endfor %}
     </ul>
   </nav>
   
-  <!-- 네비게이션 메뉴 추가 -->
-  <nav class="site-nav">
-    <ul class="nav-links">
-      <li><a href="/" {% if page.url == "/" %}class="active"{% endif %}>홈</a></li>
-      <li><a href="/projects/" {% if page.url == "/projects/" %}class="active"{% endif %}>프로젝트</a></li>
-      <li><a href="/achievements/" {% if page.url == "/achievements/" %}class="active"{% endif %}>성과</a></li>
-      <li><a href="/tools/" {% if page.url == "/tools/" %}class="active"{% endif %}>도구</a></li>
-    </ul>
-  </nav>
-
   <!-- 검색 필드 -->
   <div class="search-container">
     <input type="text" id="search-input" placeholder="검색어를 입력하세요" aria-label="검색어 입력">

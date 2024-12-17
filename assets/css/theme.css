@@ -43,7 +43,6 @@
 body {
   background-color: var(--background-color);
   color: var(--text-color);
-  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* 링크 스타일 */
@@ -85,27 +84,6 @@ pre, code {
   background-color: var(--code-background);
   color: var(--text-color);
   border: 1px solid var(--border-color);
-}
-
-/* 테마 토글 버튼 */
-.theme-toggle {
-  position: fixed;
-  bottom: 2rem;
-  right: 2rem;
-  padding: 0.5rem;
-  border-radius: 50%;
-  background-color: var(--primary-color);
-  color: var(--button-text);
-  border: none;
-  cursor: pointer;
-  box-shadow: var(--shadow-md);
-  z-index: 1000;
-  transition: all 0.3s ease;
-}
-
-.theme-toggle:hover {
-  background-color: var(--primary-color-dark);
-  transform: scale(1.1);
 }
 
 /* 로딩 애니메이션 */

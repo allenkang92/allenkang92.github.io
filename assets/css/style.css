@@ -230,6 +230,7 @@ a:hover {
 .post-list {
   list-style-type: none;
   padding: 0;
+  margin: 0;
 }
 
 .post-meta {
@@ -425,181 +426,6 @@ footer {
   .sidebar-right {
     padding: 10px;
   }
-}
-
-/* 다크 모드 */
-@media (prefers-color-scheme: dark) {
-  body {
-    background-color: #FFFFFF; /* 화이트 모드 배경 */
-    color: #000000; /* 화이트 모드 텍스트 */
-  }
-
-  .sidebar-right, header, footer {
-    background-color: #FFFFFF;
-    color: #000000;
-    border-color: #A8E1DB;
-  }
-
-  a {
-    color: #A8E1DB;
-  }
-
-  a:hover {
-    color: #005F5F;
-  }
-
-  .modal-content {
-    background-color: #FFFFFF;
-    color: #000000;
-    border: 2px solid #A8E1DB;
-  }
-
-  .input-pixel {
-    background-color: #FFFFFF;
-    color: #000000;
-    border: 2px solid #A8E1DB;
-  }
-
-  .btn-pixel {
-    background-color: #FFFFFF;
-    color: #000000;
-    border: 2px solid #A8E1DB;
-  }
-
-  .btn-pixel:hover {
-    background-color: #A8E1DB;
-    color: #FFFFFF;
-  }
-
-  .custom-table th,
-  .custom-table td {
-    background-color: #FFFFFF;
-    color: #000000;
-  }
-
-  #search-results {
-    background-color: #FFFFFF;
-    color: #000000;
-    border-color: #A8E1DB;
-  }
-}
-
-#blog-info-btn {
-  background-color: #A8E1DB; /* 기존 색상 유지 */
-  color: #ffffff;
-  border: none;
-  padding: 8px 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  font-family: 'PFStardust', monospace; /* 'PFStardust' 폰트 적용 */
-  transition: background-color 0.3s;
-}
-
-#blog-info-btn:hover {
-  background-color: #b7e9e4; /* 호버시 색상 유지 */
-}
-
-.modal {
-  display: none; /* 모달이 보이지 않도록 기본 설정 */
-  position: fixed;
-  z-index: 1000;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgba(0, 0, 0, 0.5); /* 배경 어둡게 조정 */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  
-  /* Flexbox를 사용하여 모달을 화면 중앙에 배치 */
-  display: flex;
-  justify-content: center; /* 가로축 중앙 정렬 */
-  align-items: center;     /* 세로축 중앙 정렬 */
-}
-
-.modal-content {
-  background-color: #A8E1DB;
-  margin: auto; /* 중앙 정렬을 위한 마진 자동 설정 */
-  padding: 20px;
-  border: 2px solid #ece9f6;
-  width: 80%; /* 기본 크기 */
-  max-width: 600px;
-  min-width: 300px; /* 최소 크기 지정 */
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(169, 202, 221, 0.2);
-}
-
-/* 반응형: 화면 너비가 768px 이하일 때 */
-@media only screen and (max-width: 768px) {
-  .modal-content {
-    width: 90%;  /* 너비를 90%로 설정하여 작은 화면에서도 잘 맞도록 조정 */
-    max-width: 400px;  /* 최대 너비를 더 작게 설정 */
-  }
-}
-
-/* 반응형: 화면 너비가 576px 이하일 때 */
-@media (max-width: 576px) {
-  .modal-content {
-    width: 90%; /* 작은 화면에서는 더 작은 크기로 조정 */
-    padding: 15px; /* 패딩 축소 */
-  }
-
-  .modal-body {
-    font-size: 12px;  /* 작은 화면에서는 글씨 크기 조정 */
-  }
-
-  .modal-header {
-    font-size: 16px;  /* 작은 화면에서는 헤더 크기 조정 */
-  }
-}
-
-.close {
-  color: #a1e3dc;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.close:hover,
-.close:focus {
-  color: #a7e4de;
-  text-decoration: none;
-}
-
-.modal-header {
-  font-size: 18px;
-  font-weight: bold;
-  color: #93cfc9;
-  margin-bottom: 10px;
-}
-
-.modal-body {
-  font-size: 14px;
-  color: #ace4df;
-  line-height: 1.6;
-}
-
-.modal-footer {
-  margin-top: 20px;
-  text-align: right;
-}
-
-.modal-footer button {
-  background-color: #A8E1DB; /* 기존 색상 유지 */
-  color: #ffffff;
-  border: none;
-  padding: 8px 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-.modal-footer button:hover {
-  background-color: #A8E1DB; /* 호버시 색상 */
 }
 
 /* 차트 관련 스타일 */
@@ -874,4 +700,179 @@ th {
 .tabs-trigger[aria-selected="true"] {
   background-color: #c9f3ef;
   color: #ffffff;
+}
+
+#blog-info-btn {
+  background-color: #A8E1DB; /* 기존 색상 유지 */
+  color: #ffffff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-family: 'PFStardust', monospace; /* 'PFStardust' 폰트 적용 */
+  transition: background-color 0.3s;
+}
+
+#blog-info-btn:hover {
+  background-color: #b7e9e4; /* 호버시 색상 유지 */
+}
+
+.modal {
+  display: none; /* 모달이 보이지 않도록 기본 설정 */
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.5); /* 배경 어둡게 조정 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+  /* Flexbox를 사용하여 모달을 화면 중앙에 배치 */
+  display: flex;
+  justify-content: center; /* 가로축 중앙 정렬 */
+  align-items: center;     /* 세로축 중앙 정렬 */
+}
+
+.modal-content {
+  background-color: #A8E1DB;
+  margin: auto; /* 중앙 정렬을 위한 마진 자동 설정 */
+  padding: 20px;
+  border: 2px solid #ece9f6;
+  width: 80%; /* 기본 크기 */
+  max-width: 600px;
+  min-width: 300px; /* 최소 크기 지정 */
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(169, 202, 221, 0.2);
+}
+
+/* 반응형: 화면 너비가 768px 이하일 때 */
+@media only screen and (max-width: 768px) {
+  .modal-content {
+    width: 90%;  /* 너비를 90%로 설정하여 작은 화면에서도 잘 맞도록 조정 */
+    max-width: 400px;  /* 최대 너비를 더 작게 설정 */
+  }
+}
+
+/* 반응형: 화면 너비가 576px 이하일 때 */
+@media (max-width: 576px) {
+  .modal-content {
+    width: 90%; /* 작은 화면에서는 더 작은 크기로 조정 */
+    padding: 15px; /* 패딩 축소 */
+  }
+
+  .modal-body {
+    font-size: 12px;  /* 작은 화면에서는 글씨 크기 조정 */
+  }
+
+  .modal-header {
+    font-size: 16px;  /* 작은 화면에서는 헤더 크기 조정 */
+  }
+}
+
+.close {
+  color: #a1e3dc;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+  color: #a7e4de;
+  text-decoration: none;
+}
+
+.modal-header {
+  font-size: 18px;
+  font-weight: bold;
+  color: #93cfc9;
+  margin-bottom: 10px;
+}
+
+.modal-body {
+  font-size: 14px;
+  color: #ace4df;
+  line-height: 1.6;
+}
+
+.modal-footer {
+  margin-top: 20px;
+  text-align: right;
+}
+
+.modal-footer button {
+  background-color: #A8E1DB; /* 기존 색상 유지 */
+  color: #ffffff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.modal-footer button:hover {
+  background-color: #A8E1DB; /* 호버시 색상 */
+}
+
+/* 다크모드 감지 후 라이트모드 강제 적용 */
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #FFFFFF !important;
+    color: #000000 !important;
+  }
+
+  .sidebar-right, header, footer {
+    background-color: #FFFFFF !important;
+    color: #000000 !important;
+    border-color: #A8E1DB !important;
+  }
+
+  a {
+    color: #A8E1DB !important;
+  }
+
+  a:hover {
+    color: #005F5F !important;
+  }
+
+  .modal-content {
+    background-color: #FFFFFF !important;
+    color: #000000 !important;
+    border: 2px solid #A8E1DB !important;
+  }
+
+  .input-pixel {
+    background-color: #FFFFFF !important;
+    color: #000000 !important;
+    border: 2px solid #A8E1DB !important;
+  }
+
+  .btn-pixel {
+    background-color: #FFFFFF !important;
+    color: #000000 !important;
+    border: 2px solid #A8E1DB !important;
+  }
+
+  .btn-pixel:hover {
+    background-color: #A8E1DB !important;
+    color: #FFFFFF !important;
+  }
+
+  .custom-table th,
+  .custom-table td {
+    background-color: #FFFFFF !important;
+    color: #000000 !important;
+  }
+
+  #search-results {
+    background-color: #FFFFFF !important;
+    color: #000000 !important;
+    border-color: #A8E1DB !important;
+  }
 }

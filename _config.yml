@@ -16,9 +16,12 @@ plugins:
   - jekyll-sitemap
   - jekyll-redirect-from
 
-sass:
-  sass_dir: _sass
-  style: compressed
+# Directory settings
+source: .
+destination: ./_site
+layouts_dir: _layouts
+includes_dir: _includes
+data_dir: _data
 
 # Exclude from processing
 exclude:
@@ -39,21 +42,20 @@ exclude:
 include:
   - assets/js/dist/
 
-# Navigation menu
-navigation:
-  - title: Home
-    url: /
-  - title: Posts
-    url: /posts.html
-  - title: Achievements
-    url: /achievements.html
-  - title: Tools
-    url: /tools.html
-  - title: About
-    url: /about.html
-
 # Collections
 collections:
+  pages:
+    output: true
+    permalink: /:path/
+  posts:
+    output: true
+    permalink: /posts/:year/:month/:day/:title/
+  projects:
+    output: true
+    permalink: /projects/:title/
+  achievements:
+    output: true
+    permalink: /achievements/:title/
   categories:
     output: true
     permalink: /categories/:name/
@@ -62,16 +64,29 @@ collections:
   series:
     output: true
     permalink: /series/:name/
-  achievements:
-    output: true
-    permalink: /achievements/:name/
-  projects:
-    output: true
-    permalink: /projects/:title/
-    hidden: true  # 직접 URL 접근 방지
 
 # Defaults
 defaults:
+  - scope:
+      path: "_pages"
+      type: "pages"
+    values:
+      layout: "page"
+  - scope:
+      path: "_posts"
+      type: "posts"
+    values:
+      layout: "post"
+  - scope:
+      path: "_projects"
+      type: "projects"
+    values:
+      layout: "project"
+  - scope:
+      path: "_achievements"
+      type: "achievements"
+    values:
+      layout: "achievement"
   - scope:
       path: ""
       type: "posts"
@@ -93,6 +108,19 @@ defaults:
       path: "_data/achievement_categories.yml"
     values:
       layout: achievement
+
+# Navigation menu
+navigation:
+  - title: Home
+    url: /
+  - title: Posts
+    url: /posts.html
+  - title: Achievements
+    url: /achievements.html
+  - title: Tools
+    url: /tools.html
+  - title: About
+    url: /about.html
 
 # Category structure for the blog
 category_structure:
@@ -275,8 +303,9 @@ features:
 
 # Assets
 assets:
-  sources:
-    - assets/js
+  css_dir: assets/css
+  js_dir: assets/js
+  img_dir: assets/images
 
 # JavaScript processing
 js_dir: assets/js
@@ -291,5 +320,3 @@ webrick:
       font-src 'self' https://fonts.gstatic.com;
       img-src 'self' data: https:;
       connect-src 'self' https:;
-# 추가된 설정
-destination: ./_site
