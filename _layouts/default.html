@@ -1,45 +1,28 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
-    {% include head.html %}
-    <title>{{ page.title }} - {{ site.title }}</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% if page.title %}{{ page.title }} - {% endif %}{{ site.title }}</title>
+    <link rel="stylesheet" href="{{ "/assets/css/main.css" | relative_url }}">
+    {% feed_meta %}
+    {% seo %}
 </head>
 <body>
-    <div class="layout-container">
-        <aside class="sidebar-right" role="complementary" aria-label="sidebar">
-            <div class="profile">
-                <img src="{{ '/assets/images/allen_logo.png' | relative_url }}" alt="Allen's profile picture" class="profile-pic">
-            </div>
-            
-            <div class="blog-title">
-                <h1>Allen's Blog</h1>
-                <p>{{ site.description | newline_to_br }}</p>
-            </div>
-            
-            <nav role="navigation" aria-label="main navigation">
-                <ul>
-                    {% for item in site.data.navigation.main %}
-                    <li><a href="{{ item.url | relative_url }}" {% if page.url == item.url %}class="active"{% endif %}>{{ item.title }}</a></li>
-                    {% endfor %}
-                </ul>
-            </nav>
-
-            <div class="search-container">
-                <input type="text" id="search-input" placeholder="Search..." aria-label="Search">
-                <div id="search-results"></div>
-            </div>
-        </aside>
-
-        <div class="content-wrapper">
-            <main id="main-content" class="main-content" role="main">
-                {{ content }}
-            </main>
-            <footer>
-                {% include footer.html %}
-            </footer>
+    {% include header.html %}
+    
+    <main class="page-content" aria-label="Content">
+        <div class="wrapper">
+            {{ content }}
         </div>
-    </div>
+    </main>
 
-    {% include scripts.html %}
+    {% include footer.html %}
+
+    {% if page.math %}
+        <script type="text/javascript" async
+            src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
+        </script>
+    {% endif %}
 </body>
 </html>

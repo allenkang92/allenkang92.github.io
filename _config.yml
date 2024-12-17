@@ -5,6 +5,7 @@ url: "https://allenkang92.github.io"
 github_username: allenkang92
 author: Allen Kang
 email: ksw8841@knou.ac.kr
+baseurl: ""
 
 # Build settings
 markdown: kramdown
@@ -42,10 +43,10 @@ collections:
     permalink: /:categories/:year/:month/:day/:title/
   achievements:
     output: true
-    permalink: /achievements/:path/
+    permalink: /achievements/:name/
   projects:
     output: true
-    permalink: /projects/:path/
+    permalink: /projects/:name/
 
 # Defaults
 defaults:
@@ -70,3 +71,9 @@ defaults:
       type: "pages"
     values:
       layout: "page"
+
+# Navigation
+header_pages:
+  - _pages/about.md
+  - _pages/achievements.md
+  - _pages/projects.md

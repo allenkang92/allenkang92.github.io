@@ -1,20 +1,33 @@
-# 메인 카테고리
+# Main categories
 main:
-  - name: "물리학"
-    description: "물리학 관련 포스트"
+  - name: "Computer Science"
+    description: "Computer science and programming related posts"
     subcategories:
-      - "입자물리학"
-      - "양자역학"
-      - "상대성이론"
-  - name: "수학"
-    description: "수학 관련 포스트"
+      - "Algorithms"
+      - "Data Structures"
+      - "System Design"
+      - "Programming Languages"
+  
+  - name: "Data Science"
+    description: "Data science and analytics related posts"
     subcategories:
-      - "대수학"
-      - "기하학"
-      - "해석학"
-  - name: "프로그래밍"
-    description: "프로그래밍 관련 포스트"
+      - "Machine Learning"
+      - "Data Analysis"
+      - "Statistics"
+      - "Big Data"
+  
+  - name: "Physics"
+    description: "Physics related posts"
     subcategories:
-      - "웹개발"
-      - "알고리즘"
-      - "데이터구조"
+      - "Quantum Mechanics"
+      - "Relativity"
+      - "Particle Physics"
+      - "Astrophysics"
+  
+  - name: "Neuroscience"
+    description: "Neuroscience and cognitive science related posts"
+    subcategories:
+      - "Brain Structure"
+      - "Neural Networks"
+      - "Cognitive Functions"
+      - "Consciousness"
