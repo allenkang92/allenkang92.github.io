@@ -1,3 +1,29 @@
+// 다크모드 감지 및 라이트모드 강제 적용
+class ThemeManager {
+  constructor() {
+    this.init();
+  }
+
+  init() {
+    // 다크모드 감지
+    this.darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    
+    // 초기 테마 설정
+    this.setLightMode();
+    
+    // 시스템 테마 변경 감지
+    this.darkModeMediaQuery.addListener(() => {
+      this.setLightMode();
+    });
+  }
+
+  setLightMode() {
+    document.documentElement.style.setProperty('color-scheme', 'light');
+    document.body.style.backgroundColor = '#FFFFFF';
+    document.body.style.color = '#000000';
+  }
+}
+
 // 이미지 로딩 최적화
 class ImageLoader {
   constructor() {
@@ -45,4 +71,5 @@ class ImageLoader {
 // 초기화
 document.addEventListener('DOMContentLoaded', () => {
   window.imageLoader = new ImageLoader();
+  window.themeManager = new ThemeManager();
 });
