@@ -30,8 +30,8 @@ html, body {
 body {
   font-family: 'PFStardust', monospace;
   line-height: 1.6;
-  color: #000000; /* 기본 텍스트 색상 */
-  background-color: #FFFFFF; /* 배경색 */
+  color: #000000;
+  background-color: #FFFFFF;
   image-rendering: pixelated;
   overflow-x: hidden;
 }
@@ -48,8 +48,8 @@ body {
   height: 100%;
   flex: 1;
   padding: 20px;
-  margin-right: 280px; /* 사이드바 너비 */
-  width: calc(100% - 280px);
+  margin-right: 0;
+  width: 100%;
   box-sizing: border-box;
 }
 
@@ -66,91 +66,6 @@ body {
   height: auto;
   border: 2px solid #A8E1DB; /* 이미지 테두리 색상 */
   box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* 이미지 그림자 */
-}
-
-/* 사이드바 스타일 */
-.sidebar-right {
-  width: 280px;
-  background-color: #FFFFFF; /* 사이드바 배경색 */
-  border-left: 2px solid #A8E1DB; /* 사이드바 테두리 색상 */
-  padding: 20px;
-  box-sizing: border-box;
-  position: fixed;
-  top: 0;
-  right: 0;
-  height: 100vh;
-  overflow-y: auto;
-  z-index: 1000;
-}
-
-/* 사이드바 내부 스타일 */
-.sidebar-right h1,
-.sidebar-right p,
-.sidebar-right li {
-  color: #000000; /* 사이드바 텍스트 색상 */
-}
-
-.sidebar-right a {
-  color: #A8E1DB; /* 사이드바 링크 색상 */
-  text-decoration: none;
-}
-
-.sidebar-right a:hover {
-  color: #005F5F; /* 사이드바 링크 호버 색상 */
-}
-
-/* 프로필 스타일 */
-.profile {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.profile-pic {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  border: 2px solid #A8E1DB; /* 프로필 이미지 테두리 색상 */
-  margin-bottom: 15px;
-}
-
-/* 검색창 스타일 */
-.search-container {
-  margin-top: 20px;
-  z-index: 1000;
-  position: relative;
-}
-
-#search-input {
-  width: 100%;
-  padding: 10px;
-  border: 2px solid #A8E1DB; /* 검색창 테두리 색상 */
-  background-color: #FFFFFF; /* 검색창 배경색 */
-  color: #000000; /* 검색창 텍스트 색상 */
-  box-sizing: border-box;
-  font-family: 'PFStardust', monospace;
-  font-size: 16px;
-}
-
-/* 플레이스홀더 스타일 */
-#search-input::placeholder {
-  color: #888888; /* 플레이스홀더 색상 */
-  opacity: 0.7;
-  font-family: 'PFStardust', monospace;
-}
-
-/* 웹킷 브라우저용 */
-#search-input::-webkit-input-placeholder {
-  font-family: 'PFStardust', monospace;
-}
-
-/* 파이어폭스용 */
-#search-input::-moz-placeholder {
-  font-family: 'PFStardust', monospace;
-}
-
-/* IE 10+용 */
-#search-input:-ms-input-placeholder {
-  font-family: 'PFStardust', monospace;
 }
 
 /* 메인 헤더 스타일 */
@@ -196,24 +111,6 @@ option {
   font-family: 'PFStardust', monospace;
   color: #000000;
   background-color: #FFFFFF;
-}
-
-/* 드롭다운 컨테이너 스타일 */
-.category-filter,
-#achievement-category-select {
-  margin-top: 20px;
-}
-
-.category-filter label,
-.achievement-page h2 {
-  font-weight: bold;
-  color: #000000;
-}
-
-/* 드롭다운 호버 및 포커스 스타일 */
-select:hover,
-select:focus {
-  border-color: #005F5F; /* 드롭다운 호버/포커스 테두리 색상 */
 }
 
 /* 링크 스타일 */
@@ -358,13 +255,8 @@ footer {
 }
 
 @media only screen and (min-width: 992px) and (max-width: 1199px) {
-  .sidebar-right {
-    width: 250px;
-  }
-  
   .content-wrapper {
-    margin-right: 250px;
-    width: calc(100% - 250px);
+    padding: 20px;
   }
 }
 
@@ -373,22 +265,13 @@ footer {
     font-size: 14px; /* 모바일에서 글씨 크기 조정 */
   }
 
-  /* 사이드바 및 기타 요소들을 모바일에서 적절히 표시 */
-  .sidebar-right {
-    width: 100%;
-    height: auto;
-    position: relative;
+  .content-wrapper {
+    padding: 20px;
   }
 }
 
 @media only screen and (min-width: 768px) and (max-width: 991px) {
-  .sidebar-right {
-    width: 220px;
-  }
-  
   .content-wrapper {
-    margin-right: 220px;
-    width: calc(100% - 220px);
     padding: 15px;
   }
 }
@@ -405,14 +288,6 @@ footer {
     height: auto;
   }
 
-  .sidebar-right {
-    position: static;
-    width: 100%;
-    height: auto;
-    border-left: none;
-    border-bottom: 2px solid #A8E1DB;
-  }
-
   .main-content {
     max-width: 100%;
   }
@@ -420,10 +295,6 @@ footer {
 
 @media only screen and (max-width: 575px) {
   .content-wrapper {
-    padding: 10px;
-  }
-  
-  .sidebar-right {
     padding: 10px;
   }
 }
@@ -456,7 +327,6 @@ footer {
 footer {
   margin-top: 20px;  /* 푸터 상단 간격 추가 */
 }
-
 
 /* 레이더 차트를 포함하는 컨테이너에 적용할 스타일 */
 #skill-chart {
@@ -499,7 +369,6 @@ th {
   color: #ffffff;
 }
 
-
 /* 성과 카드 스타일 */
 .achievement-card {
   background-color: #FFFFFF;
@@ -535,7 +404,6 @@ th {
 .achievement-category p {
   margin-bottom: 1em;
 }
-
 
 .achievement-card ul {
   list-style-type: none;
@@ -683,7 +551,6 @@ th {
   margin: 20px auto 0 auto; /* 카드와 탭 사이에 20px 간격 추가 */
   padding: 0px;
 }
-
 
 /* 카드 스타일 */
 .achievement-card {
