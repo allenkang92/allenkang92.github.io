@@ -5,101 +5,61 @@
   padding: 20px;
 }
 
-.series-title {
-  text-align: center;
+.series-group {
   margin-bottom: 40px;
-  color: var(--heading-color);
-}
-
-/* 시리즈 카드 스타일링 */
-.series-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
-  list-style: none;
-  padding: 0;
-}
-
-.series-card {
-  background: var(--content-bg);
-  border-radius: 10px;
   padding: 20px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.series-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-}
-
-.series-card h2 {
-  color: var(--heading-color);
-  margin: 0 0 15px 0;
-  font-size: 1.5em;
-  border-bottom: 2px solid var(--accent-color);
+.series-title {
+  color: #333;
+  margin-bottom: 20px;
   padding-bottom: 10px;
+  border-bottom: 2px solid #eee;
 }
 
-.series-meta {
-  font-size: 0.9em;
-  color: var(--text-muted);
-  margin-bottom: 15px;
+.series-posts {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.series-meta span {
-  margin-right: 15px;
-}
-
-.series-meta i {
-  margin-right: 5px;
-}
-
-.post-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.post-list li {
-  margin-bottom: 10px;
-  padding: 8px;
-  border-radius: 5px;
+.series-post {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  background-color: #f8f9fa;
+  border-radius: 4px;
   transition: background-color 0.2s;
 }
 
-.post-list li:hover {
-  background-color: var(--hover-color);
-}
-
-.post-list a {
-  color: var(--text-color);
-  text-decoration: none;
-  display: block;
-}
-
-.post-list a:hover {
-  color: var(--accent-color);
+.series-post:hover {
+  background-color: #e9ecef;
 }
 
 .post-date {
-  font-size: 0.85em;
-  color: var(--text-muted);
-  margin-left: 10px;
+  color: #666;
+  font-size: 0.9em;
+  margin-right: 15px;
+  min-width: 100px;
+}
+
+.post-link {
+  color: #007bff;
+  text-decoration: none;
+  flex-grow: 1;
+}
+
+.post-link:hover {
+  text-decoration: underline;
 }
 
 /* 반응형 디자인 */
 @media (max-width: 768px) {
   .series-container {
     padding: 10px;
-  }
-
-  .series-list {
-    grid-template-columns: 1fr;
-  }
-
-  .series-card {
-    margin-bottom: 20px;
   }
 }
 
@@ -115,6 +75,6 @@
   }
 }
 
-.series-card {
+.series-post {
   animation: fadeIn 0.5s ease-out forwards;
 }

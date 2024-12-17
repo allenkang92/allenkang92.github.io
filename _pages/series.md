@@ -1,26 +1,28 @@
 ---
-layout: series
+layout: default
 title: Series
-description: Browse blog posts by series
 permalink: /series/
 ---
 
-# Series
+<div class="series-container">
+    <h1>Series</h1>
 
-{% assign series = site.posts | map: "series" | uniq %}
-{% for series_name in series %}
-  {% if series_name %}
-    <section class="series-section">
-      <h2>{{ series_name }}</h2>
-      <ul class="series-posts">
-        {% assign series_posts = site.posts | where: "series", series_name %}
-        {% for post in series_posts %}
-          <li>
-            <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
-            <span class="post-date">{{ post.date | date: "%Y-%m-%d" }}</span>
-          </li>
-        {% endfor %}
-      </ul>
-    </section>
-  {% endif %}
-{% endfor %}
+    {% assign series_posts = site.posts | where_exp: "post", "post.series != nil" | group_by: "series" %}
+    
+    {% for series in series_posts %}
+        {% if series.name != "" %}
+        <div class="series-group">
+            <h2 class="series-title">{{ series.name }}</h2>
+            <div class="series-posts">
+                {% assign sorted_posts = series.items | sort: "date" %}
+                {% for post in sorted_posts %}
+                <div class="series-post">
+                    <span class="post-date">{{ post.date | date: "%Y-%m-%d" }}</span>
+                    <a href="{{ post.url | relative_url }}" class="post-link">{{ post.title }}</a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    {% endfor %}
+</div>
