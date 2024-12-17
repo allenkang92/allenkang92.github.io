@@ -38,26 +38,79 @@ body {
 
 .layout-container {
   display: flex;
-  flex-direction: row-reverse;
-  width: 100%;
+  min-height: 100vh;
+  position: relative;
 }
 
+/* 사이드바 스타일 */
+.sidebar-right {
+  width: 280px;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  right: 0;
+  background-color: #FFFFFF;
+  border-left: 2px solid #A8E1DB;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+.sidebar-right .profile {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.sidebar-right .profile-pic {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 2px solid #A8E1DB;
+  margin-bottom: 15px;
+}
+
+.sidebar-right .blog-title {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.sidebar-right nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-right nav li {
+  margin-bottom: 10px;
+}
+
+.sidebar-right nav a {
+  display: block;
+  padding: 8px;
+  color: #000000;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.sidebar-right nav a:hover,
+.sidebar-right nav a.active {
+  color: #A8E1DB;
+}
+
+/* 메인 콘텐츠 영역 */
 .content-wrapper {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
   flex: 1;
   padding: 20px;
-  margin-right: 0;
-  width: 100%;
+  margin-right: 280px; /* 사이드바 너비만큼 여백 */
+  max-width: calc(100% - 280px);
   box-sizing: border-box;
 }
 
 .main-content {
-  flex: 1;
   max-width: 800px;
   margin: 0 auto;
-  padding-bottom: 40px; /* 푸터와의 간격 */
+  padding-bottom: 40px;
 }
 
 /* 이미지 스타일 */
@@ -137,14 +190,10 @@ a:hover {
 
 /* 푸터 스타일 */
 footer {
-  margin-top: 50px; /* 푸터와 차트 사이의 간격 유지 */
+  margin-top: auto;
   padding: 20px;
-  background-color: #FFFFFF;
-  border-top: 1px solid #A8E1DB;
   text-align: center;
-  font-size: 0.9em;
-  position: relative; /* 위치 지정 */
-  z-index: 10; /* 레이더 차트 위에 표시되도록 z-index 설정 */
+  border-top: 2px solid #A8E1DB;
 }
 
 /* 검색 결과 스타일 */

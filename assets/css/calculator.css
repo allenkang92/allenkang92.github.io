@@ -1,0 +1,142 @@
+/* 계산기 컨테이너 스타일 */
+.calculator-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f5f5f5;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* 탭 스타일 */
+.tab-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.tab-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #e0e0e0;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.tab-button.active {
+  background-color: #007bff;
+  color: white;
+}
+
+/* 기본 계산기 스타일 */
+.calculator {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.calculator-display {
+  background-color: #f8f9fa;
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  text-align: right;
+  font-size: 24px;
+  min-height: 60px;
+}
+
+.calculator-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.calculator-grid button {
+  padding: 15px;
+  font-size: 18px;
+  border: none;
+  border-radius: 5px;
+  background-color: #f8f9fa;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.calculator-grid button:hover {
+  background-color: #e9ecef;
+}
+
+.calculator-grid button.span-two {
+  grid-column: span 2;
+}
+
+/* 물리량 계산기 스타일 */
+.physics-calculator {
+  padding: 20px;
+  background-color: white;
+  border-radius: 8px;
+}
+
+.input-group {
+  margin-bottom: 15px;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 5px;
+  color: #666;
+}
+
+.input-group input,
+.input-group select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+/* 단위 변환기 스타일 */
+.unit-converter {
+  padding: 20px;
+  background-color: white;
+  border-radius: 8px;
+}
+
+.converter-form {
+  display: grid;
+  gap: 15px;
+}
+
+/* 결과 표시 스타일 */
+.result {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #e9ecef;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 18px;
+}
+
+/* 오류 메시지 스타일 */
+.error {
+  color: #dc3545;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 600px) {
+  .calculator-container {
+    padding: 10px;
+  }
+  
+  .calculator-grid button {
+    padding: 10px;
+    font-size: 16px;
+  }
+  
+  .calculator-display {
+    font-size: 20px;
+  }
+}
