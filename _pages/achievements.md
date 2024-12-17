@@ -1,12 +1,16 @@
 ---
 layout: achievements
-title: 성과
+title: Achievements
 permalink: /achievements/
 ---
 
+# Achievements
+
+Welcome to my achievements page! Here you'll find a collection of my accomplishments, certifications, and notable projects.
+
 <div class="achievements-container">
   <header class="achievements-header">
-    <h1>성과</h1>
+    <h1>Achievements</h1>
     <p class="achievements-description">A collection of my professional and academic achievements.</p>
   </header>
 
@@ -18,10 +22,10 @@ permalink: /achievements/
         <span class="achievement-category">Education</span>
       </div>
       <div class="achievement-content">
-        <h2 class="achievement-title">연세대학교 인지과학 협동과정 석사과정</h2>
-        <p class="achievement-overview">인공지능 및 뇌과학 연구</p>
+        <h2 class="achievement-title">Yonsei University Cognitive Science Master's Program</h2>
+        <p class="achievement-overview">Research in Artificial Intelligence and Neuroscience</p>
         <ul class="achievement-highlights">
-          <li>지도교수: 김진석 교수님</li>
+          <li>Advisor: Professor Jinseok Kim</li>
         </ul>
       </div>
     </div>
@@ -32,11 +36,11 @@ permalink: /achievements/
         <span class="achievement-category">Education</span>
       </div>
       <div class="achievement-content">
-        <h2 class="achievement-title">서강대학교 물리학과</h2>
-        <p class="achievement-overview">학점: 3.89/4.5</p>
+        <h2 class="achievement-title">Sogang University Physics Department</h2>
+        <p class="achievement-overview">GPA: 3.89/4.5</p>
         <ul class="achievement-highlights">
-          <li>물리학 전공</li>
-          <li>컴퓨터공학 부전공</li>
+          <li>Major in Physics</li>
+          <li>Minor in Computer Science</li>
         </ul>
       </div>
     </div>
@@ -48,11 +52,11 @@ permalink: /achievements/
         <span class="achievement-category">Work</span>
       </div>
       <div class="achievement-content">
-        <h2 class="achievement-title">삼성전자 무선사업부</h2>
+        <h2 class="achievement-title">Samsung Electronics Wireless Business Division</h2>
         <p class="achievement-overview">Android Framework Engineer</p>
         <ul class="achievement-highlights">
-          <li>Camera Framework 개발</li>
-          <li>System Performance 최적화</li>
+          <li>Camera Framework Development</li>
+          <li>System Performance Optimization</li>
         </ul>
         <div class="achievement-tech">
           <h3>Tech Stack</h3>
@@ -73,8 +77,8 @@ permalink: /achievements/
         <span class="achievement-category">Award</span>
       </div>
       <div class="achievement-content">
-        <h2 class="achievement-title">물리학과 학술제 대상</h2>
-        <p class="achievement-overview">주제: "양자컴퓨터의 원리와 응용"</p>
+        <h2 class="achievement-title">Physics Department Academic Award</h2>
+        <p class="achievement-overview">Topic: "Principles and Applications of Quantum Computing"</p>
       </div>
     </div>
 
@@ -84,7 +88,7 @@ permalink: /achievements/
         <span class="achievement-category">Certification</span>
       </div>
       <div class="achievement-content">
-        <h2 class="achievement-title">정보처리기사</h2>
+        <h2 class="achievement-title">Information Processing Engineer</h2>
       </div>
     </div>
 
@@ -105,10 +109,10 @@ permalink: /achievements/
         <span class="achievement-category">Project</span>
       </div>
       <div class="achievement-content">
-        <h2 class="achievement-title">개인 블로그 개발</h2>
+        <h2 class="achievement-title">Personal Blog Development</h2>
         <ul class="achievement-highlights">
-          <li>Jekyll 기반 정적 웹사이트 개발</li>
-          <li>물리학, 인공지능, 뇌과학 관련 컨텐츠 제작</li>
+          <li>Development of a static website using Jekyll</li>
+          <li>Creation of content related to Physics, AI, and Neuroscience</li>
         </ul>
         <div class="achievement-tech">
           <h3>Tech Stack</h3>
@@ -128,11 +132,11 @@ permalink: /achievements/
         <span class="achievement-category">Project</span>
       </div>
       <div class="achievement-content">
-        <h2 class="achievement-title">카메라 프레임워크 개발</h2>
+        <h2 class="achievement-title">Camera Framework Development</h2>
         <ul class="achievement-highlights">
-          <li>Android Camera HAL3 구현</li>
-          <li>Camera Performance 최적화</li>
-          <li>Multi-Camera 기능 개발</li>
+          <li>Implementation of Android Camera HAL3</li>
+          <li>Camera Performance Optimization</li>
+          <li>Development of Multi-Camera Features</li>
         </ul>
         <div class="achievement-tech">
           <h3>Tech Stack</h3>

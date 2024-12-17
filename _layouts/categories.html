@@ -3,25 +3,23 @@ layout: default
 title: Categories
 ---
 
-<h1>All Categories</h1>
+<div class="categories-container">
+    <h1>Categories</h1>
 
-{% assign top_level_categories = site.categories | where_exp: "item", "item.parent == nil" %}
-{% for category in top_level_categories %}
-  <h2><a href="{{ category.url | relative_url }}">{{ category.title }}</a></h2>
-  
-  {% assign category_posts = site.posts | where: "categories", category.slug %}
-  <p>Posts: {{ category_posts.size }}</p>
-
-  {% assign subcategories = site.categories | where: "parent", category.slug %}
-  {% if subcategories.size > 0 %}
-    <h3>Subcategories:</h3>
-    <ul>
-      {% for subcategory in subcategories %}
-        <li>
-          <a href="{{ subcategory.url | relative_url }}">{{ subcategory.title }}</a>
-          (Posts: {{ subcategory_posts.size }})
-        </li>
-      {% endfor %}
-    </ul>
-  {% endif %}
-{% endfor %}
+    {% assign categories = site.posts | map: "categories" | flatten | uniq | sort %}
+    
+    {% for category in categories %}
+        {% assign category_posts = site.posts | where_exp: "post", "post.categories contains category" %}
+        <div class="category-group">
+            <h2 class="category-title" id="{{ category | slugify }}">{{ category }}</h2>
+            <div class="category-posts">
+                {% for post in category_posts %}
+                <div class="category-post">
+                    <span class="post-date">{{ post.date | date: "%Y-%m-%d" }}</span>
+                    <a href="{{ post.url | relative_url }}" class="post-link">{{ post.title }}</a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+</div>

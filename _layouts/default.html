@@ -5,9 +5,8 @@
     <title>{{ page.title }} - {{ site.title }}</title>
 </head>
 <body>
-    <a href="#main-content" class="skip-to-main">메인 콘텐츠로 바로가기</a>
     <div class="layout-container">
-        <aside class="sidebar-right" role="complementary" aria-label="사이드바">
+        <aside class="sidebar-right" role="complementary" aria-label="sidebar">
             <div class="profile">
                 <img src="{{ '/assets/images/allen_logo.png' | relative_url }}" alt="Allen's profile picture" class="profile-pic">
             </div>
@@ -17,7 +16,7 @@
                 <p>{{ site.description | newline_to_br }}</p>
             </div>
             
-            <nav role="navigation" aria-label="사이드바 메뉴">
+            <nav role="navigation" aria-label="main navigation">
                 <ul>
                     {% for item in site.data.navigation.main %}
                     <li><a href="{{ item.url | relative_url }}" {% if page.url == item.url %}class="active"{% endif %}>{{ item.title }}</a></li>
@@ -26,7 +25,7 @@
             </nav>
 
             <div class="search-container">
-                <input type="text" id="search-input" placeholder="검색어를 입력하세요" aria-label="검색어 입력">
+                <input type="text" id="search-input" placeholder="Search..." aria-label="Search">
                 <div id="search-results"></div>
             </div>
         </aside>
