@@ -5,7 +5,7 @@ layout: default
   <header class="achievement-header">
     <h1>{{ page.title }}</h1>
     <time datetime="{{ page.date | date_to_xmlschema }}" class="achievement-date">
-      {{ page.date | date: "%Y년 %-m월 %-d일" }}
+      {{ page.date | date: "%B %-d, %Y" }}
     </time>
   </header>
 
@@ -13,11 +13,11 @@ layout: default
     {% if page.certificate_image %}
       <figure class="certificate">
         <img src="{{ page.certificate_image }}" 
-             alt="{{ page.title }} 자격증/수료증" 
+             alt="{{ page.title }} Certificate" 
              loading="lazy"
              onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
         <figcaption class="image-error" style="display: none;" role="alert">
-          이미지를 불러올 수 없습니다
+          Image could not be loaded
         </figcaption>
         {% if page.certificate_description %}
           <figcaption class="certificate-description">
@@ -30,13 +30,13 @@ layout: default
     <div class="achievement-details">
       {% if page.institution %}
         <p class="institution">
-          <strong>발행 기관:</strong> {{ page.institution }}
+          <strong>Institution:</strong> {{ page.institution }}
         </p>
       {% endif %}
       
       {% if page.credential_id %}
         <p class="credential">
-          <strong>자격증 번호:</strong> 
+          <strong>Credential ID:</strong> 
           <span class="credential-id">{{ page.credential_id }}</span>
         </p>
       {% endif %}
@@ -48,8 +48,8 @@ layout: default
       <div class="project-detail-link">
         <a href="{{ page.project_detail }}" 
            class="button project-button"
-           aria-label="{{ page.title }}의 상세 프로젝트 정보 보기">
-          상세 프로젝트 보기
+           aria-label="View detailed project information for {{ page.title }}">
+          View Project Details
           <span class="icon" aria-hidden="true">→</span>
         </a>
       </div>
@@ -57,7 +57,7 @@ layout: default
 
     {% if page.skills %}
       <section class="skills" aria-labelledby="skills-heading">
-        <h2 id="skills-heading">관련 기술</h2>
+        <h2 id="skills-heading">Related Skills</h2>
         <ul class="skill-list">
           {% for skill in page.skills %}
             <li class="skill-item">{{ skill }}</li>
@@ -68,7 +68,7 @@ layout: default
 
     {% if page.related_achievements %}
       <section class="related-achievements" aria-labelledby="related-heading">
-        <h2 id="related-heading">관련 성과</h2>
+        <h2 id="related-heading">Related Achievements</h2>
         <ul class="achievement-list">
           {% for achievement in site.achievements %}
             {% if page.related_achievements contains achievement.title %}
@@ -76,7 +76,7 @@ layout: default
                 <a href="{{ achievement.url }}" class="achievement-link">
                   <h3 class="achievement-title">{{ achievement.title }}</h3>
                   <time datetime="{{ achievement.date | date_to_xmlschema }}" class="achievement-date">
-                    {{ achievement.date | date: "%Y년 %-m월 %-d일" }}
+                    {{ achievement.date | date: "%B %-d, %Y" }}
                   </time>
                   {% if achievement.description %}
                     <p class="achievement-description">{{ achievement.description }}</p>
@@ -90,7 +90,7 @@ layout: default
     {% endif %}
   </div>
 
-  <nav class="achievement-navigation" aria-label="성과 탐색">
+  <nav class="achievement-navigation" aria-label="Achievement Navigation">
     {% assign achievements = site.achievements | sort: 'date' | reverse %}
     {% for achievement in achievements %}
       {% if achievement.url == page.url %}
@@ -98,45 +98,35 @@ layout: default
         {% assign prev_index = achievement_index | plus: 1 %}
         {% assign next_index = achievement_index | minus: 1 %}
         
-        {% if prev_index < achievements.size %}
-          {% assign prev_achievement = achievements[prev_index] %}
-          <a href="{{ prev_achievement.url }}" class="prev" rel="prev">
-            <span aria-hidden="true">←</span>
-            이전 성과: {{ prev_achievement.title }}
-          </a>
-        {% endif %}
-        
-        {% if next_index >= 0 %}
-          {% assign next_achievement = achievements[next_index] %}
-          <a href="{{ next_achievement.url }}" class="next" rel="next">
-            다음 성과: {{ next_achievement.title }}
-            <span aria-hidden="true">→</span>
-          </a>
-        {% endif %}
-        
-        {% break %}
+        <div class="nav-links">
+          {% if prev_index < achievements.size %}
+            {% assign prev_achievement = achievements[prev_index] %}
+            <a href="{{ prev_achievement.url }}" class="nav-previous">
+              <span class="nav-label">Previous Achievement:</span>
+              <span class="nav-title">{{ prev_achievement.title }}</span>
+            </a>
+          {% endif %}
+
+          {% if next_index >= 0 %}
+            {% assign next_achievement = achievements[next_index] %}
+            <a href="{{ next_achievement.url }}" class="nav-next">
+              <span class="nav-label">Next Achievement:</span>
+              <span class="nav-title">{{ next_achievement.title }}</span>
+            </a>
+          {% endif %}
+        </div>
       {% endif %}
     {% endfor %}
   </nav>
 </article>
 
 <script>
-// 이미지 로딩 실패 처리
 document.addEventListener('DOMContentLoaded', function() {
   const images = document.querySelectorAll('img');
   images.forEach(img => {
     if (!img.hasAttribute('alt')) {
-      img.alt = ''; // 데코레이티브 이미지
+      img.alt = ''; // Decorative image
     }
-    
-    img.addEventListener('error', function() {
-      this.alt = '이미지를 불러올 수 없습니다';
-      this.style.display = 'none';
-      const errorText = document.createElement('span');
-      errorText.textContent = '이미지를 불러올 수 없습니다';
-      errorText.className = 'image-error';
-      this.parentNode.insertBefore(errorText, this);
-    });
   });
 });
 </script>

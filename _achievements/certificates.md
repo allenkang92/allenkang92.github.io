@@ -1,15 +1,13 @@
 ---
 layout: achievement
-title: Certificates
-category: certificates
+title: Professional Certifications
+category: certifications
+date: 2024-01-01
+overview: Professional certifications and qualifications
+highlights:
+  - Information Processing Engineer
+tech_stack:
+  - Software Development
+  - System Architecture
+  - Database Management
 ---
-
-
-This is a placeholder for the certificates category. Here you will find professional and academic certificates.
-
-## Professional Certificates
-- Certificate in Data Science
-- Certificate in Cloud Computing
-
-## Academic Certificates
-- Master's Degree in Computer Science

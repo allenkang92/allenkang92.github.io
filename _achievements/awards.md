@@ -1,14 +1,14 @@
 ---
 layout: achievement
-title: Awards
+title: Academic Awards
 category: awards
+date: 2024-01-01
+overview: Academic and professional recognition
+highlights:
+  - Physics Department Academic Award
+  - Topic - "Principles and Applications of Quantum Computing"
+tech_stack:
+  - Quantum Computing
+  - Physics
+  - Scientific Research
 ---
-
-
-This is a placeholder for the awards category. Here you will find professional and academic awards.
-
-## Professional Awards
-- Employee of the Year Award
-
-## Academic Awards
-- Best Research Paper Award
