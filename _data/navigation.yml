@@ -4,6 +4,8 @@ main:
     url: "/"
   - title: "Posts"
     url: "/posts/"
+  - title: "Series"
+    url: "/series/"
   - title: "Achievements"
     url: "/achievements/"
   - title: "About"

@@ -49,10 +49,15 @@ collections:
 defaults:
   - scope:
       path: ""
+      type: "pages"
+    values:
+      layout: "default"
+  - scope:
+      path: "_posts"
       type: "posts"
     values:
       layout: "post"
-      comments: true
+      permalink: /posts/:title/
   - scope:
       path: ""
       type: "achievements"
@@ -63,12 +68,6 @@ defaults:
       type: "pages"
     values:
       layout: "page"
-  - scope:
-      path: "posts"
-      type: "pages"
-    values:
-      layout: "page"
-      permalink: /posts/
 
 # Include
 include:
