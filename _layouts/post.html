@@ -1,185 +1,202 @@
 ---
 layout: default
 ---
-<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+<article class="post">
   <header class="post-header">
-    <h1 class="post-title" itemprop="name headline">{{ page.title }}</h1>
+    <h1 class="post-title">{{ page.title }}</h1>
     <div class="post-meta">
-      <time datetime="{{ page.date | date_to_xmlschema }}" itemprop="datePublished">
-        {{ page.date | date: "%Y년 %-m월 %-d일" }}
+      <time datetime="{{ page.date | date_to_xmlschema }}">
+        {{ page.date | date: "%Y년 %m월 %d일" }}
       </time>
-      {% if page.author %}
-        • <span itemprop="author" itemscope itemtype="http://schema.org/Person">
-            <span itemprop="name">{{ page.author }}</span>
-          </span>
-      {% endif %}
       {% if page.categories %}
-        • <span class="categories">
-            카테고리:
-            {% for category in page.categories %}
-              <a href="{{ site.baseurl }}/categories/{{ category | slugify }}">{{ category }}</a>
-              {% unless forloop.last %}, {% endunless %}
-            {% endfor %}
-          </span>
+        {% for category in page.categories %}
+          <span class="category">{{ category | replace: '_', ' ' | capitalize }}</span>
+        {% endfor %}
       {% endif %}
     </div>
   </header>
 
-  {% if page.toc %}
-  <nav class="table-of-contents" aria-labelledby="toc-heading">
-    <h2 id="toc-heading">목차</h2>
-    <div id="toc"></div>
-  </nav>
+  {% if page.toc != false %}
+  <div class="table-of-contents">
+    <h2>목차</h2>
+    {% assign content_array = content | split: '<h2' %}
+    <ul>
+    {% for item in content_array offset: 1 %}
+      {% assign header = item | split: '</h2>' | first %}
+      {% assign title = header | split: '>' | last %}
+      <li><a href="#{{ title | strip | slugify }}">{{ title | strip }}</a>
+        {% assign subcontent = item | split: '<h3' %}
+        {% if subcontent.size > 1 %}
+          <ul>
+          {% for subitem in subcontent offset: 1 %}
+            {% assign subheader = subitem | split: '</h3>' | first %}
+            {% assign subtitle = subheader | split: '>' | last %}
+            <li><a href="#{{ subtitle | strip | slugify }}">{{ subtitle | strip }}</a></li>
+          {% endfor %}
+          </ul>
+        {% endif %}
+      </li>
+    {% endfor %}
+    </ul>
+  </div>
   {% endif %}
 
-  <div class="post-content" itemprop="articleBody">
-    {{ content | replace: '<img src="', '<img loading="lazy" src="' }}
+  <div class="post-content">
+    {{ content }}
   </div>
-
-  {% if page.comments %}
-  <div class="post-comments">
-    <h2>댓글</h2>
-    <!-- 댓글 시스템 -->
-  </div>
-  {% endif %}
 
   {% if page.series %}
-    {% assign series_posts = site.posts | where: "series", page.series | sort: "date" %}
-    <nav class="series-navigation" aria-label="시리즈 탐색">
-      <h2>{{ page.series }} 시리즈:</h2>
-      <ol>
+  <div class="series-navigation">
+    <h3>Series: {{ page.series | replace: '_', ' ' }}</h3>
+    {% assign series_posts = site.posts | where: "series", page.series | sort: "series_order" %}
+    <ul>
       {% for post in series_posts %}
-        <li>
+        <li {% if post.url == page.url %}class="current"{% endif %}>
+          {% if post.series_order %}{{ post.series_order }}. {% endif %}
           {% if post.url == page.url %}
-            <span class="current-post" aria-current="true">{{ post.title }} (현재 글)</span>
+            {{ post.title }}
           {% else %}
             <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
           {% endif %}
         </li>
       {% endfor %}
-      </ol>
-    </nav>
-  {% endif %}
-
-  <div class="post-navigation" aria-label="글 이동">
-    {% if page.previous.url %}
-    <a class="prev" href="{{page.previous.url}}" rel="prev" aria-label="이전 글: {{page.previous.title}}">
-      <span class="nav-label">이전 글</span>
-      <span class="nav-title">{{page.previous.title}}</span>
-    </a>
-    {% endif %}
-
-    {% if page.next.url %}
-    <a class="next" href="{{page.next.url}}" rel="next" aria-label="다음 글: {{page.next.title}}">
-      <span class="nav-label">다음 글</span>
-      <span class="nav-title">{{page.next.title}}</span>
-    </a>
-    {% endif %}
-  </div>
-
-  <aside class="related-posts" aria-labelledby="related-posts-heading">
-    <h2 id="related-posts-heading">관련 글</h2>
-    <ul>
-      {% for post in site.related_posts limit:3 %}
-      <li>
-        <a href="{{ post.url }}">{{ post.title }}</a>
-        <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%Y년 %-m월 %-d일" }}</time>
-      </li>
-      {% endfor %}
     </ul>
-  </aside>
+  </div>
+  {% endif %}
 </article>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  // 목차 생성
-  var headings = document.querySelectorAll('.post-content h2, .post-content h3');
-  var tocDiv = document.getElementById('toc');
-  
-  if (tocDiv && headings.length > 0) {
-    var toc = document.createElement('ul');
-    var currentLevel = 0;
-    var currentList = toc;
-    var listStack = [toc];
-    
-    headings.forEach(function(heading, index) {
-      var level = parseInt(heading.tagName.charAt(1)) - 2;
-      var id = 'heading-' + index;
-      heading.id = id;
-      
-      var item = document.createElement('li');
-      var link = document.createElement('a');
-      link.href = '#' + id;
-      link.textContent = heading.textContent;
-      item.appendChild(link);
-      
-      if (level > currentLevel) {
-        var newList = document.createElement('ul');
-        listStack[listStack.length - 1].lastElementChild.appendChild(newList);
-        listStack.push(newList);
-        currentList = newList;
-      } else if (level < currentLevel) {
-        listStack.pop();
-        currentList = listStack[listStack.length - 1];
-      }
-      
-      currentList.appendChild(item);
-      currentLevel = level;
-    });
-    
-    tocDiv.appendChild(toc);
+<style>
+.post {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.post-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.post-title {
+  margin: 0;
+  color: #212529;
+}
+
+.post-meta {
+  margin-top: 1rem;
+  color: #6c757d;
+}
+
+.post-meta time {
+  margin-right: 1rem;
+}
+
+.category {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  margin: 0 0.3rem;
+  background: #e9ecef;
+  color: #495057;
+  border-radius: 15px;
+  font-size: 0.85rem;
+}
+
+.table-of-contents {
+  background: #f8f9fa;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  border-radius: 8px;
+}
+
+.table-of-contents h2 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  color: #343a40;
+}
+
+.table-of-contents ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.table-of-contents ul ul {
+  padding-left: 1.5rem;
+}
+
+.table-of-contents li {
+  margin: 0.5rem 0;
+}
+
+.table-of-contents a {
+  color: #495057;
+  text-decoration: none;
+}
+
+.table-of-contents a:hover {
+  color: #007bff;
+}
+
+.post-content {
+  line-height: 1.8;
+  color: #212529;
+}
+
+.post-content h2 {
+  margin-top: 2.5rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.post-content h3 {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.series-navigation {
+  margin-top: 3rem;
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.series-navigation h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: #343a40;
+}
+
+.series-navigation ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.series-navigation li {
+  margin: 0.5rem 0;
+}
+
+.series-navigation a {
+  color: #495057;
+  text-decoration: none;
+}
+
+.series-navigation a:hover {
+  color: #007bff;
+}
+
+.series-navigation .current {
+  font-weight: bold;
+  color: #007bff;
+}
+
+@media (max-width: 768px) {
+  .post {
+    padding: 1rem;
   }
-
-  // 수식 접근성
-  document.querySelectorAll('.math').forEach(function(math) {
-    var description = math.getAttribute('data-description');
-    if (description) {
-      math.setAttribute('aria-label', description);
-    }
-  });
-
-  // 코드 블록 접근성
-  document.querySelectorAll('pre code').forEach(function(code) {
-    var pre = code.parentElement;
-    var language = code.className.match(/language-(\w+)/);
-    if (language) {
-      pre.setAttribute('aria-label', language[1] + ' 코드');
-    }
-    
-    // 줄 번호 추가
-    var lines = code.textContent.split('\n');
-    var numbered = lines.map(function(line, index) {
-      return '<span class="line-number" aria-hidden="true">' + (index + 1) + '</span>' + line;
-    }).join('\n');
-    code.innerHTML = numbered;
-  });
-
-  // 이미지 오류 처리
-  document.querySelectorAll('img').forEach(function(img) {
-    if (!img.hasAttribute('alt')) {
-      if (img.classList.contains('latex')) {
-        // LaTeX 수식 이미지
-        var tex = img.getAttribute('data-tex');
-        if (tex) {
-          img.alt = '수식: ' + tex;
-        }
-      } else if (img.classList.contains('diagram')) {
-        // 도표 이미지
-        var caption = img.nextElementSibling;
-        if (caption && caption.tagName === 'FIGCAPTION') {
-          img.alt = caption.textContent;
-        }
-      }
-    }
-    
-    img.addEventListener('error', function() {
-      var errorMsg = document.createElement('div');
-      errorMsg.className = 'image-error';
-      errorMsg.setAttribute('role', 'alert');
-      errorMsg.textContent = '이미지를 불러올 수 없습니다';
-      this.parentNode.insertBefore(errorMsg, this.nextSibling);
-      this.style.display = 'none';
-    });
-  });
-});
-</script>
+}
+</style>
