@@ -18,7 +18,7 @@ layout: null
       "title": {{ post.title | jsonify }},
       "category": {{ post.categories | first | default: "미분류" | jsonify }},
       "tags": {% if post.tags %}{{ post.tags | jsonify }}{% else %}[]{% endif %},
-      "url": {{ site.baseurl | append: post.url | jsonify }},
+      "url": {{ post.url | relative_url | jsonify }},
       "date": {{ post.date | date: "%Y-%m-%d" | jsonify }},
       "content": {{ post.content | strip_html | strip_newlines | truncatewords: 50 | jsonify }},
       "series": {% if post.series %}{{ post.series | jsonify }}{% else %}null{% endif %},

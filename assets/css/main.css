@@ -6,6 +6,9 @@
   font-style: normal;
 }
 
+/* 검색 스타일 가져오기 */
+@import url('./search.css');
+
 @font-face {
   font-family: 'PFStardust';
   src: url('/assets/fonts/PFStardust 3.0 Bold.ttf') format('truetype');

@@ -1,45 +1,76 @@
-(function() {
+export function initSearch() {
     var searchInput = document.getElementById('search-input');
     var searchResults = document.getElementById('search-results');
+    
+    if (!searchInput || !searchResults) {
+        console.error('Search elements not found in the DOM');
+        return;
+    }
+    
     var posts = [];
     var debounceTimer;
 
-    // 포스트 데이터 로드
-    fetch('/search.json')
-        .then(response => response.json())
+    // 포스트 데이터 로드 - 상대 경로로 수정
+    // 사이트 기본 URL을 자동으로 검색
+    const baseUrl = window.location.pathname.includes('.github.io') ? 
+        window.location.pathname.split('.github.io')[0] + '.github.io' : '';
+    const searchJsonUrl = window.location.origin + baseUrl + '/search.json';
+    
+    fetch(searchJsonUrl)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
             posts = data;
-            console.log('Loaded posts:', posts);
+            console.log('검색 데이터 로드 완료:', posts.length);
         })
         .catch(error => {
-            console.error('Error loading search data:', error);
+            console.error('검색 데이터 로드 실패:', error);
             searchResults.innerHTML = '<p>검색 데이터를 불러오는 데 실패했습니다. 나중에 다시 시도해 주세요.</p>';
         });
+
+    // 검색 폼 제출 이벤트 처리
+    const searchForm = document.getElementById('search-form');
+    if (searchForm) {
+        searchForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            performSearch();
+        });
+    }
 
     // 검색 이벤트 리스너 (디바운싱 적용)
     searchInput.addEventListener('input', function() {
         clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(function() {
-            var query = searchInput.value.toLowerCase();
-            if (query.length < 1) {
-                searchResults.style.display = 'none';
-                return;
-            }
-            var results = posts.filter(function(post) {
-                return post.title.toLowerCase().includes(query) ||
-                       post.content.toLowerCase().includes(query) ||
-                       (post.category && post.category.toLowerCase().includes(query)) ||
-                       (post.tags && post.tags.some(tag => tag.toLowerCase().includes(query)));
-            });
-            displayResults(results, query);
-        }, 300);  // 300ms 디바운스
+        debounceTimer = setTimeout(performSearch, 300);  // 300ms 디바운스
     });
 
+    function performSearch() {
+        var query = searchInput.value.toLowerCase().trim();
+        if (query.length < 1) {
+            searchResults.style.display = 'none';
+            return;
+        }
+        
+        var results = posts.filter(function(post) {
+            return post.title.toLowerCase().includes(query) ||
+                   post.content.toLowerCase().includes(query) ||
+                   (post.category && post.category.toLowerCase().includes(query)) ||
+                   (post.tags && post.tags.some(tag => tag.toLowerCase().includes(query)));
+        });
+        
+        displayResults(results, query);
+    }
+
     function truncateContent(content, limit) {
+        if (!content) return '';
         return content.length > limit ? content.substring(0, limit) + '...' : content;
     }
 
     function highlightText(text, query) {
+        if (!text) return '';
         return text.replace(new RegExp(query, 'gi'), match => `<mark>${match}</mark>`);
     }
 
@@ -77,16 +108,23 @@
             e.preventDefault();
             if (focused && focused.parentElement.nextElementSibling) {
                 focused.parentElement.nextElementSibling.querySelector('a').focus();
-            } else {
+            } else if (links.length > 0) {
                 links[0].focus();
             }
         } else if (e.key === 'ArrowUp') {
             e.preventDefault();
             if (focused && focused.parentElement.previousElementSibling) {
                 focused.parentElement.previousElementSibling.querySelector('a').focus();
-            } else {
+            } else if (links.length > 0) {
                 links[links.length - 1].focus();
             }
         }
     });
-})();
+    
+    // 문서 클릭 시 검색 결과 닫기
+    document.addEventListener('click', function(e) {
+        if (!searchForm.contains(e.target)) {
+            searchResults.style.display = 'none';
+        }
+    });
+}

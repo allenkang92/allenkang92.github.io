@@ -1,6 +1,6 @@
-document.addEventListener('DOMContentLoaded', function() {
-    var categorySelect = document.getElementById('category-select');
-    var achievementCategorySelect = document.getElementById('achievement-category-select');
+export function initFilter() {
+    const categorySelect = document.getElementById('category-select');
+    const achievementCategorySelect = document.getElementById('achievement-category-select');
 
     if (categorySelect) {
         categorySelect.addEventListener('change', filterCategories);
@@ -9,14 +9,16 @@ document.addEventListener('DOMContentLoaded', function() {
     if (achievementCategorySelect) {
         achievementCategorySelect.addEventListener('change', filterAchievements);
     }
-});
+}
 
 function filterCategories() {
-    var select = document.getElementById('category-select');
-    var selectedCategory = select.value;
-    var posts = document.getElementsByClassName('post-preview');
+    const select = document.getElementById('category-select');
+    if (!select) return;
     
-    for (var i = 0; i < posts.length; i++) {
+    const selectedCategory = select.value;
+    const posts = document.getElementsByClassName('post-preview');
+    
+    for (let i = 0; i < posts.length; i++) {
         if (selectedCategory === 'all' || posts[i].getAttribute('data-category') === selectedCategory) {
             posts[i].style.display = 'block';
         } else {
@@ -26,11 +28,13 @@ function filterCategories() {
 }
 
 function filterAchievements() {
-    var select = document.getElementById('achievement-category-select');
-    var selectedCategory = select.value;
-    var categories = document.getElementsByClassName('achievement-category');
+    const select = document.getElementById('achievement-category-select');
+    if (!select) return;
+    
+    const selectedCategory = select.value;
+    const categories = document.getElementsByClassName('achievement-category');
 
-    for (var i = 0; i < categories.length; i++) {
+    for (let i = 0; i < categories.length; i++) {
         if (selectedCategory === 'all' || categories[i].getAttribute('data-category') === selectedCategory) {
             categories[i].style.display = 'block';
         } else {

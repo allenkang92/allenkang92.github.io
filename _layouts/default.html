@@ -29,8 +29,7 @@
             </nav>
 
             <div class="search-container">
-                <input type="text" id="search-input" placeholder="Search..." aria-label="Search">
-                <div id="search-results"></div>
+                {% include components/search-form.html %}
             </div>
         </aside>
 
@@ -48,5 +47,11 @@
         src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
     </script>
     {% endif %}
+    
+    <!-- Main JavaScript Bundle -->
+    <script src="{{ "/assets/js/main.js" | relative_url }}" type="module"></script>
+    
+    <!-- Search JS -->
+    <script src="{{ "/assets/js/modules/search.js" | relative_url }}" type="module"></script>
 </body>
 </html>
