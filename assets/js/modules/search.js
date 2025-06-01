@@ -10,11 +10,19 @@ export function initSearch() {
     var posts = [];
     var debounceTimer;
 
-    // 포스트 데이터 로드 - 상대 경로로 수정
-    // 사이트 기본 URL을 자동으로 검색
-    const baseUrl = window.location.pathname.includes('.github.io') ? 
-        window.location.pathname.split('.github.io')[0] + '.github.io' : '';
-    const searchJsonUrl = window.location.origin + baseUrl + '/search.json';
+    // 포스트 데이터 로드 - Jekyll baseurl 고려
+    // 절대 경로 대신 상대 경로 사용 - 로컬 & 기투허페이지 호환성 확보
+    let rootPath = '';
+    const scripts = document.getElementsByTagName('script');
+    for (let i = 0; i < scripts.length; i++) {
+        const src = scripts[i].getAttribute('src');
+        if (src && src.includes('/assets/js/main.js')) {
+            rootPath = src.split('/assets/js/main.js')[0];
+            break;
+        }
+    }
+    
+    const searchJsonUrl = rootPath + '/search.json';
     
     fetch(searchJsonUrl)
         .then(response => {

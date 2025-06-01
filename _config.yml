@@ -1,11 +1,15 @@
 # Site settings
 title: Allen's Blog
 description: Striving for a better tomorrow, together with you.
-url: "https://allenkang92.github.io"
+url: "https://allenkang92.github.io" # 웨사이트 주소
 github_username: allenkang92
 author: Allen Kang
 email: ksw8841@knou.ac.kr
-baseurl: ""
+baseurl: "" # 서브디렉토리가 있을 경우 예: /blog
+
+# 사이트 속성
+is_project_page: true
+
 
 # Build settings
 markdown: kramdown

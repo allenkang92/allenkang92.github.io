@@ -1,0 +1,44 @@
+{% comment %}
+반응형 이미지 컴포넌트
+사용법: {% include components/responsive-image.html src="/path/to/image.jpg" alt="이미지 설명" %}
+옵션:
+- src: 이미지 경로 (필수)
+- alt: 대체 텍스트 (필수)
+- lazy: 지연 로딩 여부 (기본값: true)
+- class: 추가 클래스 (선택 사항)
+- caption: 이미지 캡션 (선택 사항)
+{% endcomment %}
+
+{% assign lazy_load = include.lazy | default: true %}
+{% assign img_class = include.class | default: "img-fluid" %}
+{% if lazy_load %}
+  {% assign img_class = img_class | append: " lazy" %}
+{% endif %}
+
+<figure class="responsive-figure {{ include.figure_class }}">
+  <picture>
+    {% if include.webp != false %}
+      {% assign webp_src = include.src | replace: '.jpg', '.webp' | replace: '.jpeg', '.webp' | replace: '.png', '.webp' %}
+      <source 
+        {% if lazy_load %}data-srcset{% else %}srcset{% endif %}="{{ webp_src | relative_url }}"
+        type="image/webp">
+    {% endif %}
+    
+    <img 
+      {% if lazy_load %}
+        src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="
+        data-src="{{ include.src | relative_url }}"
+      {% else %}
+        src="{{ include.src | relative_url }}"
+      {% endif %}
+      alt="{{ include.alt }}"
+      class="{{ img_class }}"
+      loading="{% if lazy_load %}lazy{% else %}eager{% endif %}"
+      width="{{ include.width | default: 'auto' }}"
+      height="{{ include.height | default: 'auto' }}">
+  </picture>
+  
+  {% if include.caption %}
+  <figcaption>{{ include.caption }}</figcaption>
+  {% endif %}
+</figure>

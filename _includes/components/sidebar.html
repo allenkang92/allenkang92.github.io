@@ -1,30 +1,33 @@
 <!-- 사이드바 시작 -->
-<aside class="sidebar-right">
-  <!-- 프로필 섹션 -->
+<aside class="sidebar-right" role="complementary" aria-label="sidebar">
+  <!-- 프로필 섹션 - 이미지 지연 로딩 적용 -->
   <div class="profile">
-    <img src="{{ site.avatar }}" alt="Profile Picture" class="profile-pic">
+    <img src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" 
+         data-src="{{ '/assets/images/allen_logo.png' | relative_url }}" 
+         alt="Allen's profile picture" 
+         class="profile-pic lazy" 
+         width="200" height="200" 
+         loading="lazy">
   </div>
-
+  
   <!-- 블로그 제목 -->
   <div class="blog-title">
     <h1>{{ site.title }}</h1>
-    <p>{{ site.description }}</p>
+    <p>{{ site.description | newline_to_br }}</p>
   </div>
-
+  
   <!-- 메인 네비게이션 -->
-  <nav class="main-nav" role="navigation" aria-label="Main navigation">
-    <ul class="nav-links">
-      <li><a href="{{ site.baseurl }}/" {% if page.url == "/" %}class="active"{% endif %}>Home</a></li>
-      <li><a href="{{ site.baseurl }}/posts" {% if page.url == "/posts/" %}class="active"{% endif %}>Posts</a></li>
-      <li><a href="{{ site.baseurl }}/achievements" {% if page.url == "/achievements/" %}class="active"{% endif %}>Achievements</a></li>
-      <li><a href="{{ site.baseurl }}/about" {% if page.url == "/about/" %}class="active"{% endif %}>About</a></li>
+  <nav role="navigation" aria-label="main navigation">
+    <ul>
+      {% for item in site.data.navigation.main %}
+      <li><a href="{{ item.url | relative_url }}" {% if page.url == item.url %}class="active"{% endif %}>{{ item.title }}</a></li>
+      {% endfor %}
     </ul>
   </nav>
 
   <!-- 검색 필드 -->
   <div class="search-container">
-    <label for="search-input" class="sr-only">Search posts</label>
-    <input type="search" id="search-input" placeholder="Search posts..." aria-label="Search posts">
+    {% include components/search-form.html %}
   </div>
 
   <!-- 카테고리 필터 -->

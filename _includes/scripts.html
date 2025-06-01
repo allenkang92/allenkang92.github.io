@@ -1,49 +1,77 @@
-<!-- 검색 및 필터링 스크립트 -->
+<!-- 주요 JavaScript 모듈 로딩 - 디퍼드 적용하여 페이지 로딩 성능 개선 -->
+<script src="{{ "/assets/js/main.js" | relative_url }}" type="module" defer></script>
+
+<!-- 이미지 지연 로딩 적용 -->
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // 모달 관련 요소
-    var modal = document.getElementById("blog-info-modal");
-    var btn = document.getElementById("blog-info-btn");
-    var span = document.querySelector(".modal-close");
-
-    // 모달 이벤트 리스너
-    if(btn) {
-        btn.onclick = function() {
-            modal.style.display = "flex";
-        }
-    }
-
-    if(span) {
-        span.onclick = function() {
-            modal.style.display = "none";
-        }
-    }
-
-    // 카테고리 필터 (posts 페이지용)
-    var categorySelect = document.getElementById('category-select');
-    if (categorySelect) {
-        categorySelect.addEventListener('change', function() {
-            var selectedCategory = this.value;
-            var posts = document.querySelectorAll('.post-item');
-            
-            posts.forEach(function(post) {
-                if (selectedCategory === 'all' || post.dataset.category === selectedCategory) {
-                    post.style.display = 'block';
-                } else {
-                    post.style.display = 'none';
-                }
-            });
+  document.addEventListener('DOMContentLoaded', function() {
+    var lazyImages = [].slice.call(document.querySelectorAll('img.lazy'));
+    
+    if ('IntersectionObserver' in window) {
+      let lazyImageObserver = new IntersectionObserver(function(entries, observer) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            let lazyImage = entry.target;
+            if (lazyImage.dataset.src) {
+              lazyImage.src = lazyImage.dataset.src;
+              lazyImage.removeAttribute('data-src');
+            }
+            lazyImage.classList.remove('lazy');
+            lazyImageObserver.unobserve(lazyImage);
+          }
         });
-    }
+      });
 
-    // 모달 외부 클릭 시 닫기
-    window.onclick = function(event) {
-        if (event.target == modal) {
-            modal.style.display = "none";
+      lazyImages.forEach(function(lazyImage) {
+        lazyImageObserver.observe(lazyImage);
+      });
+    } else {
+      // 가시성 API가 지원되지 않는 브라우저에 대한 폴백
+      let active = false;
+
+      const lazyLoad = function() {
+        if (active === false) {
+          active = true;
+
+          setTimeout(function() {
+            lazyImages.forEach(function(lazyImage) {
+              if ((lazyImage.getBoundingClientRect().top <= window.innerHeight && lazyImage.getBoundingClientRect().bottom >= 0) && getComputedStyle(lazyImage).display !== 'none') {
+                if (lazyImage.dataset.src) {
+                  lazyImage.src = lazyImage.dataset.src;
+                  lazyImage.removeAttribute('data-src');
+                }
+                lazyImage.classList.remove('lazy');
+
+                lazyImages = lazyImages.filter(function(image) {
+                  return image !== lazyImage;
+                });
+
+                if (lazyImages.length === 0) {
+                  document.removeEventListener('scroll', lazyLoad);
+                  window.removeEventListener('resize', lazyLoad);
+                  window.removeEventListener('orientationchange', lazyLoad);
+                }
+              }
+            });
+
+            active = false;
+          }, 200);
         }
+      };
+
+      document.addEventListener('scroll', lazyLoad);
+      window.addEventListener('resize', lazyLoad);
+      window.addEventListener('orientationchange', lazyLoad);
+      lazyLoad();
     }
-});
+  });
 </script>
+
+<!-- 추가적인 페이지별 스크립트 -->
+{% if page.math %}
+<script type="text/javascript" async
+    src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+{% endif %}
 
 <!-- 페이지별 추가 스크립트 -->
 {% if page.scripts %}

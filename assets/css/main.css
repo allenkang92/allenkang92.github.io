@@ -1,26 +1,56 @@
 /* 폰트 정의 */
 @font-face {
   font-family: 'PFStardust';
-  src: url('/assets/fonts/PFStardust 3.0.ttf') format('truetype');
+  src: url('../fonts/PFStardust 3.0.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
+  font-display: swap; /* 폰트 로딩 성능 개선 */
 }
 
-/* 검색 스타일 가져오기 */
+/* 스타일시트 가져오기 */
 @import url('./search.css');
+@import url('./style.css');
+@import url('./theme.css');
+@import url('./series.css');
+@import url('./pages/about.css');
+@import url('./pages/posts.css');
+@import url('./pages/projects.css');
+@import url('./pages/project_detail.css');
+@import url('./pages/achievements.css');
+@import url('./pages/tools.css');
 
 @font-face {
   font-family: 'PFStardust';
-  src: url('/assets/fonts/PFStardust 3.0 Bold.ttf') format('truetype');
+  src: url('../fonts/PFStardust 3.0 Bold.ttf') format('truetype');
   font-weight: bold;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
   font-family: 'PFStardust';
-  src: url('/assets/fonts/PFStardust 3.0 ExtraBold.ttf') format('truetype');
+  src: url('../fonts/PFStardust 3.0 ExtraBold.ttf') format('truetype');
   font-weight: 800;
   font-style: normal;
+  font-display: swap;
+}
+
+/* 접근성 - 스킵 네비게이션 */
+.skip-link {
+  background: #A8E1DB;
+  color: #000;
+  font-weight: bold;
+  left: 50%;
+  padding: 8px;
+  position: absolute;
+  transform: translateY(-100%) translateX(-50%);
+  transition: transform 0.3s;
+  z-index: 100;
+}
+
+.skip-link:focus {
+  transform: translateY(0%) translateX(-50%);
+  outline: 3px solid #005F5F;
 }
 
 /* 전체 레이아웃 */
