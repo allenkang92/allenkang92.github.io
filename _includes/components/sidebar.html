@@ -16,6 +16,8 @@
     <p>{{ site.description | newline_to_br }}</p>
   </div>
   
+
+
   <!-- 메인 네비게이션 -->
   <nav role="navigation" aria-label="main navigation">
     <ul>
@@ -24,22 +26,6 @@
       {% endfor %}
     </ul>
   </nav>
-
-  <!-- 검색 필드 -->
-  <div class="search-container">
-    {% include components/search-form.html %}
-  </div>
-
-  <!-- 카테고리 필터 -->
-  <div class="filter-container">
-    <label for="category-select" class="sr-only">Filter by category</label>
-    <select id="category-select" aria-label="Filter by category">
-      <option value="">All Categories</option>
-      {% for category in site.categories %}
-        <option value="{{ category[0] }}">{{ category[0] }}</option>
-      {% endfor %}
-    </select>
-  </div>
 
   <!-- 소셜 링크 -->
   <div class="social-links">

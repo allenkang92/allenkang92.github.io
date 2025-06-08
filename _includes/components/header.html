@@ -1,49 +1,53 @@
-<aside class="sidebar-right" role="complementary" aria-label="사이드바">
-  <!-- 프로필 이미지 추가 -->
-  <div class="profile">
-    <img src="{{ '/assets/images/allen_logo.png' | relative_url }}" alt="Allen's profile picture" class="profile-pic">
-  </div>
-  
-  <!-- 블로그 제목 및 설명 -->
-  <div class="blog-title">
-    <h1>{{ site.title }}</h1>
-    <p>{{ site.description }}</p>
-  </div>
-  
-  <!-- 내비게이션 메뉴 -->
-  <nav role="navigation" aria-label="사이드바 메뉴">
-    <ul class="nav-links">
-      {% for item in site.navigation %}
-      <li>
-        <a href="{{ item.url | relative_url }}" {% if page.url == item.url %}class="active"{% endif %}>
-          {{ item.title }}
-        </a>
-      </li>
-      {% endfor %}
-    </ul>
-  </nav>
-  
-  <!-- 검색 필드 -->
-  <div class="search-container">
-    <input type="text" id="search-input" placeholder="검색어를 입력하세요" aria-label="검색어 입력">
-    <div id="search-results"></div>
-  </div>
-
-  <!-- 카테고리 선택 -->
-  {% if page.url contains '/posts/' or page.url contains '/achievements/' %}
-    <div class="categories">
-      <h2>{% if page.url contains '/posts/' %}Blog{% else %}Achievement{% endif %} Categories:</h2>
-      <select id="{% if page.url contains '/posts/' %}category-select{% else %}achievement-category-select{% endif %}" onchange="{% if page.url contains '/posts/' %}filterCategories(){% else %}filterAchievements(){% endif %}" aria-label="카테고리 선택">
-        <option value="all">All Categories</option>
-        {% if page.url contains '/posts/' %}
-          {% assign categories = site.category_structure %}
-        {% elsif page.url contains '/achievements/' %}
-          {% assign categories = site.achievement_categories %}
-        {% endif %}
-        {% for category in categories %}
-          <option value="{{ category[0] }}">{{ category[1].title }}</option>
+<header class="header" role="banner">
+  <div class="header-content">
+    <h1 class="site-title">
+      <a href="{{ '/' | relative_url }}">
+        {{ site.title }}
+      </a>
+    </h1>
+    
+    <!-- 내비게이션 메뉴 -->
+    <nav class="main-nav" role="navigation" aria-label="메인 네비게이션">
+      <ul>
+        {% for item in site.data.navigation.main %}
+        <li>
+          <a href="{{ item.url | relative_url }}" {% if page.url == item.url %}class="active"{% endif %}>
+            {{ item.title }}
+          </a>
+        </li>
         {% endfor %}
-      </select>
+      </ul>
+    </nav>
+    
+    <!-- 검색 컴포넌트 -->
+    <div class="search-wrapper">
+      {% include components/search-form.html %}
     </div>
-  {% endif %}
+  </div>
+</header>
+
+{% if page.url contains '/posts/' or page.url contains '/achievements/' %}
+<!-- 카테고리 필터 -->
+<div class="category-filter">
+  <h2 class="filter-title">{% if page.url contains '/posts/' %}Blog{% else %}Achievement{% endif %} Categories:</h2>
+  <select 
+    id="{% if page.url contains '/posts/' %}category-select{% else %}achievement-category-select{% endif %}" 
+    onchange="{% if page.url contains '/posts/' %}filterCategories(){% else %}filterAchievements(){% endif %}" 
+    aria-label="카테고리 선택"
+  >
+    <option value="all">All Categories</option>
+    {% if page.url contains '/posts/' %}
+      {% assign categories = site.category_structure %}
+    {% elsif page.url contains '/achievements/' %}
+      {% assign categories = site.achievement_categories %}
+    {% endif %}
+
+    {% for category in categories %}
+    <option value="{{ category.name }}" {% if page.category == category.name %}selected{% endif %}>
+      {{ category.title }}
+    </option>
+    {% endfor %}
+  </select>
+</div>
+{% endif %}
 </aside>

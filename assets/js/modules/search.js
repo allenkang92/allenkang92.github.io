@@ -1,52 +1,127 @@
 export function initSearch() {
-    var searchInput = document.getElementById('search-input');
-    var searchResults = document.getElementById('search-results');
+    const searchInput = document.getElementById('search-input');
+    const searchResults = document.getElementById('search-results');
+    const searchForm = document.getElementById('search-form');
     
-    if (!searchInput || !searchResults) {
+    if (!searchInput || !searchResults || !searchForm) {
         console.error('Search elements not found in the DOM');
         return;
     }
     
-    var posts = [];
-    var debounceTimer;
+    let posts = [];
+    let debounceTimer;
+    let isLoading = false;
 
-    // 포스트 데이터 로드 - Jekyll baseurl 고려
-    // 절대 경로 대신 상대 경로 사용 - 로컬 & 기투허페이지 호환성 확보
-    let rootPath = '';
-    const scripts = document.getElementsByTagName('script');
-    for (let i = 0; i < scripts.length; i++) {
-        const src = scripts[i].getAttribute('src');
-        if (src && src.includes('/assets/js/main.js')) {
-            rootPath = src.split('/assets/js/main.js')[0];
-            break;
-        }
+    // 검색 로딩 상태 표시
+    function showLoading() {
+        searchResults.innerHTML = '<p class="search-loading">검색중...</p>';
+        isLoading = true;
     }
-    
-    const searchJsonUrl = rootPath + '/search.json';
-    
-    fetch(searchJsonUrl)
-        .then(response => {
+
+    // 검색 데이터 로드
+    async function loadSearchData() {
+        try {
+            showLoading();
+            // 상대 경로를 사용하여 모든 환경에서 동작하게 함
+            const response = await fetch('/search.json');
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
-            return response.json();
-        })
-        .then(data => {
-            posts = data;
+            posts = await response.json();
             console.log('검색 데이터 로드 완료:', posts.length);
-        })
-        .catch(error => {
+            searchResults.innerHTML = '';
+        } catch (error) {
             console.error('검색 데이터 로드 실패:', error);
-            searchResults.innerHTML = '<p>검색 데이터를 불러오는 데 실패했습니다. 나중에 다시 시도해 주세요.</p>';
-        });
+            searchResults.innerHTML = `
+                <div class="error-message" role="alert">
+                    <p>검색 데이터를 불러오는 데 실패했습니다.</p>
+                    <p>나중에 다시 시도해 주세요.</p>
+                </div>
+            `;
+        } finally {
+            isLoading = false;
+        }
+    }
+
+    // 페이지 로드 시 검색 데이터 로드
+    loadSearchData();
 
     // 검색 폼 제출 이벤트 처리
-    const searchForm = document.getElementById('search-form');
-    if (searchForm) {
-        searchForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            performSearch();
+    searchForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        performSearch();
+    });
+
+    // 검색 입력 이벤트 처리
+    searchInput.addEventListener('input', function(e) {
+        // 로딩 중이면 처리하지 않음
+        if (isLoading) return;
+        
+        // 이전 타이머 취소
+        clearTimeout(debounceTimer);
+        
+        // 300ms 디바운싱 적용
+        debounceTimer = setTimeout(performSearch, 300);
+    });
+
+    function performSearch() {
+        const searchTerm = searchInput.value.trim().toLowerCase();
+        if (!searchTerm) {
+            searchResults.innerHTML = '';
+            searchResults.classList.remove('active');
+            return;
+        }
+        
+        // 검색 결과 표시 전 로딩 상태
+        searchResults.innerHTML = '<p class="search-loading">검색중...</p>';
+        searchResults.classList.add('active');
+
+        // 데이터가 없으면 로드
+        if (posts.length === 0) {
+            loadSearchData().then(performSearch);
+            return;
+        }
+
+        const results = posts.filter(post => {
+            const title = post.title.toLowerCase();
+            const content = (post.content || '').toLowerCase();
+            const tags = (post.tags || []).join(' ').toLowerCase();
+            const categories = (post.categories || []).join(' ').toLowerCase();
+            
+            // 타이틀, 콘텐츠, 태그, 카테고리 모두에서 검색
+            return title.includes(searchTerm) || 
+                   content.includes(searchTerm) || 
+                   tags.includes(searchTerm) ||
+                   categories.includes(searchTerm);
         });
+        
+        // 검색 결과가 없을 경우
+        if (results.length === 0) {
+            searchResults.innerHTML = `
+                <div class="no-results" role="alert">
+                    <p>검색 결과가 없습니다.</p>
+                    <p>다른 검색어를 시도해 보세요.</p>
+                </div>
+            `;
+            return;
+        }
+
+        // 검색 결과 표시 - 접근성 개선
+        const html = results.map(post => `
+            <article class="search-result-item">
+                <h3><a href="${post.url}" aria-label="${post.title} 게시물 읽기">${post.title}</a></h3>
+                <div class="result-excerpt">
+                    ${post.content ? `<p>${post.content.substring(0, 150)}${post.content.length > 150 ? '...' : ''}</p>` : ''}
+                </div>
+                <footer class="result-meta">
+                    ${post.date ? `<time datetime="${post.date}">${new Date(post.date).toLocaleDateString('ko-KR')}</time>` : ''}
+                    ${post.categories && post.categories.length > 0 ? `<span class="categories">카테고리: ${post.categories.join(', ')}</span>` : ''}
+                    ${post.tags && post.tags.length > 0 ? `<span class="tags">태그: ${post.tags.join(', ')}</span>` : ''}
+                </footer>
+            </article>
+        `).join('');
+
+        searchResults.innerHTML = `<div class="search-results-count" role="status" aria-live="polite">검색 결과: ${results.length}개</div>${html}`;
     }
 
     // 검색 이벤트 리스너 (디바운싱 적용)
