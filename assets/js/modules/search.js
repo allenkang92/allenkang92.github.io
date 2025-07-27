@@ -22,31 +22,38 @@ export function initSearch() {
     async function loadSearchData() {
         try {
             showLoading();
-            // 더 안정적인 경로 감지 로직
-            let searchUrl = '/search.json';
             
-            // GitHub Pages 서브디렉토리 배포 감지
-            const pathname = window.location.pathname;
-            if (pathname.includes('/allenkang92.github.io')) {
-                searchUrl = '/allenkang92.github.io/search.json';
-            }
+            // 여러 경로를 시도하는 로직
+            const searchUrls = [
+                window.location.origin + '/search.json',
+                window.location.origin + window.location.pathname.replace(/\/[^/]*$/, '') + '/search.json',
+                './search.json',
+                '/search.json'
+            ];
             
-            console.log('검색 데이터 로드 시도:', searchUrl);
-            const response = await fetch(searchUrl);
+            let response = null;
+            let searchUrl = null;
             
-            if (!response.ok) {
-                // 첫 번째 시도 실패 시 상대 경로로 재시도
-                console.log('절대 경로 실패, 상대 경로로 재시도');
-                const fallbackResponse = await fetch('./search.json');
-                if (!fallbackResponse.ok) {
-                    throw new Error(`HTTP error! Status: ${fallbackResponse.status}`);
+            for (const url of searchUrls) {
+                try {
+                    console.log('검색 데이터 로드 시도:', url);
+                    response = await fetch(url);
+                    if (response.ok) {
+                        searchUrl = url;
+                        break;
+                    }
+                } catch (e) {
+                    console.log('URL 시도 실패:', url, e.message);
+                    continue;
                 }
-                const fallbackData = await fallbackResponse.json();
-                posts = fallbackData;
-            } else {
-                posts = await response.json();
             }
-            console.log('검색 데이터 로드 완료:', posts.length);
+            
+            if (!response || !response.ok) {
+                throw new Error('모든 검색 데이터 URL 시도 실패');
+            }
+            
+            posts = await response.json();
+            console.log('검색 데이터 로드 완료:', searchUrl, posts.length + '개 포스트');
             searchResults.innerHTML = '';
         } catch (error) {
             console.error('검색 데이터 로드 실패:', error);

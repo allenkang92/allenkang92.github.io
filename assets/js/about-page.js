@@ -6,19 +6,21 @@ document.addEventListener('DOMContentLoaded', function() {
     return;
   }
 
-  // 스킬 데이터 정의
+  // 스킬 데이터 정의 (기존 데이터 복원)
   const skillData = {
     labels: [
-      'Data Engineering',
-      'Machine Learning',
-      'Web Development',
-      'Research',
-      'Problem Solving',
-      'Communication'
+      'Data Analysis & Science',
+      'Interdisciplinary Research', 
+      'Science Communication',
+      'Databases',
+      'Data Processing',
+      'Programming Languages',
+      'MLOps',
+      'Scientific Knowledge'
     ],
     datasets: [{
-      label: 'Skill Level',
-      data: [85, 75, 80, 90, 88, 85],
+      label: 'Skills',
+      data: [85, 80, 75, 70, 65, 60, 70, 85],
       backgroundColor: 'rgba(168, 225, 219, 0.2)',
       borderColor: 'rgba(168, 225, 219, 1)',
       borderWidth: 2,
