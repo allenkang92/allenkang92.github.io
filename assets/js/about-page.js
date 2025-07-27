@@ -62,22 +62,6 @@ document.addEventListener('DOMContentLoaded', function() {
     new Chart(ctx, config);
   }
 
-  // 탭 기능 구현
-  const tabButtons = document.querySelectorAll('.tab-button');
-  const tabContents = document.querySelectorAll('.tab-content');
-
-  tabButtons.forEach(button => {
-    button.addEventListener('click', function() {
-      const targetTab = this.getAttribute('data-tab');
-      
-      // 모든 탭 버튼에서 active 클래스 제거
-      tabButtons.forEach(btn => btn.classList.remove('active'));
-      
-      // 클릭된 버튼에 active 클래스 추가
-      this.classList.add('active');
-      
-      // 탭 콘텐츠 표시/숨김 로직 (필요시 추가)
-      console.log('탭 전환:', targetTab);
-    });
-  });
+  // About 페이지 초기화 완료
+  console.log('About 페이지 레이더 차트 초기화 완료');
 });

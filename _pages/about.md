@@ -5,22 +5,15 @@ permalink: /about/
 ---
 
 <div class="about-page">
+  <!-- 마크다운 콘텐츠 복원 -->
   <div class="about-content">
     {% include_relative about_me_all.md %}
   </div>
 
-  <!-- 탭 네비게이션 -->
-  <div class="about-tabs">
-    <div class="tab-buttons">
-      <button class="tab-button active" data-tab="knowledge-domains">Knowledge Domains</button>
-      <button class="tab-button" data-tab="tech-stack">Tech Stack</button>
-      <button class="tab-button" data-tab="all">All</button>
-    </div>
-
-    <!-- 스킬 레이더 차트 -->
-    <div class="radar-chart-container">
-      <canvas id="skillRadarChart" width="400" height="400"></canvas>
-    </div>
+  <!-- 스킬 레이더 차트 -->
+  <div class="radar-chart-container">
+    <h2>Skills Overview</h2>
+    <canvas id="skillRadarChart" width="400" height="400"></canvas>
   </div>
 </div>
 
