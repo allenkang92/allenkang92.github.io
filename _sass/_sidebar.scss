@@ -9,6 +9,13 @@
   height: 100vh;
   overflow-y: auto;
   flex-shrink: 0;
+  
+  // 모든 리스트 요소에서 bullet point 제거
+  ul, ol, li {
+    list-style: none;
+    padding-left: 0;
+    margin-left: 0;
+  }
 }
 
 // 프로필 섹션
@@ -87,6 +94,10 @@ nav {
     display: flex;
     justify-content: center;
     gap: 1rem;
+  }
+  
+  li {
+    list-style: none;
   }
   
   a {

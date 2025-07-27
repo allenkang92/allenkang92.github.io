@@ -19,12 +19,18 @@
     position: relative;
   }
 
+  .search-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
   .search-input {
     width: 100%;
-    padding: 8px 35px 8px 12px;
+    padding: 10px 40px 10px 12px;
     border: 1px solid $border-color;
-    border-radius: 4px;
-    font-size: 13px;
+    border-radius: 6px;
+    font-size: 14px;
     background: white;
     transition: border-color 0.3s ease;
 
@@ -37,17 +43,27 @@
 
   .search-submit {
     position: absolute;
-    right: 5px;
+    right: 8px;
     top: 50%;
     transform: translateY(-50%);
     background: none;
     border: none;
     cursor: pointer;
-    padding: 5px;
+    padding: 6px;
     color: $text-color-light;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: all 0.3s ease;
 
     &:hover {
-      color: $text-color;
+      color: $primary-color;
+      background: rgba($primary-color, 0.1);
+    }
+
+    i {
+      font-size: 14px;
     }
   }
 }
