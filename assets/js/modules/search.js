@@ -4,7 +4,7 @@ export function initSearch() {
     const searchForm = document.getElementById('search-form');
     
     if (!searchInput || !searchResults || !searchForm) {
-        console.error('Search elements not found in the DOM');
+        console.log('Search elements not found, skipping search initialization');
         return;
     }
     
@@ -15,46 +15,35 @@ export function initSearch() {
     // 검색 로딩 상태 표시
     function showLoading() {
         searchResults.innerHTML = '<p class="search-loading">검색중...</p>';
+        searchResults.style.display = 'block';
         isLoading = true;
     }
 
-    // 검색 데이터 로드
+    // 검색 데이터 로드 - 간단하고 확실한 방법
     async function loadSearchData() {
         try {
             showLoading();
             
-            // 여러 경로를 시도하는 로직
-            const searchUrls = [
-                window.location.origin + '/search.json',
-                window.location.origin + window.location.pathname.replace(/\/[^/]*$/, '') + '/search.json',
-                './search.json',
-                '/search.json'
-            ];
+            // 간단한 경로 시도
+            const searchUrl = '/search.json';
+            console.log('검색 데이터 로드 시도:', searchUrl);
             
-            let response = null;
-            let searchUrl = null;
+            const response = await fetch(searchUrl);
             
-            for (const url of searchUrls) {
-                try {
-                    console.log('검색 데이터 로드 시도:', url);
-                    response = await fetch(url);
-                    if (response.ok) {
-                        searchUrl = url;
-                        break;
-                    }
-                } catch (e) {
-                    console.log('URL 시도 실패:', url, e.message);
-                    continue;
-                }
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
             
-            if (!response || !response.ok) {
-                throw new Error('모든 검색 데이터 URL 시도 실패');
+            const data = await response.json();
+            
+            if (!Array.isArray(data)) {
+                throw new Error('검색 데이터 형식 오류');
             }
             
-            posts = await response.json();
-            console.log('검색 데이터 로드 완료:', searchUrl, posts.length + '개 포스트');
+            posts = data;
+            console.log('검색 데이터 로드 완료:', posts.length + '개 포스트');
             searchResults.innerHTML = '';
+            searchResults.style.display = 'none';
         } catch (error) {
             console.error('검색 데이터 로드 실패:', error);
             searchResults.innerHTML = `

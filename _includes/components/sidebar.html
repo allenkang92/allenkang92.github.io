@@ -23,12 +23,10 @@
   </div>
 
   <!-- 메인 네비게이션 -->
-  <nav role="navigation" aria-label="main navigation">
-    <ul>
-      {% for item in site.data.navigation.main %}
-      <li><a href="{{ item.url | relative_url }}" {% if page.url == item.url %}class="active"{% endif %}>{{ item.title }}</a></li>
-      {% endfor %}
-    </ul>
+  <nav role="navigation" aria-label="main navigation" class="navigation">
+    {% for item in site.data.navigation.main %}
+    <a href="{{ item.url | relative_url }}" {% if page.url == item.url %}class="nav-link active"{% else %}class="nav-link"{% endif %}>{{ item.title }}</a>
+    {% endfor %}
   </nav>
 
   <!-- 카테고리 필터 - 헤더에서 이동 -->
@@ -57,29 +55,21 @@
 
   <!-- 소셜 링크 -->
   <div class="social-links">
-    <ul>
-      {% if site.github_username %}
-      <li>
-        <a href="https://github.com/{{ site.github_username }}" target="_blank" rel="noopener noreferrer" aria-label="GitHub Profile">
-          <i class="fab fa-github" aria-hidden="true"></i>
-        </a>
-      </li>
-      {% endif %}
-      {% if site.linkedin_username %}
-      <li>
-        <a href="https://linkedin.com/in/{{ site.linkedin_username }}" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn Profile">
-          <i class="fab fa-linkedin" aria-hidden="true"></i>
-        </a>
-      </li>
-      {% endif %}
-      {% if site.twitter_username %}
-      <li>
-        <a href="https://twitter.com/{{ site.twitter_username }}" target="_blank" rel="noopener noreferrer" aria-label="Twitter Profile">
-          <i class="fab fa-twitter" aria-hidden="true"></i>
-        </a>
-      </li>
-      {% endif %}
-    </ul>
+    {% if site.github_username %}
+    <a href="https://github.com/{{ site.github_username }}" target="_blank" rel="noopener noreferrer" aria-label="GitHub Profile" class="social-link">
+      <i class="fab fa-github" aria-hidden="true"></i>
+    </a>
+    {% endif %}
+    {% if site.linkedin_username %}
+    <a href="https://linkedin.com/in/{{ site.linkedin_username }}" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn Profile" class="social-link">
+      <i class="fab fa-linkedin" aria-hidden="true"></i>
+    </a>
+    {% endif %}
+    {% if site.twitter_username %}
+    <a href="https://twitter.com/{{ site.twitter_username }}" target="_blank" rel="noopener noreferrer" aria-label="Twitter Profile" class="social-link">
+      <i class="fab fa-twitter" aria-hidden="true"></i>
+    </a>
+    {% endif %}
   </div>
 </aside>
 <!-- 사이드바 끝 -->

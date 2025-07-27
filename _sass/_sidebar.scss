@@ -32,18 +32,59 @@
     }
   }
   
-  // 특정 클래스들에 대한 추가 규칙
-  .navigation, .social-links, .search-section {
-    ul, ol, li {
-      list-style: none !important;
-      list-style-type: none !important;
-      list-style-image: none !important;
-      padding: 0 !important;
-      margin: 0 !important;
+  // 네비게이션 스타일
+  .navigation {
+    margin: 2rem 0;
+    
+    .nav-link {
+      display: block;
+      padding: 0.8rem 1rem;
+      margin: 0.5rem 0;
+      color: $text-color;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: all 0.3s ease;
       
-      &::before, &::after {
-        content: none !important;
-        display: none !important;
+      &:hover {
+        background-color: rgba($primary-color, 0.1);
+        color: $primary-color;
+      }
+      
+      &.active {
+        background-color: $primary-color;
+        color: white;
+        font-weight: 600;
+      }
+    }
+  }
+  
+  // 소셜 링크 스타일
+  .social-links {
+    margin-top: 2rem;
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    
+    .social-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      background-color: rgba($primary-color, 0.1);
+      color: $primary-color;
+      border-radius: 50%;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        background-color: $primary-color;
+        color: white;
+        transform: translateY(-2px);
+      }
+      
+      i {
+        font-size: 1.2rem;
       }
     }
   }
