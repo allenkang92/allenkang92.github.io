@@ -1,0 +1,103 @@
+// 기본 스타일 리셋 및 베이스
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: $base-font-family;
+  font-size: $base-font-size;
+  line-height: $base-line-height;
+  color: $text-color;
+  background-color: white;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// 링크 스타일
+a {
+  color: $text-color;
+  text-decoration: none;
+  transition: color 0.3s ease;
+
+  &:hover {
+    color: $primary-color;
+  }
+}
+
+// 제목 스타일
+h1, h2, h3, h4, h5, h6 {
+  margin: 0 0 1rem 0;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+// 단락 스타일
+p {
+  margin: 0 0 1rem 0;
+}
+
+// 목록 스타일
+ul, ol {
+  margin: 0 0 1rem 0;
+  padding-left: 2rem;
+}
+
+// 이미지 스타일
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+// 버튼 기본 스타일
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+// 폼 요소 스타일
+input, select, textarea {
+  font-family: inherit;
+  font-size: inherit;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+// 접근성 - 스킵 링크
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 6px;
+  background: $text-color;
+  color: white;
+  padding: 8px;
+  text-decoration: none;
+  border-radius: 4px;
+  z-index: 1000;
+
+  &:focus {
+    top: 6px;
+  }
+}
+
+// 시각적으로 숨김 (스크린 리더용)
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}

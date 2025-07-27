@@ -28,8 +28,91 @@
 
 .tagline {
   color: var(--text-color-light);
-  font-size: 1.1rem;
-  margin-top: 0.5rem;
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+/* 탭 네비게이션 스타일 */
+.about-tabs {
+  margin: 2rem 0;
+}
+
+.tab-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #e0e0e0;
+  padding-bottom: 1rem;
+}
+
+.tab-button {
+  padding: 10px 20px;
+  border: none;
+  background: transparent;
+  color: #666;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.tab-button:hover {
+  background: rgba(168, 225, 219, 0.1);
+  color: #005F5F;
+}
+
+.tab-button.active {
+  background: rgba(168, 225, 219, 0.2);
+  color: #005F5F;
+  font-weight: 600;
+}
+
+.tab-button.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 30px;
+  height: 3px;
+  background: #A8E1DB;
+  border-radius: 2px;
+}
+
+/* 레이더 차트 컴테이너 */
+.radar-chart-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 2rem 0;
+  padding: 2rem;
+  background: rgba(168, 225, 219, 0.05);
+  border-radius: 12px;
+  border: 1px solid rgba(168, 225, 219, 0.2);
+}
+
+.radar-chart-container canvas {
+  max-width: 100%;
+  height: auto;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .tab-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .tab-button {
+    width: 200px;
+  }
+  
+  .radar-chart-container {
+    padding: 1rem;
+  }
 }
 
 /* 소개 섹션 */

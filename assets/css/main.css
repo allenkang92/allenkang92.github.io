@@ -8,17 +8,12 @@
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; /* 필요한 문자만 로드 */
 }
 
-/* 스타일시트 가져오기 */
-@import url('./search.css');
+/* 핵심 스타일시트만 즉시 로드 - 성능 최적화 */
 @import url('./style.css');
+@import url('./search.css');
 @import url('./theme.css');
-@import url('./series.css');
-@import url('./pages/about.css');
-@import url('./pages/posts.css');
-@import url('./pages/projects.css');
-@import url('./pages/project_detail.css');
-@import url('./pages/achievements.css');
-@import url('./pages/tools.css');
+
+/* 페이지별 스타일은 조건부 로드로 변경 예정 */
 
 @font-face {
   font-family: 'PFStardust';
@@ -52,6 +47,55 @@
 .skip-link:focus {
   transform: translateY(0%) translateX(-50%);
   outline: 3px solid #005F5F;
+}
+
+/* 이미지 최적화 스타일 */
+.responsive-figure {
+  margin: 1.5rem 0;
+  text-align: center;
+}
+
+.responsive-figure img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.responsive-figure img:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* 지연 로딩 이미지 스타일 */
+.lazy {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.lazy.loaded {
+  opacity: 1;
+}
+
+/* 이미지 로딩 상태 */
+.img-loading {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* 이미지 캐프션 */
+.responsive-figure figcaption {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: #666;
+  font-style: italic;
 }
 
 /* 전체 레이아웃 */
@@ -379,6 +423,82 @@ body {
   border-radius: 50%;
   border: 2px solid #A8E1DB; /* 프로필 이미지 테두리 색상 */
   margin-bottom: 15px;
+}
+
+/* 사이드바 검색 기능 스타일 */
+.sidebar-search {
+  margin: 20px 0;
+  padding: 15px;
+  background: rgba(168, 225, 219, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(168, 225, 219, 0.3);
+}
+
+.sidebar-search h3 {
+  margin: 0 0 10px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #005F5F;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.sidebar-search .search-form {
+  position: relative;
+}
+
+.sidebar-search .search-input {
+  width: 100%;
+  padding: 8px 35px 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 13px;
+  background: white;
+}
+
+.sidebar-search .search-submit {
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+}
+
+/* 사이드바 카테고리 필터 스타일 */
+.sidebar-category-filter {
+  margin: 20px 0;
+  padding: 15px;
+  background: rgba(168, 225, 219, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(168, 225, 219, 0.3);
+}
+
+.sidebar-category-filter h3 {
+  margin: 0 0 10px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #005F5F;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.sidebar-category-filter select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 13px;
+  background: white;
+  cursor: pointer;
+}
+
+.sidebar-category-filter select:focus {
+  outline: none;
+  border-color: #A8E1DB;
+  box-shadow: 0 0 0 2px rgba(168, 225, 219, 0.2);
 }
 
 /* 검색창 스타일 */

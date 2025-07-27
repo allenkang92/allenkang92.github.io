@@ -1,0 +1,81 @@
+// 포스트 페이지 스타일
+.post-header {
+  margin-bottom: 2rem;
+  
+  .post-title {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: $text-color;
+    line-height: 1.2;
+  }
+  
+  .post-meta {
+    color: $text-color-light;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    
+    .post-date {
+      margin-right: 1rem;
+    }
+    
+    .post-category {
+      background: rgba($primary-color, 0.2);
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+    }
+  }
+}
+
+.post-content {
+  line-height: 1.8;
+  
+  h1, h2, h3, h4, h5, h6 {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+  }
+  
+  p {
+    margin-bottom: 1.5rem;
+  }
+  
+  blockquote {
+    border-left: 4px solid $primary-color;
+    padding-left: 1rem;
+    margin: 1.5rem 0;
+    font-style: italic;
+    color: $text-color-light;
+  }
+  
+  code {
+    background: rgba($primary-color, 0.1);
+    padding: 0.2rem 0.4rem;
+    border-radius: 3px;
+    font-size: 0.9em;
+  }
+  
+  pre {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 6px;
+    overflow-x: auto;
+    margin: 1.5rem 0;
+    
+    code {
+      background: none;
+      padding: 0;
+    }
+  }
+}
+
+// 댓글 섹션
+.comments-section {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid $border-color;
+  
+  h3 {
+    margin-bottom: 1rem;
+    color: $text-color;
+  }
+}

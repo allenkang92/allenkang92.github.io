@@ -22,13 +22,30 @@ export function initSearch() {
     async function loadSearchData() {
         try {
             showLoading();
-            // 상대 경로를 사용하여 모든 환경에서 동작하게 함
-            const baseUrl = window.location.pathname.includes('/allenkang92.github.io') ? '/allenkang92.github.io' : '';
-            const response = await fetch(`${baseUrl}/search.json`);
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
+            // 더 안정적인 경로 감지 로직
+            let searchUrl = '/search.json';
+            
+            // GitHub Pages 서브디렉토리 배포 감지
+            const pathname = window.location.pathname;
+            if (pathname.includes('/allenkang92.github.io')) {
+                searchUrl = '/allenkang92.github.io/search.json';
             }
-            posts = await response.json();
+            
+            console.log('검색 데이터 로드 시도:', searchUrl);
+            const response = await fetch(searchUrl);
+            
+            if (!response.ok) {
+                // 첫 번째 시도 실패 시 상대 경로로 재시도
+                console.log('절대 경로 실패, 상대 경로로 재시도');
+                const fallbackResponse = await fetch('./search.json');
+                if (!fallbackResponse.ok) {
+                    throw new Error(`HTTP error! Status: ${fallbackResponse.status}`);
+                }
+                const fallbackData = await fallbackResponse.json();
+                posts = fallbackData;
+            } else {
+                posts = await response.json();
+            }
             console.log('검색 데이터 로드 완료:', posts.length);
             searchResults.innerHTML = '';
         } catch (error) {

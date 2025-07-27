@@ -15,11 +15,31 @@ is_project_page: true
 markdown: kramdown
 theme: minima
 future: true
+highlighter: rouge
+incremental: true
+
+# Jekyll 플러그인
 plugins:
   - jekyll-feed
   - jekyll-seo-tag
   - jekyll-sitemap
   - jekyll-redirect-from
+  - jekyll-sass-converter
+
+# Sass 설정
+sass:
+  sass_dir: _sass
+  style: compressed
+  sourcemap: development
+
+# 에셋 최적화
+compress_html:
+  clippings: all
+  comments: all
+  endings: all
+  startings: [html, head, body]
+  blanklines: false
+  profile: false
 
 # Directory settings
 source: .

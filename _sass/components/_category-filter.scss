@@ -1,0 +1,67 @@
+// 카테고리 필터 컴포넌트 스타일
+.sidebar-category-filter {
+  margin: 20px 0;
+  padding: 15px;
+  background: rgba($primary-color, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba($primary-color, 0.3);
+
+  h3 {
+    margin: 0 0 10px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: $text-color;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid $border-color;
+    border-radius: 4px;
+    font-size: 13px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:focus {
+      outline: none;
+      border-color: $primary-color;
+      box-shadow: 0 0 0 2px rgba($primary-color, 0.2);
+    }
+
+    &:hover {
+      border-color: rgba($primary-color, 0.5);
+    }
+  }
+
+  // 접근성 개선 - 포커스 표시
+  select:focus-visible {
+    outline: 2px solid $primary-color;
+    outline-offset: 2px;
+  }
+}
+
+// 고대비 모드 지원
+@media (prefers-contrast: high) {
+  .sidebar-category-filter {
+    border-color: $text-color;
+    
+    select {
+      border-color: $text-color;
+      
+      &:focus {
+        border-color: $text-color;
+        box-shadow: 0 0 0 2px $text-color;
+      }
+    }
+  }
+}
+
+// 애니메이션 감소 모드 지원
+@media (prefers-reduced-motion: reduce) {
+  .sidebar-category-filter select {
+    transition: none;
+  }
+}

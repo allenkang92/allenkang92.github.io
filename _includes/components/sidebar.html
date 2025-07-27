@@ -16,7 +16,11 @@
     <p>{{ site.description | newline_to_br }}</p>
   </div>
   
-
+  <!-- 검색 기능 - 헤더에서 이동 -->
+  <div class="sidebar-search">
+    <h3>검색</h3>
+    {% include components/search-form.html %}
+  </div>
 
   <!-- 메인 네비게이션 -->
   <nav role="navigation" aria-label="main navigation">
@@ -26,6 +30,30 @@
       {% endfor %}
     </ul>
   </nav>
+
+  <!-- 카테고리 필터 - 헤더에서 이동 -->
+  {% if page.url contains '/posts/' or page.url contains '/achievements/' %}
+  <div class="sidebar-category-filter">
+    <h3>{% if page.url contains '/posts/' %}Blog{% else %}Achievement{% endif %} Categories</h3>
+    <select 
+      id="{% if page.url contains '/posts/' %}category-select{% else %}achievement-category-select{% endif %}" 
+      aria-label="카테고리 선택"
+    >
+      <option value="all">All Categories</option>
+      {% if page.url contains '/posts/' %}
+        {% assign categories = site.category_structure %}
+      {% elsif page.url contains '/achievements/' %}
+        {% assign categories = site.achievement_categories %}
+      {% endif %}
+
+      {% for category in categories %}
+      <option value="{{ category.name }}" {% if page.category == category.name %}selected{% endif %}>
+        {{ category.title }}
+      </option>
+      {% endfor %}
+    </select>
+  </div>
+  {% endif %}
 
   <!-- 소셜 링크 -->
   <div class="social-links">

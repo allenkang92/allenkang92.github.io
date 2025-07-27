@@ -19,21 +19,40 @@
   <picture>
     {% if include.webp != false %}
       {% assign webp_src = include.src | replace: '.jpg', '.webp' | replace: '.jpeg', '.webp' | replace: '.png', '.webp' %}
+      <!-- WebP 형식 지원 - 최신 브라우저에서 성능 최적화 -->
       <source 
-        {% if lazy_load %}data-srcset{% else %}srcset{% endif %}="{{ webp_src | relative_url }}"
+        {% if lazy_load %}data-srcset{% else %}srcset{% endif %}="
+          {{ webp_src | replace: '.webp', '-400.webp' | relative_url }} 400w,
+          {{ webp_src | replace: '.webp', '-800.webp' | relative_url }} 800w,
+          {{ webp_src | relative_url }} 1200w
+        "
+        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         type="image/webp">
     {% endif %}
     
+    <!-- 기본 이미지 형식 - 호환성 보장 -->
     <img 
       {% if lazy_load %}
-        src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="
+        src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'%3E%3C/svg%3E"
         data-src="{{ include.src | relative_url }}"
+        data-srcset="
+          {{ include.src | replace: '.jpg', '-400.jpg' | replace: '.jpeg', '-400.jpeg' | replace: '.png', '-400.png' | relative_url }} 400w,
+          {{ include.src | replace: '.jpg', '-800.jpg' | replace: '.jpeg', '-800.jpeg' | replace: '.png', '-800.png' | relative_url }} 800w,
+          {{ include.src | relative_url }} 1200w
+        "
       {% else %}
         src="{{ include.src | relative_url }}"
+        srcset="
+          {{ include.src | replace: '.jpg', '-400.jpg' | replace: '.jpeg', '-400.jpeg' | replace: '.png', '-400.png' | relative_url }} 400w,
+          {{ include.src | replace: '.jpg', '-800.jpg' | replace: '.jpeg', '-800.jpeg' | replace: '.png', '-800.png' | relative_url }} 800w,
+          {{ include.src | relative_url }} 1200w
+        "
       {% endif %}
       alt="{{ include.alt }}"
       class="{{ img_class }}"
       loading="{% if lazy_load %}lazy{% else %}eager{% endif %}"
+      decoding="async"
+      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
       width="{{ include.width | default: 'auto' }}"
       height="{{ include.height | default: 'auto' }}">
   </picture>
