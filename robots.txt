@@ -2,7 +2,7 @@ User-agent: *
 Allow: /
 
 # 사이트맵 위치
-Sitemap: {{ site.url }}{{ site.baseurl }}/sitemap.xml
+Sitemap: https://allenkang92.github.io/sitemap.xml
 
 # 크롤링 제한
 Crawl-delay: 10

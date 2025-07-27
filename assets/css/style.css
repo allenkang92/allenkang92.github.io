@@ -1,25 +1,3 @@
-/* 폰트 정의 */
-@font-face {
-  font-family: 'PFStardust';
-  src: url('/assets/fonts/PFStardust 3.0.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'PFStardust';
-  src: url('/assets/fonts/PFStardust 3.0 Bold.ttf') format('truetype');
-  font-weight: bold;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'PFStardust';
-  src: url('/assets/fonts/PFStardust 3.0 ExtraBold.ttf') format('truetype');
-  font-weight: 800;
-  font-style: normal;
-}
-
 /* 전체 레이아웃 */
 html, body {
   height: 100%;
