@@ -24,9 +24,11 @@
 
   <!-- 메인 네비게이션 -->
   <nav role="navigation" aria-label="main navigation" class="navigation">
-    {% for item in site.data.navigation.main %}
-    <a href="{{ item.url | relative_url }}" {% if page.url == item.url %}class="nav-link active"{% else %}class="nav-link"{% endif %}>{{ item.title }}</a>
-    {% endfor %}
+    <div class="nav-links">
+      {% for item in site.data.navigation.main %}
+      <a href="{{ item.url | relative_url }}" {% if page.url == item.url %}class="nav-link active"{% else %}class="nav-link"{% endif %}>{{ item.title }}</a>
+      {% endfor %}
+    </div>
   </nav>
 
   <!-- 카테고리 필터 - 헤더에서 이동 -->
