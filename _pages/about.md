@@ -34,7 +34,6 @@ Aspirant in Cognitive Science and Neuroscience | Data Engineer
 
 <!-- 스킬 레이더 차트 -->
 <div class="radar-chart-container">
-  <h2>Skills Overview</h2>
   <canvas id="skillRadarChart" width="400" height="400"></canvas>
 </div>
 

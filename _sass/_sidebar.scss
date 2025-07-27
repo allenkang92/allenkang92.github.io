@@ -14,14 +14,38 @@
   *, *::before, *::after {
     list-style: none !important;
     list-style-type: none !important;
+    list-style-image: none !important;
   }
   
   ul, ol, li {
     list-style: none !important;
     list-style-type: none !important;
+    list-style-image: none !important;
+    list-style-position: outside !important;
     padding-left: 0 !important;
     margin-left: 0 !important;
     text-indent: 0 !important;
+    
+    &::before, &::after {
+      content: none !important;
+      display: none !important;
+    }
+  }
+  
+  // 특정 클래스들에 대한 추가 규칙
+  .navigation, .social-links, .search-section {
+    ul, ol, li {
+      list-style: none !important;
+      list-style-type: none !important;
+      list-style-image: none !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      
+      &::before, &::after {
+        content: none !important;
+        display: none !important;
+      }
+    }
   }
 }
 

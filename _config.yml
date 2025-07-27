@@ -18,6 +18,19 @@ future: true
 highlighter: rouge
 incremental: true
 
+# Kramdown 설정
+kramdown:
+  input: GFM
+  hard_wrap: false
+  auto_ids: true
+  footnote_nr: 1
+  entity_output: as_char
+  toc_levels: 1..6
+  smart_quotes: lsquo,rsquo,ldquo,rdquo
+  enable_coderay: false
+  parse_block_html: true
+  parse_span_html: true
+
 # Jekyll 플러그인
 plugins:
   - jekyll-feed
