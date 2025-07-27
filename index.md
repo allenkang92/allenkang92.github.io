@@ -4,10 +4,10 @@ title: Home
 description: Striving for a better tomorrow, together with you.
 ---
 
-## Recent Posts
+<h2>Recent Posts</h2>
 
 <div class="recent-posts">
-  {% for post in site.posts limit:3 %}
+{% for post in site.posts limit:3 %}
   <article class="post-preview">
     <h3><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h3>
     <div class="post-meta">
@@ -17,5 +17,5 @@ description: Striving for a better tomorrow, together with you.
       {{ post.excerpt | strip_html | truncatewords: 30 }}
     </div>
   </article>
-  {% endfor %}
+{% endfor %}
 </div>
