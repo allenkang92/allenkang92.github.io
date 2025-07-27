@@ -6,19 +6,6 @@
       </a>
     </h1>
     
-    <!-- 내비게이션 메뉴 -->
-    <nav class="main-nav" role="navigation" aria-label="메인 네비게이션">
-      <ul>
-        {% for item in site.data.navigation.main %}
-        <li>
-          <a href="{{ item.url | relative_url }}" {% if page.url == item.url %}class="active"{% endif %}>
-            {{ item.title }}
-          </a>
-        </li>
-        {% endfor %}
-      </ul>
-    </nav>
-    
     <!-- 검색 컴포넌트 -->
     <div class="search-wrapper">
       {% include components/search-form.html %}
@@ -32,7 +19,6 @@
   <h2 class="filter-title">{% if page.url contains '/posts/' %}Blog{% else %}Achievement{% endif %} Categories:</h2>
   <select 
     id="{% if page.url contains '/posts/' %}category-select{% else %}achievement-category-select{% endif %}" 
-    onchange="{% if page.url contains '/posts/' %}filterCategories(){% else %}filterAchievements(){% endif %}" 
     aria-label="카테고리 선택"
   >
     <option value="all">All Categories</option>

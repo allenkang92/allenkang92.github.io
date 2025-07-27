@@ -23,7 +23,8 @@ export function initSearch() {
         try {
             showLoading();
             // 상대 경로를 사용하여 모든 환경에서 동작하게 함
-            const response = await fetch('/search.json');
+            const baseUrl = window.location.pathname.includes('/allenkang92.github.io') ? '/allenkang92.github.io' : '';
+            const response = await fetch(`${baseUrl}/search.json`);
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
