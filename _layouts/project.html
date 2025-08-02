@@ -1,0 +1,88 @@
+---
+layout: default
+---
+
+<article class="project-detail">
+  <header class="project-header">
+    <h1>{{ page.title }}</h1>
+    {% if page.description %}
+    <p class="project-description">{{ page.description }}</p>
+    {% endif %}
+    
+    <div class="project-meta">
+      {% if page.date %}
+      <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%Y년 %m월 %d일" }}</time>
+      {% endif %}
+      
+      {% if page.technologies %}
+      <div class="project-technologies">
+        <h3>사용 기술</h3>
+        <ul>
+          {% for tech in page.technologies %}
+          <li>{{ tech }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+      
+      {% if page.github_url %}
+      <a href="{{ page.github_url }}" target="_blank" rel="noopener noreferrer" class="project-link">
+        <i class="fab fa-github"></i> GitHub
+      </a>
+      {% endif %}
+      
+      {% if page.demo_url %}
+      <a href="{{ page.demo_url }}" target="_blank" rel="noopener noreferrer" class="project-link">
+        <i class="fas fa-external-link-alt"></i> Demo
+      </a>
+      {% endif %}
+    </div>
+  </header>
+
+  <div class="project-content">
+    {{ content }}
+  </div>
+
+  {% if page.gallery %}
+  <section class="project-gallery">
+    <h2>프로젝트 갤러리</h2>
+    <div class="gallery-grid">
+      {% for image in page.gallery %}
+      <div class="gallery-item">
+        <img src="{{ image.url | relative_url }}" alt="{{ image.alt }}" loading="lazy">
+        {% if image.caption %}
+        <p class="gallery-caption">{{ image.caption }}</p>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+  <nav class="project-navigation">
+    <div class="nav-links">
+      {% assign projects = site.projects | sort: 'date' %}
+      {% for project in projects %}
+        {% if project.url == page.url %}
+          {% assign current_index = forloop.index0 %}
+          {% break %}
+        {% endif %}
+      {% endfor %}
+      
+      {% if current_index > 0 %}
+        {% assign prev_project = projects[current_index | minus: 1] %}
+        <a href="{{ prev_project.url | relative_url }}" class="nav-prev">
+          <i class="fas fa-chevron-left"></i> {{ prev_project.title }}
+        </a>
+      {% endif %}
+      
+      {% assign next_index = current_index | plus: 1 %}
+      {% if next_index < projects.size %}
+        {% assign next_project = projects[next_index] %}
+        <a href="{{ next_project.url | relative_url }}" class="nav-next">
+          {{ next_project.title }} <i class="fas fa-chevron-right"></i>
+        </a>
+      {% endif %}
+    </div>
+  </nav>
+</article>

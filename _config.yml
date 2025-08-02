@@ -81,6 +81,9 @@ collections:
   achievements:
     output: true
     permalink: /achievements/:title/
+  projects:
+    output: true
+    permalink: /projects/:title/
 
 # Defaults
 defaults:
@@ -100,6 +103,11 @@ defaults:
       type: "achievements"
     values:
       layout: "achievement"
+  - scope:
+      path: ""
+      type: "projects"
+    values:
+      layout: "project"
   - scope:
       path: "_pages"
       type: "pages"

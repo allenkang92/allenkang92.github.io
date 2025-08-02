@@ -19,14 +19,19 @@ export function initSearch() {
         isLoading = true;
     }
 
-    // 검색 데이터 로드 - 간단하고 확실한 방법
+    // 검색 데이터 로드 - 강화된 경로 감지
     async function loadSearchData() {
         try {
             showLoading();
             
-            // 간단한 경로 시도
-            const searchUrl = '/search.json';
+            // 현재 페이지 기반 경로 감지
+            const currentPath = window.location.pathname;
+            const basePath = currentPath.includes('/allenkang92.github.io') ? '/allenkang92.github.io' : '';
+            const searchUrl = `${basePath}/search.json`;
+            
             console.log('검색 데이터 로드 시도:', searchUrl);
+            console.log('현재 경로:', currentPath);
+            console.log('베이스 경로:', basePath);
             
             const response = await fetch(searchUrl);
             

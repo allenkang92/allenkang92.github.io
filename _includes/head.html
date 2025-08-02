@@ -38,7 +38,7 @@
     {% if page.image %}
     <meta name="twitter:image" content="{{ page.image | prepend: site.baseurl | prepend: site.url }}">
     {% endif %}
-    <meta name="twitter:creator" content="@{{ site.twitter_username }}">
+    {% if site.twitter_username %}<meta name="twitter:creator" content="@{{ site.twitter_username }}">{% endif %}
     
     <!-- 구조화 데이터 - 웹사이트 기본 정보 -->
     <script type="application/ld+json">
@@ -108,23 +108,8 @@
     <!-- 사이트 타이틀 -->
     <title>{% if page.title %}{{ page.title }} - {% endif %}{{ site.title }}</title>
     
-    <!-- 메인 스타일시트 - CSS 통합 적용 -->
+    <!-- 메인 스타일시트 - 모든 스타일이 SCSS로 통합됨 -->
     <link rel="stylesheet" href="{{ "/assets/css/main.css" | relative_url }}">
-    
-    <!-- 페이지별 CSS 조건부 로드 - 성능 최적화 -->
-    {% if page.layout == 'post' %}
-        <link rel="stylesheet" href="{{ "/assets/css/pages/posts.css" | relative_url }}" media="print" onload="this.media='all'">
-        <link rel="stylesheet" href="{{ "/assets/css/series.css" | relative_url }}" media="print" onload="this.media='all'">
-    {% elsif page.url contains '/about' %}
-        <link rel="stylesheet" href="{{ "/assets/css/pages/about.css" | relative_url }}" media="print" onload="this.media='all'">
-    {% elsif page.url contains '/projects' %}
-        <link rel="stylesheet" href="{{ "/assets/css/pages/projects.css" | relative_url }}" media="print" onload="this.media='all'">
-        <link rel="stylesheet" href="{{ "/assets/css/pages/project_detail.css" | relative_url }}" media="print" onload="this.media='all'">
-    {% elsif page.url contains '/achievements' %}
-        <link rel="stylesheet" href="{{ "/assets/css/pages/achievements.css" | relative_url }}" media="print" onload="this.media='all'">
-    {% elsif page.url contains '/tools' %}
-        <link rel="stylesheet" href="{{ "/assets/css/pages/tools.css" | relative_url }}" media="print" onload="this.media='all'">
-    {% endif %}
     
     <!-- Web Fonts 지연 로딩 -->
     <link rel="preconnect" href="https://fonts.googleapis.com">

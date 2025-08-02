@@ -29,7 +29,7 @@ layout: default
     <p>No posts in this category yet.</p>
   {% endif %}
 
-  {% assign subcategories = site.category_structure[page.slug].subcategories %}
+  {% assign subcategories = site.data.categories.main[page.slug].subcategories %}
   {% if subcategories.size > 0 %}
     <h2>Subcategories</h2>
     <ul class="subcategory-list">

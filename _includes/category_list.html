@@ -1,7 +1,7 @@
 <div class="category-list">
   <h2>Categories</h2>
   <ul>
-    {% for category in site.category_structure %}
+    {% for category in site.data.categories.main %}
       <li>
         <a href="{{ site.baseurl }}/categories/{{ category[0] }}/">{{ category[1].title }}</a>
         {% if category[1].subcategories.size > 0 %}

@@ -2,11 +2,6 @@
 layout: default
 title: Tools
 permalink: /tools/
-styles:
-  - /assets/css/pages/tools.css
-  - /assets/css/calculator.css
-scripts:
-  - /assets/js/calculator.js
 ---
 
 # Tools & Resources

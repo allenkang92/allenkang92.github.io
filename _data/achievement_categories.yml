@@ -1,0 +1,21 @@
+# Achievement categories
+main:
+  - name: "Academic"
+    title: "Academic Achievements"
+    description: "Educational and academic accomplishments"
+  
+  - name: "Professional"
+    title: "Professional Achievements"
+    description: "Career and work-related accomplishments"
+  
+  - name: "Technical"
+    title: "Technical Achievements"
+    description: "Programming and technical skill accomplishments"
+  
+  - name: "Research"
+    title: "Research Achievements"
+    description: "Research and publication accomplishments"
+  
+  - name: "Personal"
+    title: "Personal Achievements"
+    description: "Personal development and growth accomplishments"

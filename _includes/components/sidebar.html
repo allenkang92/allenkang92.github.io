@@ -41,9 +41,9 @@
     >
       <option value="all">All Categories</option>
       {% if page.url contains '/posts/' %}
-        {% assign categories = site.category_structure %}
+        {% assign categories = site.data.categories.main %}
       {% elsif page.url contains '/achievements/' %}
-        {% assign categories = site.achievement_categories %}
+        {% assign categories = site.data.achievement_categories.main %}
       {% endif %}
 
       {% for category in categories %}
