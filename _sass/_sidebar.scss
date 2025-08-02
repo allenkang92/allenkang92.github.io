@@ -35,31 +35,41 @@
   // 네비게이션 스타일
   .navigation {
     margin: 2rem 0;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     
     .nav-links {
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
+      gap: 0.3rem;
     }
     
     .nav-link {
       display: block;
       padding: 0.8rem 1rem;
-      color: $text-color;
+      color: #005F5F;
       text-decoration: none;
       border-radius: 8px;
       transition: all 0.3s ease;
       font-weight: 500;
+      font-size: 1rem;
+      border: 1px solid transparent;
       
       &:hover {
-        background-color: rgba($primary-color, 0.1);
-        color: $primary-color;
+        background-color: rgba(168, 225, 219, 0.2);
+        color: #005F5F;
+        border-color: rgba(168, 225, 219, 0.5);
+        transform: translateX(4px);
       }
       
       &.active {
-        background-color: $primary-color;
-        color: white;
+        background-color: #A8E1DB;
+        color: #005F5F;
         font-weight: 600;
+        border-color: #A8E1DB;
+        box-shadow: 0 2px 4px rgba(168, 225, 219, 0.3);
       }
     }
   }
