@@ -87,88 +87,114 @@ main {
     text-align: justify;
   }
   
-  // 테이블 스타일링 - 강제 적용
+  // 테이블 스타일링 - 최강 강제 적용
   .about-content table,
+  table,
+  div.about-content table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    margin: 2rem 0 !important;
+    background: white !important;
+    border: 2px solid rgba(0, 95, 95, 0.2) !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+    display: table !important;
+    table-layout: fixed !important;
+  }
+  
+  // 추가 강화 선택자
   table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 2rem 0;
-    background: white;
-    border: 2px solid rgba($primary-color, 0.2);
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    width: 100% !important;
+    border-collapse: collapse !important;
+    margin: 2rem 0 !important;
+    background: white !important;
+    border: 2px solid rgba(0, 95, 95, 0.2) !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+    display: table !important;
     
     thead {
-      background: rgba($primary-color, 0.1);
+      background: rgba(0, 95, 95, 0.1) !important;
+      display: table-header-group !important;
       
       th {
-        padding: 1rem;
-        font-weight: 600;
-        color: $text-color;
-        text-align: left;
-        border-bottom: 2px solid rgba($primary-color, 0.2);
+        padding: 1rem !important;
+        font-weight: 600 !important;
+        color: #333 !important;
+        text-align: left !important;
+        border-bottom: 2px solid rgba(0, 95, 95, 0.2) !important;
+        display: table-cell !important;
+        vertical-align: middle !important;
         
         &:first-child {
-          width: 30%;
-          text-align: center;
+          width: 30% !important;
+          text-align: center !important;
         }
         
         &:last-child {
-          width: 70%;
+          width: 70% !important;
         }
       }
     }
     
     tbody {
+      display: table-row-group !important;
+      
       tr {
-        border-bottom: 1px solid rgba($primary-color, 0.1);
+        border-bottom: 1px solid rgba(0, 95, 95, 0.1) !important;
+        display: table-row !important;
         
         &:last-child {
-          border-bottom: none;
+          border-bottom: none !important;
         }
         
         &:hover {
-          background-color: rgba($primary-color, 0.05);
+          background-color: rgba(0, 95, 95, 0.05) !important;
         }
         
         td {
-          padding: 1.2rem 1rem;
-          vertical-align: top;
+          padding: 1.2rem 1rem !important;
+          vertical-align: top !important;
+          display: table-cell !important;
           
           &:first-child {
-            text-align: center;
-            font-weight: 600;
-            background: rgba($primary-color, 0.03);
-            border-right: 1px solid rgba($primary-color, 0.1);
+            text-align: center !important;
+            font-weight: 600 !important;
+            background: rgba(0, 95, 95, 0.03) !important;
+            border-right: 1px solid rgba(0, 95, 95, 0.1) !important;
             
             strong {
-              font-weight: 600;
+              font-weight: 600 !important;
             }
             
             img {
-              max-height: 20px;
-              vertical-align: middle;
+              max-height: 20px !important;
+              vertical-align: middle !important;
+              display: inline-block !important;
             }
           }
           
           &:last-child {
-            text-align: left;
-            line-height: 1.8;
+            text-align: left !important;
+            line-height: 1.8 !important;
             
             img {
               display: inline-block !important;
               max-height: 20px !important;
               height: 20px !important;
+              width: auto !important;
               margin: 2px 3px !important;
               vertical-align: middle !important;
               border-radius: 3px !important;
               border: none !important;
               background: transparent !important;
+              object-fit: contain !important;
               
               &:hover {
-                transform: scale(1.05);
-                transition: transform 0.2s ease;
+                transform: scale(1.05) !important;
+                transition: transform 0.2s ease !important;
               }
             }
           }

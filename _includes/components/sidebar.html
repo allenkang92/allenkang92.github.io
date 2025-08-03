@@ -31,7 +31,21 @@
     </div>
   </nav>
 
-
+  <!-- 카테고리 필터 - Posts 페이지에서만 표시 -->
+  {% if page.url contains '/posts/' %}
+  <div class="sidebar-category-filter">
+    <h3>Blog Categories</h3>
+    <select id="category-select" aria-label="카테고리 선택">
+      <option value="all">All Categories</option>
+      {% assign categories = site.posts | map: "categories" | flatten | uniq | sort %}
+      {% for category in categories %}
+        {% if category %}
+          <option value="{{ category }}">{{ category | replace: '_', ' ' | capitalize }}</option>
+        {% endif %}
+      {% endfor %}
+    </select>
+  </div>
+  {% endif %}
 
   <!-- 소셜 링크 -->
   <div class="social-links">

@@ -36,7 +36,7 @@ aside.sidebar-right,
     }
   }
   
-  // 네비게이션 스타일 - 강력한 선택자로 확실히 적용
+  // 네비게이션 스타일 - 세로 배치 (정상)
   .navigation {
     margin: 1.5rem 0 !important;
     width: 100% !important;
@@ -81,7 +81,7 @@ aside.sidebar-right,
     }
   }
   
-  // 추가 강화: 직접 선택자로도 적용
+  // 추가 강화: 직접 선택자로도 적용 (세로 배치)
   nav.navigation {
     margin: 1.5rem 0 !important;
     width: 100% !important;
