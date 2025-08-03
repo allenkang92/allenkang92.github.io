@@ -7,19 +7,6 @@ permalink: /posts/
 
 <h1>Blog Posts</h1>
 
-<div class="posts-filter">
-  <label for="category-select">Filter by Category:</label>
-  <select id="category-select">
-    <option value="all">All Categories</option>
-    {% assign categories = site.posts | map: "categories" | flatten | uniq | sort %}
-    {% for category in categories %}
-      {% if category %}
-        <option value="{{ category }}">{{ category | replace: '_', ' ' | capitalize }}</option>
-      {% endif %}
-    {% endfor %}
-  </select>
-</div>
-
 <div class="posts-list">
 {% for post in site.posts %}
   <article class="post-preview" data-categories="{{ post.categories | join: ' ' }}">
@@ -42,27 +29,6 @@ permalink: /posts/
 </div>
 
 <style>
-.posts-filter {
-  margin-bottom: 2rem;
-  padding: 1rem;
-  background: #f8f9fa;
-  border-radius: 8px;
-}
-
-.posts-filter select {
-  padding: 0.5rem 1rem;
-  margin-left: 0.5rem;
-  border: 1px solid #dee2e6;
-  border-radius: 4px;
-  background: white;
-  font-size: 1rem;
-  cursor: pointer;
-}
-
-.posts-filter select:hover {
-  border-color: #adb5bd;
-}
-
 .post-preview {
   margin-bottom: 2rem;
   padding-bottom: 2rem;
@@ -113,19 +79,3 @@ permalink: /posts/
   color: #007bff;
 }
 </style>
-
-<script>
-document.getElementById('category-select').addEventListener('change', function() {
-  const selectedCategory = this.value.toLowerCase();
-  const posts = document.querySelectorAll('.post-preview');
-  
-  posts.forEach(post => {
-    const postCategories = post.dataset.categories.toLowerCase().split(' ');
-    if (selectedCategory === 'all' || postCategories.includes(selectedCategory)) {
-      post.style.display = 'block';
-    } else {
-      post.style.display = 'none';
-    }
-  });
-});
-</script>

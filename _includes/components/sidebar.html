@@ -31,29 +31,7 @@
     </div>
   </nav>
 
-  <!-- 카테고리 필터 - 헤더에서 이동 -->
-  {% if page.url contains '/posts/' or page.url contains '/achievements/' %}
-  <div class="sidebar-category-filter">
-    <h3>{% if page.url contains '/posts/' %}Blog{% else %}Achievement{% endif %} Categories</h3>
-    <select 
-      id="{% if page.url contains '/posts/' %}category-select{% else %}achievement-category-select{% endif %}" 
-      aria-label="카테고리 선택"
-    >
-      <option value="all">All Categories</option>
-      {% if page.url contains '/posts/' %}
-        {% assign categories = site.data.categories.main %}
-      {% elsif page.url contains '/achievements/' %}
-        {% assign categories = site.data.achievement_categories.main %}
-      {% endif %}
 
-      {% for category in categories %}
-      <option value="{{ category.name }}" {% if page.category == category.name %}selected{% endif %}>
-        {{ category.title }}
-      </option>
-      {% endfor %}
-    </select>
-  </div>
-  {% endif %}
 
   <!-- 소셜 링크 -->
   <div class="social-links">
