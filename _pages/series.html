@@ -5,7 +5,7 @@ description: Browse posts by series
 permalink: /series/
 ---
 
-# Series
+<h1>Series</h1>
 
 <div class="series-list">
 {% assign series_posts = site.posts | where_exp: "post", "post.series != nil" | group_by: "series" %}
