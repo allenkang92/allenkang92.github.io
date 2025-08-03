@@ -40,7 +40,29 @@
   line-height: 1.6;
 }
 
-// About 콘텐츠 스타일
+// About 페이지 스타일 - 강화된 레이아웃
+.about-content,
+.content,
+main {
+  
+  h2, h3, h4 {
+    color: $text-color;
+    margin: 2rem 0 1rem 0;
+    font-weight: 600;
+  }
+  
+  h2 {
+    font-size: 1.8rem;
+    border-bottom: 2px solid rgba($primary-color, 0.2);
+    padding-bottom: 0.5rem;
+  }
+  
+  h4 {
+    font-size: 1.2rem;
+    color: rgba($text-color, 0.8);
+  }
+}
+
 .about-content {
   margin-bottom: 3rem;
   
@@ -65,79 +87,92 @@
     text-align: justify;
   }
   
-  // 테이블 스타일링 - 완전 재작성
+  // 테이블 스타일링 - 강제 적용
+  .about-content table,
   table {
     width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
+    border-collapse: collapse;
     margin: 2rem 0;
     background: white;
-    border: 1px solid rgba($primary-color, 0.2);
-    border-radius: 12px;
+    border: 2px solid rgba($primary-color, 0.2);
+    border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     
-    th {
-      background: linear-gradient(135deg, rgba($primary-color, 0.1), rgba($primary-color, 0.05));
-      color: $text-color;
-      font-weight: 700;
-      font-size: 0.9rem;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      padding: 16px 20px;
-      border-bottom: 2px solid rgba($primary-color, 0.3);
-      text-align: center;
+    thead {
+      background: rgba($primary-color, 0.1);
       
-      &:first-child {
-        text-align: left;
-        width: 25%;
-      }
-    }
-    
-    td {
-      padding: 20px;
-      border-bottom: 1px solid rgba($primary-color, 0.1);
-      vertical-align: middle;
-      line-height: 1.6;
-      
-      &:first-child {
-        background: rgba($primary-color, 0.02);
+      th {
+        padding: 1rem;
         font-weight: 600;
         color: $text-color;
-        text-align: center;
-        width: 25%;
-        border-right: 1px solid rgba($primary-color, 0.1);
-      }
-      
-      &:last-child {
         text-align: left;
-        width: 75%;
+        border-bottom: 2px solid rgba($primary-color, 0.2);
+        
+        &:first-child {
+          width: 30%;
+          text-align: center;
+        }
+        
+        &:last-child {
+          width: 70%;
+        }
       }
     }
     
-    tr:last-child td {
-      border-bottom: none;
-    }
-    
-    tr:hover {
-      background-color: rgba($primary-color, 0.03);
-      transform: translateY(-1px);
-      box-shadow: 0 6px 16px rgba(0,0,0,0.15);
-      transition: all 0.3s ease;
-    }
-    
-    // 배지 이미지 스타일 강화
-    img {
-      display: inline-block;
-      max-height: 24px;
-      height: 24px;
-      margin: 3px 4px;
-      vertical-align: middle;
-      border-radius: 4px;
-      transition: transform 0.2s ease;
-      
-      &:hover {
-        transform: scale(1.1);
+    tbody {
+      tr {
+        border-bottom: 1px solid rgba($primary-color, 0.1);
+        
+        &:last-child {
+          border-bottom: none;
+        }
+        
+        &:hover {
+          background-color: rgba($primary-color, 0.05);
+        }
+        
+        td {
+          padding: 1.2rem 1rem;
+          vertical-align: top;
+          
+          &:first-child {
+            text-align: center;
+            font-weight: 600;
+            background: rgba($primary-color, 0.03);
+            border-right: 1px solid rgba($primary-color, 0.1);
+            
+            strong {
+              font-weight: 600;
+            }
+            
+            img {
+              max-height: 20px;
+              vertical-align: middle;
+            }
+          }
+          
+          &:last-child {
+            text-align: left;
+            line-height: 1.8;
+            
+            img {
+              display: inline-block !important;
+              max-height: 20px !important;
+              height: 20px !important;
+              margin: 2px 3px !important;
+              vertical-align: middle !important;
+              border-radius: 3px !important;
+              border: none !important;
+              background: transparent !important;
+              
+              &:hover {
+                transform: scale(1.05);
+                transition: transform 0.2s ease;
+              }
+            }
+          }
+        }
       }
     }
   }
