@@ -4,6 +4,72 @@ title: About
 permalink: /about/
 ---
 
+<style>
+  /* About page table overrides (inline, page-scoped) */
+  .about-content table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    margin: 2rem 0 !important;
+    background: #ffffff !important;
+    border: 2px solid rgba(0, 95, 95, 0.2) !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+    table-layout: fixed !important;
+    display: table !important;
+  }
+  .about-content thead { 
+    display: table-header-group !important;
+    background: rgba(0, 95, 95, 0.1) !important;
+  }
+  .about-content thead th {
+    padding: 1rem !important;
+    font-weight: 600 !important;
+    color: #333 !important;
+    text-align: left !important;
+    border-bottom: 2px solid rgba(0, 95, 95, 0.2) !important;
+    display: table-cell !important;
+    vertical-align: middle !important;
+  }
+  .about-content tbody { display: table-row-group !important; }
+  .about-content tbody tr {
+    display: table-row !important;
+    border-bottom: 1px solid rgba(0, 95, 95, 0.1) !important;
+  }
+  .about-content tbody tr:last-child { border-bottom: none !important; }
+  .about-content td {
+    padding: 1.2rem 1rem !important;
+    display: table-cell !important;
+    vertical-align: top !important;
+  }
+  .about-content td:first-child {
+    width: 30% !important;
+    text-align: center !important;
+    font-weight: 600 !important;
+    background: rgba(0, 95, 95, 0.03) !important;
+    border-right: 1px solid rgba(0, 95, 95, 0.1) !important;
+  }
+  .about-content td:first-child img { 
+    max-height: 20px !important; 
+    vertical-align: middle !important; 
+    display: inline-block !important; 
+  }
+  .about-content td:last-child { text-align: left !important; line-height: 1.8 !important; }
+  .about-content td:last-child img {
+    display: inline-block !important;
+    height: 20px !important;
+    max-height: 20px !important;
+    width: auto !important;
+    margin: 2px 3px !important;
+    vertical-align: middle !important;
+    border: none !important;
+    background: transparent !important;
+    border-radius: 3px !important;
+    object-fit: contain !important;
+  }
+  .about-content tbody tr:hover { background-color: rgba(0, 95, 95, 0.05) !important; }
+</style>
+
 <div class="about-content">
 <h2>About Me</h2>
 

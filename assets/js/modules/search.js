@@ -2,6 +2,7 @@ export function initSearch() {
     const searchInput = document.getElementById('search-input');
     const searchResults = document.getElementById('search-results');
     const searchForm = document.getElementById('search-form');
+    const searchContainer = document.getElementById('search-container');
     
     if (!searchInput || !searchResults || !searchForm) {
         console.log('Search elements not found, skipping search initialization');
@@ -19,19 +20,19 @@ export function initSearch() {
         isLoading = true;
     }
 
-    // 검색 데이터 로드 - 강화된 경로 감지
+    // 검색 데이터 로드 - 템플릿에서 전달된 URL 우선 사용
     async function loadSearchData() {
         try {
             showLoading();
             
-            // 현재 페이지 기반 경로 감지
+            // 템플릿에서 주입된 data-search-url 사용, 없으면 기본값
             const currentPath = window.location.pathname;
-            const basePath = currentPath.includes('/allenkang92.github.io') ? '/allenkang92.github.io' : '';
-            const searchUrl = `${basePath}/search.json`;
+            const dataUrl = (searchContainer && searchContainer.dataset) ? searchContainer.dataset.searchUrl : null;
+            const searchUrl = dataUrl || '/search.json';
             
             console.log('검색 데이터 로드 시도:', searchUrl);
             console.log('현재 경로:', currentPath);
-            console.log('베이스 경로:', basePath);
+            console.log('data-url 사용 여부:', !!dataUrl);
             
             const response = await fetch(searchUrl);
             
@@ -57,6 +58,7 @@ export function initSearch() {
                     <p>나중에 다시 시도해 주세요.</p>
                 </div>
             `;
+            searchResults.style.display = 'block';
         } finally {
             isLoading = false;
         }
@@ -84,87 +86,33 @@ export function initSearch() {
     });
 
     function performSearch() {
-        const searchTerm = searchInput.value.trim().toLowerCase();
-        if (!searchTerm) {
+        const query = searchInput.value.toLowerCase().trim();
+        if (query.length < 1) {
             searchResults.innerHTML = '';
-            searchResults.classList.remove('active');
+            searchResults.style.display = 'none';
             return;
         }
         
-        // 검색 결과 표시 전 로딩 상태
-        searchResults.innerHTML = '<p class="search-loading">검색중...</p>';
-        searchResults.classList.add('active');
-
-        // 데이터가 없으면 로드
+        // 데이터가 없으면 로드 후 재시도
         if (posts.length === 0) {
             loadSearchData().then(performSearch);
             return;
         }
 
         const results = posts.filter(post => {
-            const title = post.title.toLowerCase();
+            const title = (post.title || '').toLowerCase();
             const content = (post.content || '').toLowerCase();
-            const tags = (post.tags || []).join(' ').toLowerCase();
-            const categories = (post.categories || []).join(' ').toLowerCase();
-            
-            // 타이틀, 콘텐츠, 태그, 카테고리 모두에서 검색
-            return title.includes(searchTerm) || 
-                   content.includes(searchTerm) || 
-                   tags.includes(searchTerm) ||
-                   categories.includes(searchTerm);
+            const category = (post.category || '').toLowerCase();
+            const tags = Array.isArray(post.tags) ? post.tags.join(' ').toLowerCase() : '';
+            return title.includes(query) || content.includes(query) || category.includes(query) || tags.includes(query);
         });
-        
-        // 검색 결과가 없을 경우
-        if (results.length === 0) {
-            searchResults.innerHTML = `
-                <div class="no-results" role="alert">
-                    <p>검색 결과가 없습니다.</p>
-                    <p>다른 검색어를 시도해 보세요.</p>
-                </div>
-            `;
-            return;
-        }
 
-        // 검색 결과 표시 - 접근성 개선
-        const html = results.map(post => `
-            <article class="search-result-item">
-                <h3><a href="${post.url}" aria-label="${post.title} 게시물 읽기">${post.title}</a></h3>
-                <div class="result-excerpt">
-                    ${post.content ? `<p>${post.content.substring(0, 150)}${post.content.length > 150 ? '...' : ''}</p>` : ''}
-                </div>
-                <footer class="result-meta">
-                    ${post.date ? `<time datetime="${post.date}">${new Date(post.date).toLocaleDateString('ko-KR')}</time>` : ''}
-                    ${post.categories && post.categories.length > 0 ? `<span class="categories">카테고리: ${post.categories.join(', ')}</span>` : ''}
-                    ${post.tags && post.tags.length > 0 ? `<span class="tags">태그: ${post.tags.join(', ')}</span>` : ''}
-                </footer>
-            </article>
-        `).join('');
-
-        searchResults.innerHTML = `<div class="search-results-count" role="status" aria-live="polite">검색 결과: ${results.length}개</div>${html}`;
-    }
-
-    // 검색 이벤트 리스너 (디바운싱 적용)
-    searchInput.addEventListener('input', function() {
-        clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(performSearch, 300);  // 300ms 디바운스
-    });
-
-    function performSearch() {
-        var query = searchInput.value.toLowerCase().trim();
-        if (query.length < 1) {
-            searchResults.style.display = 'none';
-            return;
-        }
-        
-        var results = posts.filter(function(post) {
-            return post.title.toLowerCase().includes(query) ||
-                   post.content.toLowerCase().includes(query) ||
-                   (post.category && post.category.toLowerCase().includes(query)) ||
-                   (post.tags && post.tags.some(tag => tag.toLowerCase().includes(query)));
-        });
-        
         displayResults(results, query);
     }
+
+    // 중복 리스너 제거됨: 상단 디바운스 입력 리스너 사용
+
+    // 중복 performSearch 제거됨: 상단의 단일 구현 사용
 
     function truncateContent(content, limit) {
         if (!content) return '';
@@ -178,24 +126,27 @@ export function initSearch() {
 
     function displayResults(results, query) {
         if (results.length === 0) {
-            searchResults.innerHTML = '<p>검색 결과가 없습니다.</p>';
-        } else {
-            var html = '<ul>';
-            results.forEach(function(result) {
-                html += '<li>';
-                html += `<a href="${result.url}">${highlightText(result.title, query)}</a>`;
-                html += `<p>${highlightText(truncateContent(result.content, 100), query)}</p>`;
-                if (result.category) {
-                    html += `<span class="category">카테고리: ${result.category}</span>`;
-                }
-                if (result.tags && result.tags.length > 0) {
-                    html += `<span class="tags">태그: ${result.tags.join(', ')}</span>`;
-                }
-                html += '</li>';
-            });
-            html += '</ul>';
-            searchResults.innerHTML = html;
+            searchResults.innerHTML = '<div class="no-results" role="alert">검색 결과가 없습니다.</div>';
+            searchResults.style.display = 'block';
+            return;
         }
+        var html = '<ul>';
+        results.forEach(function(result) {
+            html += '<li>';
+            html += '<div class="search-result">';
+            html += `<h4><a href="${result.url}">${highlightText(result.title, query)}</a></h4>`;
+            html += `<p>${highlightText(truncateContent(result.content, 100), query)}</p>`;
+            if (result.category) {
+                html += `<span class="category">카테고리: ${result.category}</span>`;
+            }
+            if (result.tags && result.tags.length > 0) {
+                html += `<span class="tags">태그: ${result.tags.join(', ')}</span>`;
+            }
+            html += '</div>';
+            html += '</li>';
+        });
+        html += '</ul>';
+        searchResults.innerHTML = html;
         searchResults.style.display = 'block';
     }
 
@@ -205,21 +156,26 @@ export function initSearch() {
         
         var focused = searchResults.querySelector('a:focus');
         var links = searchResults.querySelectorAll('a');
+        if (links.length === 0) return;
         
         if (e.key === 'ArrowDown') {
             e.preventDefault();
-            if (focused && focused.parentElement.nextElementSibling) {
-                focused.parentElement.nextElementSibling.querySelector('a').focus();
-            } else if (links.length > 0) {
+            if (!focused) {
                 links[0].focus();
+                return;
             }
+            var idx = Array.prototype.indexOf.call(links, focused);
+            var next = links[Math.min(idx + 1, links.length - 1)];
+            next.focus();
         } else if (e.key === 'ArrowUp') {
             e.preventDefault();
-            if (focused && focused.parentElement.previousElementSibling) {
-                focused.parentElement.previousElementSibling.querySelector('a').focus();
-            } else if (links.length > 0) {
+            if (!focused) {
                 links[links.length - 1].focus();
+                return;
             }
+            var idxUp = Array.prototype.indexOf.call(links, focused);
+            var prev = links[Math.max(idxUp - 1, 0)];
+            prev.focus();
         }
     });
     

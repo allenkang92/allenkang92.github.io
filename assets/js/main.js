@@ -55,6 +55,7 @@ function initBasicSearch() {
     console.log('기본 검색 기능 초기화');
     const searchInput = document.getElementById('search-input');
     const searchResults = document.getElementById('search-results');
+    const searchContainer = document.getElementById('search-container');
     
     if (!searchInput || !searchResults) {
         console.log('검색 요소를 찾을 수 없습니다');
@@ -64,7 +65,9 @@ function initBasicSearch() {
     let posts = [];
     
     // 검색 데이터 로드
-    fetch('/search.json')
+    const dataUrl = (searchContainer && searchContainer.dataset) ? searchContainer.dataset.searchUrl : null;
+    const searchUrl = dataUrl || '/search.json';
+    fetch(searchUrl)
         .then(response => response.json())
         .then(data => {
             posts = data;

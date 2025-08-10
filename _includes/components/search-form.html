@@ -1,17 +1,19 @@
-<div id="search-container" style="position: relative; z-index: 1000;">
-  <form id="search-form" class="search-form" role="search" aria-label="Site search">
+<div id="search-container" data-search-url="{{ '/search.json' | relative_url }}" style="position: relative; z-index: 1000;">
+  <form id="search-form" class="search-form" role="search" aria-label="사이트 검색">
     <div class="search-input-wrapper">
       <input type="search" 
              id="search-input" 
              class="search-input" 
-             placeholder="Enter search terms" 
-             aria-label="Search input"
+             placeholder="검색어를 입력하세요" 
+             aria-label="검색어 입력"
              required>
-      <button type="submit" class="search-submit" aria-label="Search">
-        <i class="fas fa-search" aria-hidden="true"></i>
+      <button type="submit" class="search-submit" aria-label="검색">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false">
+          <path fill="currentColor" d="M15.5 14h-.79l-.28-.27a6.471 6.471 0 0 0 1.57-4.23C15.99 6.01 13.98 4 11.5 4S7.01 6.01 7.01 9.5 9.02 15 11.5 15c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l4.5 4.5a1 1 0 0 1-1.41 1.41L15.5 14zm-4 0C9.01 14 7 11.99 7 9.5S9.01 5 11.5 5 16 7.01 16 9.5 13.99 14 11.5 14z"/>
+        </svg>
       </button>
     </div>
-    <div id="search-results" class="search-results" role="region" aria-live="polite" aria-label="Search results">
+    <div id="search-results" class="search-results" role="region" aria-live="polite" aria-label="검색 결과">
       <ul id="results-container"></ul>
     </div>
   </form>
