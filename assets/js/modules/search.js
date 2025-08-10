@@ -15,7 +15,7 @@ export function initSearch() {
 
     // 검색 로딩 상태 표시
     function showLoading() {
-        searchResults.innerHTML = '<p class="search-loading">검색중...</p>';
+        searchResults.innerHTML = '<p class="search-loading">Searching...</p>';
         searchResults.style.display = 'block';
         isLoading = true;
     }
@@ -30,9 +30,9 @@ export function initSearch() {
             const dataUrl = (searchContainer && searchContainer.dataset) ? searchContainer.dataset.searchUrl : null;
             const searchUrl = dataUrl || '/search.json';
             
-            console.log('검색 데이터 로드 시도:', searchUrl);
-            console.log('현재 경로:', currentPath);
-            console.log('data-url 사용 여부:', !!dataUrl);
+            console.log('Attempting to load search data:', searchUrl);
+            console.log('Current path:', currentPath);
+            console.log('Using data-url:', !!dataUrl);
             
             const response = await fetch(searchUrl);
             
@@ -43,19 +43,19 @@ export function initSearch() {
             const data = await response.json();
             
             if (!Array.isArray(data)) {
-                throw new Error('검색 데이터 형식 오류');
+                throw new Error('Invalid search data format');
             }
             
             posts = data;
-            console.log('검색 데이터 로드 완료:', posts.length + '개 포스트');
+            console.log('Search data loaded:', posts.length + ' posts');
             searchResults.innerHTML = '';
             searchResults.style.display = 'none';
         } catch (error) {
-            console.error('검색 데이터 로드 실패:', error);
+            console.error('Search data load failed:', error);
             searchResults.innerHTML = `
                 <div class="error-message" role="alert">
-                    <p>검색 데이터를 불러오는 데 실패했습니다.</p>
-                    <p>나중에 다시 시도해 주세요.</p>
+                    <p>Failed to load search data.</p>
+                    <p>Please try again later.</p>
                 </div>
             `;
             searchResults.style.display = 'block';
@@ -126,7 +126,7 @@ export function initSearch() {
 
     function displayResults(results, query) {
         if (results.length === 0) {
-            searchResults.innerHTML = '<div class="no-results" role="alert">검색 결과가 없습니다.</div>';
+            searchResults.innerHTML = '<div class="no-results" role="alert">No results found.</div>';
             searchResults.style.display = 'block';
             return;
         }
@@ -137,10 +137,10 @@ export function initSearch() {
             html += `<h4><a href="${result.url}">${highlightText(result.title, query)}</a></h4>`;
             html += `<p>${highlightText(truncateContent(result.content, 100), query)}</p>`;
             if (result.category) {
-                html += `<span class="category">카테고리: ${result.category}</span>`;
+                html += `<span class="category">Category: ${result.category}</span>`;
             }
             if (result.tags && result.tags.length > 0) {
-                html += `<span class="tags">태그: ${result.tags.join(', ')}</span>`;
+                html += `<span class="tags">Tags: ${result.tags.join(', ')}</span>`;
             }
             html += '</div>';
             html += '</li>';

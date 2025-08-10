@@ -4,22 +4,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
         const { initSearch } = await import('./modules/search.js');
         initSearch();
-        console.log('검색 기능 초기화 완료');
+        console.log('Search initialized');
     } catch (error) {
-        console.error('검색 모듈 로드 실패:', error);
+        console.error('Failed to load search module:', error);
         // 폴백: 기본 검색 기능
         initBasicSearch();
     }
     
     // 모달 기능 조건부 로딩
     if (document.querySelector('.modal') || document.querySelector('[data-modal]')) {
-        const { initModal } = await import('./modules/modal');
+        const { initModal } = await import('./modules/modal.js');
         initModal();
     }
     
     // 필터 기능 조건부 로딩 (포스트/업적 페이지에서만)
     if (document.querySelector('#category-select') || document.querySelector('#achievement-category-select')) {
-        const { initFilter } = await import('./modules/filter');
+        const { initFilter } = await import('./modules/filter.js');
         initFilter();
     }
     
@@ -52,13 +52,13 @@ async function loadPageSpecificModules() {
 
 // 기본 검색 기능 폴백
 function initBasicSearch() {
-    console.log('기본 검색 기능 초기화');
+    console.log('Basic search initialized');
     const searchInput = document.getElementById('search-input');
     const searchResults = document.getElementById('search-results');
     const searchContainer = document.getElementById('search-container');
     
     if (!searchInput || !searchResults) {
-        console.log('검색 요소를 찾을 수 없습니다');
+        console.log('Search elements not found');
         return;
     }
     
@@ -71,10 +71,10 @@ function initBasicSearch() {
         .then(response => response.json())
         .then(data => {
             posts = data;
-            console.log('검색 데이터 로드 완료:', posts.length + '개 포스트');
+            console.log('Search data loaded:', posts.length + ' posts');
         })
         .catch(error => {
-            console.error('검색 데이터 로드 실패:', error);
+            console.error('Search data load failed:', error);
         });
     
     // 검색 이벤트
@@ -102,7 +102,7 @@ function initBasicSearch() {
             ).join('');
             searchResults.style.display = 'block';
         } else {
-            searchResults.innerHTML = '<div class="no-results">검색 결과가 없습니다.</div>';
+            searchResults.innerHTML = '<div class="no-results">No results found.</div>';
             searchResults.style.display = 'block';
         }
     });

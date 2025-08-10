@@ -41,6 +41,11 @@
       box-shadow: 0 0 0 3px rgba(168, 225, 219, 0.1);
     }
     
+    &:focus-visible {
+      outline: 2px solid #A8E1DB;
+      outline-offset: 2px;
+    }
+    
     &::placeholder {
       color: #999;
     }
@@ -53,7 +58,7 @@
     transform: translateY(-50%);
     background: none;
     border: none;
-    color: #666;
+    color: $text-color;
     cursor: pointer;
     padding: 0.5rem;
     border-radius: 50%;
@@ -63,8 +68,14 @@
     justify-content: center;
     
     &:hover {
-      color: #A8E1DB;
+      color: $primary-color;
       background: rgba(168, 225, 219, 0.1);
+    }
+    
+    &:focus-visible {
+      outline: 2px solid $primary-color;
+      outline-offset: 2px;
+      box-shadow: 0 0 0 3px rgba(168, 225, 219, 0.25);
     }
     
     i {
@@ -72,8 +83,8 @@
     }
     
     svg {
-      width: 1rem;
-      height: 1rem;
+      width: 1.125rem; // ~18px
+      height: 1.125rem;
       display: block;
     }
   }
