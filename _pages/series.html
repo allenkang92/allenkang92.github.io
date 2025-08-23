@@ -12,11 +12,11 @@ permalink: /series/
   
   <div class="series-controls">
     <button id="toggle-all-series" class="toggle-btn">
-      <span class="toggle-text">전체 시리즈 보기</span>
+      <span class="toggle-text">Show All Series</span>
       <span class="toggle-icon">▼</span>
     </button>
     <div class="series-info">
-      <span>총 {{ series_posts.size }}개 시리즈</span>
+      <span>Total {{ series_posts.size }} series</span>
     </div>
   </div>
 
@@ -26,7 +26,7 @@ permalink: /series/
         <div class="series-header">
           <h2>{{ series.name | replace: '_', ' ' }}</h2>
           <button class="series-toggle" data-series-name="{{ series.name }}">
-            <span class="series-toggle-text">펼치기</span>
+            <span class="series-toggle-text">Expand</span>
             <span class="series-toggle-icon">▼</span>
           </button>
         </div>
@@ -62,7 +62,7 @@ permalink: /series/
         <div class="series-header">
           <h2>{{ series.name | replace: '_', ' ' }}</h2>
           <button class="series-toggle" data-series-name="{{ series.name }}">
-            <span class="series-toggle-text">펼치기</span>
+            <span class="series-toggle-text">Expand</span>
             <span class="series-toggle-icon">▼</span>
           </button>
         </div>
@@ -95,9 +95,9 @@ permalink: /series/
   </div>
   
   <div id="pagination" class="pagination" style="display: none;">
-    <button id="prev-page" class="page-btn" disabled>이전</button>
+    <button id="prev-page" class="page-btn" disabled>Previous</button>
     <span id="page-info"></span>
-    <button id="next-page" class="page-btn">다음</button>
+    <button id="next-page" class="page-btn">Next</button>
   </div>
 </div>
 
@@ -118,7 +118,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (isExpanded) {
       // 전체 보기
       seriesList.classList.remove('collapsed');
-      mainToggleBtn.querySelector('.toggle-text').textContent = '접기';
+      mainToggleBtn.querySelector('.toggle-text').textContent = 'Collapse';
       mainToggleBtn.querySelector('.toggle-icon').textContent = '▲';
       
       // 모든 시리즈 표시
@@ -131,7 +131,7 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
       // 페이징 모드
       seriesList.classList.add('collapsed');
-      mainToggleBtn.querySelector('.toggle-text').textContent = '전체 시리즈 보기';
+      mainToggleBtn.querySelector('.toggle-text').textContent = 'Show All Series';
       mainToggleBtn.querySelector('.toggle-icon').textContent = '▼';
       
       // 페이징 활성화
@@ -151,11 +151,11 @@ document.addEventListener('DOMContentLoaded', function() {
       
       if (seriesContent.classList.contains('collapsed')) {
         seriesContent.classList.remove('collapsed');
-        toggleText.textContent = '접기';
+        toggleText.textContent = 'Collapse';
         toggleIcon.textContent = '▲';
       } else {
         seriesContent.classList.add('collapsed');
-        toggleText.textContent = '펼치기';
+        toggleText.textContent = 'Expand';
         toggleIcon.textContent = '▼';
       }
     });
@@ -329,10 +329,12 @@ document.addEventListener('DOMContentLoaded', function() {
   gap: 0.5rem;
   padding: 0.6rem 1.2rem;
   background: white;
+  color: #212529;
   border: 2px solid #dee2e6;
   border-radius: 6px;
   cursor: pointer;
   font-size: 0.95rem;
+  font-weight: 500;
   transition: all 0.3s ease;
 }
 
@@ -340,6 +342,15 @@ document.addEventListener('DOMContentLoaded', function() {
   background: #007bff;
   color: white;
   border-color: #007bff;
+}
+
+.toggle-text {
+  color: inherit;
+}
+
+.toggle-icon {
+  color: inherit;
+  font-size: 0.8rem;
 }
 
 .series-info {
@@ -362,6 +373,7 @@ document.addEventListener('DOMContentLoaded', function() {
   gap: 0.3rem;
   padding: 0.4rem 0.8rem;
   background: white;
+  color: #212529;
   border: 1px solid #dee2e6;
   border-radius: 4px;
   cursor: pointer;
@@ -371,9 +383,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
 .series-toggle:hover {
   background: #e9ecef;
+  color: #212529;
+}
+
+.series-toggle-text {
+  color: inherit;
 }
 
 .series-toggle-icon {
+  color: inherit;
   font-size: 0.7rem;
 }
 
@@ -401,9 +419,11 @@ document.addEventListener('DOMContentLoaded', function() {
 .page-btn {
   padding: 0.5rem 1rem;
   background: white;
+  color: #212529;
   border: 1px solid #dee2e6;
   border-radius: 4px;
   cursor: pointer;
+  font-weight: 500;
   transition: all 0.2s ease;
 }
 
@@ -416,6 +436,7 @@ document.addEventListener('DOMContentLoaded', function() {
 .page-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  color: #6c757d;
 }
 
 #page-info {

@@ -10,11 +10,11 @@ permalink: /posts/
 <div class="posts-container">
   <div class="posts-controls">
     <button id="toggle-all-posts" class="toggle-btn">
-      <span class="toggle-text">전체 보기</span>
+      <span class="toggle-text">Show All</span>
       <span class="toggle-icon">▼</span>
     </button>
     <div class="posts-info">
-      <span id="posts-count">총 {{ site.posts.size }}개 포스트</span>
+      <span id="posts-count">Total {{ site.posts.size }} posts</span>
     </div>
   </div>
 
@@ -59,9 +59,9 @@ permalink: /posts/
   </div>
   
   <div id="pagination" class="pagination" style="display: none;">
-    <button id="prev-page" class="page-btn" disabled>이전</button>
+    <button id="prev-page" class="page-btn" disabled>Previous</button>
     <span id="page-info"></span>
-    <button id="next-page" class="page-btn">다음</button>
+    <button id="next-page" class="page-btn">Next</button>
   </div>
 </div>
 
@@ -82,7 +82,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (isExpanded) {
       // 전체 보기
       postsList.classList.remove('collapsed');
-      toggleBtn.querySelector('.toggle-text').textContent = '접기';
+      toggleBtn.querySelector('.toggle-text').textContent = 'Collapse';
       toggleBtn.querySelector('.toggle-icon').textContent = '▲';
       
       // 모든 포스트 표시
@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
       // 페이징 모드
       postsList.classList.add('collapsed');
-      toggleBtn.querySelector('.toggle-text').textContent = '전체 보기';
+      toggleBtn.querySelector('.toggle-text').textContent = 'Show All';
       toggleBtn.querySelector('.toggle-icon').textContent = '▼';
       
       // 페이징 활성화
@@ -212,7 +212,26 @@ document.addEventListener('DOMContentLoaded', function() {
   color: #007bff;
 }
 
-/* 토글 및 페이징 스타일 */
+.post-meta {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  color: #6c757d;
+}
+
+.post-meta .category {
+  padding: 0.2rem 0.5rem;
+  background: #e9ecef;
+  border-radius: 4px;
+  font-size: 0.85rem;
+}
+
+.post-excerpt {
+  color: #495057;
+  line-height: 1.6;
+}
+
 .posts-container {
   max-width: 900px;
   margin: 0 auto;
@@ -234,10 +253,12 @@ document.addEventListener('DOMContentLoaded', function() {
   gap: 0.5rem;
   padding: 0.6rem 1.2rem;
   background: white;
+  color: #212529;
   border: 2px solid #dee2e6;
   border-radius: 6px;
   cursor: pointer;
   font-size: 0.95rem;
+  font-weight: 500;
   transition: all 0.3s ease;
 }
 
@@ -247,9 +268,13 @@ document.addEventListener('DOMContentLoaded', function() {
   border-color: #007bff;
 }
 
+.toggle-text {
+  color: inherit;
+}
+
 .toggle-icon {
+  color: inherit;
   font-size: 0.8rem;
-  transition: transform 0.3s ease;
 }
 
 .posts-info {
@@ -258,15 +283,15 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 
 .posts-list {
-  transition: all 0.3s ease;
+  margin-bottom: 2rem;
 }
 
 .post-preview.hidden {
-  display: none;
+  display: none !important;
 }
 
 .post-preview.visible {
-  display: block;
+  display: block !important;
 }
 
 .pagination {
@@ -281,9 +306,11 @@ document.addEventListener('DOMContentLoaded', function() {
 .page-btn {
   padding: 0.5rem 1rem;
   background: white;
+  color: #212529;
   border: 1px solid #dee2e6;
   border-radius: 4px;
   cursor: pointer;
+  font-weight: 500;
   transition: all 0.2s ease;
 }
 
@@ -296,6 +323,7 @@ document.addEventListener('DOMContentLoaded', function() {
 .page-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  color: #6c757d;
 }
 
 #page-info {

@@ -16,7 +16,7 @@ layout: null
     {% endif %}
     {
       "title": {{ post.title | jsonify }},
-      "category": {{ post.categories | first | default: "미분류" | jsonify }},
+      "category": {{ post.categories | first | default: "Uncategorized" | jsonify }},
       "tags": {% if post.tags %}{{ post.tags | jsonify }}{% else %}[]{% endif %},
       "url": {{ post.url | relative_url | jsonify }},
       "date": {{ post.date | date: "%Y-%m-%d" | jsonify }},

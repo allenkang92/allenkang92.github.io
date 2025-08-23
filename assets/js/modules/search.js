@@ -125,11 +125,11 @@ export function initSearch() {
 
     function displayResults(results, query) {
         if (results.length === 0) {
-            searchResults.innerHTML = '<div class="no-results" role="alert">검색 결과가 없습니다.</div>';
+            searchResults.innerHTML = '<div class="no-results" role="alert">No search results found.</div>';
             searchResults.style.display = 'block';
             return;
         }
-        var html = '<div class="search-results-header">검색 결과: ' + results.length + '개</div>';
+        var html = '<div class="search-results-header">Search results: ' + results.length + '</div>';
         html += '<ul class="search-results-list">';
         results.forEach(function(result) {
             html += '<li class="search-result-item">';
