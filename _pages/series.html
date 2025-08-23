@@ -7,38 +7,215 @@ permalink: /series/
 
 <h1>Series</h1>
 
-<div class="series-list">
-{% assign series_posts = site.posts | where_exp: "post", "post.series != nil" | group_by: "series" %}
-{% for series in series_posts %}
-  <div class="series-group">
-    <h2>{{ series.name | replace: '_', ' ' }}</h2>
-    <div class="series-posts">
-      {% assign sorted_posts = series.items | sort: "series_order" %}
-      {% for post in sorted_posts %}
-        <article class="post-preview">
-          <h3>
-            <span class="series-order">{{ post.series_order }}.</span>
-            <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
-          </h3>
-          <div class="post-meta">
-            <time datetime="{{ post.date | date_to_xmlschema }}">
-              {{ post.date | date: "%Y년 %m월 %d일" }}
-            </time>
-            {% if post.categories %}
-              {% for category in post.categories %}
-                <span class="category">{{ category | replace: '_', ' ' | capitalize }}</span>
-              {% endfor %}
-            {% endif %}
-          </div>
-          <div class="post-excerpt">
-            {{ post.excerpt | strip_html | truncatewords: 30 }}
-          </div>
-        </article>
-      {% endfor %}
+<div class="series-container">
+  {% assign series_posts = site.posts | where_exp: "post", "post.series != nil" | group_by: "series" %}
+  
+  <div class="series-controls">
+    <button id="toggle-all-series" class="toggle-btn">
+      <span class="toggle-text">전체 시리즈 보기</span>
+      <span class="toggle-icon">▼</span>
+    </button>
+    <div class="series-info">
+      <span>총 {{ series_posts.size }}개 시리즈</span>
     </div>
   </div>
-{% endfor %}
+
+  <div id="series-list" class="series-list collapsed">
+    {% for series in series_posts limit: 3 %}
+      <div class="series-group visible" data-series="{{ series.name }}">
+        <div class="series-header">
+          <h2>{{ series.name | replace: '_', ' ' }}</h2>
+          <button class="series-toggle" data-series-name="{{ series.name }}">
+            <span class="series-toggle-text">펼치기</span>
+            <span class="series-toggle-icon">▼</span>
+          </button>
+        </div>
+        <div class="series-posts collapsed" data-series-content="{{ series.name }}">
+          {% assign sorted_posts = series.items | sort: "series_order" %}
+          {% for post in sorted_posts %}
+            <article class="post-preview">
+              <h3>
+                <span class="series-order">{{ post.series_order }}.</span>
+                <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+              </h3>
+              <div class="post-meta">
+                <time datetime="{{ post.date | date_to_xmlschema }}">
+                  {{ post.date | date: "%Y년 %m월 %d일" }}
+                </time>
+                {% if post.categories %}
+                  {% for category in post.categories %}
+                    <span class="category">{{ category | replace: '_', ' ' | capitalize }}</span>
+                  {% endfor %}
+                {% endif %}
+              </div>
+              <div class="post-excerpt">
+                {{ post.excerpt | strip_html | truncatewords: 30 }}
+              </div>
+            </article>
+          {% endfor %}
+        </div>
+      </div>
+    {% endfor %}
+    
+    {% for series in series_posts offset: 3 %}
+      <div class="series-group hidden" data-series="{{ series.name }}">
+        <div class="series-header">
+          <h2>{{ series.name | replace: '_', ' ' }}</h2>
+          <button class="series-toggle" data-series-name="{{ series.name }}">
+            <span class="series-toggle-text">펼치기</span>
+            <span class="series-toggle-icon">▼</span>
+          </button>
+        </div>
+        <div class="series-posts collapsed" data-series-content="{{ series.name }}">
+          {% assign sorted_posts = series.items | sort: "series_order" %}
+          {% for post in sorted_posts %}
+            <article class="post-preview">
+              <h3>
+                <span class="series-order">{{ post.series_order }}.</span>
+                <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+              </h3>
+              <div class="post-meta">
+                <time datetime="{{ post.date | date_to_xmlschema }}">
+                  {{ post.date | date: "%Y년 %m월 %d일" }}
+                </time>
+                {% if post.categories %}
+                  {% for category in post.categories %}
+                    <span class="category">{{ category | replace: '_', ' ' | capitalize }}</span>
+                  {% endfor %}
+                {% endif %}
+              </div>
+              <div class="post-excerpt">
+                {{ post.excerpt | strip_html | truncatewords: 30 }}
+              </div>
+            </article>
+          {% endfor %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+  
+  <div id="pagination" class="pagination" style="display: none;">
+    <button id="prev-page" class="page-btn" disabled>이전</button>
+    <span id="page-info"></span>
+    <button id="next-page" class="page-btn">다음</button>
+  </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const mainToggleBtn = document.getElementById('toggle-all-series');
+  const seriesList = document.getElementById('series-list');
+  const pagination = document.getElementById('pagination');
+  const allSeriesGroups = document.querySelectorAll('.series-group');
+  const seriesPerPage = 3;
+  let currentPage = 1;
+  let isExpanded = false;
+  
+  // 메인 토글 기능
+  mainToggleBtn.addEventListener('click', function() {
+    isExpanded = !isExpanded;
+    
+    if (isExpanded) {
+      // 전체 보기
+      seriesList.classList.remove('collapsed');
+      mainToggleBtn.querySelector('.toggle-text').textContent = '접기';
+      mainToggleBtn.querySelector('.toggle-icon').textContent = '▲';
+      
+      // 모든 시리즈 표시
+      allSeriesGroups.forEach(group => {
+        group.classList.remove('hidden');
+        group.classList.add('visible');
+      });
+      
+      pagination.style.display = 'none';
+    } else {
+      // 페이징 모드
+      seriesList.classList.add('collapsed');
+      mainToggleBtn.querySelector('.toggle-text').textContent = '전체 시리즈 보기';
+      mainToggleBtn.querySelector('.toggle-icon').textContent = '▼';
+      
+      // 페이징 활성화
+      currentPage = 1;
+      showPage(currentPage);
+      pagination.style.display = 'flex';
+    }
+  });
+  
+  // 개별 시리즈 토글
+  document.querySelectorAll('.series-toggle').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const seriesName = this.dataset.seriesName;
+      const seriesContent = document.querySelector(`[data-series-content="${seriesName}"]`);
+      const toggleText = this.querySelector('.series-toggle-text');
+      const toggleIcon = this.querySelector('.series-toggle-icon');
+      
+      if (seriesContent.classList.contains('collapsed')) {
+        seriesContent.classList.remove('collapsed');
+        toggleText.textContent = '접기';
+        toggleIcon.textContent = '▲';
+      } else {
+        seriesContent.classList.add('collapsed');
+        toggleText.textContent = '펼치기';
+        toggleIcon.textContent = '▼';
+      }
+    });
+  });
+  
+  // 페이징 기능
+  function showPage(page) {
+    const start = (page - 1) * seriesPerPage;
+    const end = start + seriesPerPage;
+    
+    allSeriesGroups.forEach((group, index) => {
+      if (index >= start && index < end) {
+        group.classList.remove('hidden');
+        group.classList.add('visible');
+      } else {
+        group.classList.add('hidden');
+        group.classList.remove('visible');
+      }
+    });
+    
+    updatePaginationButtons();
+  }
+  
+  function updatePaginationButtons() {
+    const totalPages = Math.ceil(allSeriesGroups.length / seriesPerPage);
+    const pageInfo = document.getElementById('page-info');
+    const prevBtn = document.getElementById('prev-page');
+    const nextBtn = document.getElementById('next-page');
+    
+    pageInfo.textContent = `${currentPage} / ${totalPages}`;
+    
+    prevBtn.disabled = currentPage === 1;
+    nextBtn.disabled = currentPage === totalPages;
+  }
+  
+  // 페이지 버튼 이벤트
+  document.getElementById('prev-page').addEventListener('click', function() {
+    if (currentPage > 1) {
+      currentPage--;
+      showPage(currentPage);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  });
+  
+  document.getElementById('next-page').addEventListener('click', function() {
+    const totalPages = Math.ceil(allSeriesGroups.length / seriesPerPage);
+    if (currentPage < totalPages) {
+      currentPage++;
+      showPage(currentPage);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  });
+  
+  // 초기 페이징 설정
+  if (allSeriesGroups.length > seriesPerPage) {
+    pagination.style.display = 'flex';
+    updatePaginationButtons();
+  }
+});
+</script>
 
 <style>
 .series-list {
@@ -128,5 +305,121 @@ permalink: /series/
   .post-preview {
     padding: 1rem;
   }
+}
+
+/* 토글 및 페이징 스타일 */
+.series-container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.series-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.2rem;
+  background: white;
+  border: 2px solid #dee2e6;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.toggle-btn:hover {
+  background: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.series-info {
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.series-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.series-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.4rem 0.8rem;
+  background: white;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+}
+
+.series-toggle:hover {
+  background: #e9ecef;
+}
+
+.series-toggle-icon {
+  font-size: 0.7rem;
+}
+
+.series-posts.collapsed {
+  display: none;
+}
+
+.series-group.hidden {
+  display: none;
+}
+
+.series-group.visible {
+  display: block;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 3rem;
+  padding: 1rem;
+}
+
+.page-btn {
+  padding: 0.5rem 1rem;
+  background: white;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.page-btn:hover:not(:disabled) {
+  background: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.page-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+#page-info {
+  font-weight: 500;
+  color: #495057;
 }
 </style>

@@ -7,26 +7,159 @@ permalink: /posts/
 
 <h1>Blog Posts</h1>
 
-<div class="posts-list">
-{% for post in site.posts %}
-  <article class="post-preview" data-categories="{{ post.categories | join: ' ' }}">
-    <h2><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
-    <div class="post-meta">
-      <time datetime="{{ post.date | date_to_xmlschema }}">
-        {{ post.date | date: "%Y년 %m월 %d일" }}
-      </time>
-      {% if post.categories %}
-        {% for category in post.categories %}
-          <span class="category">{{ category | replace: '_', ' ' | capitalize }}</span>
-        {% endfor %}
-      {% endif %}
+<div class="posts-container">
+  <div class="posts-controls">
+    <button id="toggle-all-posts" class="toggle-btn">
+      <span class="toggle-text">전체 보기</span>
+      <span class="toggle-icon">▼</span>
+    </button>
+    <div class="posts-info">
+      <span id="posts-count">총 {{ site.posts.size }}개 포스트</span>
     </div>
-    <div class="post-excerpt">
-      {{ post.excerpt | strip_html | truncatewords: 50 }}
-    </div>
-  </article>
-{% endfor %}
+  </div>
+
+  <div id="posts-list" class="posts-list collapsed">
+    {% for post in site.posts limit: 10 %}
+      <article class="post-preview visible" data-categories="{{ post.categories | join: ' ' }}">
+        <h2><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
+        <div class="post-meta">
+          <time datetime="{{ post.date | date_to_xmlschema }}">
+            {{ post.date | date: "%Y년 %m월 %d일" }}
+          </time>
+          {% if post.categories %}
+            {% for category in post.categories %}
+              <span class="category">{{ category | replace: '_', ' ' | capitalize }}</span>
+            {% endfor %}
+          {% endif %}
+        </div>
+        <div class="post-excerpt">
+          {{ post.excerpt | strip_html | truncatewords: 50 }}
+        </div>
+      </article>
+    {% endfor %}
+    
+    {% for post in site.posts offset: 10 %}
+      <article class="post-preview hidden" data-categories="{{ post.categories | join: ' ' }}">
+        <h2><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
+        <div class="post-meta">
+          <time datetime="{{ post.date | date_to_xmlschema }}">
+            {{ post.date | date: "%Y년 %m월 %d일" }}
+          </time>
+          {% if post.categories %}
+            {% for category in post.categories %}
+              <span class="category">{{ category | replace: '_', ' ' | capitalize }}</span>
+            {% endfor %}
+          {% endif %}
+        </div>
+        <div class="post-excerpt">
+          {{ post.excerpt | strip_html | truncatewords: 50 }}
+        </div>
+      </article>
+    {% endfor %}
+  </div>
+  
+  <div id="pagination" class="pagination" style="display: none;">
+    <button id="prev-page" class="page-btn" disabled>이전</button>
+    <span id="page-info"></span>
+    <button id="next-page" class="page-btn">다음</button>
+  </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const toggleBtn = document.getElementById('toggle-all-posts');
+  const postsList = document.getElementById('posts-list');
+  const pagination = document.getElementById('pagination');
+  const allPosts = document.querySelectorAll('.post-preview');
+  const postsPerPage = 10;
+  let currentPage = 1;
+  let isExpanded = false;
+  
+  // 토글 기능
+  toggleBtn.addEventListener('click', function() {
+    isExpanded = !isExpanded;
+    
+    if (isExpanded) {
+      // 전체 보기
+      postsList.classList.remove('collapsed');
+      toggleBtn.querySelector('.toggle-text').textContent = '접기';
+      toggleBtn.querySelector('.toggle-icon').textContent = '▲';
+      
+      // 모든 포스트 표시
+      allPosts.forEach(post => {
+        post.classList.remove('hidden');
+        post.classList.add('visible');
+      });
+      
+      pagination.style.display = 'none';
+    } else {
+      // 페이징 모드
+      postsList.classList.add('collapsed');
+      toggleBtn.querySelector('.toggle-text').textContent = '전체 보기';
+      toggleBtn.querySelector('.toggle-icon').textContent = '▼';
+      
+      // 페이징 활성화
+      currentPage = 1;
+      showPage(currentPage);
+      pagination.style.display = 'flex';
+    }
+  });
+  
+  // 페이징 기능
+  function showPage(page) {
+    const start = (page - 1) * postsPerPage;
+    const end = start + postsPerPage;
+    
+    allPosts.forEach((post, index) => {
+      if (index >= start && index < end) {
+        post.classList.remove('hidden');
+        post.classList.add('visible');
+      } else {
+        post.classList.add('hidden');
+        post.classList.remove('visible');
+      }
+    });
+    
+    updatePaginationButtons();
+  }
+  
+  function updatePaginationButtons() {
+    const totalPages = Math.ceil(allPosts.length / postsPerPage);
+    const pageInfo = document.getElementById('page-info');
+    const prevBtn = document.getElementById('prev-page');
+    const nextBtn = document.getElementById('next-page');
+    
+    pageInfo.textContent = `${currentPage} / ${totalPages}`;
+    
+    prevBtn.disabled = currentPage === 1;
+    nextBtn.disabled = currentPage === totalPages;
+  }
+  
+  // 페이지 버튼 이벤트
+  document.getElementById('prev-page').addEventListener('click', function() {
+    if (currentPage > 1) {
+      currentPage--;
+      showPage(currentPage);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  });
+  
+  document.getElementById('next-page').addEventListener('click', function() {
+    const totalPages = Math.ceil(allPosts.length / postsPerPage);
+    if (currentPage < totalPages) {
+      currentPage++;
+      showPage(currentPage);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  });
+  
+  // 초기 페이징 설정
+  if (allPosts.length > postsPerPage) {
+    pagination.style.display = 'flex';
+    updatePaginationButtons();
+  }
+});
+</script>
 
 <style>
 .post-preview {
@@ -77,5 +210,96 @@ permalink: /posts/
 
 .post-preview h2 a:hover {
   color: #007bff;
+}
+
+/* 토글 및 페이징 스타일 */
+.posts-container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.posts-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.2rem;
+  background: white;
+  border: 2px solid #dee2e6;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.toggle-btn:hover {
+  background: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.toggle-icon {
+  font-size: 0.8rem;
+  transition: transform 0.3s ease;
+}
+
+.posts-info {
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.posts-list {
+  transition: all 0.3s ease;
+}
+
+.post-preview.hidden {
+  display: none;
+}
+
+.post-preview.visible {
+  display: block;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 3rem;
+  padding: 1rem;
+}
+
+.page-btn {
+  padding: 0.5rem 1rem;
+  background: white;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.page-btn:hover:not(:disabled) {
+  background: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.page-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+#page-info {
+  font-weight: 500;
+  color: #495057;
 }
 </style>

@@ -9,6 +9,9 @@ export function initSearch() {
         return;
     }
     
+    // 초기에 검색 결과를 숨김
+    searchResults.style.display = 'none';
+    
     let posts = [];
     let debounceTimer;
     let isLoading = false;
@@ -67,11 +70,7 @@ export function initSearch() {
     // 페이지 로드 시 검색 데이터 로드
     loadSearchData();
 
-    // 검색 폼 제출 이벤트 처리
-    searchForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        performSearch();
-    });
+    // 검색 폼 제출 이벤트 처리 제거 (폼 제출 버튼 없음)
 
     // 검색 입력 이벤트 처리
     searchInput.addEventListener('input', function(e) {
@@ -126,21 +125,22 @@ export function initSearch() {
 
     function displayResults(results, query) {
         if (results.length === 0) {
-            searchResults.innerHTML = '<div class="no-results" role="alert">No results found.</div>';
+            searchResults.innerHTML = '<div class="no-results" role="alert">검색 결과가 없습니다.</div>';
             searchResults.style.display = 'block';
             return;
         }
-        var html = '<ul>';
+        var html = '<div class="search-results-header">검색 결과: ' + results.length + '개</div>';
+        html += '<ul class="search-results-list">';
         results.forEach(function(result) {
-            html += '<li>';
-            html += '<div class="search-result">';
-            html += `<h4><a href="${result.url}">${highlightText(result.title, query)}</a></h4>`;
-            html += `<p>${highlightText(truncateContent(result.content, 100), query)}</p>`;
+            html += '<li class="search-result-item">';
+            html += '<h4 class="search-result-title"><a href="' + result.url + '">' + highlightText(result.title, query) + '</a></h4>';
+            html += '<p class="search-result-content">' + highlightText(truncateContent(result.content, 100), query) + '</p>';
+            html += '<div class="search-result-meta">';
             if (result.category) {
-                html += `<span class="category">Category: ${result.category}</span>`;
+                html += '<span class="category-tag">' + result.category + '</span>';
             }
             if (result.tags && result.tags.length > 0) {
-                html += `<span class="tags">Tags: ${result.tags.join(', ')}</span>`;
+                html += '<span class="tags">' + result.tags.join(', ') + '</span>';
             }
             html += '</div>';
             html += '</li>';
