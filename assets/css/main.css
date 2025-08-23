@@ -15,6 +15,57 @@
 
 /* 페이지별 스타일은 조건부 로드로 변경 예정 */
 
+/* 사이드바 네비게이션 세로 배치 - 최우선 적용 */
+.sidebar-right .navigation .nav-links,
+.sidebar-right nav .nav-links,
+aside.sidebar-right .nav-links {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.5rem !important;
+  width: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  list-style: none !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+}
+
+.sidebar-right .navigation .nav-links a,
+.sidebar-right nav .nav-links a,
+.sidebar-right .nav-link {
+  display: block !important;
+  width: 100% !important;
+  padding: 0.8rem 1rem !important;
+  background: rgba(255, 255, 255, 0.7) !important;
+  border: 1px solid rgba(168, 225, 219, 0.3) !important;
+  border-radius: 6px !important;
+  color: #005F5F !important;
+  text-decoration: none !important;
+  font-weight: 500 !important;
+  transition: all 0.2s ease !important;
+  box-sizing: border-box !important;
+  text-align: left !important;
+}
+
+.sidebar-right .navigation .nav-links a:hover,
+.sidebar-right nav .nav-links a:hover,
+.sidebar-right .nav-link:hover {
+  background: rgba(168, 225, 219, 0.2) !important;
+  color: #003D3D !important;
+  border-color: rgba(168, 225, 219, 0.6) !important;
+  transform: translateX(4px) !important;
+}
+
+.sidebar-right .navigation .nav-links a.active,
+.sidebar-right nav .nav-links a.active,
+.sidebar-right .nav-link.active {
+  background: #A8E1DB !important;
+  color: #003D3D !important;
+  font-weight: 600 !important;
+  border-color: #005F5F !important;
+  box-shadow: 0 2px 4px rgba(168, 225, 219, 0.4) !important;
+}
+
 @font-face {
   font-family: 'PFStardust';
   src: url('../fonts/PFStardust 3.0 Bold.ttf') format('truetype');

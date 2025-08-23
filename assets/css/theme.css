@@ -147,6 +147,8 @@ img.loaded {
   }
 }
 
+/* 사이드바 네비게이션 스타일은 main.css에서 관리 */
+
 /* 기본 반응형 설정 */
 .container {
   width: 100%;
