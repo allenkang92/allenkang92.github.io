@@ -4,8 +4,13 @@ export function initSearch() {
     const searchForm = document.getElementById('search-form');
     const searchContainer = document.getElementById('search-container');
     
-    if (!searchInput || !searchResults || !searchForm) {
-        console.log('Search elements not found, skipping search initialization');
+    if (!searchInput) {
+        console.log('Search input not found');
+        return;
+    }
+    
+    if (!searchResults) {
+        console.log('Search results container not found');
         return;
     }
     
@@ -69,8 +74,6 @@ export function initSearch() {
 
     // 페이지 로드 시 검색 데이터 로드
     loadSearchData();
-
-    // 검색 폼 제출 이벤트 처리 제거 (폼 제출 버튼 없음)
 
     // 검색 입력 이벤트 처리
     searchInput.addEventListener('input', function(e) {
@@ -181,7 +184,7 @@ export function initSearch() {
     
     // 문서 클릭 시 검색 결과 닫기
     document.addEventListener('click', function(e) {
-        if (!searchForm.contains(e.target)) {
+        if (!searchContainer.contains(e.target)) {
             searchResults.style.display = 'none';
         }
     });

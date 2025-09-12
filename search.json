@@ -16,13 +16,12 @@ layout: null
     {% endif %}
     {
       "title": {{ post.title | jsonify }},
+      "url": {{ post.url | absolute_url | jsonify }},
       "category": {{ post.categories | first | default: "Uncategorized" | jsonify }},
       "tags": {% if post.tags %}{{ post.tags | jsonify }}{% else %}[]{% endif %},
-      "url": {{ post.url | relative_url | jsonify }},
-      "date": {{ post.date | date: "%Y-%m-%d" | jsonify }},
-      "content": {{ post.content | strip_html | strip_newlines | truncatewords: 50 | jsonify }},
+      "content": {{ post.content | strip_html | strip_newlines | normalize_whitespace | truncate: 500, "..." | jsonify }},
+      "date": "{{ post.date | date: "%Y-%m-%d" }}",
       "series": {% if post.series %}{{ post.series | jsonify }}{% else %}null{% endif %},
-      "series_description": {% if post.series_description %}{{ post.series_description | jsonify }}{% else %}null{% endif %},
       "series_index": {% if series_index %}{{ series_index }}{% else %}null{% endif %}
     }{% unless forloop.last %},{% endunless %}
   {% endfor %}

@@ -1,14 +1,41 @@
-<div id="search-container" class="search-container" data-search-url="{{ '/search.json' | relative_url }}">
-  <form id="search-form" class="search-form" role="search" aria-label="Site search">
-    <div class="search-input-wrapper">
-      <label for="search-input" class="visually-hidden">Search</label>
-      <input type="search" 
-             id="search-input" 
-             class="search-input" 
-             placeholder="Enter search query..." 
-             aria-label="Search query">
-    </div>
-    <div id="search-results" class="search-results" role="region" aria-live="polite" aria-label="Search results">
-    </div>
-  </form>
+<!-- Search Form Component -->
+<div class="search-widget">
+  <div id="search-container" class="search-container">
+    <form id="search-form" class="search-form" role="search" aria-label="Site search">
+      <div class="search-input-wrapper">
+        <label for="search-input" class="visually-hidden">Search the site</label>
+        <input type="search" 
+               id="search-input" 
+               class="search-input" 
+               placeholder="your search" 
+               aria-label="Search query"
+               aria-controls="search-results"
+               autocomplete="off"
+               aria-expanded="false">
+        <button type="button" class="search-clear" aria-label="Clear search" hidden>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+        <button type="submit" class="search-submit" aria-label="Submit search">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </button>
+      </div>
+      <div id="search-results" 
+           class="search-results" 
+           role="region" 
+           aria-live="polite" 
+           aria-label="Search results" 
+           aria-atomic="false">
+        <div class="search-loading" hidden>Loading search results...</div>
+      </div>
+    </form>
+  </div>
 </div>
+
+<!-- Load the search script -->
+<script src="{{ '/assets/js/simple-search.js' | relative_url }}" defer></script>

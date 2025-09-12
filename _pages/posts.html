@@ -9,10 +9,9 @@ permalink: /posts/
 
 <div class="posts-container">
   <div class="posts-controls">
-    <button id="toggle-all-posts" class="toggle-btn">
-      <span class="toggle-text">Show All</span>
-      <span class="toggle-icon">▼</span>
-    </button>
+      <button id="toggle-posts" class="toggle-btn" aria-label="Toggle all posts">
+        <span class="toggle-icon">▼</span>
+      </button>
     <div class="posts-info">
       <span id="posts-count">Total {{ site.posts.size }} posts</span>
     </div>
@@ -82,8 +81,8 @@ document.addEventListener('DOMContentLoaded', function() {
     if (isExpanded) {
       // 전체 보기
       postsList.classList.remove('collapsed');
-      toggleBtn.querySelector('.toggle-text').textContent = 'Collapse';
       toggleBtn.querySelector('.toggle-icon').textContent = '▲';
+      toggleBtn.setAttribute('aria-label', 'Collapse all posts');
       
       // 모든 포스트 표시
       allPosts.forEach(post => {
@@ -95,8 +94,8 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
       // 페이징 모드
       postsList.classList.add('collapsed');
-      toggleBtn.querySelector('.toggle-text').textContent = 'Show All';
       toggleBtn.querySelector('.toggle-icon').textContent = '▼';
+      toggleBtn.setAttribute('aria-label', 'Show all posts');
       
       // 페이징 활성화
       currentPage = 1;

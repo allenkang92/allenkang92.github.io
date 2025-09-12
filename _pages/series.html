@@ -11,8 +11,7 @@ permalink: /series/
   {% assign series_posts = site.posts | where_exp: "post", "post.series != nil" | group_by: "series" %}
   
   <div class="series-controls">
-    <button id="toggle-all-series" class="toggle-btn">
-      <span class="toggle-text">Show All Series</span>
+    <button id="toggle-all-series" class="toggle-btn" aria-label="Toggle all series">
       <span class="toggle-icon">▼</span>
     </button>
     <div class="series-info">
@@ -25,8 +24,7 @@ permalink: /series/
       <div class="series-group visible" data-series="{{ series.name }}">
         <div class="series-header">
           <h2>{{ series.name | replace: '_', ' ' }}</h2>
-          <button class="series-toggle" data-series-name="{{ series.name }}">
-            <span class="series-toggle-text">Expand</span>
+          <button class="series-toggle" data-series-name="{{ series.name }}" aria-label="Toggle series">
             <span class="series-toggle-icon">▼</span>
           </button>
         </div>
@@ -61,8 +59,7 @@ permalink: /series/
       <div class="series-group hidden" data-series="{{ series.name }}">
         <div class="series-header">
           <h2>{{ series.name | replace: '_', ' ' }}</h2>
-          <button class="series-toggle" data-series-name="{{ series.name }}">
-            <span class="series-toggle-text">Expand</span>
+          <button class="series-toggle" data-series-name="{{ series.name }}" aria-label="Toggle series">
             <span class="series-toggle-icon">▼</span>
           </button>
         </div>
@@ -118,7 +115,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (isExpanded) {
       // 전체 보기
       seriesList.classList.remove('collapsed');
-      mainToggleBtn.querySelector('.toggle-text').textContent = 'Collapse';
       mainToggleBtn.querySelector('.toggle-icon').textContent = '▲';
       
       // 모든 시리즈 표시
@@ -131,7 +127,6 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
       // 페이징 모드
       seriesList.classList.add('collapsed');
-      mainToggleBtn.querySelector('.toggle-text').textContent = 'Show All Series';
       mainToggleBtn.querySelector('.toggle-icon').textContent = '▼';
       
       // 페이징 활성화
@@ -146,16 +141,13 @@ document.addEventListener('DOMContentLoaded', function() {
     btn.addEventListener('click', function() {
       const seriesName = this.dataset.seriesName;
       const seriesContent = document.querySelector(`[data-series-content="${seriesName}"]`);
-      const toggleText = this.querySelector('.series-toggle-text');
       const toggleIcon = this.querySelector('.series-toggle-icon');
       
       if (seriesContent.classList.contains('collapsed')) {
         seriesContent.classList.remove('collapsed');
-        toggleText.textContent = 'Collapse';
         toggleIcon.textContent = '▲';
       } else {
         seriesContent.classList.add('collapsed');
-        toggleText.textContent = 'Expand';
         toggleIcon.textContent = '▼';
       }
     });
