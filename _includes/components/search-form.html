@@ -1,40 +1,45 @@
 <!-- Search Form Component -->
 <div class="search-widget">
-  <div id="search-container" class="search-container">
-    <form id="search-form" class="search-form" role="search" aria-label="Site search">
-      <div class="search-input-wrapper">
-        <label for="search-input" class="visually-hidden">Search the site</label>
-        <input type="search" 
-               id="search-input" 
-               class="search-input" 
-               placeholder="your search" 
-               aria-label="Search query"
-               aria-controls="search-results"
-               autocomplete="off"
-               aria-expanded="false">
-        <button type="button" class="search-clear" aria-label="Clear search" hidden>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
-        </button>
-        <button type="submit" class="search-submit" aria-label="Submit search">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="11" cy="11" r="8"></circle>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-          </svg>
-        </button>
-      </div>
-      <div id="search-results" 
-           class="search-results" 
-           role="region" 
-           aria-live="polite" 
-           aria-label="Search results" 
-           aria-atomic="false">
-        <div class="search-loading" hidden>Loading search results...</div>
-      </div>
+  <div class="search-container" id="search-container">
+    <form class="search-form" role="search" aria-label="사이트 검색">
+        <label for="search-input" class="visually-hidden">검색어 입력</label>
+        <div class="search-input-wrapper">
+            <input 
+                type="search" 
+                id="search-input" 
+                class="search-input" 
+                placeholder="검색어를 입력하세요..." 
+                autocomplete="off"
+                aria-label="검색어 입력"
+                aria-describedby="search-instructions"
+            >
+            <button 
+                type="button" 
+                class="clear-button" 
+                aria-label="검색어 지우기"
+                style="display: none;"
+            >
+                <span aria-hidden="true">×</span>
+            </button>
+            <button 
+                type="submit" 
+                class="search-button" 
+                aria-label="검색 실행"
+            >
+                <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                    <path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 0 0 1.48-5.34c-.47-2.78-2.79-5-5.59-5.34a6.505 6.505 0 0 0-7.27 7.27c.34 2.8 2.56 5.12 5.34 5.59a6.5 6.5 0 0 0 5.34-1.48l.27.28v.79l4.25 4.25c.41.41 1.08.41 1.49 0 .41-.41.41-1.08 0-1.49L15.5 14zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                </svg>
+            </button>
+        </div>
+        <span id="search-instructions" class="visually-hidden">검색어를 입력하고 엔터를 누르거나 검색 버튼을 클릭하세요</span>
+        <div class="search-spinner" style="display: none;">
+            <span class="spinner"></span>
+        </div>
     </form>
-  </div>
+    
+    <div class="search-results" id="search-results" role="region" aria-live="polite" aria-label="검색 결과">
+        <!-- 검색 결과가 여기에 표시됩니다 -->
+    </div>
 </div>
 
 <!-- Load the search script -->

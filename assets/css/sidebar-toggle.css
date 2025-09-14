@@ -1,0 +1,132 @@
+/* ==========================================================================
+   SIDEBAR TOGGLE STYLES
+   ========================================================================== */
+
+/* Toggle Button */
+.sidebar-toggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 35px;
+  height: 35px;
+  background: #4a6cf7;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  padding: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.sidebar-toggle:hover {
+  background: #3857e0;
+  box-shadow: 0 4px 12px rgba(74, 108, 247, 0.3);
+}
+
+.sidebar-toggle span {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background: #fff;
+  transition: all 0.3s ease;
+}
+
+/* Sidebar States */
+.sidebar-right {
+  transition: transform 0.3s ease, width 0.3s ease;
+}
+
+.sidebar-right.sidebar-collapsed {
+  transform: translateX(100%);
+}
+
+/* Content wrapper adjustment */
+.content-wrapper {
+  transition: margin-right 0.3s ease;
+}
+
+.content-wrapper.full-width {
+  margin-right: 0;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .sidebar-toggle {
+    display: flex !important;
+  }
+  
+  .sidebar-right {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    z-index: 1000;
+    background: #fff;
+    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .sidebar-right.sidebar-collapsed {
+    transform: translateX(100%);
+  }
+}
+
+/* Desktop - Hide toggle by default */
+@media (min-width: 769px) {
+  .sidebar-toggle {
+    display: none;
+  }
+  
+  /* Show toggle on hover */
+  .sidebar-right:hover .sidebar-toggle {
+    display: flex;
+    opacity: 0.7;
+  }
+  
+  .sidebar-toggle:hover {
+    opacity: 1 !important;
+  }
+}
+
+/* Animation for hamburger menu */
+.sidebar-right.sidebar-collapsed .sidebar-toggle span:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.sidebar-right.sidebar-collapsed .sidebar-toggle span:nth-child(2) {
+  opacity: 0;
+}
+
+.sidebar-right.sidebar-collapsed .sidebar-toggle span:nth-child(3) {
+  transform: rotate(-45deg) translate(5px, -5px);
+}
+
+/* Accessibility */
+.sidebar-toggle:focus {
+  outline: 2px solid #4a6cf7;
+  outline-offset: 2px;
+}
+
+.sidebar-toggle:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .sidebar-toggle {
+    background: #5a6cf7;
+  }
+  
+  .sidebar-toggle:hover {
+    background: #4857e0;
+  }
+  
+  .sidebar-right {
+    background: #1a1a1a;
+  }
+}

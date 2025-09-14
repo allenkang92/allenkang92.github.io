@@ -1,15 +1,7 @@
 // 성능 최적화를 위한 조건부 모듈 로딩
 document.addEventListener('DOMContentLoaded', async () => {
-    // 검색 기능은 모든 페이지에서 필요 - 직접 초기화
-    try {
-        const { initSearch } = await import('./modules/search.js');
-        initSearch();
-        console.log('Search initialized');
-    } catch (error) {
-        console.error('Failed to load search module:', error);
-        // 폴백: 기본 검색 기능
-        initBasicSearch();
-    }
+    // 검색 기능은 simple-search.js에서 자동으로 초기화됨
+    console.log('Main.js loaded');
     
     // 모달 기능 조건부 로딩
     if (document.querySelector('.modal') || document.querySelector('[data-modal]')) {
@@ -50,67 +42,34 @@ async function loadPageSpecificModules() {
     }
 }
 
-// 기본 검색 기능 폴백
-function initBasicSearch() {
-    console.log('Basic search initialized');
-    const searchInput = document.getElementById('search-input');
-    const searchResults = document.getElementById('search-results');
-    const searchContainer = document.getElementById('search-container');
+// 사이드바 토글 기능
+function initSidebarToggle() {
+    const sidebar = document.querySelector('.sidebar-right');
+    const toggleBtn = document.querySelector('.sidebar-toggle');
+    const contentWrapper = document.querySelector('.content-wrapper');
     
-    if (!searchInput || !searchResults) {
-        console.log('Search elements not found');
-        return;
-    }
-    
-    let posts = [];
-    
-    // 검색 데이터 로드
-    const dataUrl = (searchContainer && searchContainer.dataset) ? searchContainer.dataset.searchUrl : null;
-    const searchUrl = dataUrl || '/search.json';
-    fetch(searchUrl)
-        .then(response => response.json())
-        .then(data => {
-            posts = data;
-            console.log('Search data loaded:', posts.length + ' posts');
-        })
-        .catch(error => {
-            console.error('Search data load failed:', error);
+    if (toggleBtn && sidebar) {
+        toggleBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('sidebar-collapsed');
+            contentWrapper.classList.toggle('full-width');
+            
+            // 상태 저장
+            const isCollapsed = sidebar.classList.contains('sidebar-collapsed');
+            localStorage.setItem('sidebarCollapsed', isCollapsed);
         });
-    
-    // 검색 이벤트
-    searchInput.addEventListener('input', function() {
-        const query = this.value.trim().toLowerCase();
         
-        if (query.length < 2) {
-            searchResults.innerHTML = '';
-            searchResults.style.display = 'none';
-            return;
+        // 저장된 상태 복원
+        const savedState = localStorage.getItem('sidebarCollapsed');
+        if (savedState === 'true') {
+            sidebar.classList.add('sidebar-collapsed');
+            contentWrapper.classList.add('full-width');
         }
-        
-        const results = posts.filter(post => 
-            post.title.toLowerCase().includes(query) ||
-            post.content.toLowerCase().includes(query) ||
-            (post.tags && post.tags.some(tag => tag.toLowerCase().includes(query)))
-        ).slice(0, 5);
-        
-        if (results.length > 0) {
-            searchResults.innerHTML = results.map(post => 
-                `<div class="search-result">
-                    <h4><a href="${post.url}">${post.title}</a></h4>
-                    <p>${post.excerpt || ''}</p>
-                </div>`
-            ).join('');
-            searchResults.style.display = 'block';
-        } else {
-            searchResults.innerHTML = '<div class="no-results">No results found.</div>';
-            searchResults.style.display = 'block';
-        }
-    });
-    
-    // 검색 결과 숨기기
-    document.addEventListener('click', function(e) {
-        if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
-            searchResults.style.display = 'none';
-        }
-    });
+    }
+}
+
+// 페이지 로드 시 사이드바 토글 초기화
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initSidebarToggle);
+} else {
+    initSidebarToggle();
 }

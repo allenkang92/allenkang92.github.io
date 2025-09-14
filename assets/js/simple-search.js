@@ -23,10 +23,10 @@
     function initSearch() {
         // Get DOM elements
         searchForm = document.querySelector('.search-form');
-        searchInput = document.querySelector('.search-input');
+        searchInput = document.getElementById('search-input');
         searchButton = document.querySelector('.search-button');
         clearButton = document.querySelector('.clear-button');
-        searchResults = document.querySelector('.search-results');
+        searchResults = document.getElementById('search-results');
         searchSpinner = document.querySelector('.search-spinner');
         
         if (!searchForm || !searchInput || !searchResults) {
@@ -290,8 +290,8 @@
             } finally {
                 isSearching = false;
                 showLoading(false);
-            });
-        }
+            }
+        });
     }
     
     // Display search results
