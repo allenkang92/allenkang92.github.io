@@ -66,6 +66,7 @@ data_dir: _data
 # Exclude from processing
 exclude:
   - AGENTS.md
+  - DESIGN.md
   - Gemfile
   - Gemfile.lock
   - node_modules

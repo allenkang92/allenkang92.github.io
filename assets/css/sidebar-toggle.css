@@ -9,8 +9,8 @@
   right: 20px;
   width: 44px;
   height: 44px;
-  background: #5141b8;
-  border: 2px solid #f8f1e3;
+  background: var(--atlas-violet, #7467d6);
+  border: 1px solid rgba(255, 255, 255, 0.86);
   border-radius: 8px;
   cursor: pointer;
   z-index: 1001;
@@ -20,20 +20,20 @@
   align-items: center;
   gap: 4px;
   padding: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 24px rgba(34, 57, 54, 0.18);
   transition: all 0.3s ease;
 }
 
 .sidebar-toggle:hover {
-  background: #005f5f;
-  box-shadow: 0 4px 12px rgba(81, 65, 184, 0.3);
+  background: var(--atlas-teal, #2f9e8f);
+  box-shadow: 0 14px 30px rgba(34, 57, 54, 0.22);
 }
 
 .sidebar-toggle span {
   display: block;
   width: 100%;
   height: 2px;
-  background: #fffaf0;
+  background: #ffffff;
   transition: all 0.3s ease;
 }
 
@@ -99,7 +99,7 @@
 
 /* Accessibility */
 .sidebar-toggle:focus {
-  outline: 3px solid #7c5cff;
+  outline: 3px solid var(--atlas-focus, #217f74);
   outline-offset: 2px;
 }
 
@@ -110,14 +110,14 @@
 /* Dark mode support */
 @media (prefers-color-scheme: dark) {
   .sidebar-toggle {
-    background: #5a6cf7;
+    background: var(--atlas-violet, #7467d6);
   }
   
   .sidebar-toggle:hover {
-    background: #4857e0;
+    background: var(--atlas-teal, #2f9e8f);
   }
   
   .sidebar-right {
-    background: #1a1a1a;
+    background: var(--atlas-sidebar, #e8faf3);
   }
 }
