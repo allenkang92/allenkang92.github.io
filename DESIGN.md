@@ -3,20 +3,21 @@ version: alpha
 name: Allen's Blog
 description: "A quiet knowledge lab for math philosophy, science history, accessibility notes, and practical calculators."
 colors:
-  ink: "#223936"
-  inkSoft: "#425B56"
-  muted: "#60746F"
-  paper: "#F4FFFB"
-  paperDeep: "#E4F7F0"
+  ink: "#1F3430"
+  inkSoft: "#4F6762"
+  muted: "#6F807C"
+  paper: "#F5FFFB"
+  paperDeep: "#EAF8F2"
   surface: "#FFFFFF"
-  surfaceWarm: "#FFFDF7"
-  mint: "#2F9E8F"
-  mintSoft: "#D7F3EC"
-  violet: "#7467D6"
-  violetSoft: "#EEEAFD"
+  surfaceWarm: "#FFFEF8"
+  mint: "#1F746A"
+  mintHover: "#155F57"
+  mintSoft: "#DDF8EF"
+  violet: "#5F57B8"
+  violetSoft: "#F2EFFF"
   amber: "#C28F3B"
-  border: "#B8D8D0"
-  focus: "#217F74"
+  border: "#C8E4DC"
+  focus: "#1F746A"
 typography:
   display:
     fontFamily: "Georgia, Times New Roman, serif"
@@ -97,7 +98,7 @@ Allen's Blog should feel like a calm research desk rather than a retro terminal.
 
 ## Colors
 
-Use `paper` as the page background, `surfaceWarm` for article panels and repeated content blocks, and `surface` for form fields. `mint` is the primary action color. `violet` is reserved for selected states, tabs, and subtle contrast. Avoid a one-note mint-only interface by pairing mint with warm white, ink, and controlled violet.
+Use `paper` as the page background, `surfaceWarm` for article panels and repeated content blocks, and `surface` for form fields. `mint` is the primary action color and `mintHover` is the primary hover color. `violet` is a restricted accent for rare emphasis only; it must not be the default hover transition. Avoid a one-note mint-only interface by pairing mint with warm white, ink, and carefully limited accent color.
 
 All readable text/background pairs must meet WCAG AA. Never place body text on decorative gradients or low-contrast pastel backgrounds.
 
@@ -126,12 +127,12 @@ Post pages should prioritize reading: clear title, metadata, “이 글에서 �
 ## Do's and Don'ts
 
 Do keep the first viewport calm, readable, and useful.
-Do use mint for primary actions and violet sparingly for active states.
+Do use mint for primary actions and darker mint for hover states.
 Do make hover/focus states visible without changing layout dimensions.
 Do keep Korean and English labels paired only where it helps comprehension.
 Do check mobile at 390px before shipping visual changes.
 
-Don't bring back pixelated fonts, pixel rendering, or terminal-like contrast as the main theme.
+Don't bring back pixelated fonts, pixel rendering, purple hover flashes, or terminal-like contrast as the main theme.
 Don't use decorative blobs, bokeh, oversized marketing cards, or nested cards.
 Don't hide search results behind visibility/transform states without a matching active class.
 Don't put long text into fixed-width buttons when it can wrap or become a label below an icon.

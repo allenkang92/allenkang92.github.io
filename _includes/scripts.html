@@ -11,17 +11,35 @@
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     var lazyImages = [].slice.call(document.querySelectorAll('img.lazy'));
+    var loadImage = function(lazyImage) {
+      var picture = lazyImage.closest('picture');
+      if (picture) {
+        [].slice.call(picture.querySelectorAll('source[data-srcset]')).forEach(function(source) {
+          source.srcset = source.dataset.srcset;
+          source.removeAttribute('data-srcset');
+        });
+      }
+
+      if (lazyImage.dataset.srcset) {
+        lazyImage.srcset = lazyImage.dataset.srcset;
+        lazyImage.removeAttribute('data-srcset');
+      }
+
+      if (lazyImage.dataset.src) {
+        lazyImage.src = lazyImage.dataset.src;
+        lazyImage.removeAttribute('data-src');
+      }
+
+      lazyImage.classList.remove('lazy');
+      lazyImage.classList.add('loaded');
+    };
     
     if ('IntersectionObserver' in window) {
       let lazyImageObserver = new IntersectionObserver(function(entries, observer) {
         entries.forEach(function(entry) {
           if (entry.isIntersecting) {
             let lazyImage = entry.target;
-            if (lazyImage.dataset.src) {
-              lazyImage.src = lazyImage.dataset.src;
-              lazyImage.removeAttribute('data-src');
-            }
-            lazyImage.classList.remove('lazy');
+            loadImage(lazyImage);
             lazyImageObserver.unobserve(lazyImage);
           }
         });
@@ -41,11 +59,7 @@
           setTimeout(function() {
             lazyImages.forEach(function(lazyImage) {
               if ((lazyImage.getBoundingClientRect().top <= window.innerHeight && lazyImage.getBoundingClientRect().bottom >= 0) && getComputedStyle(lazyImage).display !== 'none') {
-                if (lazyImage.dataset.src) {
-                  lazyImage.src = lazyImage.dataset.src;
-                  lazyImage.removeAttribute('data-src');
-                }
-                lazyImage.classList.remove('lazy');
+                loadImage(lazyImage);
 
                 lazyImages = lazyImages.filter(function(image) {
                   return image !== lazyImage;

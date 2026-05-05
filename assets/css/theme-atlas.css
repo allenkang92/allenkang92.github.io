@@ -52,6 +52,10 @@ canvas {
   image-rendering: auto !important;
 }
 
+img {
+  opacity: 1 !important;
+}
+
 ::placeholder,
 option {
   font-family: var(--atlas-sans) !important;
@@ -178,22 +182,27 @@ aside.sidebar-right,
   margin: 0 auto 15px;
   border-radius: 50%;
   background-color: #1f746a;
-  background-image: url("/assets/images/mint-whale-logo.png"), linear-gradient(135deg, #1f746a 0%, #58c9b7 100%);
+  background-image: url("../images/mint-whale-logo.png"), linear-gradient(135deg, #1f746a 0%, #58c9b7 100%);
   background-position: center;
   background-repeat: no-repeat;
   background-size: 112% auto, cover;
 }
 
 .sidebar-right .blog-title {
+  display: block !important;
   border-bottom: 1px solid var(--atlas-border);
   padding-bottom: 1rem;
+  text-align: center;
 }
 
 .sidebar-right .blog-title .site-title {
+  display: block;
+  width: 100%;
   color: var(--atlas-ink) !important;
   font-size: 1.45rem;
   line-height: 1.15;
-  margin: 0;
+  margin: 0 0 0.65rem;
+  text-decoration: none !important;
 }
 
 .sidebar-right .blog-title .site-title::after {
@@ -204,6 +213,13 @@ aside.sidebar-right,
 .sidebar-right .blog-title p,
 .sidebar-right h3 {
   color: var(--atlas-muted) !important;
+}
+
+.sidebar-right .blog-title p {
+  display: block !important;
+  width: 100%;
+  margin: 0;
+  line-height: 1.5;
 }
 
 .sidebar-right .navigation {
@@ -294,7 +310,7 @@ aside#site-sidebar.sidebar-right .navigation .nav-links a.nav-link.active {
 
 .search-input-wrapper {
   display: grid !important;
-  grid-template-columns: minmax(0, 1fr) 44px;
+  grid-template-columns: minmax(0, 1fr) 44px 44px;
   gap: 0.25rem;
   align-items: center;
   padding: 0.25rem;
@@ -317,7 +333,8 @@ aside#site-sidebar.sidebar-right .navigation .nav-links a.nav-link.active {
   display: none;
 }
 
-.search-button {
+.search-button,
+.clear-button {
   position: static !important;
   transform: none !important;
   display: inline-flex !important;
@@ -333,6 +350,26 @@ aside#site-sidebar.sidebar-right .navigation .nav-links a.nav-link.active {
   background: var(--atlas-teal-soft) !important;
   color: var(--atlas-teal) !important;
   cursor: pointer;
+}
+
+.clear-button {
+  visibility: hidden;
+  pointer-events: none;
+  background: transparent !important;
+  color: var(--atlas-muted) !important;
+  font-size: 1.15rem !important;
+  line-height: 1 !important;
+}
+
+.search-input-wrapper.has-query .clear-button {
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.clear-button:hover,
+.clear-button:focus-visible {
+  background: var(--atlas-teal-soft) !important;
+  color: var(--atlas-teal) !important;
 }
 
 .search-button:hover,
@@ -644,7 +681,7 @@ code {
   height: 72px;
   border-radius: 22px;
   background-color: #1f746a;
-  background-image: url("/assets/images/mint-whale-logo.png"), linear-gradient(135deg, #1f746a 0%, #58c9b7 100%);
+  background-image: url("../images/mint-whale-logo.png"), linear-gradient(135deg, #1f746a 0%, #58c9b7 100%);
   background-position: center;
   background-repeat: no-repeat;
   background-size: 122% auto, cover;

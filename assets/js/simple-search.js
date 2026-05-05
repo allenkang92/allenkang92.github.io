@@ -19,6 +19,7 @@
     let searchData = [];
     let searchTimeout;
     let isSearching = false;
+    let lastRenderedQuery = '';
     
     // Initialize the search functionality
     function initSearch() {
@@ -66,10 +67,10 @@
                 if (searchQuery) {
                     searchInput.value = searchQuery;
                     toggleClearButton();
-                    performSearch(searchQuery);
+                    performSearch(searchQuery, { historyMode: 'replace' });
                 } else if (searchInput.value.trim()) {
                     toggleClearButton();
-                    performSearch(searchInput.value.trim());
+                    performSearch(searchInput.value.trim(), { historyMode: 'replace' });
                 }
             })
             .catch(error => {
@@ -83,9 +84,7 @@
     
     // Get the correct path to search.json
     function getSearchJsonPath() {
-        // Check if we're in a subdirectory
-        const baseUrl = window.location.pathname.includes('/blog/') ? '/blog' : '';
-        return `${baseUrl}/search.json`;
+        return searchForm?.dataset.searchUrl || searchContainer?.dataset.searchUrl || '/search.json';
     }
     
     // Set up event listeners
@@ -122,7 +121,7 @@
         // Hide results if input is empty
         if (query.length === 0) {
             hideResults();
-            updateUrl('');
+            updateUrl('', { mode: 'replace' });
             return;
         }
         
@@ -131,7 +130,7 @@
         
         // Debounce the search
         searchTimeout = setTimeout(() => {
-            performSearch(query);
+            performSearch(query, { historyMode: 'replace' });
         }, 300);
     }
 
@@ -140,14 +139,14 @@
         const query = searchInput.value.trim();
         if (!query) return;
 
-        if (searchResults && searchResults.innerHTML.trim()) {
+        if (searchResults && lastRenderedQuery === query) {
             searchResults.style.display = 'block';
             searchResults.classList.add('active');
             searchInput.setAttribute('aria-expanded', 'true');
             return;
         }
 
-        performSearch(query);
+        performSearch(query, { historyMode: 'replace' });
     }
     
     // Handle form submission
@@ -155,7 +154,7 @@
         e.preventDefault();
         const query = searchInput.value.trim();
         if (query) {
-            performSearch(query);
+            performSearch(query, { historyMode: 'push' });
         }
     }
     
@@ -180,8 +179,9 @@
     function clearSearch() {
         searchInput.value = '';
         searchInput.focus();
+        lastRenderedQuery = '';
         hideResults();
-        updateUrl('');
+        updateUrl('', { mode: 'push' });
         toggleClearButton();
     }
     
@@ -198,8 +198,10 @@
     
     // Handle keyboard navigation
     function handleKeyDown(e) {
+        const isInsideSearch = searchContainer && searchContainer.contains(document.activeElement);
+
         // Close on Escape key
-        if (e.key === 'Escape') {
+        if (e.key === 'Escape' && isInsideSearch) {
             hideResults();
             if (searchContainer && searchContainer.contains(document.activeElement)) {
                 searchInput.focus();
@@ -208,8 +210,10 @@
         
         // Handle arrow key navigation in results
         if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+            if (!isInsideSearch || !searchResults || !searchResults.classList.contains('active')) return;
+
             const activeElement = document.activeElement;
-            const resultItems = Array.from(document.querySelectorAll('.search-result-item a'));
+            const resultItems = Array.from(searchResults.querySelectorAll('.search-result-item a'));
             
             if (resultItems.length === 0) return;
             
@@ -228,7 +232,7 @@
     }
     
     // Perform the search
-    function performSearch(query) {
+    function performSearch(query, options = {}) {
         if (isSearching || !searchData || searchData.length === 0) {
             showLoading(false);
             return;
@@ -243,7 +247,7 @@
         requestAnimationFrame(() => {
             try {
                 const queryLower = query.toLowerCase();
-                const queryTerms = queryLower.split(/\s+/).filter(term => term.length > 1); // Ignore single character terms
+                const queryTerms = queryLower.split(/\s+/).filter(term => term.length > 0);
                 
                 if (queryTerms.length === 0) {
                     showNoResults('검색어를 입력하세요');
@@ -301,18 +305,21 @@
                 });
                 
                 // Filter, sort and limit results
-                const filteredResults = scoredResults
+                const allResults = scoredResults
                     .filter(item => item.score > 0)
-                    .sort((a, b) => b.score - a.score || b.post.date.localeCompare(a.post.date))
+                    .sort((a, b) => b.score - a.score || b.post.date.localeCompare(a.post.date));
+
+                const filteredResults = allResults
                     .slice(0, 10) // Limit to top 10 results
                     .map(item => item.post);
                 
                 // Display results
                 if (filteredResults.length > 0) {
-                    displayResults(filteredResults, query);
-                    updateUrl(query);
+                    displayResults(filteredResults, query, allResults.length);
+                    updateUrl(query, { mode: options.historyMode || 'replace' });
                 } else {
                     showNoResults(`'${query}'에 대한 검색 결과가 없습니다`);
+                    updateUrl(query, { mode: options.historyMode || 'replace' });
                 }
             } catch (error) {
                 console.error('Search error:', error);
@@ -325,11 +332,11 @@
     }
     
     // Display search results
-    function displayResults(results, query) {
+    function displayResults(results, query, totalResults = results.length) {
         if (!searchResults) return;
         
         // Highlight query terms in results
-        const queryTerms = query.toLowerCase().split(/\s+/).filter(term => term.length > 1);
+        const queryTerms = query.toLowerCase().split(/\s+/).filter(term => term.length > 0);
         
         // Build results HTML
         let html = `
@@ -346,8 +353,6 @@
             
             // Apply highlighting
             queryTerms.forEach(term => {
-                if (term.length < 2) return;
-                
                 // Highlight in title
                 const titleRegex = new RegExp(`(${escapeRegex(term)})`, 'gi');
                 highlightedTitle = highlightedTitle.replace(titleRegex, '<mark>$1</mark>');
@@ -405,18 +410,18 @@
             </ul>`;
         
         // Add footer with result count
-        const totalResults = results.length;
         const maxResults = 10;
         
-        if (totalResults > maxResults) {
+        if (totalResults > results.length) {
             html += `
                 <div class="search-results-footer">
-                    <p>${maxResults}개 결과 중 ${totalResults}개 표시 중</p>
+                    <p>${results.length}개 결과 중 ${totalResults}개 표시 중</p>
                 </div>`;
         }
         
         // Update the DOM
         searchResults.innerHTML = html;
+        lastRenderedQuery = query;
         searchResults.style.display = 'block';
         searchResults.classList.add('active');
         searchInput.setAttribute('aria-expanded', 'true');
@@ -430,6 +435,7 @@
             <div class="no-results">
                 <p>${escapeHtml(message)}</p>
             </div>`;
+        lastRenderedQuery = searchInput ? searchInput.value.trim() : '';
         searchResults.style.display = 'block';
         searchResults.classList.add('active');
         searchInput.setAttribute('aria-expanded', 'true');
@@ -444,6 +450,7 @@
                 <p>${escapeHtml(message)}</p>
                 <p>다른 검색어로 시도해 보세요.</p>
             </div>`;
+        lastRenderedQuery = searchInput ? searchInput.value.trim() : '';
         searchResults.style.display = 'block';
         searchResults.classList.add('active');
         searchInput.setAttribute('aria-expanded', 'true');
@@ -461,7 +468,7 @@
     }
     
     // Update URL with search query
-    function updateUrl(query) {
+    function updateUrl(query, options = {}) {
         if (!history.pushState) return;
         
         const url = new URL(window.location);
@@ -472,8 +479,12 @@
             url.searchParams.delete('q');
         }
         
-        // Update URL without page reload
-        window.history.pushState({}, '', url);
+        // Update URL without page reload. Live search replaces; explicit actions can push.
+        if (options.mode === 'push') {
+            window.history.pushState({}, '', url);
+        } else {
+            window.history.replaceState({}, '', url);
+        }
     }
     
     // Format date (YYYY-MM-DD)

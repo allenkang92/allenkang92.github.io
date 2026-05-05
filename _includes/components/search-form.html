@@ -1,7 +1,7 @@
 <!-- Search Form Component -->
 <div class="search-widget">
   <div class="search-container" id="search-container">
-    <form class="search-form" role="search" aria-label="사이트 검색">
+    <form class="search-form" role="search" aria-label="사이트 검색" data-search-url="{{ '/search.json' | relative_url }}">
         <label for="search-input" class="visually-hidden">검색어 입력</label>
         <div class="search-input-wrapper">
             <input
@@ -16,6 +16,15 @@
                 aria-controls="search-results"
                 aria-expanded="false"
             >
+            <button
+                type="button"
+                class="clear-button"
+                aria-label="검색어 지우기"
+                aria-hidden="true"
+                tabindex="-1"
+            >
+                ×
+            </button>
             <button
                 type="submit"
                 class="search-button"
