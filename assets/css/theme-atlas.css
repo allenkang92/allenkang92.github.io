@@ -340,52 +340,6 @@ aside#site-sidebar.sidebar-right .navigation .nav-links a.nav-link.active {
   max-height: 360px;
 }
 
-.about-profile,
-.about-section {
-  box-sizing: border-box;
-  width: min(100%, 920px);
-  margin: 0 auto;
-  padding: 1rem;
-}
-
-.about-profile {
-  padding-top: 2rem;
-}
-
-.about-eyebrow {
-  margin: 0 0 0.5rem;
-  color: var(--atlas-teal);
-  font-weight: 800;
-}
-
-.about-lead {
-  max-width: 720px;
-  font-size: 1.08rem;
-  line-height: 1.75;
-}
-
-.about-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1rem;
-}
-
-.about-panel,
-.about-note {
-  border: 1px solid var(--atlas-border);
-  border-radius: var(--atlas-radius);
-  background: rgba(255, 255, 255, 0.74);
-  box-shadow: var(--atlas-shadow-tight);
-}
-
-.about-panel {
-  padding: 1.2rem;
-}
-
-.about-panel h3 {
-  margin-top: 0;
-}
-
 .chip-list {
   display: flex;
   flex-wrap: wrap;
@@ -1166,10 +1120,6 @@ mark {
 
   .home-dashboard {
     gap: 2rem;
-  }
-
-  .about-grid {
-    grid-template-columns: 1fr;
   }
 
   .home-brief {

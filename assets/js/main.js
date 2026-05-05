@@ -2,12 +2,6 @@
 document.addEventListener('DOMContentLoaded', async () => {
     // 검색 기능은 simple-search.js에서 자동으로 초기화됨
 
-    // 모달 기능 조건부 로딩
-    if (document.querySelector('.modal') || document.querySelector('[data-modal]')) {
-        const { initModal } = await import('./modules/modal.js');
-        initModal();
-    }
-    
     // 필터 기능 조건부 로딩 (포스트/업적 페이지에서만)
     if (document.querySelector('#category-select') || document.querySelector('#achievement-category-select')) {
         const { initFilter } = await import('./modules/filter.js');

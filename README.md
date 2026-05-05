@@ -22,14 +22,11 @@ allenkang92.github.io/
 │   ├── meta/                    # 메타 정보
 │   │   ├── head.html           # 헤드 태그
 │   │   └── scripts.html        # 스크립트
-│   └── modals/                  # 모달 컴포넌트
-│       └── blog-info.html       # 블로그 정보 모달
 ├── _layouts/                     # 레이아웃 템플릿
 │   ├── default.html             # 기본 레이아웃
 │   ├── post.html                # 포스트 레이아웃
 │   └── page.html                # 페이지 레이아웃
 ├── _pages/                       # 정적 페이지
-│   ├── about.md                 # 소개 페이지
 │   ├── posts.md                 # 글 목록
 │   ├── projects.md              # 프로젝트 목록
 │   └── tools.md                 # 도구 목록
