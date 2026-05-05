@@ -27,6 +27,7 @@ allenkang92.github.io/
 │   ├── post.html                # 포스트 레이아웃
 │   └── page.html                # 페이지 레이아웃
 ├── _pages/                       # 정적 페이지
+│   ├── about.html               # 블로그 소개
 │   ├── posts.md                 # 글 목록
 │   ├── projects.md              # 프로젝트 목록
 │   └── tools.md                 # 도구 목록
