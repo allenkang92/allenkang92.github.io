@@ -19,7 +19,8 @@
                 type="button" 
                 class="clear-button" 
                 aria-label="검색어 지우기"
-                style="display: none;"
+                aria-hidden="true"
+                tabindex="-1"
             >
                 <span aria-hidden="true">×</span>
             </button>
@@ -45,5 +46,9 @@
 </div>
 
 <!-- Load the search script -->
-{% assign asset_version = site.github.build_revision | default: site.time | slugify %}
+{% if jekyll.environment == "production" and site.github.build_revision %}
+  {% assign asset_version = site.github.build_revision %}
+{% else %}
+  {% assign asset_version = site.time | date: "%s" %}
+{% endif %}
 <script src="{{ '/assets/js/simple-search.js' | relative_url }}?v={{ asset_version }}" defer></script>

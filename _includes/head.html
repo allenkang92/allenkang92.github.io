@@ -1,11 +1,15 @@
 <head>
-    {% assign asset_version = site.github.build_revision | default: site.time | slugify %}
+    {% if jekyll.environment == "production" and site.github.build_revision %}
+      {% assign asset_version = site.github.build_revision %}
+    {% else %}
+      {% assign asset_version = site.time | date: "%s" %}
+    {% endif %}
     {% assign analytics_id = site.google_analytics %}
     <!-- 기본 메타 태그 -->
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="theme-color" content="#f8f1e3">
+    <meta name="theme-color" content="#f4fffb">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     
@@ -50,7 +54,7 @@
     <link rel="stylesheet" href="{{ "/assets/css/search.css" | relative_url }}?v={{ asset_version }}">
     <!-- 사이드바 토글 스타일 -->
     <link rel="stylesheet" href="{{ "/assets/css/sidebar-toggle.css" | relative_url }}?v={{ asset_version }}">
-    <!-- Cognitive Atlas theme overrides -->
+    <!-- Theme overrides -->
     <link rel="stylesheet" href="{{ "/assets/css/theme-atlas.css" | relative_url }}?v={{ asset_version }}">
     {% if page.styles %}
       {% for style in page.styles %}

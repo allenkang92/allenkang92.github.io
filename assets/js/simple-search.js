@@ -65,8 +65,10 @@
                 const searchQuery = urlParams.get('q');
                 if (searchQuery) {
                     searchInput.value = searchQuery;
+                    toggleClearButton();
                     performSearch(searchQuery);
                 } else if (searchInput.value.trim()) {
+                    toggleClearButton();
                     performSearch(searchInput.value.trim());
                 }
             })
@@ -146,12 +148,14 @@
         if (!searchClearBtn) return;
         
         if (searchInput.value.length > 0) {
-            searchClearBtn.hidden = false;
-            searchClearBtn.style.display = '';
+            searchInput.closest('.search-input-wrapper')?.classList.add('has-query');
+            searchClearBtn.removeAttribute('aria-hidden');
+            searchClearBtn.removeAttribute('tabindex');
             searchInput.setAttribute('aria-expanded', 'true');
         } else {
-            searchClearBtn.hidden = true;
-            searchClearBtn.style.display = 'none';
+            searchInput.closest('.search-input-wrapper')?.classList.remove('has-query');
+            searchClearBtn.setAttribute('aria-hidden', 'true');
+            searchClearBtn.setAttribute('tabindex', '-1');
             searchInput.setAttribute('aria-expanded', 'false');
         }
     }
@@ -394,6 +398,7 @@
         // Update the DOM
         searchResults.innerHTML = html;
         searchResults.style.display = 'block';
+        searchResults.classList.add('active');
         searchInput.setAttribute('aria-expanded', 'true');
     }
     
@@ -406,6 +411,7 @@
                 <p>${escapeHtml(message)}</p>
             </div>`;
         searchResults.style.display = 'block';
+        searchResults.classList.add('active');
         searchInput.setAttribute('aria-expanded', 'true');
     }
     
@@ -419,6 +425,7 @@
                 <p>다른 검색어로 시도해 보세요.</p>
             </div>`;
         searchResults.style.display = 'block';
+        searchResults.classList.add('active');
         searchInput.setAttribute('aria-expanded', 'true');
     }
     
@@ -426,6 +433,7 @@
     function hideResults() {
         if (searchResults) {
             searchResults.style.display = 'none';
+            searchResults.classList.remove('active');
         }
         if (searchInput) {
             searchInput.setAttribute('aria-expanded', 'false');
