@@ -1,75 +1,107 @@
 ---
 layout: default
 title: About
-description: "Allen's Blog의 관점, 주제, 읽는 방법"
+description: "About Allen Kang and this blog"
 permalink: /about/
 ---
 
 <article class="about-page" aria-labelledby="about-title">
-  <header class="about-hero">
-    <p class="about-kicker">About Allen's Blog</p>
-    <h1 id="about-title">질문을 오래 붙잡는 지식 실험실</h1>
-    <p class="about-lede">
-      Allen's Blog는 수학철학과 과학사, 웹 접근성, 실험형 계산 도구를 엮어
-      지식을 읽고 검증하는 방법을 정리합니다. 빠른 결론보다 개념의 맥락,
-      근거의 출처, 실제 화면에서의 쓰임을 차분히 남깁니다.
-    </p>
-    <nav class="about-actions" aria-label="소개 페이지 주요 이동">
-      <a class="about-action about-action--primary" href="{{ '/posts/' | relative_url }}">글 읽기</a>
-      <a class="about-action" href="{{ '/series/' | relative_url }}">시리즈 보기</a>
-      <a class="about-action" href="{{ '/tools/' | relative_url }}">도구 사용하기</a>
-    </nav>
+  <header class="about-app-header">
+    <div class="about-avatar" aria-hidden="true"></div>
+    <div class="about-heading-copy">
+      <p class="about-kicker">Personal Notes</p>
+      <h1 id="about-title">Allen Kang</h1>
+      <p>Writing, reading, and building small tools around ideas I want to understand better.</p>
+    </div>
   </header>
 
-  <section class="about-section" aria-labelledby="about-focus-title">
-    <p class="section-kicker">Focus</p>
-    <h2 id="about-focus-title">이 블로그가 붙잡는 세 가지 질문</h2>
-    <div class="about-pillar-grid">
-      <section class="about-pillar" aria-labelledby="about-pillar-math">
-        <h3 id="about-pillar-math">수학은 무엇을 말하는가</h3>
-        <p>무한, 증명, 존재론, 확률처럼 추상적인 개념을 역사와 철학의 흐름 안에서 다시 읽습니다.</p>
-      </section>
-      <section class="about-pillar" aria-labelledby="about-pillar-science">
-        <h3 id="about-pillar-science">과학은 어떻게 세계를 설명하는가</h3>
-        <p>과학사와 물리학의 전환점을 따라가며, 이론이 바뀔 때 세계를 보는 방식도 어떻게 달라지는지 살핍니다.</p>
-      </section>
-      <section class="about-pillar" aria-labelledby="about-pillar-web">
-        <h3 id="about-pillar-web">좋은 웹은 누구를 배려하는가</h3>
-        <p>접근성, 반응형 UI, 작은 계산 도구를 통해 지식이 실제 화면에서 어떻게 더 잘 전달되는지 확인합니다.</p>
-      </section>
-    </div>
-  </section>
-
-  <section class="about-section" aria-labelledby="about-principles-title">
-    <p class="section-kicker">Principles</p>
-    <h2 id="about-principles-title">운영 원칙</h2>
-    <ol class="about-principles">
-      <li>
-        <strong>근거를 남깁니다.</strong>
-        참고자료, 갱신일, 관련 글을 함께 정리해 나중에 다시 검토할 수 있게 합니다.
-      </li>
-      <li>
-        <strong>시리즈로 축적합니다.</strong>
-        단편 글보다 장기적으로 이어 읽을 수 있는 흐름을 우선합니다.
-      </li>
-      <li>
-        <strong>도구로 확인합니다.</strong>
-        개념 설명에 그치지 않고 계산기와 변환기처럼 직접 만져볼 수 있는 형태를 함께 만듭니다.
-      </li>
-    </ol>
-  </section>
-
-  <section class="about-section about-entry" aria-labelledby="about-entry-title">
-    <p class="section-kicker">Start</p>
-    <h2 id="about-entry-title">처음 온다면</h2>
+  <section class="about-main-card" aria-labelledby="about-main-title">
+    <p class="about-card-label">Current Focus</p>
+    <h2 id="about-main-title">Mathematics, science, accessibility, and useful calculators.</h2>
     <p>
-      수학철학·수학사 시리즈에서 큰 질문을 따라가고, 과학철학·과학사 시리즈에서 세계관의 변화를 읽은 뒤,
-      도구 페이지에서 계산기를 직접 써보면 이 블로그의 방향이 가장 잘 보입니다.
+      I use this blog to turn scattered study notes into readable essays, series, references, and simple tools.
     </p>
-    <ul class="about-link-list">
-      <li><a href="{{ '/series/mathematics-philosophy-history/' | relative_url }}">수학철학·수학사 시리즈</a></li>
-      <li><a href="{{ '/series/science-philosophy-history/' | relative_url }}">과학철학·과학사 시리즈</a></li>
-      <li><a href="{{ '/tools/' | relative_url }}">계산 도구 모음</a></li>
+  </section>
+
+  <section class="about-app-section" aria-labelledby="about-start-title">
+    <h2 id="about-start-title">Start here</h2>
+    <ul class="about-app-list">
+      <li>
+        <a href="{{ '/posts/' | relative_url }}">
+          <span class="about-list-icon" aria-hidden="true">N</span>
+          <span class="about-list-copy">
+            <strong>Notes</strong>
+            <small>Read the latest posts</small>
+          </span>
+          <span class="about-list-arrow" aria-hidden="true">›</span>
+        </a>
+      </li>
+      <li>
+        <a href="{{ '/series/' | relative_url }}">
+          <span class="about-list-icon" aria-hidden="true">S</span>
+          <span class="about-list-copy">
+            <strong>Series</strong>
+            <small>Follow topics in order</small>
+          </span>
+          <span class="about-list-arrow" aria-hidden="true">›</span>
+        </a>
+      </li>
+      <li>
+        <a href="{{ '/tools/' | relative_url }}">
+          <span class="about-list-icon" aria-hidden="true">T</span>
+          <span class="about-list-copy">
+            <strong>Tools</strong>
+            <small>Open calculators and converters</small>
+          </span>
+          <span class="about-list-arrow" aria-hidden="true">›</span>
+        </a>
+      </li>
+    </ul>
+  </section>
+
+  <section class="about-app-section" aria-labelledby="about-topics-title">
+    <h2 id="about-topics-title">Work in progress</h2>
+    <ul class="about-app-list">
+      <li>
+        <a href="{{ '/series/mathematics-philosophy-history/' | relative_url }}">
+          <span class="about-list-icon" aria-hidden="true">M</span>
+          <span class="about-list-copy">
+            <strong>Mathematics</strong>
+            <small>Philosophy, history, proof, infinity</small>
+          </span>
+          <span class="about-list-arrow" aria-hidden="true">›</span>
+        </a>
+      </li>
+      <li>
+        <a href="{{ '/series/science-philosophy-history/' | relative_url }}">
+          <span class="about-list-icon" aria-hidden="true">P</span>
+          <span class="about-list-copy">
+            <strong>Science</strong>
+            <small>Philosophy, history, and modern physics</small>
+          </span>
+          <span class="about-list-arrow" aria-hidden="true">›</span>
+        </a>
+      </li>
+      <li>
+        <a href="{{ '/posts/?category=web_technologies' | relative_url }}">
+          <span class="about-list-icon" aria-hidden="true">A</span>
+          <span class="about-list-copy">
+            <strong>Accessibility</strong>
+            <small>Readable interfaces and responsive web</small>
+          </span>
+          <span class="about-list-arrow" aria-hidden="true">›</span>
+        </a>
+      </li>
+      <li>
+        <a href="{{ '/tools/' | relative_url }}">
+          <span class="about-list-icon" aria-hidden="true">C</span>
+          <span class="about-list-copy">
+            <strong>Calculators</strong>
+            <small>Units, kinetic energy, acceleration</small>
+          </span>
+          <span class="about-list-arrow" aria-hidden="true">›</span>
+        </a>
+      </li>
     </ul>
   </section>
 </article>

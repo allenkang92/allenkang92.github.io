@@ -92,6 +92,7 @@
     function setupEventListeners() {
         // Input event with debounce
         searchInput.addEventListener('input', handleSearchInput);
+        searchInput.addEventListener('focus', handleSearchFocus);
         
         // Form submission
         searchForm.addEventListener('submit', handleFormSubmit);
@@ -133,6 +134,21 @@
             performSearch(query);
         }, 300);
     }
+
+    // Re-open existing results when users return to the search box.
+    function handleSearchFocus() {
+        const query = searchInput.value.trim();
+        if (!query) return;
+
+        if (searchResults && searchResults.innerHTML.trim()) {
+            searchResults.style.display = 'block';
+            searchResults.classList.add('active');
+            searchInput.setAttribute('aria-expanded', 'true');
+            return;
+        }
+
+        performSearch(query);
+    }
     
     // Handle form submission
     function handleFormSubmit(e) {
@@ -171,6 +187,10 @@
     
     // Handle clicks outside the search container
     function handleClickOutside(e) {
+        if (e.target.closest && e.target.closest('.sidebar-toggle')) {
+            return;
+        }
+
         if (searchContainer && !searchContainer.contains(e.target)) {
             hideResults();
         }
@@ -351,7 +371,7 @@
                 
                 if (result.category) {
                     html += `
-                        <span class="category-tag">${escapeHtml(result.category)}</span>`;
+                        <span class="category-tag">${escapeHtml(formatCategoryLabel(result.category))}</span>`;
                 }
                 
                 if (formattedDate) {
@@ -461,6 +481,19 @@
         if (!dateString) return '';
         const date = new Date(dateString);
         return isNaN(date.getTime()) ? '' : date.toISOString().split('T')[0];
+    }
+
+    // Format category keys for display
+    function formatCategoryLabel(category) {
+        const categoryLabels = {
+            mathematics_philosophy_history: '수학철학·수학사',
+            science_philosophy_history: '과학철학·과학사',
+            web_technologies: '웹 기술',
+            daily_life: '일상'
+        };
+
+        if (!category) return '';
+        return categoryLabels[category] || category.replace(/_/g, ' ');
     }
     
     // Strip HTML tags from content

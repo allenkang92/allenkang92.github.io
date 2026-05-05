@@ -9,7 +9,7 @@
   right: 20px;
   width: 44px;
   height: 44px;
-  background: var(--atlas-violet, #7467d6);
+  background: var(--atlas-teal, #1f746a);
   border: 1px solid rgba(255, 255, 255, 0.86);
   border-radius: 8px;
   cursor: pointer;
@@ -25,7 +25,7 @@
 }
 
 .sidebar-toggle:hover {
-  background: var(--atlas-teal, #2f9e8f);
+  background: #155f57;
   box-shadow: 0 14px 30px rgba(34, 57, 54, 0.22);
 }
 
@@ -67,8 +67,8 @@
     right: 0;
     height: 100vh;
     z-index: 1000;
-    background: #fff;
-    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
+    background: var(--atlas-sidebar, #effbf6);
+    box-shadow: -8px 0 28px rgba(31, 52, 48, 0.14);
   }
   
   .sidebar-right.sidebar-collapsed {
@@ -99,7 +99,7 @@
 
 /* Accessibility */
 .sidebar-toggle:focus {
-  outline: 3px solid var(--atlas-focus, #217f74);
+  outline: 3px solid var(--atlas-focus, #1f746a);
   outline-offset: 2px;
 }
 
@@ -110,11 +110,11 @@
 /* Dark mode support */
 @media (prefers-color-scheme: dark) {
   .sidebar-toggle {
-    background: var(--atlas-violet, #7467d6);
+    background: var(--atlas-teal, #1f746a);
   }
   
   .sidebar-toggle:hover {
-    background: var(--atlas-teal, #2f9e8f);
+    background: #155f57;
   }
   
   .sidebar-right {
