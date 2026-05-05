@@ -1,3 +1,8 @@
+/* 핵심 스타일시트만 즉시 로드 - 성능 최적화 */
+@import url('./style.css');
+@import url('./search.css');
+@import url('./theme.css');
+
 /* 폰트 정의 - 성능 개선을 위한 속성 추가 */
 @font-face {
   font-family: 'PFStardust';
@@ -7,11 +12,6 @@
   font-display: swap; /* 폰트 로딩 성능 개선 */
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; /* 필요한 문자만 로드 */
 }
-
-/* 핵심 스타일시트만 즉시 로드 - 성능 최적화 */
-@import url('./style.css');
-@import url('./search.css');
-@import url('./theme.css');
 
 /* 페이지별 스타일은 조건부 로드로 변경 예정 */
 

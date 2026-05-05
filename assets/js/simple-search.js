@@ -9,6 +9,7 @@
     // DOM Elements
     let searchInput;
     let searchForm;
+    let searchContainer;
     let searchResults;
     let searchClearBtn;
     let searchSubmitBtn;
@@ -23,11 +24,12 @@
     function initSearch() {
         // Get DOM elements
         searchForm = document.querySelector('.search-form');
+        searchContainer = document.getElementById('search-container');
         searchInput = document.getElementById('search-input');
-        searchButton = document.querySelector('.search-button');
-        clearButton = document.querySelector('.clear-button');
+        searchSubmitBtn = document.querySelector('.search-button');
+        searchClearBtn = document.querySelector('.clear-button');
         searchResults = document.getElementById('search-results');
-        searchSpinner = document.querySelector('.search-spinner');
+        searchLoading = document.querySelector('.search-spinner');
         
         if (!searchForm || !searchInput || !searchResults) {
             console.error('Required search elements not found');
@@ -39,8 +41,6 @@
         
         // Set up event listeners
         setupEventListeners();
-        
-        console.log('Simple search initialized');
     }
         
     // Load search data from search.json
@@ -60,13 +60,14 @@
             })
             .then(data => {
                 searchData = Array.isArray(data) ? data : [];
-                console.log(`Loaded ${searchData.length} posts for search`);
                 // If there's a search query in the URL, perform the search
                 const urlParams = new URLSearchParams(window.location.search);
                 const searchQuery = urlParams.get('q');
                 if (searchQuery) {
                     searchInput.value = searchQuery;
                     performSearch(searchQuery);
+                } else if (searchInput.value.trim()) {
+                    performSearch(searchInput.value.trim());
                 }
             })
             .catch(error => {
@@ -146,9 +147,11 @@
         
         if (searchInput.value.length > 0) {
             searchClearBtn.hidden = false;
+            searchClearBtn.style.display = '';
             searchInput.setAttribute('aria-expanded', 'true');
         } else {
             searchClearBtn.hidden = true;
+            searchClearBtn.style.display = 'none';
             searchInput.setAttribute('aria-expanded', 'false');
         }
     }
@@ -164,7 +167,7 @@
     
     // Handle clicks outside the search container
     function handleClickOutside(e) {
-        if (!searchForm.contains(e.target)) {
+        if (searchContainer && !searchContainer.contains(e.target)) {
             hideResults();
         }
     }
@@ -174,6 +177,9 @@
         // Close on Escape key
         if (e.key === 'Escape') {
             hideResults();
+            if (searchContainer && searchContainer.contains(document.activeElement)) {
+                searchInput.focus();
+            }
         }
         
         // Handle arrow key navigation in results
@@ -200,7 +206,7 @@
     // Perform the search
     function performSearch(query) {
         if (isSearching || !searchData || searchData.length === 0) {
-            showLoading(true);
+            showLoading(false);
             return;
         }
         
@@ -312,6 +318,7 @@
             // Highlight matches in title and excerpt
             let highlightedTitle = escapeHtml(result.title || '제목 없음');
             let excerpt = truncateText(stripHtml(result.content || ''), 150);
+            const formattedDate = formatDate(result.date);
             
             // Apply highlighting
             queryTerms.forEach(term => {
@@ -330,7 +337,7 @@
             html += `
                 <li class="search-result-item">
                     <h3 class="search-result-title">
-                        <a href="${result.url}">${highlightedTitle}</a>
+                        <a href="${escapeHtml(result.url || '#')}">${highlightedTitle}</a>
                     </h3>`;
             
             // Add metadata (category and date)
@@ -387,12 +394,7 @@
         // Update the DOM
         searchResults.innerHTML = html;
         searchResults.style.display = 'block';
-        
-        // Focus the first result for keyboard navigation
-        const firstResult = searchResults.querySelector('.search-result-item a');
-        if (firstResult) {
-            firstResult.setAttribute('tabindex', '-1');
-        }
+        searchInput.setAttribute('aria-expanded', 'true');
     }
     
     // Show error message
@@ -404,6 +406,7 @@
                 <p>${escapeHtml(message)}</p>
             </div>`;
         searchResults.style.display = 'block';
+        searchInput.setAttribute('aria-expanded', 'true');
     }
     
     // Show no results message
@@ -416,12 +419,16 @@
                 <p>다른 검색어로 시도해 보세요.</p>
             </div>`;
         searchResults.style.display = 'block';
+        searchInput.setAttribute('aria-expanded', 'true');
     }
     
     // Hide search results
     function hideResults() {
         if (searchResults) {
             searchResults.style.display = 'none';
+        }
+        if (searchInput) {
+            searchInput.setAttribute('aria-expanded', 'false');
         }
     }
     
@@ -490,7 +497,10 @@
     // Show loading state
     function showLoading(show) {
         if (searchLoading) {
-            searchLoading.style.display = show ? 'block' : 'none';
+            searchLoading.style.display = show ? 'flex' : 'none';
+        }
+        if (searchSubmitBtn) {
+            searchSubmitBtn.setAttribute('aria-busy', show ? 'true' : 'false');
         }
     }
     

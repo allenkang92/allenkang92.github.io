@@ -7,10 +7,10 @@
   position: fixed;
   top: 20px;
   right: 20px;
-  width: 35px;
-  height: 35px;
-  background: #4a6cf7;
-  border: none;
+  width: 44px;
+  height: 44px;
+  background: #5141b8;
+  border: 2px solid #f8f1e3;
   border-radius: 8px;
   cursor: pointer;
   z-index: 1001;
@@ -25,15 +25,15 @@
 }
 
 .sidebar-toggle:hover {
-  background: #3857e0;
-  box-shadow: 0 4px 12px rgba(74, 108, 247, 0.3);
+  background: #005f5f;
+  box-shadow: 0 4px 12px rgba(81, 65, 184, 0.3);
 }
 
 .sidebar-toggle span {
   display: block;
   width: 100%;
   height: 2px;
-  background: #fff;
+  background: #fffaf0;
   transition: all 0.3s ease;
 }
 
@@ -82,33 +82,24 @@
     display: none;
   }
   
-  /* Show toggle on hover */
-  .sidebar-right:hover .sidebar-toggle {
-    display: flex;
-    opacity: 0.7;
-  }
-  
-  .sidebar-toggle:hover {
-    opacity: 1 !important;
-  }
 }
 
 /* Animation for hamburger menu */
-.sidebar-right.sidebar-collapsed .sidebar-toggle span:nth-child(1) {
+.sidebar-toggle[aria-expanded="true"] span:nth-child(1) {
   transform: rotate(45deg) translate(5px, 5px);
 }
 
-.sidebar-right.sidebar-collapsed .sidebar-toggle span:nth-child(2) {
+.sidebar-toggle[aria-expanded="true"] span:nth-child(2) {
   opacity: 0;
 }
 
-.sidebar-right.sidebar-collapsed .sidebar-toggle span:nth-child(3) {
+.sidebar-toggle[aria-expanded="true"] span:nth-child(3) {
   transform: rotate(-45deg) translate(5px, -5px);
 }
 
 /* Accessibility */
 .sidebar-toggle:focus {
-  outline: 2px solid #4a6cf7;
+  outline: 3px solid #7c5cff;
   outline-offset: 2px;
 }
 

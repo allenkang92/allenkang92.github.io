@@ -2,6 +2,7 @@
 layout: default
 title: Projects
 description: Explore my projects and contributions
+permalink: /projects/
 ---
 
 # Projects

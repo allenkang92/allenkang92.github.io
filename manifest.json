@@ -4,22 +4,12 @@
   "description": "Cognitive Science, Neuroscience, Physics, and Programming",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#007bff",
+  "background_color": "#f8f1e3",
+  "theme_color": "#f8f1e3",
   "icons": [
     {
-      "src": "/favicon-16x16.png",
-      "sizes": "16x16",
-      "type": "image/png"
-    },
-    {
-      "src": "/favicon-32x32.png",
-      "sizes": "32x32",
-      "type": "image/png"
-    },
-    {
       "src": "/apple-touch-icon.png",
-      "sizes": "180x180",
+      "sizes": "1024x1024",
       "type": "image/png"
     }
   ]

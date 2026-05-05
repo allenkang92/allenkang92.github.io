@@ -1,154 +1,147 @@
 ---
 layout: default
 title: Home
-description: Striving for a better tomorrow, together with you.
+description: 수학철학, 과학사, 웹 접근성, 작은 계산 도구를 함께 정리하는 개인 블로그입니다.
 ---
 
-<div class="home-container">
-  <section class="recent-posts-section">
-    <h2 class="section-title">Recent Posts</h2>
-    
+{% assign math_intro = site.posts | where: "title", "서론: 수학철학 및 수학사 둘러보기" | first %}
+{% assign science_intro = site.posts | where: "title", "서론: 과학철학 및 과학사 둘러보기" | first %}
+{% assign accessibility_post = site.posts | where: "title", "웹 접근성 및 CSS 심화, 호환성 이슈" | first %}
+
+<div class="home-container home-dashboard">
+  <section class="home-brief" aria-labelledby="home-title">
+    <p class="home-eyebrow">Allen's Blog</p>
+    <h1 id="home-title">생각을 정리하고 검증하는 곳</h1>
+    <p class="home-lede">
+      수학철학과 수학사, 과학사, 웹 접근성, 그리고 직접 써볼 수 있는 작은 계산 도구를 한 곳에 모았습니다.
+    </p>
+
+    <nav class="home-actions" aria-label="주요 이동">
+      <a class="home-action primary" href="{{ '/posts/' | relative_url }}">글 탐색</a>
+      <a class="home-action" href="{{ '/series/' | relative_url }}">시리즈</a>
+      <a class="home-action" href="{{ '/tools/' | relative_url }}">계산기</a>
+    </nav>
+
+    <dl class="home-metrics" aria-label="콘텐츠 현황">
+      <div class="metric">
+        <dt>{{ site.posts.size }}</dt>
+        <dd>전체 글</dd>
+      </div>
+      <div class="metric">
+        <dt>{{ site.categories.mathematics_philosophy_history | size }}</dt>
+        <dd>수학철학·수학사</dd>
+      </div>
+      <div class="metric">
+        <dt>{{ site.categories.web_technologies | size }}</dt>
+        <dd>웹·접근성</dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="home-section" aria-labelledby="tracks-title">
+    <div class="section-heading">
+      <p class="section-kicker">Reading Tracks</p>
+      <h2 id="tracks-title">주제별로 바로 이어 읽기</h2>
+    </div>
+
+    <div class="track-grid">
+      <article class="track-card">
+        <p class="track-index">01</p>
+        <h3>수학철학과 수학사</h3>
+        <p>무한, 증명, 존재론, 확률, 현실과 수학의 관계를 긴 호흡으로 따라갑니다.</p>
+        <a href="{{ '/posts/?category=mathematics_philosophy_history' | relative_url }}">
+          {{ site.categories.mathematics_philosophy_history | size }}개 글 보기
+        </a>
+      </article>
+
+      <article class="track-card">
+        <p class="track-index">02</p>
+        <h3>과학철학과 물리학사</h3>
+        <p>표준 모형, 입자, 자연계의 힘, 현대 물리학의 과제를 역사와 철학으로 묶습니다.</p>
+        <a href="{{ '/posts/?category=science_philosophy_history' | relative_url }}">
+          {{ site.categories.science_philosophy_history | size }}개 글 보기
+        </a>
+      </article>
+
+      <article class="track-card">
+        <p class="track-index">03</p>
+        <h3>웹 접근성과 도구</h3>
+        <p>시맨틱 마크업, CSS, 접근성 기준, 계산기를 실제 화면에서 확인할 수 있게 정리합니다.</p>
+        <a href="{{ '/tools/' | relative_url }}">도구 열기</a>
+      </article>
+    </div>
+  </section>
+
+  <section class="home-section home-featured" aria-labelledby="featured-title">
+    <div class="section-heading">
+      <p class="section-kicker">Start Here</p>
+      <h2 id="featured-title">처음 읽기 좋은 글</h2>
+    </div>
+
+    <div class="featured-list">
+      {% if math_intro %}
+      <article class="featured-item">
+        <span class="featured-label">수학</span>
+        <h3><a href="{{ math_intro.url | relative_url }}">{{ math_intro.title }}</a></h3>
+        <p>{{ math_intro.excerpt | strip_html | truncatewords: 24 }}</p>
+      </article>
+      {% endif %}
+
+      {% if science_intro %}
+      <article class="featured-item">
+        <span class="featured-label">과학</span>
+        <h3><a href="{{ science_intro.url | relative_url }}">{{ science_intro.title }}</a></h3>
+        <p>{{ science_intro.excerpt | strip_html | truncatewords: 24 }}</p>
+      </article>
+      {% endif %}
+
+      {% if accessibility_post %}
+      <article class="featured-item">
+        <span class="featured-label">웹</span>
+        <h3><a href="{{ accessibility_post.url | relative_url }}">{{ accessibility_post.title }}</a></h3>
+        <p>{{ accessibility_post.excerpt | strip_html | truncatewords: 24 }}</p>
+      </article>
+      {% endif %}
+    </div>
+  </section>
+
+  <section class="home-section recent-posts-section" aria-labelledby="recent-title">
+    <div class="section-heading section-heading-inline">
+      <div>
+        <p class="section-kicker">Latest</p>
+        <h2 id="recent-title">최근 글</h2>
+      </div>
+      <a href="{{ '/posts/' | relative_url }}" class="view-all-link">전체 글 보기</a>
+    </div>
+
     <div class="recent-posts">
-      {% for post in site.posts limit:3 %}
+      {% for post in site.posts limit:5 %}
         <article class="post-card">
           <h3 class="post-title">
             <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
           </h3>
           <div class="post-meta">
-            <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%B %d, %Y" }}</time>
+            <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%Y년 %m월 %d일" }}</time>
             {% if post.categories %}
-              <span class="category-badge">{{ post.categories | first }}</span>
+              {% for category in post.categories limit:1 %}
+                <span class="category-badge">
+                  {% case category %}
+                    {% when 'mathematics_philosophy_history' %}수학철학·수학사
+                    {% when 'science_philosophy_history' %}과학철학·과학사
+                    {% when 'web_technologies' %}웹 기술
+                    {% when 'daily_life' %}일상
+                    {% else %}{{ category | replace: '_', ' ' | capitalize }}
+                  {% endcase %}
+                </span>
+              {% endfor %}
             {% endif %}
           </div>
           <div class="post-excerpt">
-            {{ post.excerpt | strip_html | truncatewords: 30 }}
+            {{ post.excerpt | strip_html | truncatewords: 28 }}
           </div>
-          <a href="{{ post.url | relative_url }}" class="read-more">Read more →</a>
+          <a href="{{ post.url | relative_url }}" class="read-more">읽기</a>
         </article>
       {% endfor %}
     </div>
-    
-    <div class="view-all">
-      <a href="{{ '/posts/' | relative_url }}" class="view-all-link">View all posts →</a>
-    </div>
   </section>
 </div>
-
-<style>
-.home-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem;
-}
-
-.recent-posts-section {
-  margin-bottom: 3rem;
-}
-
-.section-title {
-  font-size: 2rem;
-  margin-bottom: 2rem;
-  color: #333;
-  border-bottom: 2px solid #007bff;
-  padding-bottom: 0.5rem;
-}
-
-.recent-posts {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
-  margin-bottom: 2rem;
-}
-
-.post-card {
-  background: white;
-  border: 1px solid #e9ecef;
-  border-radius: 8px;
-  padding: 1.5rem;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.post-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-}
-
-.post-title {
-  margin: 0 0 1rem 0;
-  font-size: 1.3rem;
-}
-
-.post-title a {
-  color: #333;
-  text-decoration: none;
-  transition: color 0.3s ease;
-}
-
-.post-title a:hover {
-  color: #007bff;
-}
-
-.post-meta {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1rem;
-  font-size: 0.9rem;
-  color: #6c757d;
-}
-
-.category-badge {
-  background: #007bff;
-  color: white;
-  padding: 0.2rem 0.6rem;
-  border-radius: 4px;
-  font-size: 0.8rem;
-}
-
-.post-excerpt {
-  color: #495057;
-  line-height: 1.6;
-  margin-bottom: 1rem;
-}
-
-.read-more {
-  color: #007bff;
-  text-decoration: none;
-  font-weight: 500;
-  transition: color 0.3s ease;
-}
-
-.read-more:hover {
-  color: #0056b3;
-}
-
-.view-all {
-  text-align: center;
-  margin-top: 2rem;
-}
-
-.view-all-link {
-  display: inline-block;
-  padding: 0.8rem 2rem;
-  background: #007bff;
-  color: white;
-  text-decoration: none;
-  border-radius: 6px;
-  font-weight: 500;
-  transition: background 0.3s ease;
-}
-
-.view-all-link:hover {
-  background: #0056b3;
-}
-
-@media (max-width: 768px) {
-  .recent-posts {
-    grid-template-columns: 1fr;
-  }
-  
-  .home-container {
-    padding: 1rem;
-  }
-}
-</style>

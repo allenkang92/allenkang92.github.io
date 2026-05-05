@@ -63,7 +63,4 @@ document.addEventListener('DOMContentLoaded', function() {
   if (ctx) {
     new Chart(ctx, config);
   }
-
-  // About 페이지 초기화 완료
-  console.log('About 페이지 레이더 차트 초기화 완료');
 });

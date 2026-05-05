@@ -1,19 +1,21 @@
 # 메인 네비게이션
 main:
-  - title: "Home"
+  - title: "홈"
     url: "/"
-  - title: "Posts"
+  - title: "글"
     url: "/posts/"
-  - title: "Series"
+  - title: "시리즈"
     url: "/series/"
-  - title: "Achievements"
+  - title: "도구"
+    url: "/tools/"
+  - title: "성과"
     url: "/achievements/"
-  - title: "About"
+  - title: "소개"
     url: "/about/"
 
 # 푸터 네비게이션
 footer:
-  - title: "Search"
+  - title: "검색"
     url: "/search/"
-  - title: "About"
+  - title: "소개"
     url: "/about/"

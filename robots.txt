@@ -8,7 +8,6 @@ Sitemap: https://allenkang92.github.io/sitemap.xml
 Crawl-delay: 10
 
 # 제외할 디렉토리
-Disallow: /assets/
 Disallow: /_layouts/
 Disallow: /_includes/
 Disallow: /_data/

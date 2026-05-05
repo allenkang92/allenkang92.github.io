@@ -1,30 +1,28 @@
----
----
+// Legacy Sass import manifest.
+// The live site uses assets/css/main.css plus theme-atlas.css.
+// This file is excluded from Jekyll processing to avoid output conflicts.
 
-// Jekyll 네이티브 Sass 컴파일러 사용
-// _sass 디렉토리의 파일들을 import
-
-// 1. 변수 정의
+// 1. Variables
 @import "variables";
 
-// 2. 기본 스타일
+// 2. Base styles
 @import "base";
 
-// 3. 레이아웃 컴포넌트
+// 3. Layout components
 @import "layout";
 @import "sidebar";
 
-// 4. 페이지별 스타일
+// 4. Page styles
 @import "pages/home";
 @import "pages/about";
 @import "pages/posts";
 @import "pages/achievements";
 
-// 5. 컴포넌트 스타일
+// 5. Components
 @import "components/search";
 @import "components/modal";
 @import "components/category-filter";
 @import "components/responsive-image";
 
-// 6. 유틸리티 클래스
+// 6. Utilities
 @import "utilities";

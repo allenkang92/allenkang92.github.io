@@ -6,7 +6,7 @@ permalink: /about/all/
 
 <div class="about-content" markdown="1">
 
-## About Me
+# About Me
 
 <div class="introduction" style="text-align: center; font-size: 1.5em; margin: 30px 0; color: #333; font-weight: 500;">
 Aspirant in Cognitive Science and Neuroscience | Data Engineer

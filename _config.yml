@@ -2,10 +2,12 @@
 title: Allen's Blog
 description: Striving for a better tomorrow, together with you.
 url: "https://allenkang92.github.io" # 웨사이트 주소
+lang: ko_KR
 github_username: allenkang92
 author: Allen Kang
 email: ksw8841@knou.ac.kr
 baseurl: "" # 서브디렉토리가 있을 경우 예: /blog
+google_analytics: G-C2BXF21DKW
 
 # 사이트 속성
 is_project_page: true
@@ -16,7 +18,7 @@ markdown: kramdown
 theme: minima
 future: true
 highlighter: rouge
-incremental: true
+incremental: false
 
 # Kramdown 설정
 kramdown:
@@ -63,10 +65,13 @@ data_dir: _data
 
 # Exclude from processing
 exclude:
+  - AGENTS.md
   - Gemfile
   - Gemfile.lock
   - node_modules
   - vendor
+  - assets/css/main.scss
+  - assets/css/main-new.scss
   - package.json
   - package-lock.json
   - webpack.config.js

@@ -4,7 +4,6 @@ export function initModal() {
     var span = document.querySelector(".modal-close");
 
     if (!modal || !btn) {
-        console.log('Modal elements not found');
         return;
     }
 

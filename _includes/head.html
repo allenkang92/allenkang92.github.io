@@ -1,18 +1,16 @@
 <head>
+    {% assign asset_version = site.github.build_revision | default: site.time | slugify %}
+    {% assign analytics_id = site.google_analytics %}
     <!-- 기본 메타 태그 -->
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="theme-color" content="#A8E1DB">
+    <meta name="theme-color" content="#f8f1e3">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="description" content="{% if page.excerpt %}{{ page.excerpt | strip_html | strip_newlines | truncate: 160 }}{% else %}{{ site.description }}{% endif %}">
-    <link rel="canonical" href="{{ page.url | replace:'index.html','' | prepend: site.baseurl | prepend: site.url }}">
     
     <!-- 성능 최적화 및 중요 리소스 프리로드 -->
-    <link rel="preload" href="{{ "/assets/css/main.css" | relative_url }}" as="style">
-    <link rel="preload" href="{{ "/assets/js/main.js" | relative_url }}" as="script">
-    <link rel="preload" href="{{ "/assets/fonts/PFStardust 3.0.ttf" | relative_url }}" as="font" type="font/ttf" crossorigin>
+    <link rel="preload" href="{{ "/assets/css/main.css" | relative_url }}?v={{ asset_version }}" as="style">
     
     <!-- 검색 엔진 최적화 -->
     <meta name="robots" content="index, follow">
@@ -20,100 +18,45 @@
     <!-- 검색 엔진 및 소셜 마크업 -->
     {% seo %}
     
-    <!-- 오픈 그래프 데이터 -->
-    <meta property="og:locale" content="ko_KR">
-    <meta property="og:type" content="{% if page.layout == 'post' %}article{% else %}website{% endif %}">
-    <meta property="og:title" content="{% if page.title %}{{ page.title }}{% else %}{{ site.title }}{% endif %}">
-    <meta property="og:description" content="{% if page.excerpt %}{{ page.excerpt | strip_html | strip_newlines | truncate: 160 }}{% else %}{{ site.description }}{% endif %}">
-    <meta property="og:url" content="{{ page.url | replace:'index.html','' | prepend: site.baseurl | prepend: site.url }}">
-    <meta property="og:site_name" content="{{ site.title }}">
-    {% if page.image %}
-    <meta property="og:image" content="{{ page.image | prepend: site.baseurl | prepend: site.url }}">
-    {% endif %}
-    
-    <!-- 트위터 카드 데이터 -->
-    <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="{% if page.title %}{{ page.title }}{% else %}{{ site.title }}{% endif %}">
-    <meta name="twitter:description" content="{% if page.excerpt %}{{ page.excerpt | strip_html | strip_newlines | truncate: 160 }}{% else %}{{ site.description }}{% endif %}">
-    {% if page.image %}
-    <meta name="twitter:image" content="{{ page.image | prepend: site.baseurl | prepend: site.url }}">
-    {% endif %}
-    {% if site.twitter_username %}<meta name="twitter:creator" content="@{{ site.twitter_username }}">{% endif %}
-    
-    <!-- 구조화 데이터 - 웹사이트 기본 정보 -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "@id": "{{ site.url }}{{ site.baseurl }}",
-      "name": "{{ site.title }}",
-      "url": "{{ site.url }}{{ site.baseurl }}",
-      "description": "{{ site.description }}",
-      "author": {
-        "@type": "Person",
-        "@id": "{{ site.url }}{{ site.baseurl }}/author#{{ site.author | slugify }}",
-        "name": "{{ site.author }}"
-      }
-    }
-    </script>
-    
-    {% if page.layout == 'post' %}
-    <!-- 포스트용 JSON-LD 구조화된 데이터 -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "BlogPosting",
-      "@id": "{{ page.url | absolute_url }}",
-      "headline": "{{ page.title }}",
-      "datePublished": "{{ page.date | date_to_xmlschema }}",
-      "dateModified": "{{ page.last_modified_at | default: page.date | date_to_xmlschema }}",
-      "author": {
-        "@type": "Person",
-        "@id": "{{ site.url }}{{ site.baseurl }}/author#{{ site.author | slugify }}",
-        "name": "{{ site.author }}"
-      },
-      "description": "{{ page.description | default: site.description }}",
-      "mainEntityOfPage": {
-        "@type": "WebPage",
-        "@id": "{{ page.url | absolute_url }}"
-      },
-      "image": {
-        "@type": "ImageObject",
-        "url": "{{ page.image | default: '/assets/images/default-post.jpg' | absolute_url }}",
-        "width": "1200",
-        "height": "630"
-      }
-    }
-    </script>
-    {% endif %}
-    
     <!-- 파비콘 및 앱 아이콘 -->
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ '/favicon-32x32.png' | relative_url }}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ '/favicon-16x16.png' | relative_url }}">
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ '/apple-touch-icon.png' | relative_url }}">
+    <link rel="apple-touch-icon" sizes="1024x1024" href="{{ '/apple-touch-icon.png' | relative_url }}">
     <link rel="icon" href="{{ '/favicon.ico' | relative_url }}" sizes="any">
+    <link rel="manifest" href="{{ '/manifest.json' | relative_url }}">
     
     <!-- 언어 설정 -->
     <meta http-equiv="content-language" content="ko">
     
-    <!-- 구글 애널리틱스 - 성능 최적화를 위해 async 유지 -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-C2BXF21DKW"></script>
+    {% if analytics_id %}
+    <!-- Google tag (gtag.js): production only -->
     <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-C2BXF21DKW');
+        (function () {
+          if (!/^(localhost|127\.0\.0\.1)$/.test(window.location.hostname)) {
+            var gaScript = document.createElement('script');
+            gaScript.async = true;
+            gaScript.src = 'https://www.googletagmanager.com/gtag/js?id={{ analytics_id }}';
+            document.head.appendChild(gaScript);
+            window.dataLayer = window.dataLayer || [];
+            window.gtag = function(){window.dataLayer.push(arguments);};
+            window.gtag('js', new Date());
+            window.gtag('config', '{{ analytics_id }}');
+          }
+        })();
     </script>
-    
-    <!-- 사이트 타이틀 -->
-    <title>{% if page.title %}{{ page.title }} - {% endif %}{{ site.title }}</title>
+    {% endif %}
     
     <!-- 메인 스타일시트 - 모든 스타일이 SCSS로 통합됨 -->
-    <link rel="stylesheet" href="{{ "/assets/css/main.css" | relative_url }}">
+    <link rel="stylesheet" href="{{ "/assets/css/main.css" | relative_url }}?v={{ asset_version }}">
     <!-- 검색 스타일 -->
-    <link rel="stylesheet" href="{{ "/assets/css/search.css" | relative_url }}">
+    <link rel="stylesheet" href="{{ "/assets/css/search.css" | relative_url }}?v={{ asset_version }}">
     <!-- 사이드바 토글 스타일 -->
-    <link rel="stylesheet" href="{{ "/assets/css/sidebar-toggle.css" | relative_url }}">
+    <link rel="stylesheet" href="{{ "/assets/css/sidebar-toggle.css" | relative_url }}?v={{ asset_version }}">
+    <!-- Cognitive Atlas theme overrides -->
+    <link rel="stylesheet" href="{{ "/assets/css/theme-atlas.css" | relative_url }}?v={{ asset_version }}">
+    {% if page.styles %}
+      {% for style in page.styles %}
+        <link rel="stylesheet" href="{{ style | relative_url }}?v={{ asset_version }}">
+      {% endfor %}
+    {% endif %}
     
     <!-- Web Fonts 지연 로딩 -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -122,15 +65,5 @@
     
     <!-- FontAwesome 아이콘 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-<!-- JSON-LD 구조화된 데이터 -->
-<script type="application/ld+json">
-{
-  "@context": "http://schema.org",
-  "@type": "WebSite",
-  "name": "{{ site.title }}",
-  "url": "{{ site.url }}"
-}
-</script>
 
 </head>

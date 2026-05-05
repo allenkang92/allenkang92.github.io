@@ -1,33 +1,17 @@
-# Main categories
 main:
-  - name: "Computer Science"
-    description: "Computer science and programming related posts"
-    subcategories:
-      - "Algorithms"
-      - "Data Structures"
-      - "System Design"
-      - "Programming Languages"
-  
-  - name: "Data Science"
-    description: "Data science and analytics related posts"
-    subcategories:
-      - "Machine Learning"
-      - "Data Analysis"
-      - "Statistics"
-      - "Big Data"
-  
-  - name: "Physics"
-    description: "Physics related posts"
-    subcategories:
-      - "Quantum Mechanics"
-      - "Relativity"
-      - "Particle Physics"
-      - "Astrophysics"
-  
-  - name: "Neuroscience"
-    description: "Neuroscience and cognitive science related posts"
-    subcategories:
-      - "Brain Structure"
-      - "Neural Networks"
-      - "Cognitive Functions"
-      - "Consciousness"
+  mathematics_philosophy_history:
+    title: "수학철학·수학사"
+    description: "수학의 역사, 기초론, 무한, 증명, 현대적 응용을 다루는 글"
+    subcategories: []
+  science_philosophy_history:
+    title: "과학철학·과학사"
+    description: "과학적 방법, 현대 물리학, 표준 모형과 과학사의 맥락을 다루는 글"
+    subcategories: []
+  web_technologies:
+    title: "웹 기술"
+    description: "HTML, CSS, 웹 접근성, 프론트엔드 기초를 정리한 글"
+    subcategories: []
+  daily_life:
+    title: "일상"
+    description: "자격증, 회고, 개인 기록을 보관하는 글"
+    subcategories: []

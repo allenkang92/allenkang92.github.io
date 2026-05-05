@@ -4,15 +4,9 @@ export function initSearch() {
     const searchForm = document.getElementById('search-form');
     const searchContainer = document.getElementById('search-container');
     
-    if (!searchInput) {
-        console.log('Search input not found');
-        return;
-    }
+    if (!searchInput) return;
     
-    if (!searchResults) {
-        console.log('Search results container not found');
-        return;
-    }
+    if (!searchResults) return;
     
     // 초기에 검색 결과를 숨김
     searchResults.style.display = 'none';
@@ -34,13 +28,8 @@ export function initSearch() {
             showLoading();
             
             // 템플릿에서 주입된 data-search-url 사용, 없으면 기본값
-            const currentPath = window.location.pathname;
             const dataUrl = (searchContainer && searchContainer.dataset) ? searchContainer.dataset.searchUrl : null;
             const searchUrl = dataUrl || '/search.json';
-            
-            console.log('Attempting to load search data:', searchUrl);
-            console.log('Current path:', currentPath);
-            console.log('Using data-url:', !!dataUrl);
             
             const response = await fetch(searchUrl);
             
@@ -55,7 +44,6 @@ export function initSearch() {
             }
             
             posts = data;
-            console.log('Search data loaded:', posts.length + ' posts');
             searchResults.innerHTML = '';
             searchResults.style.display = 'none';
         } catch (error) {
@@ -121,9 +109,26 @@ export function initSearch() {
         return content.length > limit ? content.substring(0, limit) + '...' : content;
     }
 
+    function escapeHtml(value) {
+        return String(value).replace(/[&<>"']/g, character => ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;'
+        }[character]));
+    }
+
+    function escapeRegExp(value) {
+        return String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+
     function highlightText(text, query) {
         if (!text) return '';
-        return text.replace(new RegExp(query, 'gi'), match => `<mark>${match}</mark>`);
+        const escapedText = escapeHtml(text);
+        const escapedQuery = escapeRegExp(query);
+        if (!escapedQuery) return escapedText;
+        return escapedText.replace(new RegExp(escapedQuery, 'gi'), match => `<mark>${match}</mark>`);
     }
 
     function displayResults(results, query) {
@@ -136,14 +141,14 @@ export function initSearch() {
         html += '<ul class="search-results-list">';
         results.forEach(function(result) {
             html += '<li class="search-result-item">';
-            html += '<h4 class="search-result-title"><a href="' + result.url + '">' + highlightText(result.title, query) + '</a></h4>';
+            html += '<h4 class="search-result-title"><a href="' + escapeHtml(result.url || '#') + '">' + highlightText(result.title, query) + '</a></h4>';
             html += '<p class="search-result-content">' + highlightText(truncateContent(result.content, 100), query) + '</p>';
             html += '<div class="search-result-meta">';
             if (result.category) {
-                html += '<span class="category-tag">' + result.category + '</span>';
+                html += '<span class="category-tag">' + escapeHtml(result.category) + '</span>';
             }
             if (result.tags && result.tags.length > 0) {
-                html += '<span class="tags">' + result.tags.join(', ') + '</span>';
+                html += '<span class="tags">' + escapeHtml(result.tags.join(', ')) + '</span>';
             }
             html += '</div>';
             html += '</li>';

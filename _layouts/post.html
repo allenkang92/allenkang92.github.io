@@ -5,16 +5,43 @@ layout: default
 <article class="post">
   <header class="post-header">
     <h1 class="post-title">{{ page.title }}</h1>
+    {% assign modified_at = page.date_modified | default: page.last_modified_at %}
+    {% assign published_timestamp = page.date | date: "%s" %}
+    {% assign modified_timestamp = modified_at | date: "%s" %}
     <div class="post-meta">
-      <time datetime="{{ page.date | date_to_xmlschema }}">
-        {{ page.date | date: "%Y년 %m월 %d일" }}
-      </time>
+      <span class="post-date-item">
+        작성일
+        <time datetime="{{ page.date | date_to_xmlschema }}">
+          {{ page.date | date: "%Y년 %m월 %d일" }}
+        </time>
+      </span>
+      {% if modified_at and modified_timestamp != published_timestamp %}
+        <span class="post-date-item">
+          갱신일
+          <time datetime="{{ modified_at | date_to_xmlschema }}">
+            {{ modified_at | date: "%Y년 %m월 %d일" }}
+          </time>
+        </span>
+      {% endif %}
       {% if page.categories %}
         {% for category in page.categories %}
-          <span class="category">{{ category | replace: '_', ' ' | capitalize }}</span>
+          <span class="category">
+            {% case category %}
+              {% when 'mathematics_philosophy_history' %}수학철학·수학사
+              {% when 'science_philosophy_history' %}과학철학·과학사
+              {% when 'web_technologies' %}웹 기술
+              {% when 'daily_life' %}일상
+              {% else %}{{ category | replace: '_', ' ' | capitalize }}
+            {% endcase %}
+          </span>
         {% endfor %}
       {% endif %}
     </div>
+    {% if page.migrated_from %}
+      <p class="post-origin-note">
+        이 글은 {{ page.migrated_from }}에서 옮겨온 보관 글입니다. 작성일은 원문 기준이며, 갱신일은 현재 블로그에서 정리한 날짜입니다.
+      </p>
+    {% endif %}
   </header>
 
   {% if page.toc != false %}
@@ -80,6 +107,8 @@ layout: default
 
 <style>
 .post {
+  box-sizing: border-box;
+  width: 100%;
   max-width: 800px;
   margin: 0 auto;
   padding: 2rem;
@@ -97,12 +126,22 @@ layout: default
 }
 
 .post-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
   margin-top: 1rem;
   color: #6c757d;
 }
 
-.post-meta time {
-  margin-right: 1rem;
+.post-date-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.post-date-item time {
+  font-weight: 600;
 }
 
 .category {
@@ -113,6 +152,15 @@ layout: default
   color: #495057;
   border-radius: 15px;
   font-size: 0.85rem;
+}
+
+.post-origin-note {
+  margin: 1rem 0 0;
+  padding: 0.85rem 1rem;
+  border-left: 4px solid #005f5f;
+  background: #f8f9fa;
+  color: #495057;
+  line-height: 1.65;
 }
 
 .table-of-contents {
