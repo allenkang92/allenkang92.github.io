@@ -5,434 +5,221 @@ description: Browse posts by series
 permalink: /series/
 ---
 
-<h1>Series</h1>
+{% assign math_posts = site.posts | where: "series", "Mathematics-Philosophy-History" | sort: "series_order" %}
+{% assign science_posts = site.posts | where: "series", "Science_Philosophy_History" | sort: "series_order" %}
+{% assign series_posts = site.posts | where_exp: "post", "post.series != nil" | group_by: "series" %}
 
-<div class="series-container">
-  {% assign series_posts = site.posts | where_exp: "post", "post.series != nil" | group_by: "series" %}
-  
-  <div class="series-controls">
-    <button id="toggle-all-series" class="toggle-btn" aria-label="Toggle all series">
-      <span class="toggle-icon">▼</span>
-    </button>
-    <div class="series-info">
-      <span>Total {{ series_posts.size }} series</span>
-    </div>
-  </div>
+<section class="series-index-hero" aria-labelledby="series-index-title">
+  <p class="series-eyebrow">Research Garden</p>
+  <h1 id="series-index-title">Series</h1>
+  <p>
+    긴 글을 주제별 경로로 다시 묶었습니다. 수학철학·수학사와 과학철학·현대물리학 글은
+    허브에서 순서, 핵심 질문, 참고자료를 함께 볼 수 있습니다.
+  </p>
+</section>
 
-  <div id="series-list" class="series-list collapsed">
-    {% for series in series_posts limit: 3 %}
-      <div class="series-group visible" data-series="{{ series.name }}">
-        <div class="series-header">
-          <h2>{{ series.name | replace: '_', ' ' }}</h2>
-          <button class="series-toggle" data-series-name="{{ series.name }}" aria-label="Toggle series">
-            <span class="series-toggle-icon">▼</span>
-          </button>
-        </div>
-        <div class="series-posts collapsed" data-series-content="{{ series.name }}">
-          {% assign sorted_posts = series.items | sort: "series_order" %}
-          {% for post in sorted_posts %}
-            <article class="post-preview">
-              <h3>
-                <span class="series-order">{{ post.series_order }}.</span>
-                <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
-              </h3>
-              <div class="post-meta">
-                <time datetime="{{ post.date | date_to_xmlschema }}">
-                  {{ post.date | date: "%Y년 %m월 %d일" }}
-                </time>
-                {% if post.categories %}
-                  {% for category in post.categories %}
-                    <span class="category">{{ category | replace: '_', ' ' | capitalize }}</span>
-                  {% endfor %}
-                {% endif %}
-              </div>
-              <div class="post-excerpt">
-                {{ post.excerpt | strip_html | truncatewords: 30 }}
-              </div>
-            </article>
-          {% endfor %}
-        </div>
+<section class="series-hub-grid" aria-label="주요 시리즈 허브">
+  <a class="series-hub-card" href="{{ '/series/mathematics-philosophy-history/' | relative_url }}">
+    <span class="series-hub-kicker">Mathematics</span>
+    <strong>수학철학·수학사</strong>
+    <span>{{ math_posts.size }}편의 글을 수학의 역사, 무한, 논리, 존재론, 현실 적용으로 읽습니다.</span>
+  </a>
+  <a class="series-hub-card" href="{{ '/series/science-philosophy-history/' | relative_url }}">
+    <span class="series-hub-kicker">Physics</span>
+    <strong>과학철학·현대물리학</strong>
+    <span>{{ science_posts.size }}편의 글을 과학의 방법, 입자, 힘, 표준 모형, 미해결 문제로 읽습니다.</span>
+  </a>
+</section>
+
+<section class="series-catalog" aria-labelledby="series-catalog-title">
+  <h2 id="series-catalog-title">전체 시리즈 목록</h2>
+  {% for series in series_posts %}
+    {% assign sorted_posts = series.items | sort: "series_order" %}
+    {% assign series_title = series.name | replace: '_', ' ' | replace: '-', ' ' %}
+    {% assign hub_url = nil %}
+    {% case series.name %}
+      {% when 'Mathematics-Philosophy-History' %}
+        {% assign series_title = '수학철학·수학사' %}
+        {% assign hub_url = '/series/mathematics-philosophy-history/' %}
+      {% when 'Science_Philosophy_History' %}
+        {% assign series_title = '과학철학·현대물리학' %}
+        {% assign hub_url = '/series/science-philosophy-history/' %}
+      {% when 'Web_Technologies' %}
+        {% assign series_title = '웹 기술' %}
+    {% endcase %}
+    <article class="series-catalog-group">
+      <div class="series-catalog-header">
+        <h3>{{ series_title }}</h3>
+        {% if hub_url %}
+          <a href="{{ hub_url | relative_url }}">허브 보기</a>
+        {% endif %}
       </div>
-    {% endfor %}
-    
-    {% for series in series_posts offset: 3 %}
-      <div class="series-group hidden" data-series="{{ series.name }}">
-        <div class="series-header">
-          <h2>{{ series.name | replace: '_', ' ' }}</h2>
-          <button class="series-toggle" data-series-name="{{ series.name }}" aria-label="Toggle series">
-            <span class="series-toggle-icon">▼</span>
-          </button>
-        </div>
-        <div class="series-posts collapsed" data-series-content="{{ series.name }}">
-          {% assign sorted_posts = series.items | sort: "series_order" %}
-          {% for post in sorted_posts %}
-            <article class="post-preview">
-              <h3>
-                <span class="series-order">{{ post.series_order }}.</span>
-                <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
-              </h3>
-              <div class="post-meta">
-                <time datetime="{{ post.date | date_to_xmlschema }}">
-                  {{ post.date | date: "%Y년 %m월 %d일" }}
-                </time>
-                {% if post.categories %}
-                  {% for category in post.categories %}
-                    <span class="category">{{ category | replace: '_', ' ' | capitalize }}</span>
-                  {% endfor %}
-                {% endif %}
-              </div>
-              <div class="post-excerpt">
-                {{ post.excerpt | strip_html | truncatewords: 30 }}
-              </div>
-            </article>
-          {% endfor %}
-        </div>
-      </div>
-    {% endfor %}
-  </div>
-  
-  <div id="pagination" class="pagination" style="display: none;">
-    <button id="prev-page" class="page-btn" disabled>Previous</button>
-    <span id="page-info"></span>
-    <button id="next-page" class="page-btn">Next</button>
-  </div>
-</div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  const mainToggleBtn = document.getElementById('toggle-all-series');
-  const seriesList = document.getElementById('series-list');
-  const pagination = document.getElementById('pagination');
-  const allSeriesGroups = document.querySelectorAll('.series-group');
-  const seriesPerPage = 3;
-  let currentPage = 1;
-  let isExpanded = false;
-  
-  // 메인 토글 기능
-  mainToggleBtn.addEventListener('click', function() {
-    isExpanded = !isExpanded;
-    
-    if (isExpanded) {
-      // 전체 보기
-      seriesList.classList.remove('collapsed');
-      mainToggleBtn.querySelector('.toggle-icon').textContent = '▲';
-      
-      // 모든 시리즈 표시
-      allSeriesGroups.forEach(group => {
-        group.classList.remove('hidden');
-        group.classList.add('visible');
-      });
-      
-      pagination.style.display = 'none';
-    } else {
-      // 페이징 모드
-      seriesList.classList.add('collapsed');
-      mainToggleBtn.querySelector('.toggle-icon').textContent = '▼';
-      
-      // 페이징 활성화
-      currentPage = 1;
-      showPage(currentPage);
-      pagination.style.display = 'flex';
-    }
-  });
-  
-  // 개별 시리즈 토글
-  document.querySelectorAll('.series-toggle').forEach(btn => {
-    btn.addEventListener('click', function() {
-      const seriesName = this.dataset.seriesName;
-      const seriesContent = document.querySelector(`[data-series-content="${seriesName}"]`);
-      const toggleIcon = this.querySelector('.series-toggle-icon');
-      
-      if (seriesContent.classList.contains('collapsed')) {
-        seriesContent.classList.remove('collapsed');
-        toggleIcon.textContent = '▲';
-      } else {
-        seriesContent.classList.add('collapsed');
-        toggleIcon.textContent = '▼';
-      }
-    });
-  });
-  
-  // 페이징 기능
-  function showPage(page) {
-    const start = (page - 1) * seriesPerPage;
-    const end = start + seriesPerPage;
-    
-    allSeriesGroups.forEach((group, index) => {
-      if (index >= start && index < end) {
-        group.classList.remove('hidden');
-        group.classList.add('visible');
-      } else {
-        group.classList.add('hidden');
-        group.classList.remove('visible');
-      }
-    });
-    
-    updatePaginationButtons();
-  }
-  
-  function updatePaginationButtons() {
-    const totalPages = Math.ceil(allSeriesGroups.length / seriesPerPage);
-    const pageInfo = document.getElementById('page-info');
-    const prevBtn = document.getElementById('prev-page');
-    const nextBtn = document.getElementById('next-page');
-    
-    pageInfo.textContent = `${currentPage} / ${totalPages}`;
-    
-    prevBtn.disabled = currentPage === 1;
-    nextBtn.disabled = currentPage === totalPages;
-  }
-  
-  // 페이지 버튼 이벤트
-  document.getElementById('prev-page').addEventListener('click', function() {
-    if (currentPage > 1) {
-      currentPage--;
-      showPage(currentPage);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  });
-  
-  document.getElementById('next-page').addEventListener('click', function() {
-    const totalPages = Math.ceil(allSeriesGroups.length / seriesPerPage);
-    if (currentPage < totalPages) {
-      currentPage++;
-      showPage(currentPage);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  });
-  
-  // 초기 페이징 설정
-  if (allSeriesGroups.length > seriesPerPage) {
-    pagination.style.display = 'flex';
-    updatePaginationButtons();
-  }
-});
-</script>
+      <ol>
+        {% for post in sorted_posts %}
+          <li>
+            <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+            {% if post.learning_outcomes %}
+              <span>{{ post.learning_outcomes | first }}</span>
+            {% else %}
+              <span>{{ post.excerpt | strip_html | truncatewords: 18 }}</span>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ol>
+    </article>
+  {% endfor %}
+</section>
 
 <style>
-.series-list {
-  max-width: 900px;
+.series-index-hero,
+.series-hub-grid,
+.series-catalog {
+  box-sizing: border-box;
+  width: min(100%, 980px);
   margin: 0 auto;
 }
 
-.series-group {
-  margin-bottom: 3rem;
-  padding: 2rem;
-  background: #f8f9fa;
-  border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+.series-index-hero {
+  padding: 2rem 1rem 1rem;
 }
 
-.series-group h2 {
-  color: #212529;
-  margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
-  border-bottom: 2px solid #dee2e6;
+.series-eyebrow {
+  margin: 0 0 0.5rem;
+  color: #5f4b8b;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
 }
 
-.post-preview {
-  margin-bottom: 1.5rem;
-  padding: 1.5rem;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  transition: transform 0.2s;
+.series-index-hero h1 {
+  margin: 0 0 0.75rem;
+  color: #17211f;
 }
 
-.post-preview:hover {
-  transform: translateY(-2px);
-}
-
-.post-preview h3 {
+.series-index-hero p {
+  max-width: 720px;
   margin: 0;
-  color: #343a40;
+  color: #3f4a48;
+  line-height: 1.75;
 }
 
-.post-preview h3 a {
-  text-decoration: none;
-  color: inherit;
-}
-
-.post-preview h3 a:hover {
-  color: #007bff;
-}
-
-.series-order {
-  color: #6c757d;
-  font-weight: normal;
-  margin-right: 0.5rem;
-}
-
-.post-meta {
-  margin: 0.8rem 0;
-  color: #6c757d;
-  font-size: 0.9rem;
-}
-
-.post-meta time {
-  margin-right: 1rem;
-}
-
-.category {
-  display: inline-block;
-  padding: 0.2rem 0.6rem;
-  margin: 0 0.3rem;
-  background: #e9ecef;
-  color: #495057;
-  border-radius: 15px;
-  font-size: 0.85rem;
-}
-
-.post-excerpt {
-  color: #495057;
-  line-height: 1.6;
-  margin-top: 0.8rem;
-}
-
-@media (max-width: 768px) {
-  .series-group {
-    padding: 1rem;
-  }
-  
-  .post-preview {
-    padding: 1rem;
-  }
-}
-
-/* 토글 및 페이징 스타일 */
-.series-container {
-  max-width: 900px;
-  margin: 0 auto;
-}
-
-.series-controls {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-  padding: 1rem;
-  background: #f8f9fa;
-  border-radius: 8px;
-}
-
-.toggle-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.6rem 1.2rem;
-  background: white;
-  color: #212529;
-  border: 2px solid #dee2e6;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.95rem;
-  font-weight: 500;
-  transition: all 0.3s ease;
-}
-
-.toggle-btn:hover {
-  background: #007bff;
-  color: white;
-  border-color: #007bff;
-}
-
-.toggle-text {
-  color: inherit;
-}
-
-.toggle-icon {
-  color: inherit;
-  font-size: 0.8rem;
-}
-
-.series-info {
-  color: #6c757d;
-  font-size: 0.9rem;
-}
-
-.series-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
-  border-bottom: 2px solid #dee2e6;
-}
-
-.series-toggle {
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-  padding: 0.4rem 0.8rem;
-  background: white;
-  color: #212529;
-  border: 1px solid #dee2e6;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.85rem;
-  transition: all 0.2s ease;
-}
-
-.series-toggle:hover {
-  background: #e9ecef;
-  color: #212529;
-}
-
-.series-toggle-text {
-  color: inherit;
-}
-
-.series-toggle-icon {
-  color: inherit;
-  font-size: 0.7rem;
-}
-
-.series-posts.collapsed {
-  display: none;
-}
-
-.series-group.hidden {
-  display: none;
-}
-
-.series-group.visible {
-  display: block;
-}
-
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.series-hub-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1rem;
-  margin-top: 3rem;
   padding: 1rem;
 }
 
-.page-btn {
-  padding: 0.5rem 1rem;
-  background: white;
-  color: #212529;
-  border: 1px solid #dee2e6;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: all 0.2s ease;
+.series-hub-card {
+  display: flex;
+  min-height: 190px;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1.35rem;
+  border: 1px solid #c8d7d4;
+  border-left: 5px solid #00736f;
+  border-radius: 8px;
+  background: #fbf8f1;
+  color: #17211f;
+  text-decoration: none;
 }
 
-.page-btn:hover:not(:disabled) {
-  background: #007bff;
-  color: white;
-  border-color: #007bff;
+.series-hub-card:focus-visible,
+.series-hub-card:hover {
+  border-color: #5f4b8b;
+  outline: 3px solid rgba(95, 75, 139, 0.2);
+  outline-offset: 2px;
 }
 
-.page-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  color: #6c757d;
+.series-hub-card strong {
+  display: block;
+  margin: 0.5rem 0;
+  color: #17211f;
+  font-size: 1.45rem;
 }
 
-#page-info {
-  font-weight: 500;
-  color: #495057;
+.series-hub-card span:last-child {
+  color: #3f4a48;
+  line-height: 1.65;
+}
+
+.series-hub-kicker {
+  color: #5f4b8b;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.series-catalog {
+  padding: 1rem 1rem 3rem;
+}
+
+.series-catalog h2 {
+  margin: 1rem 0;
+  color: #17211f;
+}
+
+.series-catalog-group {
+  margin: 1rem 0;
+  padding: 1.25rem;
+  border: 1px solid #d8dde2;
+  border-radius: 8px;
+  background: #fffdf8;
+}
+
+.series-catalog-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.8rem;
+}
+
+.series-catalog-header h3 {
+  margin: 0;
+  color: #17211f;
+  font-size: 1.2rem;
+}
+
+.series-catalog-header a,
+.series-catalog li a {
+  color: #005f5f;
+  font-weight: 700;
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.18em;
+}
+
+.series-catalog ol {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.series-catalog li {
+  margin: 0.75rem 0;
+  padding-left: 0.2rem;
+}
+
+.series-catalog li span {
+  display: block;
+  margin-top: 0.2rem;
+  color: #667085;
+  line-height: 1.55;
+}
+
+@media (max-width: 720px) {
+  .series-hub-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .series-hub-card {
+    min-height: 160px;
+  }
+
+  .series-catalog-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
 }
 </style>

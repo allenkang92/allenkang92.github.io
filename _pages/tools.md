@@ -8,6 +8,30 @@ scripts:
 
 # Lab Instruments / 실험 도구
 
+<p class="tools-intro">계산기는 이 페이지에서 바로 사용할 수 있고, 자주 찾는 한국어 검색어별 공식과 예시는 개별 안내 페이지로 분리했습니다.</p>
+
+<section class="tool-directory" aria-labelledby="tool-directory-title">
+  <h2 id="tool-directory-title">개별 계산 안내</h2>
+  <div class="tool-directory__grid" markdown="0">
+<a class="tool-directory__item" href="/tools/unit-converter/">
+<span class="tool-directory__label">단위 변환기</span>
+<span class="tool-directory__desc">길이, 질량, 시간, 온도 변환 공식과 예시</span>
+</a>
+<a class="tool-directory__item" href="/tools/kinetic-energy-calculator/">
+<span class="tool-directory__label">운동 에너지 계산기</span>
+<span class="tool-directory__desc">질량과 속도로 운동 에너지를 J 단위로 계산</span>
+</a>
+<a class="tool-directory__item" href="/tools/acceleration-calculator/">
+<span class="tool-directory__label">가속도 계산기</span>
+<span class="tool-directory__desc">속도 변화량과 시간으로 평균 가속도 계산</span>
+</a>
+<a class="tool-directory__item tool-directory__item--pending" href="/tools/dsr-calculator/">
+<span class="tool-directory__label">DSR 계산기 준비 중</span>
+<span class="tool-directory__desc">총부채원리금상환비율 공식과 기준 안내</span>
+</a>
+  </div>
+</section>
+
 <div class="tools-container" markdown="0">
   <div class="tool-card">
     <h2>Calculator / 계산기</h2>

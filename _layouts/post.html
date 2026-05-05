@@ -44,6 +44,17 @@ layout: default
     {% endif %}
   </header>
 
+  {% if page.learning_outcomes %}
+  <section class="post-learning-outcomes" aria-labelledby="post-learning-outcomes-heading">
+    <h2 id="post-learning-outcomes-heading">이 글에서 얻는 것</h2>
+    <ul>
+      {% for outcome in page.learning_outcomes limit: 3 %}
+        <li>{{ outcome }}</li>
+      {% endfor %}
+    </ul>
+  </section>
+  {% endif %}
+
   {% if page.toc != false %}
   <div class="table-of-contents">
     <h2>목차</h2>
@@ -74,13 +85,103 @@ layout: default
   </div>
 
   {% if page.series %}
-  <div class="series-navigation">
-    <h3>Series: {{ page.series | replace: '_', ' ' }}</h3>
-    {% assign series_posts = site.posts | where: "series", page.series | sort: "series_order" %}
-    <ul>
+  {% assign series_posts = site.posts | where: "series", page.series | sort: "series_order" %}
+  {% assign current_series_order = page.series_order | plus: 0 %}
+  {% assign next_series_order = current_series_order | plus: 1 %}
+  {% assign previous_series_order = current_series_order | minus: 1 %}
+  {% assign next_series_post = nil %}
+  {% assign previous_series_post = nil %}
+  {% for series_post in series_posts %}
+    {% assign candidate_order = series_post.series_order | plus: 0 %}
+    {% if candidate_order == next_series_order %}
+      {% assign next_series_post = series_post %}
+    {% endif %}
+    {% if candidate_order == previous_series_order %}
+      {% assign previous_series_post = series_post %}
+    {% endif %}
+  {% endfor %}
+  {% assign series_label = page.series | replace: '_', ' ' | replace: '-', ' ' %}
+  {% assign series_hub_url = nil %}
+  {% case page.series %}
+    {% when 'Mathematics-Philosophy-History' %}
+      {% assign series_label = '수학철학·수학사' %}
+      {% assign series_hub_url = '/series/mathematics-philosophy-history/' %}
+    {% when 'Science_Philosophy_History' %}
+      {% assign series_label = '과학철학·현대물리학' %}
+      {% assign series_hub_url = '/series/science-philosophy-history/' %}
+  {% endcase %}
+  {% assign show_series_footer = false %}
+  {% if series_hub_url or page.references or page.related_items %}
+    {% assign show_series_footer = true %}
+  {% endif %}
+  {% if show_series_footer %}
+  <nav class="post-series-footer" aria-label="시리즈 글 탐색">
+    <section class="post-series-panel" aria-labelledby="post-next-heading">
+      <h2 id="post-next-heading">다음 글</h2>
+      {% if next_series_post %}
+        <a class="series-next-link" href="{{ next_series_post.url | relative_url }}">
+          <span class="series-kicker">{{ series_label }} {{ next_series_post.series_order }}번째 글</span>
+          <span>{{ next_series_post.title }}</span>
+        </a>
+      {% else %}
+        <p>이 시리즈의 마지막 글입니다.</p>
+        {% if series_hub_url %}
+          <a href="{{ series_hub_url | relative_url }}">시리즈 허브에서 전체 흐름 보기</a>
+        {% endif %}
+      {% endif %}
+    </section>
+
+    <section class="post-series-panel" aria-labelledby="post-related-heading">
+      <h2 id="post-related-heading">관련 글</h2>
+      <ul>
+        {% if series_hub_url %}
+          <li><a href="{{ series_hub_url | relative_url }}">{{ series_label }} 허브</a></li>
+        {% endif %}
+        {% if previous_series_post %}
+          <li><a href="{{ previous_series_post.url | relative_url }}">이전 글: {{ previous_series_post.title }}</a></li>
+        {% endif %}
+        {% if page.related_items %}
+          {% for item in page.related_items %}
+            <li><a href="{{ item.url | relative_url }}">{{ item.title }}</a></li>
+          {% endfor %}
+        {% endif %}
+        {% unless series_hub_url or previous_series_post or page.related_items %}
+          <li><a href="#series-navigation-heading">이 시리즈의 전체 글</a></li>
+        {% endunless %}
+      </ul>
+    </section>
+
+    <section class="post-series-panel" aria-labelledby="post-references-heading">
+      <h2 id="post-references-heading">참고한 자료</h2>
+      {% if page.references %}
+        <ul>
+          {% for reference in page.references %}
+            <li>
+              {% if reference.url %}
+                <a href="{{ reference.url }}">{{ reference.title }}</a>
+              {% else %}
+                {{ reference.title }}
+              {% endif %}
+              {% if reference.note %}
+                <span class="reference-note">{{ reference.note }}</span>
+              {% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p>이 글은 시리즈 흐름을 정리한 내부 노트이며, 대표 참고자료는 시리즈 허브에 모았습니다.</p>
+      {% endif %}
+    </section>
+  </nav>
+  {% endif %}
+  {% endif %}
+
+  {% if page.series %}
+  <div class="series-navigation" aria-labelledby="series-navigation-heading">
+    <h2 id="series-navigation-heading">시리즈 전체 글</h2>
+    <ol>
       {% for post in series_posts %}
-        <li {% if post.url == page.url %}class="current"{% endif %}>
-          {% if post.series_order %}{{ post.series_order }}. {% endif %}
+        <li {% if post.url == page.url %}class="current" aria-current="page"{% endif %}>
           {% if post.url == page.url %}
             {{ post.title }}
           {% else %}
@@ -88,7 +189,7 @@ layout: default
           {% endif %}
         </li>
       {% endfor %}
-    </ul>
+    </ol>
   </div>
   {% endif %}
 
@@ -163,6 +264,31 @@ layout: default
   line-height: 1.65;
 }
 
+.post-learning-outcomes {
+  margin: 0 0 2rem;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid #b7d8d2;
+  border-left: 5px solid #00736f;
+  border-radius: 8px;
+  background: #fbf8f1;
+}
+
+.post-learning-outcomes h2 {
+  margin: 0 0 0.8rem;
+  color: #18312f;
+  font-size: 1.15rem;
+}
+
+.post-learning-outcomes ul {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.post-learning-outcomes li {
+  margin: 0.35rem 0;
+  line-height: 1.65;
+}
+
 .table-of-contents {
   background: #f8f9fa;
   padding: 1.5rem;
@@ -217,6 +343,62 @@ layout: default
   margin-bottom: 1rem;
 }
 
+.post-series-footer {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 3rem;
+}
+
+.post-series-panel {
+  padding: 1.2rem;
+  border: 1px solid #d8dde2;
+  border-top: 4px solid #5f4b8b;
+  border-radius: 8px;
+  background: #fbf8f1;
+}
+
+.post-series-panel h2 {
+  margin: 0 0 0.8rem;
+  color: #212529;
+  font-size: 1.1rem;
+}
+
+.post-series-panel p,
+.post-series-panel ul {
+  margin: 0;
+}
+
+.post-series-panel ul {
+  padding-left: 1.1rem;
+}
+
+.post-series-panel li {
+  margin: 0.45rem 0;
+  line-height: 1.5;
+}
+
+.post-series-panel a {
+  color: #005f5f;
+  font-weight: 600;
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.18em;
+}
+
+.series-next-link {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.series-kicker,
+.reference-note {
+  display: block;
+  color: #667085;
+  font-size: 0.86rem;
+  font-weight: 500;
+}
+
 .series-navigation {
   margin-top: 3rem;
   padding: 1.5rem;
@@ -224,15 +406,15 @@ layout: default
   border-radius: 8px;
 }
 
-.series-navigation h3 {
+.series-navigation h2 {
   margin-top: 0;
   margin-bottom: 1rem;
   color: #343a40;
+  font-size: 1.25rem;
 }
 
-.series-navigation ul {
-  list-style: none;
-  padding-left: 0;
+.series-navigation ol {
+  padding-left: 1.3rem;
   margin: 0;
 }
 
@@ -251,7 +433,7 @@ layout: default
 
 .series-navigation .current {
   font-weight: bold;
-  color: #007bff;
+  color: #005f5f;
 }
 
 /* 댓글 섹션 스타일 */
@@ -271,6 +453,10 @@ layout: default
 @media (max-width: 768px) {
   .post {
     padding: 1rem;
+  }
+
+  .post-series-footer {
+    grid-template-columns: 1fr;
   }
 }
 </style>
