@@ -1,0 +1,38 @@
+items:
+  - key: "Mathematics-Philosophy-History"
+    title: "수학철학·수학사"
+    hub_url: "/series/mathematics-philosophy-history/"
+    kicker: "Mathematics"
+    count_label: "편의 글을 수학의 역사, 무한, 논리, 존재론, 현실 적용으로 읽습니다."
+    reading_order: "역사에서 존재론, 현실 적용으로 이동"
+    summary: "수학이 어떻게 생겨났고, 어떤 논리와 존재론을 통해 정당화되며, 왜 현실 세계에 잘 적용되는지 차례로 읽는 경로입니다."
+    references:
+      - "Morris Kline, Mathematical Thought from Ancient to Modern Times"
+      - "Stewart Shapiro, Thinking about Mathematics"
+      - "Imre Lakatos, Proofs and Refutations"
+      - "Eugene Wigner, The Unreasonable Effectiveness of Mathematics in the Natural Sciences"
+    featured: true
+  - key: "Science_Philosophy_History"
+    title: "과학철학·현대물리학"
+    hub_url: "/series/science-philosophy-history/"
+    kicker: "Physics"
+    count_label: "편의 글을 과학의 방법, 입자, 힘, 표준 모형, 미해결 문제로 읽습니다."
+    reading_order: "탐구 방법에서 표준 모형과 미래 과제로 이동"
+    summary: "과학이 지식을 만드는 방식에서 출발해, 현대 물리학이 우주의 기본 구조를 입자와 힘, 표준 모형, 미해결 문제로 설명하는 흐름을 따라갑니다."
+    references:
+      - "Alan Chalmers, What Is This Thing Called Science?"
+      - "Peter Godfrey-Smith, Theory and Reality"
+      - "David J. Griffiths, Introduction to Elementary Particles"
+      - "CERN, The Standard Model"
+    featured: true
+  - key: "Web_Technologies"
+    title: "웹 기술"
+    hub_url:
+    kicker: "Web"
+    count_label: "편의 글을 HTML, CSS, 접근성, 호환성 순서로 읽습니다."
+    reading_order: "마크업에서 스타일과 접근성으로 이동"
+    summary: "HTML, CSS, 웹 접근성, 브라우저 호환성처럼 블로그 자체를 개선하는 기초 기술을 정리한 경로입니다."
+    references:
+      - "MDN Web Docs"
+      - "W3C Web Accessibility Initiative"
+    featured: false

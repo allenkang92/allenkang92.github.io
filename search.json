@@ -6,7 +6,7 @@ layout: null
   {% for post in posts %}
     {% assign series_index = nil %}
     {% if post.series %}
-      {% assign series_posts = site.posts | where: "series", post.series | sort: "date" %}
+      {% assign series_posts = site.posts | where: "series", post.series | sort: "series_order" %}
       {% for series_post in series_posts %}
         {% if series_post.url == post.url %}
           {% assign series_index = forloop.index %}
@@ -19,6 +19,7 @@ layout: null
       "url": {{ post.url | absolute_url | jsonify }},
       "category": {{ post.categories | first | default: "Uncategorized" | jsonify }},
       "tags": {% if post.tags %}{{ post.tags | jsonify }}{% else %}[]{% endif %},
+      "description": {{ post.description | default: post.excerpt | strip_html | normalize_whitespace | jsonify }},
       "content": {{ post.content | strip_html | strip_newlines | normalize_whitespace | truncate: 500, "..." | jsonify }},
       "date": "{{ post.date | date: "%Y-%m-%d" }}",
       "series": {% if post.series %}{{ post.series | jsonify }}{% else %}null{% endif %},

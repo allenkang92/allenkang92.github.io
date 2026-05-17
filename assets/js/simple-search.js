@@ -11,7 +11,6 @@
     let searchForm;
     let searchContainer;
     let searchResults;
-    let searchClearBtn;
     let searchSubmitBtn;
     let searchLoading;
     
@@ -28,7 +27,6 @@
         searchContainer = document.getElementById('search-container');
         searchInput = document.getElementById('search-input');
         searchSubmitBtn = document.querySelector('.search-button');
-        searchClearBtn = document.querySelector('.clear-button');
         searchResults = document.getElementById('search-results');
         searchLoading = document.querySelector('.search-spinner');
         
@@ -66,10 +64,10 @@
                 const searchQuery = urlParams.get('q');
                 if (searchQuery) {
                     searchInput.value = searchQuery;
-                    toggleClearButton();
+                    updateSearchInputState();
                     performSearch(searchQuery, { historyMode: 'replace' });
                 } else if (searchInput.value.trim()) {
-                    toggleClearButton();
+                    updateSearchInputState();
                     performSearch(searchInput.value.trim(), { historyMode: 'replace' });
                 }
             })
@@ -96,11 +94,6 @@
         // Form submission
         searchForm.addEventListener('submit', handleFormSubmit);
         
-        // Clear button
-        if (searchClearBtn) {
-            searchClearBtn.addEventListener('click', clearSearch);
-        }
-        
         // Close search when clicking outside
         document.addEventListener('click', handleClickOutside);
         
@@ -110,8 +103,7 @@
     
     // Handle search input with debounce
     function handleSearchInput() {
-        // Show/hide clear button based on input
-        toggleClearButton();
+        updateSearchInputState();
         
         // Clear any existing timeout
         clearTimeout(searchTimeout);
@@ -158,31 +150,11 @@
         }
     }
     
-    // Toggle clear button visibility
-    function toggleClearButton() {
-        if (!searchClearBtn) return;
-        
-        if (searchInput.value.length > 0) {
-            searchInput.closest('.search-input-wrapper')?.classList.add('has-query');
-            searchClearBtn.removeAttribute('aria-hidden');
-            searchClearBtn.removeAttribute('tabindex');
-            searchInput.setAttribute('aria-expanded', 'true');
-        } else {
-            searchInput.closest('.search-input-wrapper')?.classList.remove('has-query');
-            searchClearBtn.setAttribute('aria-hidden', 'true');
-            searchClearBtn.setAttribute('tabindex', '-1');
-            searchInput.setAttribute('aria-expanded', 'false');
-        }
-    }
-    
-    // Clear search input and results
-    function clearSearch() {
-        searchInput.value = '';
-        searchInput.focus();
-        lastRenderedQuery = '';
-        hideResults();
-        updateUrl('', { mode: 'push' });
-        toggleClearButton();
+    // Keep visible and assistive state in sync with the current query.
+    function updateSearchInputState() {
+        const hasQuery = searchInput.value.trim().length > 0;
+        searchInput.closest('.search-input-wrapper')?.classList.toggle('has-query', hasQuery);
+        searchInput.setAttribute('aria-expanded', hasQuery ? 'true' : 'false');
     }
     
     // Handle clicks outside the search container
@@ -257,6 +229,7 @@
                 // Score and filter results
                 const scoredResults = searchData.map(post => {
                     const title = (post.title || '').toLowerCase();
+                    const description = (post.description || '').toLowerCase();
                     const content = (post.content || '').toLowerCase();
                     const category = (post.category || '').toLowerCase();
                     const tags = Array.isArray(post.tags) ? post.tags.join(' ').toLowerCase() : '';
@@ -283,6 +256,11 @@
                         
                         // Tag matches (medium weight)
                         if (tags.includes(term)) {
+                            termScore += 2;
+                        }
+
+                        // Description matches (medium weight)
+                        if (description.includes(term)) {
                             termScore += 2;
                         }
                         
@@ -340,15 +318,15 @@
         
         // Build results HTML
         let html = `
-            <div class="search-results-header">
-                <div class="search-results-count">검색 결과: ${results.length}건</div>
+                <div class="search-results-header">
+                <div class="search-results-count">검색 결과: ${totalResults}건</div>
             </div>
             <ul class="search-results-list">`;
         
         results.forEach(result => {
             // Highlight matches in title and excerpt
             let highlightedTitle = escapeHtml(result.title || '제목 없음');
-            let excerpt = truncateText(stripHtml(result.content || ''), 150);
+            let excerpt = truncateText(stripHtml(result.description || result.content || ''), 150);
             const formattedDate = formatDate(result.date);
             
             // Apply highlighting
@@ -410,8 +388,6 @@
             </ul>`;
         
         // Add footer with result count
-        const maxResults = 10;
-        
         if (totalResults > results.length) {
             html += `
                 <div class="search-results-footer">
@@ -567,7 +543,6 @@
     window.searchFunctions = {
         initSearch: initSearch,
         performSearch: performSearch,
-        clearSearch: clearSearch,
         updateUrl: updateUrl
     };
     

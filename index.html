@@ -125,13 +125,7 @@ description: 수학철학, 과학사, 웹 접근성, 작은 계산 도구를 함
             {% if post.categories %}
               {% for category in post.categories limit:1 %}
                 <span class="category-badge">
-                  {% case category %}
-                    {% when 'mathematics_philosophy_history' %}수학철학·수학사
-                    {% when 'science_philosophy_history' %}과학철학·과학사
-                    {% when 'web_technologies' %}웹 기술
-                    {% when 'daily_life' %}일상
-                    {% else %}{{ category | replace: '_', ' ' | capitalize }}
-                  {% endcase %}
+                  {% include category-label.html category=category %}
                 </span>
               {% endfor %}
             {% endif %}

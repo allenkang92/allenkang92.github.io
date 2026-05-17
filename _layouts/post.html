@@ -25,15 +25,7 @@ layout: default
       {% endif %}
       {% if page.categories %}
         {% for category in page.categories %}
-          <span class="category">
-            {% case category %}
-              {% when 'mathematics_philosophy_history' %}수학철학·수학사
-              {% when 'science_philosophy_history' %}과학철학·과학사
-              {% when 'web_technologies' %}웹 기술
-              {% when 'daily_life' %}일상
-              {% else %}{{ category | replace: '_', ' ' | capitalize }}
-            {% endcase %}
-          </span>
+          <span class="category">{% include category-label.html category=category %}</span>
         {% endfor %}
       {% endif %}
     </div>
@@ -91,6 +83,7 @@ layout: default
   {% assign previous_series_order = current_series_order | minus: 1 %}
   {% assign next_series_post = nil %}
   {% assign previous_series_post = nil %}
+  {% assign series_record = site.data.series.items | where: "key", page.series | first %}
   {% for series_post in series_posts %}
     {% assign candidate_order = series_post.series_order | plus: 0 %}
     {% if candidate_order == next_series_order %}
@@ -102,14 +95,10 @@ layout: default
   {% endfor %}
   {% assign series_label = page.series | replace: '_', ' ' | replace: '-', ' ' %}
   {% assign series_hub_url = nil %}
-  {% case page.series %}
-    {% when 'Mathematics-Philosophy-History' %}
-      {% assign series_label = '수학철학·수학사' %}
-      {% assign series_hub_url = '/series/mathematics-philosophy-history/' %}
-    {% when 'Science_Philosophy_History' %}
-      {% assign series_label = '과학철학·현대물리학' %}
-      {% assign series_hub_url = '/series/science-philosophy-history/' %}
-  {% endcase %}
+  {% if series_record %}
+    {% assign series_label = series_record.title %}
+    {% assign series_hub_url = series_record.hub_url %}
+  {% endif %}
   {% assign show_series_footer = false %}
   {% if series_hub_url or page.references or page.related_items %}
     {% assign show_series_footer = true %}
@@ -209,264 +198,3 @@ layout: default
     </script>
   </section>
 </article>
-
-<style>
-.post {
-  box-sizing: border-box;
-  width: 100%;
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 2rem;
-}
-
-.post-header {
-  margin-bottom: 2rem;
-  padding-bottom: 1rem;
-  border-bottom: 2px solid #dee2e6;
-}
-
-.post-title {
-  margin: 0;
-  color: #212529;
-}
-
-.post-meta {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.5rem 0.75rem;
-  margin-top: 1rem;
-  color: #6c757d;
-}
-
-.post-date-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-}
-
-.post-date-item time {
-  font-weight: 600;
-}
-
-.category {
-  display: inline-block;
-  padding: 0.2rem 0.6rem;
-  margin: 0 0.3rem;
-  background: #e9ecef;
-  color: #495057;
-  border-radius: 15px;
-  font-size: 0.85rem;
-}
-
-.post-origin-note {
-  margin: 1rem 0 0;
-  padding: 0.85rem 1rem;
-  border-left: 4px solid #005f5f;
-  background: #f8f9fa;
-  color: #495057;
-  line-height: 1.65;
-}
-
-.post-learning-outcomes {
-  margin: 0 0 2rem;
-  padding: 1.25rem 1.5rem;
-  border: 1px solid #b7d8d2;
-  border-left: 5px solid #00736f;
-  border-radius: 8px;
-  background: #fbf8f1;
-}
-
-.post-learning-outcomes h2 {
-  margin: 0 0 0.8rem;
-  color: #18312f;
-  font-size: 1.15rem;
-}
-
-.post-learning-outcomes ul {
-  margin: 0;
-  padding-left: 1.2rem;
-}
-
-.post-learning-outcomes li {
-  margin: 0.35rem 0;
-  line-height: 1.65;
-}
-
-.table-of-contents {
-  background: #f8f9fa;
-  padding: 1.5rem;
-  margin-bottom: 2rem;
-  border-radius: 8px;
-}
-
-.table-of-contents h2 {
-  margin-top: 0;
-  margin-bottom: 1rem;
-  font-size: 1.5rem;
-  color: #343a40;
-}
-
-.table-of-contents ul {
-  list-style: none;
-  padding-left: 0;
-  margin: 0;
-}
-
-.table-of-contents ul ul {
-  padding-left: 1.5rem;
-}
-
-.table-of-contents li {
-  margin: 0.5rem 0;
-}
-
-.table-of-contents a {
-  color: #495057;
-  text-decoration: none;
-}
-
-.table-of-contents a:hover {
-  color: #007bff;
-}
-
-.post-content {
-  line-height: 1.8;
-  color: #212529;
-}
-
-.post-content h2 {
-  margin-top: 2.5rem;
-  margin-bottom: 1.5rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid #dee2e6;
-}
-
-.post-content h3 {
-  margin-top: 2rem;
-  margin-bottom: 1rem;
-}
-
-.post-series-footer {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1rem;
-  margin-top: 3rem;
-}
-
-.post-series-panel {
-  padding: 1.2rem;
-  border: 1px solid #d8dde2;
-  border-top: 4px solid #5f4b8b;
-  border-radius: 8px;
-  background: #fbf8f1;
-}
-
-.post-series-panel h2 {
-  margin: 0 0 0.8rem;
-  color: #212529;
-  font-size: 1.1rem;
-}
-
-.post-series-panel p,
-.post-series-panel ul {
-  margin: 0;
-}
-
-.post-series-panel ul {
-  padding-left: 1.1rem;
-}
-
-.post-series-panel li {
-  margin: 0.45rem 0;
-  line-height: 1.5;
-}
-
-.post-series-panel a {
-  color: #005f5f;
-  font-weight: 600;
-  text-decoration-thickness: 0.08em;
-  text-underline-offset: 0.18em;
-}
-
-.series-next-link {
-  display: inline-flex;
-  flex-direction: column;
-  gap: 0.35rem;
-}
-
-.series-kicker,
-.reference-note {
-  display: block;
-  color: #667085;
-  font-size: 0.86rem;
-  font-weight: 500;
-}
-
-.series-navigation {
-  margin-top: 3rem;
-  padding: 1.5rem;
-  background: #f8f9fa;
-  border-radius: 8px;
-}
-
-.series-navigation h2 {
-  margin-top: 0;
-  margin-bottom: 1rem;
-  color: #343a40;
-  font-size: 1.25rem;
-}
-
-.series-navigation ol {
-  padding-left: 1.3rem;
-  margin: 0;
-}
-
-.series-navigation li {
-  margin: 0.5rem 0;
-}
-
-.series-navigation a {
-  color: #495057;
-  text-decoration: none;
-}
-
-.series-navigation a:hover {
-  color: #007bff;
-}
-
-.series-navigation .current {
-  font-weight: bold;
-  color: #005f5f;
-}
-
-/* 댓글 섹션 스타일 */
-.comments-section {
-  margin-top: 3rem;
-  padding-top: 2rem;
-  border-top: 1px solid #dee2e6;
-}
-
-.comments-section h2 {
-  margin-top: 0;
-  margin-bottom: 0.75rem;
-  color: #343a40;
-  font-size: 1.35rem;
-}
-
-.comments-note {
-  margin: 0 0 1rem;
-  color: #495057;
-  line-height: 1.65;
-}
-
-@media (max-width: 768px) {
-  .post {
-    padding: 1rem;
-  }
-
-  .post-series-footer {
-    grid-template-columns: 1fr;
-  }
-}
-</style>

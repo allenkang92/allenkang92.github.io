@@ -1,0 +1,3 @@
+{% assign category_key = include.category %}
+{% assign category_item = site.data.categories.main[category_key] %}
+{% if category_item %}{{ category_item.title }}{% else %}{{ category_key | replace: '_', ' ' | capitalize }}{% endif %}

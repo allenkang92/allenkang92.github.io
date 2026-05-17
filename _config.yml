@@ -67,12 +67,14 @@ data_dir: _data
 exclude:
   - AGENTS.md
   - DESIGN.md
+  - BLOG_OPERATIONS.md
+  - CONTENT_STRATEGY.md
+  - docs
   - Gemfile
   - Gemfile.lock
   - node_modules
   - vendor
   - assets/css/main.scss
-  - assets/css/main-new.scss
   - package.json
   - package-lock.json
   - webpack.config.js

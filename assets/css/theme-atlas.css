@@ -26,8 +26,15 @@
 }
 
 html {
+  box-sizing: border-box;
   background: var(--atlas-paper);
   color-scheme: light;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
 }
 
 body,
@@ -310,7 +317,7 @@ aside#site-sidebar.sidebar-right .navigation .nav-links a.nav-link.active {
 
 .search-input-wrapper {
   display: grid !important;
-  grid-template-columns: minmax(0, 1fr) 44px 44px;
+  grid-template-columns: minmax(0, 1fr) 44px;
   gap: 0.25rem;
   align-items: center;
   padding: 0.25rem;
@@ -333,8 +340,7 @@ aside#site-sidebar.sidebar-right .navigation .nav-links a.nav-link.active {
   display: none;
 }
 
-.search-button,
-.clear-button {
+.search-button {
   position: static !important;
   transform: none !important;
   display: inline-flex !important;
@@ -350,26 +356,6 @@ aside#site-sidebar.sidebar-right .navigation .nav-links a.nav-link.active {
   background: var(--atlas-teal-soft) !important;
   color: var(--atlas-teal) !important;
   cursor: pointer;
-}
-
-.clear-button {
-  visibility: hidden;
-  pointer-events: none;
-  background: transparent !important;
-  color: var(--atlas-muted) !important;
-  font-size: 1.15rem !important;
-  line-height: 1 !important;
-}
-
-.search-input-wrapper.has-query .clear-button {
-  visibility: visible;
-  pointer-events: auto;
-}
-
-.clear-button:hover,
-.clear-button:focus-visible {
-  background: var(--atlas-teal-soft) !important;
-  color: var(--atlas-teal) !important;
 }
 
 .search-button:hover,
@@ -1729,8 +1715,9 @@ mark {
 
   html.sidebar-enhanced .sidebar-right.sidebar-collapsed,
   .sidebar-right.sidebar-collapsed {
-    right: -100vw !important;
-    transform: none !important;
+    right: 0 !important;
+    transform: translateX(100%) !important;
+    display: none !important;
     visibility: hidden;
     pointer-events: none;
   }

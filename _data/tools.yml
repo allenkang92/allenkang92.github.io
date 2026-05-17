@@ -1,0 +1,21 @@
+items:
+  - key: unit_converter
+    title: "단위 변환기"
+    description: "길이, 질량, 시간, 온도 변환 공식과 예시"
+    url: "/tools/unit-converter/"
+    status: "ready"
+  - key: kinetic_energy
+    title: "운동 에너지 계산기"
+    description: "질량과 속도로 운동 에너지를 J 단위로 계산"
+    url: "/tools/kinetic-energy-calculator/"
+    status: "ready"
+  - key: acceleration
+    title: "가속도 계산기"
+    description: "속도 변화량과 시간으로 평균 가속도 계산"
+    url: "/tools/acceleration-calculator/"
+    status: "ready"
+  - key: dsr
+    title: "DSR 계산기 준비 중"
+    description: "총부채원리금상환비율 공식과 기준 안내"
+    url: "/tools/dsr-calculator/"
+    status: "pending"

@@ -1,6 +1,7 @@
 ---
 layout: default
 title: Tools
+description: 단위 변환기, 운동 에너지 계산기, 가속도 계산기와 DSR 공식 안내를 모은 실험 도구 페이지입니다.
 permalink: /tools/
 scripts:
   - /assets/js/tools.js
@@ -13,22 +14,12 @@ scripts:
 <section class="tool-directory" aria-labelledby="tool-directory-title">
   <h2 id="tool-directory-title">개별 계산 안내</h2>
   <div class="tool-directory__grid" markdown="0">
-<a class="tool-directory__item" href="/tools/unit-converter/">
-<span class="tool-directory__label">단위 변환기</span>
-<span class="tool-directory__desc">길이, 질량, 시간, 온도 변환 공식과 예시</span>
+{% for tool in site.data.tools.items %}
+<a class="tool-directory__item{% if tool.status == 'pending' %} tool-directory__item--pending{% endif %}" href="{{ tool.url | relative_url }}">
+<span class="tool-directory__label">{{ tool.title }}</span>
+<span class="tool-directory__desc">{{ tool.description }}</span>
 </a>
-<a class="tool-directory__item" href="/tools/kinetic-energy-calculator/">
-<span class="tool-directory__label">운동 에너지 계산기</span>
-<span class="tool-directory__desc">질량과 속도로 운동 에너지를 J 단위로 계산</span>
-</a>
-<a class="tool-directory__item" href="/tools/acceleration-calculator/">
-<span class="tool-directory__label">가속도 계산기</span>
-<span class="tool-directory__desc">속도 변화량과 시간으로 평균 가속도 계산</span>
-</a>
-<a class="tool-directory__item tool-directory__item--pending" href="/tools/dsr-calculator/">
-<span class="tool-directory__label">DSR 계산기 준비 중</span>
-<span class="tool-directory__desc">총부채원리금상환비율 공식과 기준 안내</span>
-</a>
+{% endfor %}
   </div>
 </section>
 

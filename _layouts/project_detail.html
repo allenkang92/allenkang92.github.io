@@ -72,7 +72,7 @@ layout: default
               <img src="{{ image.url }}" 
                    alt="{{ image.alt }}" 
                    loading="lazy"
-                   onclick="openGalleryModal(this)">
+                   data-gallery-item>
               {% if image.caption %}
                 <figcaption>{{ image.caption }}</figcaption>
               {% endif %}
@@ -106,34 +106,10 @@ layout: default
 </article>
 
 <!-- 갤러리 모달 -->
-<div id="gallery-modal" class="modal" onclick="closeGalleryModal()">
-  <span class="modal-close" onclick="closeGalleryModal()">&times;</span>
-  <img id="modal-image" class="modal-content">
+<div id="gallery-modal" class="modal" hidden>
+  <button class="modal-close" type="button" aria-label="갤러리 닫기">&times;</button>
+  <img id="modal-image" class="modal-content" alt="">
   <div id="modal-caption"></div>
 </div>
 
-<script>
-function openGalleryModal(img) {
-  const modal = document.getElementById('gallery-modal');
-  const modalImg = document.getElementById('modal-image');
-  const captionText = document.getElementById('modal-caption');
-  const caption = img.nextElementSibling;
-
-  modal.style.display = "block";
-  modalImg.src = img.src;
-  if (caption) {
-    captionText.innerHTML = caption.innerHTML;
-  }
-}
-
-function closeGalleryModal() {
-  document.getElementById('gallery-modal').style.display = "none";
-}
-
-// ESC 키로 모달 닫기
-document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape') {
-    closeGalleryModal();
-  }
-});
-</script>
+<script src="{{ '/assets/js/project-detail.js' | relative_url }}" defer></script>

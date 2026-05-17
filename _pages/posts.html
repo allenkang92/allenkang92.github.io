@@ -3,16 +3,18 @@ layout: default
 title: Posts
 description: Browse all blog posts by category
 permalink: /posts/
+scripts:
+  - /assets/js/posts.js
 ---
 
 <h1>전체 글</h1>
 
 <div class="posts-container">
   <div class="posts-controls">
-      <button id="toggle-posts" class="toggle-btn" aria-label="전체 글 보기" aria-expanded="false" aria-controls="posts-list">
-        <span class="toggle-icon" aria-hidden="true">▼</span>
-        <span class="toggle-text">전체 글 보기</span>
-      </button>
+    <button id="toggle-posts" class="toggle-btn" aria-label="전체 글 보기" aria-expanded="false" aria-controls="posts-list">
+      <span class="toggle-icon" aria-hidden="true">▼</span>
+      <span class="toggle-text">전체 글 보기</span>
+    </button>
     <div class="posts-info">
       <span id="posts-count">전체 {{ site.posts.size }}개 글</span>
     </div>
@@ -28,25 +30,17 @@ permalink: /posts/
           </time>
           {% if post.categories %}
             {% for category in post.categories %}
-              <span class="category">
-                {% case category %}
-                  {% when 'mathematics_philosophy_history' %}수학철학·수학사
-                  {% when 'science_philosophy_history' %}과학철학·과학사
-                  {% when 'web_technologies' %}웹 기술
-                  {% when 'daily_life' %}일상
-                  {% else %}{{ category | replace: '_', ' ' | capitalize }}
-                {% endcase %}
-              </span>
+              <span class="category">{% include category-label.html category=category %}</span>
             {% endfor %}
           {% endif %}
         </div>
         <div class="post-excerpt">
           {{ post.excerpt | strip_html | truncatewords: 50 }}
         </div>
-        <a href="{{ post.url | relative_url }}" class="read-more">읽기</a>
+        <a href="{{ post.url | relative_url }}" class="read-more" aria-label="읽기: {{ post.title }}">읽기</a>
       </article>
     {% endfor %}
-    
+
     {% for post in site.posts offset: 10 %}
       <article class="post-preview hidden" data-categories="{{ post.categories | join: ' ' }}">
         <h2><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
@@ -56,330 +50,21 @@ permalink: /posts/
           </time>
           {% if post.categories %}
             {% for category in post.categories %}
-              <span class="category">
-                {% case category %}
-                  {% when 'mathematics_philosophy_history' %}수학철학·수학사
-                  {% when 'science_philosophy_history' %}과학철학·과학사
-                  {% when 'web_technologies' %}웹 기술
-                  {% when 'daily_life' %}일상
-                  {% else %}{{ category | replace: '_', ' ' | capitalize }}
-                {% endcase %}
-              </span>
+              <span class="category">{% include category-label.html category=category %}</span>
             {% endfor %}
           {% endif %}
         </div>
         <div class="post-excerpt">
           {{ post.excerpt | strip_html | truncatewords: 50 }}
         </div>
-        <a href="{{ post.url | relative_url }}" class="read-more">읽기</a>
+        <a href="{{ post.url | relative_url }}" class="read-more" aria-label="읽기: {{ post.title }}">읽기</a>
       </article>
     {% endfor %}
   </div>
-  
-  <div id="pagination" class="pagination" style="display: none;">
+
+  <div id="pagination" class="pagination" style="display: none;" aria-label="글 목록 페이지">
     <button id="prev-page" class="page-btn" disabled>이전</button>
-    <span id="page-info"></span>
+    <span id="page-info" aria-live="polite"></span>
     <button id="next-page" class="page-btn">다음</button>
   </div>
 </div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  const toggleBtn = document.getElementById('toggle-posts');
-  const postsList = document.getElementById('posts-list');
-  const pagination = document.getElementById('pagination');
-  const allPosts = Array.from(document.querySelectorAll('.post-preview'));
-  const postsPerPage = 10;
-  let currentPage = 1;
-  let isExpanded = false;
-  
-  // 토글 기능
-  if (!toggleBtn) return;
-
-  toggleBtn.addEventListener('click', function() {
-    isExpanded = !isExpanded;
-    
-    if (isExpanded) {
-      // 전체 보기
-      postsList.classList.remove('collapsed');
-      toggleBtn.querySelector('.toggle-icon').textContent = '▲';
-      toggleBtn.querySelector('.toggle-text').textContent = '처음 10개만 보기';
-      toggleBtn.setAttribute('aria-label', '처음 10개만 보기');
-      toggleBtn.setAttribute('aria-expanded', 'true');
-      
-      getFilteredPosts().forEach(post => showPost(post));
-      hideNonMatchingPosts();
-      
-      pagination.style.display = 'none';
-    } else {
-      // 페이징 모드
-      postsList.classList.add('collapsed');
-      toggleBtn.querySelector('.toggle-icon').textContent = '▼';
-      toggleBtn.querySelector('.toggle-text').textContent = '전체 글 보기';
-      toggleBtn.setAttribute('aria-label', '전체 글 보기');
-      toggleBtn.setAttribute('aria-expanded', 'false');
-      
-      // 페이징 활성화
-      currentPage = 1;
-      showPage(currentPage);
-      updatePaginationVisibility();
-    }
-  });
-  
-  // 페이징 기능
-  function showPage(page) {
-    const filteredPosts = getFilteredPosts();
-    const start = (page - 1) * postsPerPage;
-    const end = start + postsPerPage;
-    
-    allPosts.forEach(post => hidePost(post));
-    filteredPosts.forEach((post, index) => {
-      if (index >= start && index < end) {
-        showPost(post);
-      }
-    });
-    
-    updatePaginationButtons();
-    updatePaginationVisibility();
-  }
-  
-  function updatePaginationButtons() {
-    const totalPages = Math.max(1, Math.ceil(getFilteredPosts().length / postsPerPage));
-    const pageInfo = document.getElementById('page-info');
-    const prevBtn = document.getElementById('prev-page');
-    const nextBtn = document.getElementById('next-page');
-    
-    pageInfo.textContent = `${currentPage} / ${totalPages}`;
-    
-    prevBtn.disabled = currentPage === 1;
-    nextBtn.disabled = currentPage === totalPages;
-  }
-  
-  // 페이지 버튼 이벤트
-  document.getElementById('prev-page').addEventListener('click', function() {
-    if (currentPage > 1) {
-      currentPage--;
-      showPage(currentPage);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  });
-  
-  document.getElementById('next-page').addEventListener('click', function() {
-    const totalPages = Math.ceil(getFilteredPosts().length / postsPerPage);
-    if (currentPage < totalPages) {
-      currentPage++;
-      showPage(currentPage);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  });
-  
-  // 초기 페이징 설정
-  if (allPosts.length > postsPerPage) {
-    updatePaginationVisibility();
-    updatePaginationButtons();
-  }
-
-  function getSelectedCategory() {
-    return document.getElementById('category-select')?.value || 'all';
-  }
-
-  function getFilteredPosts() {
-    const selectedCategory = getSelectedCategory();
-    if (selectedCategory === 'all') return allPosts;
-    return allPosts.filter(post => (post.dataset.categories || '').split(/\s+/).includes(selectedCategory));
-  }
-
-  function showPost(post) {
-    post.classList.remove('hidden');
-    post.classList.add('visible');
-  }
-
-  function hidePost(post) {
-    post.classList.add('hidden');
-    post.classList.remove('visible');
-  }
-
-  function hideNonMatchingPosts() {
-    const matchingPosts = new Set(getFilteredPosts());
-    allPosts.forEach(post => {
-      if (!matchingPosts.has(post)) hidePost(post);
-    });
-  }
-
-  function updatePaginationVisibility() {
-    const shouldPaginate = getSelectedCategory() === 'all' && !isExpanded && allPosts.length > postsPerPage;
-    pagination.style.display = shouldPaginate ? 'flex' : 'none';
-  }
-});
-</script>
-
-<style>
-.post-preview {
-  margin-bottom: 2rem;
-  padding-bottom: 2rem;
-  border-bottom: 1px solid #dee2e6;
-}
-
-.post-preview:last-child {
-  border-bottom: none;
-}
-
-.post-meta {
-  margin: 0.5rem 0;
-  color: #6c757d;
-  font-size: 0.9rem;
-}
-
-.post-meta time {
-  margin-right: 1rem;
-}
-
-.category {
-  display: inline-block;
-  padding: 0.2rem 0.6rem;
-  margin: 0 0.3rem;
-  background: #e9ecef;
-  color: #495057;
-  border-radius: 15px;
-  font-size: 0.85rem;
-}
-
-.post-excerpt {
-  color: #495057;
-  margin-top: 1rem;
-  line-height: 1.6;
-}
-
-.post-preview h2 {
-  margin: 0;
-  color: #212529;
-}
-
-.post-preview h2 a {
-  text-decoration: none;
-  color: inherit;
-}
-
-.post-preview h2 a:hover {
-  color: #007bff;
-}
-
-.post-meta {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 1rem;
-  font-size: 0.9rem;
-  color: #6c757d;
-}
-
-.post-meta .category {
-  padding: 0.2rem 0.5rem;
-  background: #e9ecef;
-  border-radius: 4px;
-  font-size: 0.85rem;
-}
-
-.post-excerpt {
-  color: #495057;
-  line-height: 1.6;
-}
-
-.posts-container {
-  max-width: 900px;
-  margin: 0 auto;
-}
-
-.posts-controls {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-  padding: 1rem;
-  background: #f8f9fa;
-  border-radius: 8px;
-}
-
-.toggle-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.6rem 1.2rem;
-  background: white;
-  color: #212529;
-  border: 2px solid #dee2e6;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.95rem;
-  font-weight: 500;
-  transition: all 0.3s ease;
-}
-
-.toggle-btn:hover {
-  background: #007bff;
-  color: white;
-  border-color: #007bff;
-}
-
-.toggle-text {
-  color: inherit;
-}
-
-.toggle-icon {
-  color: inherit;
-  font-size: 0.8rem;
-}
-
-.posts-info {
-  color: #6c757d;
-  font-size: 0.9rem;
-}
-
-.posts-list {
-  margin-bottom: 2rem;
-}
-
-.post-preview.hidden {
-  display: none !important;
-}
-
-.post-preview.visible {
-  display: block !important;
-}
-
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1rem;
-  margin-top: 3rem;
-  padding: 1rem;
-}
-
-.page-btn {
-  padding: 0.5rem 1rem;
-  background: white;
-  color: #212529;
-  border: 1px solid #dee2e6;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: all 0.2s ease;
-}
-
-.page-btn:hover:not(:disabled) {
-  background: #007bff;
-  color: white;
-  border-color: #007bff;
-}
-
-.page-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  color: #6c757d;
-}
-
-#page-info {
-  font-weight: 500;
-  color: #495057;
-}
-</style>

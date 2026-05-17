@@ -51,7 +51,7 @@ related:
 
 ### F-001 이미지가 전역 CSS 때문에 숨겨질 수 있음
 
-- 근거: `assets/css/theme.css`의 `img { opacity: 0; }`, lazy loader의 `.loaded` 누락
+- 근거: 제거 전 legacy `assets/css/theme.css`의 `img { opacity: 0; }`, lazy loader의 `.loaded` 누락
 - 영향: 포스트/프로젝트 이미지가 정보 전달에 실패할 수 있음
 - 조치: `theme-atlas.css`에서 이미지 opacity fallback을 보장하고 `_includes/scripts.html` lazy loader를 수정함
 - 상태: 완료
@@ -98,8 +98,8 @@ related:
 ## P0/P1 후보
 
 1. README 구조 갱신
-   - 현재 README는 `_config/`, `_includes/meta`, `_projects` 등 실제 구조와 다른 설명이 있다.
-   - post front matter 예시는 `category` 단수만 안내하지만 실제 구현은 `categories`, `series`, `series_order`, `date_modified`, `learning_outcomes`, `references`를 사용한다.
+   - 2026-05-17에 실제 Jekyll 구조, live CSS/JS, front matter, registry 기준으로 갱신했다.
+   - 상태: 완료
 
 2. description 메타데이터 정책
    - 운영 문서는 `description` 확인을 요구하지만 기존 포스트 다수에 description이 없다.
@@ -110,8 +110,8 @@ related:
    - 오탈자, 메타데이터, 사실 업데이트, 구조 개편별 갱신일 변경 기준이 필요하다.
 
 4. 시리즈 registry 도입
-   - 시리즈 키/라벨/허브 URL/참고자료가 `_pages/series.html`, 개별 허브, `_layouts/post.html`에 반복된다.
-   - `_data/series.yml` 같은 registry로 단일화하는 것이 좋다.
+   - 2026-05-17에 `_data/series.yml`을 도입하고 post/series/hub 템플릿에서 사용하도록 정리했다.
+   - 상태: 완료
 
 5. 검색 품질 정책
    - 현재 검색 색인은 본문 일부만 포함한다.

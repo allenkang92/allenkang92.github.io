@@ -47,13 +47,7 @@
         {% assign category_key = category_entry[0] %}
         {% if category_key %}
           <option value="{{ category_key }}">
-            {% case category_key %}
-              {% when 'mathematics_philosophy_history' %}수학철학·수학사
-              {% when 'science_philosophy_history' %}과학철학·과학사
-              {% when 'web_technologies' %}웹 기술
-              {% when 'daily_life' %}일상
-              {% else %}{{ category_key | replace: '_', ' ' | capitalize }}
-            {% endcase %}
+            {% include category-label.html category=category_key %}
           </option>
         {% endif %}
       {% endfor %}

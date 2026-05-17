@@ -1,118 +1,90 @@
-# Allen의 블로그
+# Allen's Blog
 
-Allen의 개인 블로그입니다.
+Jekyll 기반 GitHub Pages 개인 블로그입니다. 수학철학·수학사, 과학철학·현대물리학, 웹 접근성, 작은 계산 도구를 함께 운영합니다.
 
-## 디렉토리 구조
+## 구조
 
-```
-allenkang92.github.io/
-├── _config/                      # 설정 파일
-│   ├── development.yml          # 개발 환경 설정
-│   └── production.yml           # 운영 환경 설정
-├── _data/                        # 데이터 파일
-│   ├── navigation.yml           # 네비게이션 메뉴 구조
-│   ├── social.yml               # 소셜 미디어 링크
-│   └── categories.yml           # 블로그 카테고리
-├── _includes/                    # 재사용 가능한 컴포넌트
-│   ├── components/              # UI 컴포넌트
-│   │   ├── header.html         # 헤더
-│   │   ├── footer.html         # 푸터
-│   │   ├── sidebar.html        # 사이드바
-│   │   └── search.html         # 검색
-│   ├── meta/                    # 메타 정보
-│   │   ├── head.html           # 헤드 태그
-│   │   └── scripts.html        # 스크립트
-├── _layouts/                     # 레이아웃 템플릿
-│   ├── default.html             # 기본 레이아웃
-│   ├── post.html                # 포스트 레이아웃
-│   └── page.html                # 페이지 레이아웃
-├── _pages/                       # 정적 페이지
-│   ├── about.html               # 블로그 소개
-│   ├── posts.md                 # 글 목록
-│   ├── projects.md              # 프로젝트 목록
-│   └── tools.md                 # 도구 목록
-├── _posts/                       # 블로그 포스트
-├── _projects/                    # 프로젝트 상세
-├── _achievements/                # 성과 기록
-├── assets/                       # 정적 자원
-│   ├── css/                     # CSS 파일
-│   │   ├── components/         # 컴포넌트 스타일
-│   │   └── pages/             # 페이지별 스타일
-│   ├── js/                      # JavaScript 파일
-│   │   ├── main.js            # 메인 스크립트
-│   │   └── modules/           # JS 모듈
-│   └── images/                  # 이미지
-│       ├── posts/              # 포스트 이미지
-│       ├── projects/           # 프로젝트 이미지
-│       └── common/             # 공통 이미지
-└── _site/                        # 생성된 사이트 (git-ignore)
+```text
+.
+├── _config.yml              # Jekyll 설정, build exclude, collection 설정
+├── _data/                   # navigation, categories, series, tools registry
+├── _includes/               # sidebar, search form, footer, category label
+├── _layouts/                # default, post, category, project, achievement layouts
+├── _pages/                  # posts, series, about, tools, achievements pages
+├── _posts/                  # 블로그 글
+├── _achievements/           # achievement collection
+├── _achievement_categories/  # achievement category pages
+├── _subcategories/          # category/subcategory metadata
+├── assets/
+│   ├── css/                 # live CSS: main, search, sidebar-toggle, theme-atlas
+│   ├── js/                  # main, search, posts, tools, analytics events
+│   └── images/              # logo, post assets, PDF archive
+├── tools/                   # SEO용 개별 도구 랜딩 페이지
+├── BLOG_OPERATIONS.md       # 운영 체크리스트, build 제외
+├── CONTENT_STRATEGY.md      # 콘텐츠 전략, build 제외
+├── DESIGN.md                # 디자인 토큰과 UI 운영 원칙, build 제외
+└── docs/                    # PRD/HLD/LLD/TDD/ADR/review 문서, build 제외
 ```
 
-## 설치 방법
+## 실행
 
-1. Ruby와 Bundler 설치
-```bash
-# macOS의 경우
-brew install ruby
-gem install bundler
-```
-
-2. 의존성 설치
 ```bash
 bundle install
-```
-
-3. 로컬 실행
-```bash
 bundle exec jekyll serve
 ```
 
-http://localhost:4000 에서 사이트를 확인할 수 있습니다.
+기본 주소는 `http://127.0.0.1:4000`입니다. 포트 충돌이 있으면 `--port`를 지정합니다.
 
-## 콘텐츠 추가 방법
+## 검증
 
-### 블로그 포스트
-`_posts/` 디렉토리에 다음 형식으로 새 마크다운 파일을 생성합니다:
-```markdown
+변경 후 기본적으로 확인합니다.
+
+```bash
+node --check assets/js/main.js
+node --check assets/js/simple-search.js
+node --check assets/js/posts.js
+node --check assets/js/tools.js
+node --check assets/js/analytics-events.js
+bundle exec jekyll build
+```
+
+시각 변경이 있으면 모바일 390px, 데스크톱 폭에서 `/`, `/posts/`, 대표 포스트, `/series/`, `/tools/`, `/about/`를 확인합니다.
+
+## 글 front matter
+
+새 글은 최소한 아래 값을 둡니다.
+
+```yaml
 ---
 layout: post
-title: 포스트 제목
-date: YYYY-MM-DD
-category: 카테고리-이름
+title: "글 제목"
+description: "검색 결과와 공유 미리보기에 쓸 1문장 설명"
+date: YYYY-MM-DD HH:MM:SS +0900
+date_modified: YYYY-MM-DD HH:MM:SS +0900
+last_modified_at: YYYY-MM-DD HH:MM:SS +0900
+categories: [mathematics_philosophy_history]
+series: "Mathematics-Philosophy-History"
+series_order: 1
+learning_outcomes:
+  - "이 글에서 얻는 것 1"
+  - "이 글에서 얻는 것 2"
+  - "이 글에서 얻는 것 3"
+references:
+  - title: "참고자료명"
+    url: "https://example.com"
 ---
 ```
 
-### 프로젝트
-`_projects/` 디렉토리에 다음 형식으로 추가합니다:
-```markdown
----
-layout: project
-title: 프로젝트 이름
-thumbnail: /assets/images/projects/썸네일.jpg
-technologies: [기술1, 기술2]
----
-```
+마이그레이션 글은 `migrated_from`을 추가하고, 원문 작성일과 현재 블로그 갱신일을 구분합니다.
 
-### 성과
-`_achievements/` 디렉토리에 다음 형식으로 생성합니다:
-```markdown
----
-layout: achievement
-title: 성과 제목
-date: YYYY-MM-DD
-category: 성과-카테고리
----
-```
+## 데이터 registry
 
-## 주요 기능
+- 카테고리 라벨은 `_data/categories.yml`을 기준으로 합니다.
+- 시리즈 라벨, 허브 URL, 대표 참고자료는 `_data/series.yml`을 기준으로 합니다.
+- 도구 목록과 개별 랜딩 링크는 `_data/tools.yml`을 기준으로 합니다.
 
-- 반응형 디자인
-- 카테고리 기반 포스트 구성
-- 프로젝트 in 포트폴리오
-- 성과 관리
-- 검색 기능
+Liquid 템플릿에서 같은 라벨을 직접 `case`로 반복하지 않습니다.
 
-## 제작자
+## 운영 문서
 
-**Allen Kang**
-- GitHub: [@allenkang92](https://github.com/allenkang92)
+`BLOG_OPERATIONS.md`, `CONTENT_STRATEGY.md`, `DESIGN.md`, `docs/`는 저장소 운영용 문서입니다. `_config.yml`의 `exclude`에 들어 있으므로 public site와 sitemap에는 노출하지 않습니다.
