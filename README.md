@@ -9,12 +9,10 @@ Jekyll 기반 GitHub Pages 개인 블로그입니다. 수학철학·수학사, �
 ├── _config.yml              # Jekyll 설정, build exclude, collection 설정
 ├── _data/                   # navigation, categories, series, tools registry
 ├── _includes/               # sidebar, search form, footer, category label
-├── _layouts/                # default, post, category, project, achievement layouts
+├── _layouts/                # default, post, achievement(s) layouts
 ├── _pages/                  # posts, series, about, tools, achievements pages
 ├── _posts/                  # 블로그 글
-├── _achievements/           # achievement collection
-├── _achievement_categories/  # achievement category pages
-├── _subcategories/          # category/subcategory metadata
+├── _achievements/           # achievement collection (성과 데이터의 단일 진실원)
 ├── assets/
 │   ├── css/                 # live CSS: main, search, sidebar-toggle, theme-atlas
 │   ├── js/                  # main, search, posts, tools, analytics events
@@ -47,6 +45,9 @@ node --check assets/js/tools.js
 node --check assets/js/analytics-events.js
 bundle exec jekyll build
 ```
+
+글 목록의 카테고리 필터와 페이지네이션은 `assets/js/posts.js`가 단독으로 담당합니다.
+같은 select를 제어하는 스크립트를 새로 추가하지 않습니다.
 
 시각 변경이 있으면 모바일 390px, 데스크톱 폭에서 `/`, `/posts/`, 대표 포스트, `/series/`, `/tools/`, `/about/`를 확인합니다.
 

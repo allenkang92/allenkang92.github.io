@@ -10,14 +10,8 @@ baseurl: "" # 서브디렉토리가 있을 경우 예: /blog
 google_analytics: G-C2BXF21DKW
 logo: /assets/images/icons/icon-512.png # jekyll-seo-tag가 og:image로 사용
 
-# 사이트 속성
-is_project_page: true
-
-
 # Build settings
 markdown: kramdown
-theme: minima
-future: true
 highlighter: rouge
 incremental: false
 
@@ -40,13 +34,6 @@ plugins:
   - jekyll-seo-tag
   - jekyll-sitemap
   - jekyll-redirect-from
-  - jekyll-sass-converter
-
-# Sass 설정
-sass:
-  sass_dir: _sass
-  style: compressed
-  sourcemap: development
 
 # 에셋 최적화
 compress_html:
@@ -75,11 +62,8 @@ exclude:
   - Gemfile.lock
   - node_modules
   - vendor
-  - assets/css/main.scss
   - package.json
   - package-lock.json
-  - webpack.config.js
-  - .babelrc
   - README.md
 
 # Collections
@@ -90,9 +74,6 @@ collections:
   achievements:
     output: true
     permalink: /achievements/:title/
-  projects:
-    output: true
-    permalink: /projects/:title/
 
 # Defaults
 defaults:
@@ -114,11 +95,6 @@ defaults:
       type: "achievements"
     values:
       layout: "achievement"
-  - scope:
-      path: ""
-      type: "projects"
-    values:
-      layout: "project"
   - scope:
       path: "_pages"
       type: "pages"

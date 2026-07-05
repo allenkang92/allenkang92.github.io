@@ -7,8 +7,5 @@ Sitemap: https://allenkang92.github.io/sitemap.xml
 # 크롤링 제한
 Crawl-delay: 10
 
-# 제외할 디렉토리
-Disallow: /_layouts/
-Disallow: /_includes/
-Disallow: /_data/
+# 제외할 페이지 (언더스코어 디렉토리는 빌드 산출물에 없어 규칙 불필요)
 Disallow: /404.html

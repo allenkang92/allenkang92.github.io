@@ -12,8 +12,3 @@ main:
     url: "/achievements/"
   - title: "소개"
     url: "/about/"
-
-# 푸터 네비게이션
-footer:
-  - title: "검색"
-    url: "/search/"
