@@ -9,7 +9,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="theme-color" content="#f4fffb">
+    <meta name="theme-color" content="#f5fffb">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     
@@ -23,15 +23,15 @@
     {% seo %}
     
     <!-- 파비콘 및 앱 아이콘 -->
-    <link rel="apple-touch-icon" sizes="1024x1024" href="{{ '/apple-touch-icon.png' | relative_url }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ '/apple-touch-icon.png' | relative_url }}">
     <link rel="icon" href="{{ '/favicon.ico' | relative_url }}" sizes="any">
     <link rel="manifest" href="{{ '/manifest.json' | relative_url }}">
     
     <!-- 언어 설정 -->
     <meta http-equiv="content-language" content="ko">
     
-    {% if analytics_id %}
-    <!-- Google tag (gtag.js): production only -->
+    {% if analytics_id and jekyll.environment == "production" %}
+    <!-- Google tag (gtag.js): production 빌드에서만 삽입, 런타임 hostname 체크는 이중 안전장치 -->
     <script>
         (function () {
           if (!/^(localhost|127\.0\.0\.1)$/.test(window.location.hostname)) {
@@ -66,8 +66,5 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-    
-    <!-- FontAwesome 아이콘 -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
 </head>

@@ -14,7 +14,6 @@
                 aria-label="검색어 입력"
                 aria-describedby="search-instructions"
                 aria-controls="search-results"
-                aria-expanded="false"
             >
             <button
                 type="submit"
@@ -32,9 +31,13 @@
         </div>
     </form>
     
-    <div class="search-results" id="search-results" role="region" aria-live="polite" aria-label="검색 결과">
+    <!-- 결과 수 안내용 상시 live region — 결과 목록 전체 낭독을 피하고 요약만 알린다 -->
+    <div id="search-status" class="visually-hidden" role="status"></div>
+
+    <div class="search-results" id="search-results" role="region" aria-label="검색 결과">
         <!-- 검색 결과가 여기에 표시됩니다 -->
     </div>
+  </div>
 </div>
 
 <!-- Load the search script -->

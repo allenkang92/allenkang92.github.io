@@ -9,8 +9,10 @@
     const prevBtn = document.getElementById('prev-page');
     const nextBtn = document.getElementById('next-page');
     const categorySelect = document.getElementById('category-select');
+    const postsCount = document.getElementById('posts-count');
     const allPosts = Array.from(document.querySelectorAll('.post-preview'));
     const postsPerPage = 10;
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     let currentPage = 1;
     let isExpanded = false;
 
@@ -18,6 +20,37 @@
 
     function getSelectedCategory() {
       return categorySelect?.value || 'all';
+    }
+
+    // URL ?category= 값과 select 상태를 동기화 (북마크/공유 지원)
+    function applyCategoryFromUrl() {
+      if (!categorySelect) return;
+      const urlCategory = new URLSearchParams(window.location.search).get('category');
+      if (urlCategory && Array.from(categorySelect.options).some(option => option.value === urlCategory)) {
+        categorySelect.value = urlCategory;
+      }
+    }
+
+    function updateCategoryUrl(category) {
+      const url = new URL(window.location.href);
+      if (category === 'all') {
+        url.searchParams.delete('category');
+      } else {
+        url.searchParams.set('category', category);
+      }
+      window.history.replaceState({}, '', url);
+    }
+
+    function updatePostsCount() {
+      if (!postsCount) return;
+      const selectedCategory = getSelectedCategory();
+      postsCount.textContent = selectedCategory === 'all'
+        ? `전체 ${allPosts.length}개 글`
+        : `선택한 카테고리 ${getFilteredPosts().length}개 글`;
+    }
+
+    function scrollToTop() {
+      window.scrollTo({ top: 0, behavior: prefersReducedMotion.matches ? 'auto' : 'smooth' });
     }
 
     function getFilteredPosts() {
@@ -100,27 +133,31 @@
     prevBtn.addEventListener('click', function() {
       if (currentPage <= 1) return;
       showPage(currentPage - 1);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      scrollToTop();
     });
 
     nextBtn.addEventListener('click', function() {
       const totalPages = Math.ceil(getFilteredPosts().length / postsPerPage);
       if (currentPage >= totalPages) return;
       showPage(currentPage + 1);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      scrollToTop();
     });
 
     categorySelect?.addEventListener('change', function() {
       currentPage = 1;
+      updateCategoryUrl(getSelectedCategory());
       if (isExpanded) {
         showExpandedPosts();
       } else {
         showPage(1);
       }
+      updatePostsCount();
     });
 
+    applyCategoryFromUrl();
     syncToggleState();
     showPage(1);
+    updatePostsCount();
   }
 
   if (document.readyState === 'loading') {

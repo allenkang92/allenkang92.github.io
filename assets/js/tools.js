@@ -374,10 +374,19 @@
       tab.addEventListener('keydown', event => {
         const tabs = Array.from(document.querySelectorAll('[data-tab]'));
         const currentIndex = tabs.indexOf(tab);
-        if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') return;
+        let nextTab;
+        // APG Tabs 패턴: 좌우 화살표 + Home/End
+        if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
+          const direction = event.key === 'ArrowRight' ? 1 : -1;
+          nextTab = tabs[(currentIndex + direction + tabs.length) % tabs.length];
+        } else if (event.key === 'Home') {
+          nextTab = tabs[0];
+        } else if (event.key === 'End') {
+          nextTab = tabs[tabs.length - 1];
+        } else {
+          return;
+        }
         event.preventDefault();
-        const direction = event.key === 'ArrowRight' ? 1 : -1;
-        const nextTab = tabs[(currentIndex + direction + tabs.length) % tabs.length];
         nextTab.focus();
         switchTab(nextTab.dataset.tab);
       });

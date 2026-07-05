@@ -8,6 +8,7 @@ author: Allen Kang
 email: ksw8841@knou.ac.kr
 baseurl: "" # 서브디렉토리가 있을 경우 예: /blog
 google_analytics: G-C2BXF21DKW
+logo: /assets/images/icons/icon-512.png # jekyll-seo-tag가 og:image로 사용
 
 # 사이트 속성
 is_project_page: true
@@ -100,12 +101,14 @@ defaults:
       type: "pages"
     values:
       layout: "default"
+      image: /assets/images/icons/icon-512.png # og:image 기본값 (jekyll-seo-tag)
   - scope:
       path: "_posts"
       type: "posts"
     values:
       layout: "post"
       permalink: /posts/:title/
+      image: /assets/images/icons/icon-512.png # og:image 기본값 (jekyll-seo-tag)
   - scope:
       path: ""
       type: "achievements"

@@ -1,5 +1,17 @@
 /* Base CSS layer. Search, sidebar, and mint theme overrides are loaded explicitly in head.html. */
 
+/* 기본 모드 토큰 정의 — prefers-contrast: more 블록에서만 정의되어 있던 변수의 기본값.
+   미정의 시 :focus outline, 버튼 배경, input focus ring이 통째로 무효화된다. */
+:root {
+  --primary-color: #1f746a;
+  --primary-hover: #155f57;
+  --text-color: #1f3430;
+  --background-color: #f5fffb;
+  --border-color: #c8e4dc;
+  --focus-ring-color: rgba(31, 116, 106, 0.35);
+  --error-color: #b3261e;
+}
+
 /* 폰트 정의 - 성능 개선을 위한 속성 추가 */
 @font-face {
   font-family: 'PFStardust';
@@ -482,7 +494,7 @@ body {
   border: 1px solid rgba(168, 225, 219, 0.3);
 }
 
-.sidebar-search h3 {
+.sidebar-search .sidebar-heading {
   margin: 0 0 10px 0;
   font-size: 14px;
   font-weight: 600;
@@ -524,7 +536,7 @@ body {
   border: 1px solid rgba(168, 225, 219, 0.3);
 }
 
-.sidebar-category-filter h3 {
+.sidebar-category-filter .sidebar-heading {
   margin: 0 0 10px 0;
   font-size: 14px;
   font-weight: 600;

@@ -5,7 +5,7 @@ description: "A quiet knowledge lab for math philosophy, science history, access
 colors:
   ink: "#1F3430"
   inkSoft: "#4F6762"
-  muted: "#6F807C"
+  muted: "#5D6F6B"
   paper: "#F5FFFB"
   paperDeep: "#EAF8F2"
   surface: "#FFFFFF"

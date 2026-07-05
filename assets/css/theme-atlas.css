@@ -12,7 +12,7 @@
   --atlas-violet-soft: #f2efff;
   --atlas-amber: #c28f3b;
   --atlas-border: #c8e4dc;
-  --atlas-muted: #6f807c;
+  --atlas-muted: #5d6f6b; /* WCAG AA 4.5:1 이상 (paper/surface/sidebar 배경 기준) */
   --atlas-focus: #1f746a;
   --atlas-shadow: 0 14px 34px rgba(31, 52, 48, 0.08);
   --atlas-shadow-tight: 0 8px 18px rgba(31, 52, 48, 0.06);
@@ -218,8 +218,32 @@ aside.sidebar-right,
 }
 
 .sidebar-right .blog-title p,
-.sidebar-right h3 {
+.sidebar-right .sidebar-heading {
   color: var(--atlas-muted) !important;
+}
+
+/* 소셜 링크 — 터치 타겟 44px 확보 (WCAG 2.5.8) */
+.sidebar-right .social-links {
+  display: flex;
+  justify-content: center;
+  gap: 0.25rem;
+  margin-top: 1rem;
+}
+
+.sidebar-right .social-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--atlas-radius);
+  color: var(--atlas-teal) !important;
+}
+
+.sidebar-right .social-link:hover,
+.sidebar-right .social-link:focus-visible {
+  background: var(--atlas-teal-soft);
+  color: var(--atlas-ink) !important;
 }
 
 .sidebar-right .blog-title p {
@@ -944,9 +968,13 @@ body.sidebar-modal-open::before {
   padding: 0.85rem;
   border-top: 2px solid var(--atlas-teal-soft);
   background: rgba(255, 253, 247, 0.68);
+  /* dt(라벨)→dd(숫자)의 시맨틱 순서를 유지하고, 시각적으로는 숫자를 위에 표시 */
+  display: flex;
+  flex-direction: column-reverse;
 }
 
-.metric dt {
+.metric dd {
+  margin: 0;
   color: var(--atlas-ink);
   font-family: var(--atlas-serif);
   font-size: 1.8rem;
@@ -954,8 +982,8 @@ body.sidebar-modal-open::before {
   line-height: 1;
 }
 
-.metric dd {
-  margin: 0.35rem 0 0;
+.metric dt {
+  margin: 0 0 0.35rem;
   color: var(--atlas-muted);
   font-size: 0.88rem;
 }

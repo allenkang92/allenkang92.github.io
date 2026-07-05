@@ -24,16 +24,16 @@ description: 수학철학, 과학사, 웹 접근성, 작은 계산 도구를 함
 
     <dl class="home-metrics" aria-label="콘텐츠 현황">
       <div class="metric">
-        <dt>{{ site.posts.size }}</dt>
-        <dd>전체 글</dd>
+        <dt>전체 글</dt>
+        <dd>{{ site.posts.size }}</dd>
       </div>
       <div class="metric">
-        <dt>{{ site.categories.mathematics_philosophy_history | size }}</dt>
-        <dd>수학철학·수학사</dd>
+        <dt>수학철학·수학사</dt>
+        <dd>{{ site.categories.mathematics_philosophy_history | size }}</dd>
       </div>
       <div class="metric">
-        <dt>{{ site.categories.web_technologies | size }}</dt>
-        <dd>웹·접근성</dd>
+        <dt>웹·접근성</dt>
+        <dd>{{ site.categories.web_technologies | size }}</dd>
       </div>
     </dl>
   </section>
@@ -133,7 +133,7 @@ description: 수학철학, 과학사, 웹 접근성, 작은 계산 도구를 함
           <div class="post-excerpt">
             {{ post.excerpt | strip_html | truncatewords: 28 }}
           </div>
-          <a href="{{ post.url | relative_url }}" class="read-more">읽기</a>
+          <a href="{{ post.url | relative_url }}" class="read-more" aria-label="읽기: {{ post.title }}">읽기</a>
         </article>
       {% endfor %}
     </div>

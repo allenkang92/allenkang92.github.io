@@ -19,6 +19,17 @@
     let searchTimeout;
     let isSearching = false;
     let lastRenderedQuery = '';
+    let searchStatus;
+
+    // 결과 수 요약만 보조기술에 알린다 (결과 목록 전체 낭독 방지)
+    function announceStatus(message) {
+        if (!searchStatus) {
+            searchStatus = document.getElementById('search-status');
+        }
+        if (searchStatus) {
+            searchStatus.textContent = message || '';
+        }
+    }
     
     // Initialize the search functionality
     function initSearch() {
@@ -134,7 +145,6 @@
         if (searchResults && lastRenderedQuery === query) {
             searchResults.style.display = 'block';
             searchResults.classList.add('active');
-            searchInput.setAttribute('aria-expanded', 'true');
             return;
         }
 
@@ -150,11 +160,11 @@
         }
     }
     
-    // Keep visible and assistive state in sync with the current query.
+    // Keep visible state in sync with the current query.
+    // (aria-expanded는 textbox role에서 유효하지 않아 제거 — WAI-ARIA 1.2)
     function updateSearchInputState() {
         const hasQuery = searchInput.value.trim().length > 0;
         searchInput.closest('.search-input-wrapper')?.classList.toggle('has-query', hasQuery);
-        searchInput.setAttribute('aria-expanded', hasQuery ? 'true' : 'false');
     }
     
     // Handle clicks outside the search container
@@ -326,7 +336,7 @@
         results.forEach(result => {
             // Highlight matches in title and excerpt
             let highlightedTitle = escapeHtml(result.title || '제목 없음');
-            let excerpt = truncateText(stripHtml(result.description || result.content || ''), 150);
+            let excerpt = escapeHtml(truncateText(stripHtml(result.description || result.content || ''), 150));
             const formattedDate = formatDate(result.date);
             
             // Apply highlighting
@@ -400,7 +410,7 @@
         lastRenderedQuery = query;
         searchResults.style.display = 'block';
         searchResults.classList.add('active');
-        searchInput.setAttribute('aria-expanded', 'true');
+        announceStatus(`검색 결과 ${totalResults}건`);
     }
     
     // Show error message
@@ -414,7 +424,7 @@
         lastRenderedQuery = searchInput ? searchInput.value.trim() : '';
         searchResults.style.display = 'block';
         searchResults.classList.add('active');
-        searchInput.setAttribute('aria-expanded', 'true');
+        announceStatus(message);
     }
     
     // Show no results message
@@ -429,7 +439,7 @@
         lastRenderedQuery = searchInput ? searchInput.value.trim() : '';
         searchResults.style.display = 'block';
         searchResults.classList.add('active');
-        searchInput.setAttribute('aria-expanded', 'true');
+        announceStatus(message);
     }
     
     // Hide search results
@@ -438,9 +448,7 @@
             searchResults.style.display = 'none';
             searchResults.classList.remove('active');
         }
-        if (searchInput) {
-            searchInput.setAttribute('aria-expanded', 'false');
-        }
+        announceStatus('');
     }
     
     // Update URL with search query
@@ -472,9 +480,10 @@
 
     // Format category keys for display
     function formatCategoryLabel(category) {
+        // _data/categories.yml의 라벨과 반드시 일치시킬 것
         const categoryLabels = {
             mathematics_philosophy_history: '수학철학·수학사',
-            science_philosophy_history: '과학철학·과학사',
+            science_philosophy_history: '과학철학·현대물리학',
             web_technologies: '웹 기술',
             daily_life: '일상'
         };

@@ -1,36 +1,5 @@
-// 성능 최적화를 위한 조건부 모듈 로딩
-document.addEventListener('DOMContentLoaded', async () => {
-    // 검색 기능은 simple-search.js에서 자동으로 초기화됨
-
-    // 필터 기능 조건부 로딩 (포스트/업적 페이지에서만)
-    if (document.querySelector('#category-select') || document.querySelector('#achievement-category-select')) {
-        const { initFilter } = await import('./modules/filter.js');
-        initFilter();
-    }
-    
-    // 페이지별 추가 기능 로딩
-    await loadPageSpecificModules();
-});
-
-// 페이지별 특화 모듈 로딩
-async function loadPageSpecificModules() {
-    const path = window.location.pathname;
-    
-    // 포스트 페이지 전용 기능
-    if (path.includes('/posts/') && document.querySelector('.post')) {
-        // 목차 기능, 코드 하이라이팅 등
-    }
-    
-    // 프로젝트 페이지 전용 기능
-    if (path.includes('/projects/')) {
-        // 프로젝트 갤러리, 필터링 등
-    }
-    
-    // 도구 페이지 전용 기능
-    if (path.includes('/tools/')) {
-        // 계산기, 변환기 등
-    }
-}
+// 검색은 simple-search.js, 글 목록 필터/페이지네이션은 posts.js가 담당한다.
+// (과거 modules/filter.js와 posts.js가 같은 select를 이중 제어하던 구조를 posts.js로 단일화)
 
 // 사이드바 토글 기능
 function initSidebarToggle() {
@@ -83,7 +52,12 @@ function initSidebarToggle() {
 
         toggleBtn.setAttribute('aria-expanded', String(!collapsed));
         toggleBtn.setAttribute('aria-label', collapsed ? '사이드바 열기' : '사이드바 닫기');
-        sidebar.setAttribute('aria-hidden', String(mobileQuery.matches && collapsed));
+
+        // 모바일에서 접힌(화면 밖) 사이드바는 aria-hidden과 함께 inert로
+        // 키보드 포커스 진입도 차단한다 (WCAG 2.4.3 Focus Order)
+        const hiddenFromView = mobileQuery.matches && collapsed;
+        sidebar.setAttribute('aria-hidden', String(hiddenFromView));
+        sidebar.inert = hiddenFromView;
 
         if (persist) {
             localStorage.setItem('sidebarCollapsed', String(collapsed));

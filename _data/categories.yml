@@ -4,7 +4,7 @@ main:
     description: "수학의 역사, 기초론, 무한, 증명, 현대적 응용을 다루는 글"
     subcategories: []
   science_philosophy_history:
-    title: "과학철학·과학사"
+    title: "과학철학·현대물리학"
     description: "과학적 방법, 현대 물리학, 표준 모형과 과학사의 맥락을 다루는 글"
     subcategories: []
   web_technologies:

@@ -16,7 +16,7 @@ scripts:
       <span class="toggle-text">전체 글 보기</span>
     </button>
     <div class="posts-info">
-      <span id="posts-count">전체 {{ site.posts.size }}개 글</span>
+      <span id="posts-count" role="status">전체 {{ site.posts.size }}개 글</span>
     </div>
   </div>
 
@@ -62,9 +62,9 @@ scripts:
     {% endfor %}
   </div>
 
-  <div id="pagination" class="pagination" style="display: none;" aria-label="글 목록 페이지">
+  <nav id="pagination" class="pagination" style="display: none;" aria-label="글 목록 페이지">
     <button id="prev-page" class="page-btn" disabled>이전</button>
     <span id="page-info" aria-live="polite"></span>
     <button id="next-page" class="page-btn">다음</button>
-  </div>
+  </nav>
 </div>
