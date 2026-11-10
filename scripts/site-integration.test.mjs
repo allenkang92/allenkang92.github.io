@@ -5,7 +5,7 @@ import test from 'node:test';
 import { fileURLToPath } from 'node:url';
 
 const projectRoot = fileURLToPath(new URL('..', import.meta.url));
-const siteRoot = resolve(projectRoot, '_site');
+const siteRoot = process.env.SITE_ROOT ? resolve(process.env.SITE_ROOT) : resolve(projectRoot, '_site');
 
 test('Jekyll output serves the Vite entry and preserves the full static posts fallback', async () => {
   const pagePath = resolve(siteRoot, 'posts/index.html');
@@ -53,4 +53,34 @@ test('achievement detail pages render overview, highlights, and related fields',
     assert.ok(page.includes(highlight), `${slug} must show its highlights`);
     assert.ok(page.includes(tech), `${slug} must show its related fields`);
   }
+});
+
+test('series hubs render their facts as HTML and use one-based reading positions', async () => {
+  for (const [slug, count] of [['mathematics-philosophy-history', 10], ['science-philosophy-history', 5]]) {
+    const page = await readFile(resolve(siteRoot, 'series', slug, 'index.html'), 'utf8');
+    const facts = /<dl class="series-hub-facts">([\s\S]*?)<\/dl>/.exec(page)?.[1];
+    assert.ok(facts, `${slug}: facts must render`);
+    assert.match(facts, /<dt>글 수<\/dt>\s*<dd>\s*\d+편\s*<\/dd>/);
+    assert.match(facts, /<dt>읽는 순서<\/dt>\s*<dd>[^<]+<\/dd>/);
+    assert.doesNotMatch(facts, /<pre\b|&lt;(?:div|dt|dd)\b/);
+
+    const positions = Array.from(page.matchAll(/<p class="series-path-order">(\d+)번째 글<\/p>/g), match => Number(match[1]));
+    assert.deepEqual(positions, Array.from({ length: count }, (_, index) => index + 1), `${slug}: positions must match displayed order`);
+  }
+});
+
+test('math posts load configured inline rendering while other posts do not', async () => {
+  const mathPage = await readFile(resolve(siteRoot, 'posts', '1장-시대와지역에따른수학발전', 'index.html'), 'utf8');
+  const setPage = await readFile(resolve(siteRoot, 'posts', '2장-수학과무한', 'index.html'), 'utf8');
+  const probabilityPage = await readFile(resolve(siteRoot, 'posts', '5장-확률과통계의철학적의미', 'index.html'), 'utf8');
+  const plainPage = await readFile(resolve(siteRoot, 'posts', '9장-수학철학과수학사의종합적고찰', 'index.html'), 'utf8');
+
+  assert.match(mathPage, /id="post-content"/);
+  assert.match(mathPage, /elements:\s*\['post-content'\]/);
+  assert.match(mathPage, /inlineMath:\s*\[\['\$',\s*'\$'\]/);
+  assert.match(mathPage, /mathjax\/2\.7\.7\/MathJax\.js/);
+  assert.ok(setPage.includes('\\mathbb{N} = \\{1, 2, 3, \\dots\\}'), 'literal set braces must survive Markdown');
+  assert.ok(probabilityPage.includes('<p>$P(A\\mid B) = \\frac{P(B\\mid A) \\cdot P(A)}{P(B)}$</p>'), 'Bayes formula must remain a single math expression');
+  assert.match(probabilityPage, /<li>새로운 정보[\s\S]*?P\(A\\mid B\)\$을 형성<\/li>/, 'conditional probability in a list must remain within its list item');
+  assert.doesNotMatch(plainPage, /mathjax\/2\.7\.7\/MathJax\.js/);
 });

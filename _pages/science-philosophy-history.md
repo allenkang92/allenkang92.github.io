@@ -13,7 +13,7 @@ permalink: /series/science-philosophy-history/
   <p class="series-hub-eyebrow">Science / Philosophy / Modern Physics</p>
   <h1 id="series-hub-title">{{ series_record.title }}</h1>
   <p>{{ series_record.summary }}</p>
-  <dl class="series-hub-facts">
+  <dl class="series-hub-facts" markdown="0">
     <div>
       <dt>글 수</dt>
       <dd>{{ series_posts.size }}편</dd>
@@ -30,7 +30,7 @@ permalink: /series/science-philosophy-history/
     {% for post in series_posts %}
       <li>
         <article class="series-path-item">
-          <p class="series-path-order">{{ post.series_order }}번째 글</p>
+          <p class="series-path-order">{{ forloop.index }}번째 글</p>
           <h3><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h3>
           {% if post.learning_outcomes %}
             <ul>

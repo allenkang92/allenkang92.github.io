@@ -116,6 +116,13 @@
     if (element) element.textContent = text;
   }
 
+  function invalidateResult(id, message) {
+    const result = document.getElementById(id);
+    if (result && result.textContent && result.textContent !== message) {
+      result.textContent = message;
+    }
+  }
+
   function setCalculatorError(message) {
     const error = document.getElementById('calculator-error');
     if (!error) return;
@@ -352,7 +359,10 @@
     } else {
       converted = value * category.items[fromKey].factor / category.items[toKey].factor;
     }
-    result.textContent = `${formatNumber(converted)} ${toKey}`;
+    const displayUnit = categoryKey === 'temperature'
+      ? { c: '°C', f: '°F', k: 'K' }[toKey]
+      : toKey;
+    result.textContent = `${formatNumber(converted)} ${displayUnit}`;
   }
 
   function initCalculator() {
@@ -398,11 +408,20 @@
     if (!categorySelect) return;
     fillSelect(categorySelect, units, '종류를 선택하세요');
     categorySelect.addEventListener('change', updateUnitOptions);
+    const invalidate = () => invalidateResult('unit-result', '입력이 변경되었습니다. 다시 변환해 주세요.');
+    document.getElementById('unit-value')?.addEventListener('input', invalidate);
+    document.getElementById('from-unit')?.addEventListener('change', invalidate);
+    document.getElementById('to-unit')?.addEventListener('change', invalidate);
     document.getElementById('unit-convert')?.addEventListener('click', performConversion);
   }
 
   function initPhysics() {
     document.getElementById('physics-formula')?.addEventListener('change', updatePhysicsInputs);
+    document.getElementById('physics-inputs')?.addEventListener('input', event => {
+      if (event.target instanceof HTMLInputElement) {
+        invalidateResult('physics-result', '입력이 변경되었습니다. 다시 계산해 주세요.');
+      }
+    });
     document.getElementById('physics-calculate')?.addEventListener('click', calculatePhysics);
   }
 
