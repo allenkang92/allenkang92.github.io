@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "jsx": "react-jsx",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "types": ["node"],
+    "rootDir": ".",
+    "outDir": "build/tests",
+    "noEmitOnError": true
+  },
+  "include": ["frontend/posts/model.ts", "frontend/posts/PostsApp.tsx", "tests/posts/**/*.ts"]
+}

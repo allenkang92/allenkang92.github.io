@@ -3,10 +3,10 @@
 
   const formulas = {
     velocity: {
-      label: 'Velocity / 속도 (v = d / t)',
+      label: '속도 (v = d / t)',
       fields: [
-        { id: 'distance', label: 'Distance / 거리', unit: 'm' },
-        { id: 'time', label: 'Time / 시간', unit: 's' }
+        { id: 'distance', label: '거리', unit: 'm' },
+        { id: 'time', label: '시간', unit: 's' }
       ],
       calculate(values) {
         return values.distance / values.time;
@@ -14,10 +14,10 @@
       unit: 'm/s'
     },
     acceleration: {
-      label: 'Acceleration / 가속도 (a = Δv / t)',
+      label: '가속도 (a = Δv / t)',
       fields: [
-        { id: 'deltaVelocity', label: 'Change in velocity / 속도 변화량', unit: 'm/s' },
-        { id: 'time', label: 'Time / 시간', unit: 's' }
+        { id: 'deltaVelocity', label: '속도 변화량', unit: 'm/s' },
+        { id: 'time', label: '시간', unit: 's' }
       ],
       calculate(values) {
         return values.deltaVelocity / values.time;
@@ -25,10 +25,10 @@
       unit: 'm/s²'
     },
     force: {
-      label: 'Force / 힘 (F = m × a)',
+      label: '힘 (F = m × a)',
       fields: [
-        { id: 'mass', label: 'Mass / 질량', unit: 'kg' },
-        { id: 'acceleration', label: 'Acceleration / 가속도', unit: 'm/s²' }
+        { id: 'mass', label: '질량', unit: 'kg' },
+        { id: 'acceleration', label: '가속도', unit: 'm/s²' }
       ],
       calculate(values) {
         return values.mass * values.acceleration;
@@ -36,10 +36,10 @@
       unit: 'N'
     },
     kinetic: {
-      label: 'Kinetic Energy / 운동 에너지 (K = 1/2 × m × v²)',
+      label: '운동 에너지 (K = 1/2 × m × v²)',
       fields: [
-        { id: 'mass', label: 'Mass / 질량', unit: 'kg' },
-        { id: 'velocity', label: 'Velocity / 속도', unit: 'm/s' }
+        { id: 'mass', label: '질량', unit: 'kg' },
+        { id: 'velocity', label: '속도', unit: 'm/s' }
       ],
       calculate(values) {
         return 0.5 * values.mass * values.velocity * values.velocity;
@@ -47,11 +47,11 @@
       unit: 'J'
     },
     potential: {
-      label: 'Potential Energy / 위치 에너지 (U = m × g × h)',
+      label: '위치 에너지 (U = m × g × h)',
       fields: [
-        { id: 'mass', label: 'Mass / 질량', unit: 'kg' },
-        { id: 'gravity', label: 'Gravity / 중력가속도', unit: 'm/s²', value: 9.80665 },
-        { id: 'height', label: 'Height / 높이', unit: 'm' }
+        { id: 'mass', label: '질량', unit: 'kg' },
+        { id: 'gravity', label: '중력가속도', unit: 'm/s²', value: 9.80665 },
+        { id: 'height', label: '높이', unit: 'm' }
       ],
       calculate(values) {
         return values.mass * values.gravity * values.height;
@@ -62,41 +62,41 @@
 
   const units = {
     length: {
-      label: 'Length / 길이',
+      label: '길이',
       items: {
-        m: { label: 'Meter / 미터 (m)', factor: 1 },
-        km: { label: 'Kilometer / 킬로미터 (km)', factor: 1000 },
-        cm: { label: 'Centimeter / 센티미터 (cm)', factor: 0.01 },
-        mm: { label: 'Millimeter / 밀리미터 (mm)', factor: 0.001 },
-        in: { label: 'Inch / 인치 (in)', factor: 0.0254 },
-        ft: { label: 'Foot / 피트 (ft)', factor: 0.3048 }
+        m: { label: '미터 (m)', factor: 1 },
+        km: { label: '킬로미터 (km)', factor: 1000 },
+        cm: { label: '센티미터 (cm)', factor: 0.01 },
+        mm: { label: '밀리미터 (mm)', factor: 0.001 },
+        in: { label: '인치 (in)', factor: 0.0254 },
+        ft: { label: '피트 (ft)', factor: 0.3048 }
       }
     },
     mass: {
-      label: 'Mass / 질량',
+      label: '질량',
       items: {
-        kg: { label: 'Kilogram / 킬로그램 (kg)', factor: 1 },
-        g: { label: 'Gram / 그램 (g)', factor: 0.001 },
-        mg: { label: 'Milligram / 밀리그램 (mg)', factor: 0.000001 },
-        lb: { label: 'Pound / 파운드 (lb)', factor: 0.45359237 },
-        oz: { label: 'Ounce / 온스 (oz)', factor: 0.028349523125 }
+        kg: { label: '킬로그램 (kg)', factor: 1 },
+        g: { label: '그램 (g)', factor: 0.001 },
+        mg: { label: '밀리그램 (mg)', factor: 0.000001 },
+        lb: { label: '파운드 (lb)', factor: 0.45359237 },
+        oz: { label: '온스 (oz)', factor: 0.028349523125 }
       }
     },
     time: {
-      label: 'Time / 시간',
+      label: '시간',
       items: {
-        s: { label: 'Second / 초 (s)', factor: 1 },
-        min: { label: 'Minute / 분 (min)', factor: 60 },
-        h: { label: 'Hour / 시간 (h)', factor: 3600 },
-        day: { label: 'Day / 일', factor: 86400 }
+        s: { label: '초 (s)', factor: 1 },
+        min: { label: '분 (min)', factor: 60 },
+        h: { label: '시간 (h)', factor: 3600 },
+        day: { label: '일 (day)', factor: 86400 }
       }
     },
     temperature: {
-      label: 'Temperature / 온도',
+      label: '온도',
       items: {
-        c: { label: 'Celsius / 섭씨 (°C)' },
-        f: { label: 'Fahrenheit / 화씨 (°F)' },
-        k: { label: 'Kelvin / 켈빈 (K)' }
+        c: { label: '섭씨 (°C)' },
+        f: { label: '화씨 (°F)' },
+        k: { label: '켈빈 (K)' }
       }
     }
   };
@@ -107,7 +107,7 @@
   let shouldResetDisplay = false;
 
   function formatNumber(value) {
-    if (!Number.isFinite(value)) return 'Error / 오류';
+    if (!Number.isFinite(value)) return '오류';
     return Number.parseFloat(value.toPrecision(12)).toString();
   }
 
@@ -134,7 +134,7 @@
   }
 
   function appendNumber(number) {
-    if (currentOperand === 'Error / 오류') {
+    if (currentOperand === '오류') {
       currentOperand = '';
     }
     setCalculatorError('');
@@ -172,18 +172,18 @@
     if (operation === '-') result = previous - current;
     if (operation === '×') result = previous * current;
     if (operation === '÷' && current === 0) {
-      currentOperand = 'Error / 오류';
+      currentOperand = '오류';
       previousOperand = '';
       operation = null;
       shouldResetDisplay = true;
       updateDisplay();
-      setCalculatorError('Error / 오류: 0으로 나눌 수 없습니다. AC로 초기화하거나 DEL로 입력을 수정해 주세요.');
+      setCalculatorError('0으로 나눌 수 없습니다. 초기화하거나 마지막 입력을 수정해 주세요.');
       return;
     }
     if (operation === '÷') result = previous / current;
 
     currentOperand = formatNumber(result);
-    setCalculatorError(Number.isFinite(result) ? '' : 'Error / 오류: 계산 결과를 확인해 주세요. AC로 초기화할 수 있습니다.');
+    setCalculatorError(Number.isFinite(result) ? '' : '계산 결과를 확인해 주세요. 초기화할 수 있습니다.');
     previousOperand = '';
     operation = null;
     shouldResetDisplay = true;
@@ -200,7 +200,7 @@
   }
 
   function deleteLast() {
-    if (shouldResetDisplay || currentOperand === 'Error / 오류') {
+    if (shouldResetDisplay || currentOperand === '오류') {
       clearCalculator();
       return;
     }
@@ -265,7 +265,7 @@
 
     const formula = formulas[select.value];
     if (!formula) {
-      result.textContent = 'Select a formula first. / 먼저 공식을 선택해 주세요.';
+      result.textContent = '먼저 공식을 선택해 주세요.';
       return;
     }
 
@@ -274,12 +274,12 @@
       const input = document.getElementById(`physics-${field.id}`);
       const value = Number.parseFloat(input ? input.value : '');
       if (!Number.isFinite(value)) {
-        result.textContent = `Enter a valid value for ${field.label}. / ${field.label} 값을 올바르게 입력해 주세요.`;
+        result.textContent = `${field.label} 값을 올바르게 입력해 주세요.`;
         if (input) input.focus();
         return;
       }
-      if ((field.id === 'time' || field.id === 'mass') && value === 0) {
-        result.textContent = `${field.label} cannot be zero. / ${field.label} 값은 0일 수 없습니다.`;
+      if (field.id === 'time' && value === 0) {
+        result.textContent = `${field.label}은 0일 수 없습니다.`;
         if (input) input.focus();
         return;
       }
@@ -310,13 +310,13 @@
     const category = units[categorySelect.value];
     if (result) result.textContent = '';
     if (!category) {
-      fillSelect(fromUnit, {}, 'Select Unit / 단위 선택');
-      fillSelect(toUnit, {}, 'Select Unit / 단위 선택');
+      fillSelect(fromUnit, {}, '단위를 선택하세요');
+      fillSelect(toUnit, {}, '단위를 선택하세요');
       return;
     }
 
-    fillSelect(fromUnit, category.items, 'Select Unit / 단위 선택');
-    fillSelect(toUnit, category.items, 'Select Unit / 단위 선택');
+    fillSelect(fromUnit, category.items, '단위를 선택하세요');
+    fillSelect(toUnit, category.items, '단위를 선택하세요');
   }
 
   function toKelvin(value, unit) {
@@ -342,7 +342,7 @@
     const category = units[categoryKey];
     const value = Number.parseFloat(valueInput.value);
     if (!category || !fromKey || !toKey || !Number.isFinite(value)) {
-      result.textContent = 'Choose units and enter a valid value. / 단위를 선택하고 올바른 값을 입력해 주세요.';
+      result.textContent = '종류와 단위를 선택하고 올바른 값을 입력해 주세요.';
       return;
     }
 
@@ -396,7 +396,7 @@
   function initUnits() {
     const categorySelect = document.getElementById('unit-category');
     if (!categorySelect) return;
-    fillSelect(categorySelect, units, 'Select Category / 범주 선택');
+    fillSelect(categorySelect, units, '종류를 선택하세요');
     categorySelect.addEventListener('change', updateUnitOptions);
     document.getElementById('unit-convert')?.addEventListener('click', performConversion);
   }

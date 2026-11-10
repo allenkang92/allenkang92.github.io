@@ -1,23 +1,37 @@
 ---
 layout: default
 title: Home
-description: 수학철학, 과학사, 웹 접근성, 작은 계산 도구를 함께 정리하는 개인 블로그입니다.
+description: 수학·과학·웹 접근성의 질문과 직접 써볼 수 있는 계산 도구를 정리하는 개인 블로그입니다.
+styles:
+  - /assets/css/home-refinement.css
 ---
 
-{% assign math_intro = site.posts | where: "title", "서론: 수학철학 및 수학사 둘러보기" | first %}
-{% assign science_intro = site.posts | where: "title", "서론: 과학철학 및 과학사 둘러보기" | first %}
-{% assign accessibility_post = site.posts | where: "title", "웹 접근성 및 CSS 심화, 호환성 이슈" | first %}
+{% assign featured_post = site.posts.first %}
 
 <div class="home-container home-dashboard">
   <section class="home-brief" aria-labelledby="home-title">
-    <p class="home-eyebrow">Allen's Blog</p>
-    <h1 id="home-title">생각을 정리하고 검증하는 곳</h1>
+    <p class="home-eyebrow">Allen's Blog · 생각의 기록</p>
+    <h1 id="home-title">질문을 따라 읽고,<br>직접 확인합니다.</h1>
     <p class="home-lede">
-      수학철학과 수학사, 과학사, 웹 접근성, 그리고 직접 써볼 수 있는 작은 계산 도구를 한 곳에 모았습니다.
+      수학과 과학의 글, 웹 접근성 노트, 바로 써볼 수 있는 작은 도구를 모았습니다.
     </p>
 
+    <form class="home-search-form" action="{{ '/posts/' | relative_url }}" method="get" role="search" aria-label="글 목록 검색">
+      <label for="home-search-input">글 목록에서 주제 찾기</label>
+      <div class="home-search-controls">
+        <input
+          id="home-search-input"
+          type="search"
+          name="q"
+          inputmode="search"
+          placeholder="예: 무한, 접근성"
+        >
+        <button type="submit">글 검색</button>
+      </div>
+    </form>
+
     <nav class="home-actions" aria-label="주요 이동">
-      <a class="home-action primary" href="{{ '/posts/' | relative_url }}">글 탐색</a>
+      <a class="home-action primary" href="{{ '/posts/' | relative_url }}">전체 글</a>
       <a class="home-action" href="{{ '/series/' | relative_url }}">시리즈</a>
       <a class="home-action" href="{{ '/tools/' | relative_url }}">계산기</a>
     </nav>
@@ -28,8 +42,8 @@ description: 수학철학, 과학사, 웹 접근성, 작은 계산 도구를 함
         <dd>{{ site.posts.size }}</dd>
       </div>
       <div class="metric">
-        <dt>수학철학·수학사</dt>
-        <dd>{{ site.categories.mathematics_philosophy_history | size }}</dd>
+        <dt>수학·과학</dt>
+        <dd>{{ site.categories.mathematics_philosophy_history.size | plus: site.categories.science_philosophy_history.size }}</dd>
       </div>
       <div class="metric">
         <dt>웹·접근성</dt>
@@ -38,84 +52,71 @@ description: 수학철학, 과학사, 웹 접근성, 작은 계산 도구를 함
     </dl>
   </section>
 
+  {% if featured_post %}
+  <section class="home-featured" aria-labelledby="featured-title">
+    <div class="home-featured-meta">
+      <span class="featured-label">가장 최근에 쓴 글</span>
+      <time datetime="{{ featured_post.date | date_to_xmlschema }}">
+        {{ featured_post.date | date: "%Y년 %m월 %d일" }}
+      </time>
+    </div>
+    <h2 id="featured-title">
+      <a href="{{ featured_post.url | relative_url }}">{{ featured_post.title }}</a>
+    </h2>
+    <p>{{ featured_post.description | default: featured_post.excerpt | strip_html | strip_newlines | normalize_whitespace | truncate: 180 }}</p>
+    <a class="home-featured-link" href="{{ featured_post.url | relative_url }}">
+      이 글 읽기 <span aria-hidden="true">→</span>
+    </a>
+  </section>
+  {% endif %}
+
   <section class="home-section" aria-labelledby="tracks-title">
     <div class="section-heading">
-      <p class="section-kicker">Reading Tracks</p>
-      <h2 id="tracks-title">주제별로 바로 이어 읽기</h2>
+      <p class="section-kicker">주제별 탐색</p>
+      <h2 id="tracks-title">관심 있는 주제부터</h2>
     </div>
 
     <div class="track-grid">
       <article class="track-card">
         <p class="track-index">01</p>
         <h3>수학철학과 수학사</h3>
-        <p>무한, 증명, 존재론, 확률, 현실과 수학의 관계를 긴 호흡으로 따라갑니다.</p>
+        <p>무한, 증명, 존재론과 현실의 관계를 따라갑니다.</p>
         <a href="{{ '/posts/?category=mathematics_philosophy_history' | relative_url }}">
-          {{ site.categories.mathematics_philosophy_history | size }}개 글 보기
+          수학 글 {{ site.categories.mathematics_philosophy_history | size }}개 보기 <span aria-hidden="true">→</span>
         </a>
       </article>
 
       <article class="track-card">
         <p class="track-index">02</p>
         <h3>과학철학과 물리학사</h3>
-        <p>표준 모형, 입자, 자연계의 힘, 현대 물리학의 과제를 역사와 철학으로 묶습니다.</p>
+        <p>입자와 자연의 힘을 과학의 흐름 속에서 읽습니다.</p>
         <a href="{{ '/posts/?category=science_philosophy_history' | relative_url }}">
-          {{ site.categories.science_philosophy_history | size }}개 글 보기
+          과학 글 {{ site.categories.science_philosophy_history | size }}개 보기 <span aria-hidden="true">→</span>
         </a>
       </article>
 
       <article class="track-card">
         <p class="track-index">03</p>
         <h3>웹 접근성과 도구</h3>
-        <p>시맨틱 마크업, CSS, 접근성 기준, 계산기를 실제 화면에서 확인할 수 있게 정리합니다.</p>
-        <a href="{{ '/tools/' | relative_url }}">도구 열기</a>
+        <p>접근성, 웹 기술, 직접 쓸 수 있는 계산기를 모았습니다.</p>
+        <a href="{{ '/posts/?category=web_technologies' | relative_url }}">
+          웹 기술 글 {{ site.categories.web_technologies | size }}개 보기 <span aria-hidden="true">→</span>
+        </a>
+        <a href="{{ '/tools/' | relative_url }}">계산 도구 보기 <span aria-hidden="true">→</span></a>
       </article>
     </div>
   </section>
-
-  <section class="home-section home-featured" aria-labelledby="featured-title">
-    <div class="section-heading">
-      <p class="section-kicker">Start Here</p>
-      <h2 id="featured-title">처음 읽기 좋은 글</h2>
-    </div>
-
-    <div class="featured-list">
-      {% if math_intro %}
-      <article class="featured-item">
-        <span class="featured-label">수학</span>
-        <h3><a href="{{ math_intro.url | relative_url }}">{{ math_intro.title }}</a></h3>
-        <p>{{ math_intro.excerpt | strip_html | truncatewords: 24 }}</p>
-      </article>
-      {% endif %}
-
-      {% if science_intro %}
-      <article class="featured-item">
-        <span class="featured-label">과학</span>
-        <h3><a href="{{ science_intro.url | relative_url }}">{{ science_intro.title }}</a></h3>
-        <p>{{ science_intro.excerpt | strip_html | truncatewords: 24 }}</p>
-      </article>
-      {% endif %}
-
-      {% if accessibility_post %}
-      <article class="featured-item">
-        <span class="featured-label">웹</span>
-        <h3><a href="{{ accessibility_post.url | relative_url }}">{{ accessibility_post.title }}</a></h3>
-        <p>{{ accessibility_post.excerpt | strip_html | truncatewords: 24 }}</p>
-      </article>
-      {% endif %}
-    </div>
-  </section>
-
   <section class="home-section recent-posts-section" aria-labelledby="recent-title">
     <div class="section-heading section-heading-inline">
       <div>
-        <p class="section-kicker">Latest</p>
-        <h2 id="recent-title">최근 글</h2>
+        <p class="section-kicker">계속 읽기</p>
+        <h2 id="recent-title">다른 글도 둘러보세요</h2>
       </div>
-      <a href="{{ '/posts/' | relative_url }}" class="view-all-link">전체 글 보기</a>
+      <a href="{{ '/posts/' | relative_url }}" class="view-all-link">전체 글</a>
     </div>
 
     <div class="recent-posts">
-      {% for post in site.posts limit:5 %}
+      {% for post in site.posts offset:1 limit:4 %}
         <article class="post-card">
           <h3 class="post-title">
             <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
@@ -124,18 +125,17 @@ description: 수학철학, 과학사, 웹 접근성, 작은 계산 도구를 함
             <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%Y년 %m월 %d일" }}</time>
             {% if post.categories %}
               {% for category in post.categories limit:1 %}
-                <span class="category-badge">
-                  {% include category-label.html category=category %}
-                </span>
+                <span class="category-badge">{% include category-label.html category=category %}</span>
               {% endfor %}
             {% endif %}
           </div>
-          <div class="post-excerpt">
-            {{ post.excerpt | strip_html | truncatewords: 28 }}
-          </div>
-          <a href="{{ post.url | relative_url }}" class="read-more" aria-label="읽기: {{ post.title }}">읽기</a>
+          <p class="post-excerpt">
+            {{ post.description | default: post.excerpt | strip_html | strip_newlines | normalize_whitespace | truncate: 120 }}
+          </p>
         </article>
       {% endfor %}
     </div>
   </section>
+
+
 </div>

@@ -1,24 +1,27 @@
 <!-- 사이드바 시작 -->
 <aside id="site-sidebar" class="sidebar-right" role="complementary" aria-label="사이드바" tabindex="-1">
-  <!-- 프로필 섹션 - 이미지 지연 로딩 적용 -->
-  <div class="profile">
-    <div class="profile-logo" role="img" aria-label="Allen's Blog 민트색 고래 로고"></div>
-  </div>
-  
-  <!-- 블로그 제목 -->
-  <div class="blog-title">
-    <a class="site-title" href="{{ '/' | relative_url }}">{{ site.title }}</a>
-    <p>{{ site.description | newline_to_br }}</p>
+  <div class="sidebar-brand">
+    <div class="profile" aria-hidden="true">
+      <div class="profile-logo"></div>
+    </div>
+    <div class="blog-title">
+      <a class="site-title" href="{{ '/' | relative_url }}">{{ site.title }}</a>
+      <p>{{ site.description | newline_to_br }}</p>
+    </div>
   </div>
   
   <!-- 검색 기능 - 헤더에서 이동 -->
+  {% unless page.url == '/posts/' or page.url == '/' %}
   <div class="sidebar-search">
-    <p class="sidebar-heading">검색</p>
+    <p class="sidebar-heading">빠른 검색</p>
+    <p class="sidebar-search-hint">입력하면 글과 페이지를 찾아줍니다.</p>
     {% include components/search-form.html %}
   </div>
+  {% endunless %}
 
   <!-- 메인 네비게이션 -->
   <nav role="navigation" aria-label="주요 메뉴" class="navigation">
+    <p class="sidebar-nav-heading" aria-hidden="true">둘러보기</p>
     <div class="nav-links">
       {% for item in site.data.navigation.main %}
         {% assign is_active = false %}
@@ -31,29 +34,10 @@
         {% endif %}
       <a href="{{ item.url | relative_url }}"
          class="nav-link{% if is_active %} active{% endif %}"
-         {% if is_active %}aria-current="{% if page.url == item.url %}page{% else %}location{% endif %}"{% endif %}>{{ item.title }}</a>
+         {% if is_active %}aria-current="{% if page.url == item.url %}page{% else %}location{% endif %}"{% endif %}><span>{{ item.title }}</span>{% if is_active %}<span class="nav-current" aria-hidden="true">현재</span>{% endif %}</a>
       {% endfor %}
     </div>
   </nav>
-
-  <!-- 카테고리 필터 - 글 목록 페이지에서만 표시 (개별 글 permalink도 /posts/를 포함하므로 == 비교) -->
-  {% if page.url == '/posts/' %}
-  <div class="sidebar-category-filter">
-    <p class="sidebar-heading">카테고리</p>
-    <select id="category-select" aria-label="카테고리 선택">
-      <option value="all">전체 카테고리</option>
-      {% assign categories = site.categories | sort %}
-      {% for category_entry in categories %}
-        {% assign category_key = category_entry[0] %}
-        {% if category_key %}
-          <option value="{{ category_key }}">
-            {% include category-label.html category=category_key %}
-          </option>
-        {% endif %}
-      {% endfor %}
-    </select>
-  </div>
-  {% endif %}
 
   <!-- 소셜 링크 (인라인 SVG — FontAwesome CDN 의존 제거) -->
   <div class="social-links">

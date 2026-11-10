@@ -13,13 +13,16 @@
     let searchResults;
     let searchSubmitBtn;
     let searchLoading;
+    const MAX_VISIBLE_SEARCH_RESULTS = 50;
     
     // State
     let searchData = [];
     let searchTimeout;
-    let isSearching = false;
+    let searchRevision = 0;
     let lastRenderedQuery = '';
     let searchStatus;
+    let searchIndexReady = false;
+    let suppressSearchFocus = false;
 
     // 결과 수 요약만 보조기술에 알린다 (결과 목록 전체 낭독 방지)
     function announceStatus(message) {
@@ -33,6 +36,12 @@
     
     // Initialize the search functionality
     function initSearch() {
+        // Posts 목록에서 목록형 검색과 상태를 하나로 관리하기 위해 오버레이 검색을 비활성화한다.
+        const currentPath = window.location.pathname.replace(/\/+$/, '');
+        if (currentPath.endsWith('/posts')) {
+            return;
+        }
+
         // Get DOM elements
         searchForm = document.querySelector('.search-form');
         searchContainer = document.getElementById('search-container');
@@ -46,6 +55,14 @@
             return;
         }
         
+        // Initialize the URL query before asynchronous loading so that a later
+        // response cannot overwrite text entered while the request is pending.
+        const searchQuery = new URLSearchParams(window.location.search).get('q');
+        if (searchQuery) {
+            searchInput.value = searchQuery;
+            updateSearchInputState();
+        }
+
         // Load search data
         loadSearchData();
         
@@ -70,21 +87,15 @@
             })
             .then(data => {
                 searchData = Array.isArray(data) ? data : [];
-                // If there's a search query in the URL, perform the search
-                const urlParams = new URLSearchParams(window.location.search);
-                const searchQuery = urlParams.get('q');
-                if (searchQuery) {
-                    searchInput.value = searchQuery;
-                    updateSearchInputState();
-                    performSearch(searchQuery, { historyMode: 'replace' });
-                } else if (searchInput.value.trim()) {
+                searchIndexReady = searchData.length > 0;
+                if (searchInput.value.trim()) {
                     updateSearchInputState();
                     performSearch(searchInput.value.trim(), { historyMode: 'replace' });
                 }
             })
             .catch(error => {
                 console.error('Error loading search data:', error);
-                showError('검색 데이터를 불러오는 중 오류가 발생했습니다.');
+                showError('검색 데이터를 불러오지 못했습니다. 검색 버튼을 누르면 글 목록에서 검색할 수 있습니다.');
             })
             .finally(() => {
                 showLoading(false);
@@ -101,6 +112,7 @@
         // Input event with debounce
         searchInput.addEventListener('input', handleSearchInput);
         searchInput.addEventListener('focus', handleSearchFocus);
+        searchContainer.addEventListener('keydown', handleSearchEscape);
         
         // Form submission
         searchForm.addEventListener('submit', handleFormSubmit);
@@ -115,6 +127,7 @@
     // Handle search input with debounce
     function handleSearchInput() {
         updateSearchInputState();
+        searchRevision += 1;
         
         // Clear any existing timeout
         clearTimeout(searchTimeout);
@@ -139,6 +152,7 @@
 
     // Re-open existing results when users return to the search box.
     function handleSearchFocus() {
+        if (suppressSearchFocus) return;
         const query = searchInput.value.trim();
         if (!query) return;
 
@@ -153,7 +167,11 @@
     
     // Handle form submission
     function handleFormSubmit(e) {
+        // Keep the form's native /posts/ fallback available while the index is
+        // unavailable; that page can search its embedded post data.
+        if (!searchIndexReady) return;
         e.preventDefault();
+        clearTimeout(searchTimeout);
         const query = searchInput.value.trim();
         if (query) {
             performSearch(query, { historyMode: 'push' });
@@ -178,17 +196,22 @@
         }
     }
     
+    // Close the results before allowing Escape to close the surrounding sidebar.
+    function handleSearchEscape(e) {
+        if (e.key !== 'Escape' || !searchResults.classList.contains('active')) return;
+        e.stopPropagation();
+        hideResults();
+        suppressSearchFocus = true;
+        try {
+            searchInput.focus();
+        } finally {
+            suppressSearchFocus = false;
+        }
+    }
+
     // Handle keyboard navigation
     function handleKeyDown(e) {
         const isInsideSearch = searchContainer && searchContainer.contains(document.activeElement);
-
-        // Close on Escape key
-        if (e.key === 'Escape' && isInsideSearch) {
-            hideResults();
-            if (searchContainer && searchContainer.contains(document.activeElement)) {
-                searchInput.focus();
-            }
-        }
         
         // Handle arrow key navigation in results
         if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
@@ -215,18 +238,19 @@
     
     // Perform the search
     function performSearch(query, options = {}) {
-        if (isSearching || !searchData || searchData.length === 0) {
+        if (!searchData || searchData.length === 0) {
             showLoading(false);
             return;
         }
-        
-        isSearching = true;
+
+        const revision = ++searchRevision;
         
         // Show loading state
         showLoading(true);
         
         // Use requestAnimationFrame to prevent UI blocking
         requestAnimationFrame(() => {
+            if (revision !== searchRevision) return;
             try {
                 const queryLower = query.toLowerCase();
                 const queryTerms = queryLower.split(/\s+/).filter(term => term.length > 0);
@@ -295,10 +319,22 @@
                 // Filter, sort and limit results
                 const allResults = scoredResults
                     .filter(item => item.score > 0)
-                    .sort((a, b) => b.score - a.score || b.post.date.localeCompare(a.post.date));
+                    .sort((a, b) => {
+                      if (b.score !== a.score) {
+                        return b.score - a.score;
+                      }
+
+                      const bDate = b.post.date || '';
+                      const aDate = a.post.date || '';
+                      if (bDate !== aDate) {
+                        return bDate.localeCompare(aDate);
+                      }
+
+                      return String(b.post.title || '').localeCompare(a.post.title || '');
+                    });
 
                 const filteredResults = allResults
-                    .slice(0, 10) // Limit to top 10 results
+                    .slice(0, MAX_VISIBLE_SEARCH_RESULTS)
                     .map(item => item.post);
                 
                 // Display results
@@ -313,7 +349,6 @@
                 console.error('Search error:', error);
                 showError('검색 중 오류가 발생했습니다.');
             } finally {
-                isSearching = false;
                 showLoading(false);
             }
         });
@@ -358,13 +393,19 @@
                     </h3>`;
             
             // Add metadata (category and date)
-            if (result.category || formattedDate) {
-                html += `
-                    <div class="search-result-meta">`;
-                
-                if (result.category) {
+                const typeLabel = formatResultType(result.type);
+                if (result.category || formattedDate || typeLabel) {
                     html += `
-                        <span class="category-tag">${escapeHtml(formatCategoryLabel(result.category))}</span>`;
+                        <div class="search-result-meta">`;
+                
+                if (typeLabel) {
+                    html += `
+                        <span class="category-tag">${escapeHtml(typeLabel)}</span>`;
+                }
+
+                if (result.category && result.type !== 'page') {
+                    html += `
+                        <span class="category-chip">${escapeHtml(formatCategoryLabel(result.category))}</span>`;
                 }
                 
                 if (formattedDate) {
@@ -401,7 +442,7 @@
         if (totalResults > results.length) {
             html += `
                 <div class="search-results-footer">
-                    <p>${results.length}개 결과 중 ${totalResults}개 표시 중</p>
+                    <p>총 ${totalResults}개 중 ${results.length}개 표시 중</p>
                 </div>`;
         }
         
@@ -444,6 +485,9 @@
     
     // Hide search results
     function hideResults() {
+        searchRevision += 1;
+        clearTimeout(searchTimeout);
+        showLoading(false);
         if (searchResults) {
             searchResults.style.display = 'none';
             searchResults.classList.remove('active');
@@ -490,6 +534,15 @@
 
         if (!category) return '';
         return categoryLabels[category] || category.replace(/_/g, ' ');
+    }
+
+    function formatResultType(type) {
+        const typeLabels = {
+            post: '포스트',
+            page: '페이지'
+        };
+
+        return typeLabels[type] || '';
     }
     
     // Strip HTML tags from content

@@ -500,40 +500,6 @@ body {
   padding: 5px;
 }
 
-/* 사이드바 카테고리 필터 스타일 */
-.sidebar-category-filter {
-  margin: 20px 0;
-  padding: 15px;
-  background: rgba(168, 225, 219, 0.1);
-  border-radius: 8px;
-  border: 1px solid rgba(168, 225, 219, 0.3);
-}
-
-.sidebar-category-filter .sidebar-heading {
-  margin: 0 0 10px 0;
-  font-size: 14px;
-  font-weight: 600;
-  color: #005F5F;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.sidebar-category-filter select {
-  width: 100%;
-  padding: 8px 12px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 13px;
-  background: white;
-  cursor: pointer;
-}
-
-.sidebar-category-filter select:focus {
-  outline: none;
-  border-color: #A8E1DB;
-  box-shadow: 0 0 0 2px rgba(168, 225, 219, 0.2);
-}
-
 /* 검색창 스타일 */
 .search-container {
   margin-top: 20px;

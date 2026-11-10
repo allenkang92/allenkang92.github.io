@@ -1,7 +1,7 @@
 ---
 layout: default
-title: Series
-description: Browse posts by series
+title: 시리즈
+description: 글을 주제별 흐름으로 읽을 수 있는 시리즈 안내
 permalink: /series/
 ---
 
@@ -9,8 +9,8 @@ permalink: /series/
 {% assign featured_series = site.data.series.items | where: "featured", true %}
 
 <section class="series-index-hero" aria-labelledby="series-index-title">
-  <p class="series-eyebrow">Research Garden</p>
-  <h1 id="series-index-title">Series</h1>
+  <p class="series-eyebrow">주제별 읽기 경로</p>
+  <h1 id="series-index-title">{{ page.title }}</h1>
   <p>
     긴 글을 주제별 경로로 다시 묶었습니다. 수학철학·수학사와 과학철학·현대물리학 글은
     허브에서 순서, 핵심 질문, 참고자료를 함께 볼 수 있습니다.
@@ -20,9 +20,16 @@ permalink: /series/
   {% for item in featured_series %}
     {% assign item_posts = site.posts | where: "series", item.key | sort: "series_order" %}
     <a class="series-hub-card" href="{{ item.hub_url | relative_url }}">
-      <span class="series-hub-kicker">{{ item.kicker }}</span>
+      <span class="series-hub-kicker">
+        {% case item.key %}
+          {% when 'Mathematics-Philosophy-History' %}수학
+          {% when 'Science_Philosophy_History' %}과학
+          {% else %}{{ item.kicker }}
+        {% endcase %}
+      </span>
       <strong>{{ item.title }}</strong>
-      <span>{{ item_posts.size }}{{ item.count_label }}</span>
+      <span class="series-hub-count">{{ item_posts.size }}편</span>
+      <span class="series-hub-summary">{{ item.summary }}</span>
     </a>
   {% endfor %}
 </section>
@@ -41,19 +48,21 @@ permalink: /series/
     <article class="series-catalog-group">
       <div class="series-catalog-header">
         <h3>{{ series_title }}</h3>
-        {% if hub_url %}
-          <a href="{{ hub_url | relative_url }}">허브 보기</a>
-        {% endif %}
+        <div class="series-catalog-meta">
+          <span class="series-catalog-count">{{ sorted_posts.size }}편</span>
+          {% if hub_url %}
+            <a href="{{ hub_url | relative_url }}">허브 보기</a>
+          {% endif %}
+        </div>
       </div>
       <ol>
         {% for post in sorted_posts %}
           <li>
-            <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
-            {% if post.learning_outcomes %}
-              <span>{{ post.learning_outcomes | first }}</span>
-            {% else %}
-              <span>{{ post.excerpt | strip_html | truncatewords: 18 }}</span>
-            {% endif %}
+            <span class="series-catalog-order" aria-hidden="true">{{ forloop.index }}</span>
+            <div class="series-catalog-item-copy">
+              <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+              <span>{{ post.description | default: post.excerpt | strip_html | strip_newlines | normalize_whitespace | truncate: 150 }}</span>
+            </div>
           </li>
         {% endfor %}
       </ol>

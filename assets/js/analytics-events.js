@@ -135,7 +135,9 @@
   function handleChange(event) {
     if (!(event.target instanceof Element)) return;
 
-    const categorySelect = event.target.closest('#category-select');
+    // Delegate at the document level because the React archive mounts after
+    // this script has registered its listeners.
+    const categorySelect = event.target.closest('#react-posts-category-select, #category-select');
     if (!categorySelect) return;
 
     sendAnalyticsEvent('post_category_filter', { category: categorySelect.value });

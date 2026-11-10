@@ -4,11 +4,19 @@ layout: default
 
 <article class="post">
   <header class="post-header">
-    <h1 class="post-title">{{ page.title }}</h1>
+    <h1 class="post-title">{{ page.title | escape }}</h1>
+    {% if page.description %}
+      <p class="post-summary">{{ page.description | escape }}</p>
+    {% endif %}
     {% assign modified_at = page.date_modified | default: page.last_modified_at %}
     {% assign published_timestamp = page.date | date: "%s" %}
     {% assign modified_timestamp = modified_at | date: "%s" %}
     <div class="post-meta">
+      {% if page.categories %}
+        {% for category in page.categories %}
+          <span class="category">{% include category-label.html category=category %}</span>
+        {% endfor %}
+      {% endif %}
       <span class="post-date-item">
         작성일
         <time datetime="{{ page.date | date_to_xmlschema }}">
@@ -22,11 +30,6 @@ layout: default
             {{ modified_at | date: "%Y년 %m월 %d일" }}
           </time>
         </span>
-      {% endif %}
-      {% if page.categories %}
-        {% for category in page.categories %}
-          <span class="category">{% include category-label.html category=category %}</span>
-        {% endfor %}
       {% endif %}
     </div>
     {% if page.migrated_from %}
@@ -48,28 +51,10 @@ layout: default
   {% endif %}
 
   {% if page.toc != false %}
-  <div class="table-of-contents">
-    <h2>목차</h2>
-    {% assign content_array = content | split: '<h2' %}
-    <ul>
-    {% for item in content_array offset: 1 %}
-      {% assign header = item | split: '</h2>' | first %}
-      {% assign title = header | split: '>' | last %}
-      <li><a href="#{{ title | strip | slugify }}">{{ title | strip }}</a>
-        {% assign subcontent = item | split: '<h3' %}
-        {% if subcontent.size > 1 %}
-          <ul>
-          {% for subitem in subcontent offset: 1 %}
-            {% assign subheader = subitem | split: '</h3>' | first %}
-            {% assign subtitle = subheader | split: '>' | last %}
-            <li><a href="#{{ subtitle | strip | slugify }}">{{ subtitle | strip }}</a></li>
-          {% endfor %}
-          </ul>
-        {% endif %}
-      </li>
-    {% endfor %}
-    </ul>
-  </div>
+  <details class="table-of-contents" hidden>
+    <summary>목차 <span>글의 주요 항목</span></summary>
+    <ul class="toc-list"></ul>
+  </details>
   {% endif %}
 
   <div class="post-content">
@@ -197,4 +182,5 @@ layout: default
             async>
     </script>
   </section>
+  <script src="{{ '/assets/js/post-toc.js' | relative_url }}?v={{ site.time | date: '%s' }}" defer></script>
 </article>

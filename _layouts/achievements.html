@@ -3,6 +3,7 @@ layout: default
 ---
 <div class="achievements-container">
   <header class="achievements-header">
+    <p class="section-kicker">커리어 아카이브</p>
     <h1>{{ page.title }}</h1>
     {% if page.description %}
     <p class="achievements-description">{{ page.description }}</p>
@@ -11,7 +12,7 @@ layout: default
 
   {{ content }}
 
-  <div class="achievements-timeline">
+  <section class="achievements-timeline" aria-label="성과 목록">
     {% assign sorted_achievements = site.achievements | sort: 'date' | reverse %}
     {% for achievement in sorted_achievements %}
       <article class="achievement-card">
@@ -20,7 +21,16 @@ layout: default
             {{ achievement.date | date: "%Y-%m-%d" }}
           </time>
           {% if achievement.category %}
-            <span class="achievement-category">{{ achievement.category }}</span>
+            <span class="achievement-category">
+              {% case achievement.category %}
+                {% when 'awards' %}수상
+                {% when 'publications' %}논문·발표
+                {% when 'certifications' %}자격
+                {% when 'education' %}학력
+                {% when 'leadership' %}리더십
+                {% else %}{{ achievement.category }}
+              {% endcase %}
+            </span>
           {% endif %}
         </div>
 
@@ -41,7 +51,7 @@ layout: default
 
           {% if achievement.tech_stack %}
             <div class="achievement-tech">
-              <h3>Tech Stack</h3>
+              <h3>관련 분야</h3>
               <ul class="tech-stack">
                 {% for tech in achievement.tech_stack %}
                   <li>{{ tech }}</li>
@@ -52,12 +62,12 @@ layout: default
 
           {% if achievement.project_detail %}
             <a href="{{ achievement.project_detail }}" class="project-detail-link">
-              View Project Details
+              프로젝트 상세 보기
               <span class="icon" aria-hidden="true">→</span>
             </a>
           {% endif %}
         </div>
       </article>
     {% endfor %}
-  </div>
+  </section>
 </div>

@@ -20,6 +20,8 @@ yarn-error.log*
 
 # 컴파일 결과물 및 캐시 파일
 dist/
+!assets/js/dist/
+!assets/js/dist/**
 build/
 .cache/
 coverage/
@@ -52,8 +54,7 @@ _site/
 vendor/
 .bundle/
 
-# React/웹팩 빌드 결과물
-assets/js/dist/
+# Legacy standalone bundles; Vite output under assets/js/dist is tracked for static Pages hosting.
 assets/js/bundle.js
 assets/js/*.bundle.js
 assets/js/*.bundle.js.map

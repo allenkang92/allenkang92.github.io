@@ -3,68 +3,54 @@ layout: default
 title: Posts
 description: Browse all blog posts by category
 permalink: /posts/
-scripts:
-  - /assets/js/posts.js
+styles:
+  - /assets/css/posts-refinement.css
 ---
 
-<h1>전체 글</h1>
+<header class="posts-page-header">
+  <p class="section-kicker">글 아카이브</p>
+  <h1>전체 글</h1>
+  <p class="posts-intro">관심 있는 주제나 본문의 단어로 글을 찾아보세요.</p>
+</header>
 
-<div class="posts-container">
-  <div class="posts-controls">
-    <button id="toggle-posts" class="toggle-btn" aria-label="전체 글 보기" aria-expanded="false" aria-controls="posts-list">
-      <span class="toggle-icon" aria-hidden="true">▼</span>
-      <span class="toggle-text">전체 글 보기</span>
-    </button>
-    <div class="posts-info">
-      <span id="posts-count" role="status">전체 {{ site.posts.size }}개 글</span>
+<div
+  id="posts-react-root"
+  class="posts-react-root"
+  hidden
+  data-search-index-url="{{ '/search.json' | relative_url }}"
+  data-site-base-url="{{ site.url | append: site.baseurl | escape }}"
+  data-posts-url="{{ '/posts/' | relative_url }}"
+></div>
+
+<section id="posts-static-fallback" class="posts-static-fallback" aria-label="전체 글 목록">
+  <div class="posts-container">
+    <div class="posts-controls">
+      <div class="posts-controls-meta">
+        <div class="posts-info">
+          <span id="posts-count" role="status">전체 {{ site.posts.size }}개 글</span>
+          <p class="posts-fallback-note">검색 기능을 사용할 수 없어도 전체 글 목록은 계속 볼 수 있습니다.</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="posts-list" class="posts-list">
+      {% for post in site.posts %}
+        <article class="post-preview" data-date="{{ post.date | date_to_xmlschema }}" data-categories="{{ post.categories | join: ' ' | escape }}" data-title="{{ post.title | escape }}" data-description="{{ post.description | default: post.excerpt | strip_html | normalize_whitespace | truncate: 120 | escape }}" data-content="{{ post.content | strip_html | normalize_whitespace | truncate: 2400 | escape }}" data-tags="{{ post.tags | join: ' ' | default: '' | escape }}">
+          <h2><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
+          <div class="post-meta">
+            <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%Y년 %m월 %d일" }}</time>
+            {% for category in post.categories %}
+              <span class="category">{% include category-label.html category=category %}</span>
+            {% endfor %}
+          </div>
+          <p class="post-excerpt">{{ post.description | default: post.excerpt | strip_html | normalize_whitespace | truncate: 120 }}</p>
+        </article>
+      {% endfor %}
     </div>
   </div>
+</section>
 
-  <div id="posts-list" class="posts-list collapsed">
-    {% for post in site.posts limit: 10 %}
-      <article class="post-preview visible" data-categories="{{ post.categories | join: ' ' }}">
-        <h2><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
-        <div class="post-meta">
-          <time datetime="{{ post.date | date_to_xmlschema }}">
-            {{ post.date | date: "%Y년 %m월 %d일" }}
-          </time>
-          {% if post.categories %}
-            {% for category in post.categories %}
-              <span class="category">{% include category-label.html category=category %}</span>
-            {% endfor %}
-          {% endif %}
-        </div>
-        <div class="post-excerpt">
-          {{ post.excerpt | strip_html | truncatewords: 50 }}
-        </div>
-        <a href="{{ post.url | relative_url }}" class="read-more" aria-label="읽기: {{ post.title }}">읽기</a>
-      </article>
-    {% endfor %}
-
-    {% for post in site.posts offset: 10 %}
-      <article class="post-preview hidden" data-categories="{{ post.categories | join: ' ' }}">
-        <h2><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
-        <div class="post-meta">
-          <time datetime="{{ post.date | date_to_xmlschema }}">
-            {{ post.date | date: "%Y년 %m월 %d일" }}
-          </time>
-          {% if post.categories %}
-            {% for category in post.categories %}
-              <span class="category">{% include category-label.html category=category %}</span>
-            {% endfor %}
-          {% endif %}
-        </div>
-        <div class="post-excerpt">
-          {{ post.excerpt | strip_html | truncatewords: 50 }}
-        </div>
-        <a href="{{ post.url | relative_url }}" class="read-more" aria-label="읽기: {{ post.title }}">읽기</a>
-      </article>
-    {% endfor %}
-  </div>
-
-  <nav id="pagination" class="pagination" style="display: none;" aria-label="글 목록 페이지">
-    <button id="prev-page" class="page-btn" disabled>이전</button>
-    <span id="page-info" aria-live="polite"></span>
-    <button id="next-page" class="page-btn">다음</button>
-  </nav>
-</div>
+{% assign posts_bundle = site.data.vite_manifest['frontend/posts/main.tsx'] %}
+{% if posts_bundle and posts_bundle.file %}
+  <script type="module" src="{{ '/assets/js/dist/' | append: posts_bundle.file | relative_url }}"></script>
+{% endif %}

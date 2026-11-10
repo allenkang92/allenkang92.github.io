@@ -1,0 +1,78 @@
+/* Reading and reference surfaces share the same calm, legible hierarchy. */
+.post > .post-header > .post-title {
+  max-width: 100% !important;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+
+.post-summary,
+.post-content,
+.series-index-hero p,
+.series-hub-summary,
+.series-catalog-item-copy,
+.about-page {
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+.post-content h2,
+.post-content h3,
+.series-catalog-group h3 {
+  scroll-margin-top: 1.5rem;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+.post-content a,
+.series-catalog-item-copy a {
+  text-decoration: underline !important;
+  text-decoration-thickness: 1px !important;
+  text-underline-offset: 0.18em;
+}
+
+.table-of-contents > summary {
+  list-style: none;
+}
+
+.table-of-contents > summary::-webkit-details-marker {
+  display: none;
+}
+
+.table-of-contents > summary::before {
+  content: "▸";
+  display: inline-block;
+  color: var(--atlas-teal);
+}
+
+.table-of-contents[open] > summary::before {
+  content: "▾";
+}
+
+.series-catalog-item-copy a {
+  display: inline-block;
+  padding-block: 0.2rem;
+}
+
+.series-hub-card:focus-visible,
+.series-catalog-item-copy a:focus-visible,
+.about-app-list a:focus-visible {
+  outline: 3px solid var(--atlas-focus);
+  outline-offset: 3px;
+}
+
+@media (max-width: 480px) {
+  .post > .post-header > .post-title {
+    font-size: clamp(1.8rem, 8vw, 2.35rem) !important;
+    line-height: 1.2 !important;
+  }
+
+  .table-of-contents > summary span {
+    font-size: 0.75rem;
+  }
+
+  .tools-container .tab-button {
+    min-height: 44px;
+    white-space: normal;
+  }
+}

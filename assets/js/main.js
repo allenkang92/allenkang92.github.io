@@ -1,5 +1,4 @@
-// 검색은 simple-search.js, 글 목록 필터/페이지네이션은 posts.js가 담당한다.
-// (과거 modules/filter.js와 posts.js가 같은 select를 이중 제어하던 구조를 posts.js로 단일화)
+// 사이트 검색은 simple-search.js, /posts/ 목록 검색·페이지네이션은 React가 담당한다.
 
 // 사이드바 토글 기능
 function initSidebarToggle() {
@@ -76,6 +75,23 @@ function initSidebarToggle() {
         }
     };
 
+    const collapseSidebarOnNavigation = event => {
+      if (!mobileQuery.matches) return;
+
+      const anchor = event.target.closest('a[href]');
+      if (!anchor) return;
+
+      const href = anchor.getAttribute('href');
+      if (!href || href === '#' || href.startsWith('javascript:')) {
+        return;
+      }
+
+      const isSamePageHashOnly = href.startsWith('#');
+      if (isSamePageHashOnly) return;
+
+      setCollapsed(true, true, true);
+    };
+
     const applyResponsiveState = () => {
         const savedState = localStorage.getItem('sidebarCollapsed');
         const shouldCollapse = mobileQuery.matches
@@ -103,8 +119,10 @@ function initSidebarToggle() {
         } else if (typeof mobileQuery.addListener === 'function') {
             mobileQuery.addListener(applyResponsiveState);
         }
+
+        sidebar.addEventListener('click', collapseSidebarOnNavigation);
     }
-}
+  }
 
 // 페이지 로드 시 사이드바 토글 초기화
 if (document.readyState === 'loading') {

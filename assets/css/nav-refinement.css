@@ -1,0 +1,120 @@
+/* Sidebar navigation: keep the site identity quiet and the destinations scannable. */
+.sidebar-right .sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--atlas-border);
+}
+
+.sidebar-right .profile {
+  flex: 0 0 auto;
+  margin: 0;
+}
+
+.sidebar-right .profile-logo {
+  width: 52px;
+  height: 52px;
+  margin: 0;
+  box-shadow: none;
+}
+
+.sidebar-right .blog-title {
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  text-align: left;
+}
+
+.sidebar-right .blog-title .site-title {
+  width: auto;
+  margin: 0 0 0.2rem;
+  font-size: 1.12rem;
+}
+
+.sidebar-right .blog-title p {
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+
+.sidebar-right .sidebar-search {
+  margin: 1rem 0 0;
+  padding: 0;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none;
+}
+
+.sidebar-right .sidebar-heading,
+.sidebar-right .sidebar-nav-heading {
+  margin: 0 0 0.45rem;
+  color: var(--atlas-muted) !important;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.sidebar-right .sidebar-search-hint {
+  margin: 0 0 0.5rem;
+  color: var(--atlas-muted) !important;
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+
+.sidebar-right .navigation {
+  margin-top: 1.4rem;
+}
+
+aside#site-sidebar.sidebar-right .navigation .nav-links {
+  gap: 0.15rem !important;
+}
+
+aside#site-sidebar.sidebar-right .navigation .nav-links a.nav-link {
+  min-height: 44px;
+  justify-content: space-between;
+  padding: 0.55rem 0.75rem !important;
+  border: 1px solid transparent !important;
+  border-radius: 8px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+aside#site-sidebar.sidebar-right .navigation .nav-links a.nav-link:hover {
+  background: #dcefe9 !important;
+  color: var(--atlas-ink) !important;
+}
+
+aside#site-sidebar.sidebar-right .navigation .nav-links a.nav-link.active {
+  border-color: #91c5b7 !important;
+  background: #d3eae2 !important;
+  color: #174f46 !important;
+}
+
+.sidebar-right .nav-current {
+  margin-left: 0.5rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.sidebar-right a:focus-visible,
+.sidebar-right button:focus-visible,
+.sidebar-right input:focus-visible {
+  outline: 3px solid #185f54 !important;
+  outline-offset: 2px;
+}
+
+.sidebar-right .social-links {
+  justify-content: flex-start;
+  margin-top: 0.8rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid var(--atlas-border);
+}
+
+@media (max-width: 768px) {
+  /* Keep the open menu and its close control above page search panels. */
+  body.sidebar-modal-open::before { z-index: 1090; }
+  html.sidebar-enhanced aside.sidebar-right { z-index: 1100; }
+  .sidebar-toggle { z-index: 1101; }
+  html.sidebar-enhanced .sidebar-right .sidebar-brand { padding-right: 3.2rem; }
+  .sidebar-right .search-input { font-size: 1rem !important; }
+}

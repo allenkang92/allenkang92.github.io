@@ -1,17 +1,18 @@
 <!-- Search Form Component -->
 <div class="search-widget">
   <div class="search-container" id="search-container">
-    <form class="search-form" role="search" aria-label="사이트 검색" data-search-url="{{ '/search.json' | relative_url }}">
-        <label for="search-input" class="visually-hidden">검색어 입력</label>
+    <form class="search-form" role="search" aria-label="{{ include.aria_label | default: '사이트 검색' }}" action="{{ '/posts/' | relative_url }}" method="get" data-search-url="{{ '/search.json' | relative_url }}">
+        <label for="search-input" class="visually-hidden">{{ include.input_label | default: '검색어 입력' }}</label>
         <div class="search-input-wrapper">
             <input
                 type="text"
                 id="search-input"
                 class="search-input"
-                placeholder="검색어를 입력하세요..."
+                name="q"
+                placeholder="{{ include.placeholder | default: '검색어를 입력하세요...' }}"
                 autocomplete="off"
                 inputmode="search"
-                aria-label="검색어 입력"
+                aria-label="{{ include.input_label | default: '검색어 입력' }}"
                 aria-describedby="search-instructions"
                 aria-controls="search-results"
             >
@@ -40,10 +41,12 @@
   </div>
 </div>
 
-<!-- Load the search script -->
-{% if jekyll.environment == "production" and site.github.build_revision %}
-  {% assign asset_version = site.github.build_revision %}
-{% else %}
-  {% assign asset_version = site.time | date: "%s" %}
-{% endif %}
-<script src="{{ '/assets/js/simple-search.js' | relative_url }}?v={{ asset_version }}" defer></script>
+{% unless page.url == '/posts/' %}
+  <!-- Load the search script -->
+  {% if jekyll.environment == "production" and site.github.build_revision %}
+    {% assign asset_version = site.github.build_revision %}
+  {% else %}
+    {% assign asset_version = site.time | date: "%s" %}
+  {% endif %}
+  <script src="{{ '/assets/js/simple-search.js' | relative_url }}?v={{ asset_version }}" defer></script>
+{% endunless %}

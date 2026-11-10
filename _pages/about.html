@@ -1,107 +1,100 @@
 ---
 layout: default
-title: About
-description: "About Allen Kang and this blog"
+title: 소개
+description: Allen Kang과 이 블로그가 다루는 글, 시리즈, 도구를 소개합니다.
 permalink: /about/
 ---
 
-<article class="about-page" aria-labelledby="about-title" lang="en">
+<article class="about-page" aria-labelledby="about-title" lang="ko">
   <header class="about-app-header">
     <div class="about-avatar" aria-hidden="true"></div>
     <div class="about-heading-copy">
-      <p class="about-kicker">Personal Notes</p>
+      <p class="about-kicker">블로그 소개</p>
       <h1 id="about-title">Allen Kang</h1>
-      <p>Writing, reading, and building small tools around ideas I want to understand better.</p>
+      <p>궁금한 것을 배우고, 읽을 수 있는 글과 작은 도구로 정리합니다.</p>
     </div>
   </header>
 
   <section class="about-main-card" aria-labelledby="about-main-title">
-    <p class="about-card-label">Current Focus</p>
-    <h2 id="about-main-title">Mathematics, science, accessibility, and useful calculators.</h2>
-    <p>
-      I use this blog to turn scattered study notes into readable essays, series, references, and simple tools.
-    </p>
+    <p class="about-card-label">이 블로그</p>
+    <h2 id="about-main-title">수학과 과학, 웹 접근성에 관한 공부를 차곡차곡 기록합니다.</h2>
+    <p>흩어진 공부 내용을 주제별 글과 시리즈로 엮고, 필요한 계산은 간단한 도구로 제공합니다.</p>
   </section>
 
-  <section class="about-app-section" aria-labelledby="about-start-title">
-    <h2 id="about-start-title">Start here</h2>
-    <ul class="about-app-list">
-      <li>
-        <a href="{{ '/posts/' | relative_url }}">
-          <span class="about-list-icon" aria-hidden="true">N</span>
-          <span class="about-list-copy">
-            <strong>Notes</strong>
-            <small>Read the latest posts</small>
-          </span>
-          <span class="about-list-arrow" aria-hidden="true">›</span>
-        </a>
-      </li>
-      <li>
-        <a href="{{ '/series/' | relative_url }}">
-          <span class="about-list-icon" aria-hidden="true">S</span>
-          <span class="about-list-copy">
-            <strong>Series</strong>
-            <small>Follow topics in order</small>
-          </span>
-          <span class="about-list-arrow" aria-hidden="true">›</span>
-        </a>
-      </li>
-      <li>
-        <a href="{{ '/tools/' | relative_url }}">
-          <span class="about-list-icon" aria-hidden="true">T</span>
-          <span class="about-list-copy">
-            <strong>Tools</strong>
-            <small>Open calculators and converters</small>
-          </span>
-          <span class="about-list-arrow" aria-hidden="true">›</span>
-        </a>
-      </li>
-    </ul>
-  </section>
+  <div class="about-app-grid">
+    <section class="about-app-section" aria-labelledby="about-start-title">
+      <h2 id="about-start-title">둘러보기</h2>
+      <ul class="about-app-list">
+        <li>
+          <a href="{{ '/posts/' | relative_url }}">
+            <span class="about-list-copy">
+              <strong>글</strong>
+              <small>최신 글과 주제별 글을 살펴봅니다.</small>
+            </span>
+            <span class="about-list-arrow" aria-hidden="true">›</span>
+          </a>
+        </li>
+        <li>
+          <a href="{{ '/series/' | relative_url }}">
+            <span class="about-list-copy">
+              <strong>시리즈</strong>
+              <small>주제의 흐름을 순서대로 따라갑니다.</small>
+            </span>
+            <span class="about-list-arrow" aria-hidden="true">›</span>
+          </a>
+        </li>
+        <li>
+          <a href="{{ '/tools/' | relative_url }}">
+            <span class="about-list-copy">
+              <strong>도구</strong>
+              <small>계산기와 단위 변환기를 사용합니다.</small>
+            </span>
+            <span class="about-list-arrow" aria-hidden="true">›</span>
+          </a>
+        </li>
+        <li>
+          <a href="{{ '/achievements/' | relative_url }}">
+            <span class="about-list-copy">
+              <strong>성과</strong>
+              <small>프로젝트와 경험을 살펴봅니다.</small>
+            </span>
+            <span class="about-list-arrow" aria-hidden="true">›</span>
+          </a>
+        </li>
+      </ul>
+    </section>
 
-  <section class="about-app-section" aria-labelledby="about-topics-title">
-    <h2 id="about-topics-title">Work in progress</h2>
-    <ul class="about-app-list">
-      <li>
-        <a href="{{ '/series/mathematics-philosophy-history/' | relative_url }}">
-          <span class="about-list-icon" aria-hidden="true">M</span>
-          <span class="about-list-copy">
-            <strong>Mathematics</strong>
-            <small>Philosophy, history, proof, infinity</small>
-          </span>
-          <span class="about-list-arrow" aria-hidden="true">›</span>
-        </a>
-      </li>
-      <li>
-        <a href="{{ '/series/science-philosophy-history/' | relative_url }}">
-          <span class="about-list-icon" aria-hidden="true">P</span>
-          <span class="about-list-copy">
-            <strong>Science</strong>
-            <small>Philosophy, history, and modern physics</small>
-          </span>
-          <span class="about-list-arrow" aria-hidden="true">›</span>
-        </a>
-      </li>
-      <li>
-        <a href="{{ '/posts/?category=web_technologies' | relative_url }}">
-          <span class="about-list-icon" aria-hidden="true">A</span>
-          <span class="about-list-copy">
-            <strong>Accessibility</strong>
-            <small>Readable interfaces and responsive web</small>
-          </span>
-          <span class="about-list-arrow" aria-hidden="true">›</span>
-        </a>
-      </li>
-      <li>
-        <a href="{{ '/tools/' | relative_url }}">
-          <span class="about-list-icon" aria-hidden="true">C</span>
-          <span class="about-list-copy">
-            <strong>Calculators</strong>
-            <small>Units, kinetic energy, acceleration</small>
-          </span>
-          <span class="about-list-arrow" aria-hidden="true">›</span>
-        </a>
-      </li>
-    </ul>
-  </section>
+    <section class="about-app-section" aria-labelledby="about-topics-title">
+      <h2 id="about-topics-title">관심 주제</h2>
+      <ul class="about-app-list">
+        <li>
+          <a href="{{ '/series/mathematics-philosophy-history/' | relative_url }}">
+            <span class="about-list-copy">
+              <strong>수학</strong>
+              <small>수학철학, 역사, 증명과 무한</small>
+            </span>
+            <span class="about-list-arrow" aria-hidden="true">›</span>
+          </a>
+        </li>
+        <li>
+          <a href="{{ '/series/science-philosophy-history/' | relative_url }}">
+            <span class="about-list-copy">
+              <strong>과학</strong>
+              <small>과학철학, 역사, 현대 물리학</small>
+            </span>
+            <span class="about-list-arrow" aria-hidden="true">›</span>
+          </a>
+        </li>
+        <li>
+          <a href="{{ '/posts/?category=web_technologies' | relative_url }}">
+            <span class="about-list-copy">
+              <strong>웹 접근성</strong>
+              <small>읽기 쉬운 인터페이스와 반응형 웹</small>
+            </span>
+            <span class="about-list-arrow" aria-hidden="true">›</span>
+          </a>
+        </li>
+      </ul>
+    </section>
+  </div>
 </article>

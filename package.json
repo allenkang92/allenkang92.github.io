@@ -3,15 +3,38 @@
     "version": "1.0.0",
     "description": "Allen's personal Jekyll blog",
     "scripts": {
-        "serve": "bundle exec jekyll serve --livereload",
-        "build": "bundle exec jekyll build",
+        "serve": "npm run build:frontend && node scripts/run_jekyll.mjs serve --livereload",
+        "build:frontend": "vite build && node scripts/sync-vite-manifest.mjs",
+        "build:jekyll": "node scripts/run_jekyll.mjs build",
+        "build": "npm run build:frontend && npm run build:jekyll",
+        "typecheck": "tsc --noEmit",
+        "test:unit": "tsc --project tsconfig.test.json --pretty false && node --test build/tests/tests/posts/model.test.js tests/posts/app.integration.test.mjs tests/search/site-search.integration.test.mjs",
+        "test:frontmatter": "ruby tests/frontmatter/verify_frontmatter_test.rb",
+        "test:site-validator": "python3 -m unittest tests.test_verify_site",
+        "verify:frontmatter": "ruby scripts/verify_frontmatter.rb",
+        "test:integration": "node --test scripts/site-integration.test.mjs",
+        "test": "npm run typecheck && npm run test:unit && npm run test:frontmatter && npm run test:site-validator && npm run build:frontend",
+        "verify": "npm test && npm run build:jekyll && npm run verify:frontmatter && npm run test:integration && python3 scripts/verify_site.py",
         "clean": "bundle exec jekyll clean"
     },
-    "dependencies": {},
-    "devDependencies": {},
-    "engines": {
-        "node": ">=16.0.0"
+    "devDependencies": {
+        "@types/node": "22.19.19",
+        "@types/react": "19.2.15",
+        "@types/react-dom": "19.2.3",
+        "@vitejs/plugin-react": "6.0.0",
+        "happy-dom": "20.14.5",
+        "react": "19.3.0",
+        "react-dom": "19.3.0",
+        "typescript": "5.9.3",
+        "vite": "8.3.0"
     },
-    "keywords": ["jekyll", "blog", "github-pages"],
+    "engines": {
+        "node": "^20.19.0 || >=22.12.0"
+    },
+    "keywords": [
+        "jekyll",
+        "blog",
+        "github-pages"
+    ],
     "license": "MIT"
 }

@@ -61,6 +61,13 @@ exclude:
   - Gemfile
   - Gemfile.lock
   - node_modules
+  - frontend
+  - scripts
+  - tests
+  - vite.config.mts
+  - tsconfig.json
+  - tsconfig.test.json
+  - assets/js/dist/manifest.json
   - vendor
   - package.json
   - package-lock.json
