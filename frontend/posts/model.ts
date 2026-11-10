@@ -107,9 +107,13 @@ function indexedEntry(row: SearchIndexRow, path: string, fallback?: CatalogEntry
   };
 }
 
-function pageKind(path: string): EntryKind | null {
-  if (path === '/series' || path.startsWith('/series/')) return 'series';
-  if (path === '/tools' || path.startsWith('/tools/')) return 'tool';
+function pageKind(path: string, siteBaseUrl: string): EntryKind | null {
+  const basePath = normalizePath(siteBaseUrl);
+  const localPath = basePath === '/'
+    ? path
+    : path.startsWith(`${basePath}/`) ? path.slice(basePath.length) : '';
+  if (localPath === '/series' || localPath.startsWith('/series/')) return 'series';
+  if (localPath === '/tools' || localPath.startsWith('/tools/')) return 'tool';
   return null;
 }
 
@@ -143,7 +147,7 @@ export function mergeSearchIndex(
     }
 
     if (row.type !== 'page') continue;
-    const kind = pageKind(path);
+    const kind = pageKind(path, siteBaseUrl);
     if (!kind || pages.has(path)) continue;
     const entry = indexedEntry(row, path);
     if (entry) pages.set(path, { ...entry, kind });

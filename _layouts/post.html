@@ -63,21 +63,27 @@ layout: default
 
   {% if page.series %}
   {% assign series_posts = site.posts | where: "series", page.series | sort: "series_order" %}
-  {% assign current_series_order = page.series_order | plus: 0 %}
-  {% assign next_series_order = current_series_order | plus: 1 %}
-  {% assign previous_series_order = current_series_order | minus: 1 %}
+  {% assign current_series_index = nil %}
   {% assign next_series_post = nil %}
   {% assign previous_series_post = nil %}
   {% assign series_record = site.data.series.items | where: "key", page.series | first %}
   {% for series_post in series_posts %}
-    {% assign candidate_order = series_post.series_order | plus: 0 %}
-    {% if candidate_order == next_series_order %}
-      {% assign next_series_post = series_post %}
-    {% endif %}
-    {% if candidate_order == previous_series_order %}
-      {% assign previous_series_post = series_post %}
+    {% if series_post.url == page.url %}
+      {% assign current_series_index = forloop.index0 %}
+      {% break %}
     {% endif %}
   {% endfor %}
+  {% if current_series_index != nil %}
+    {% assign next_series_index = current_series_index | plus: 1 %}
+    {% if next_series_index < series_posts.size %}
+      {% assign next_series_post = series_posts[next_series_index] %}
+      {% assign next_series_position = next_series_index | plus: 1 %}
+    {% endif %}
+    {% if current_series_index > 0 %}
+      {% assign previous_series_index = current_series_index | minus: 1 %}
+      {% assign previous_series_post = series_posts[previous_series_index] %}
+    {% endif %}
+  {% endif %}
   {% assign series_label = page.series | replace: '_', ' ' | replace: '-', ' ' %}
   {% assign series_hub_url = nil %}
   {% if series_record %}
@@ -94,7 +100,7 @@ layout: default
       <h2 id="post-next-heading">다음 글</h2>
       {% if next_series_post %}
         <a class="series-next-link" href="{{ next_series_post.url | relative_url }}">
-          <span class="series-kicker">{{ series_label }} {{ next_series_post.series_order }}번째 글</span>
+          <span class="series-kicker">{{ series_label }} {{ next_series_position }}번째 글</span>
           <span>{{ next_series_post.title }}</span>
         </a>
       {% else %}

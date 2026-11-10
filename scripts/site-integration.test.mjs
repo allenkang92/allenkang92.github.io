@@ -69,6 +69,42 @@ test('series hubs render their facts as HTML and use one-based reading positions
   }
 });
 
+test('post series navigation follows the indexed reading order', async () => {
+  const entries = JSON.parse(await readFile(resolve(siteRoot, 'search.json'), 'utf8'));
+  const groups = new Map();
+  for (const entry of entries) {
+    if (!entry.series) continue;
+    assert.ok(Number.isInteger(entry.series_index), `${entry.title}: series position must be indexed`);
+    if (!groups.has(entry.series)) groups.set(entry.series, []);
+    groups.get(entry.series).push(entry);
+  }
+
+  for (const [series, entriesInSeries] of groups) {
+    entriesInSeries.sort((a, b) => a.series_index - b.series_index);
+    for (const [index, entry] of entriesInSeries.entries()) {
+      const path = decodeURIComponent(new URL(entry.url).pathname).replace(/^\/+/, '');
+      const page = await readFile(resolve(siteRoot, path, 'index.html'), 'utf8');
+      const next = /<a class="series-next-link" href="([^"]+)">\s*<span class="series-kicker">([^<]+)<\/span>/.exec(page);
+      if (index < entriesInSeries.length - 1) {
+        assert.ok(next, `${entry.title}: next post is missing`);
+        assert.equal(decodeURIComponent(new URL(next[1], entry.url).pathname), decodeURIComponent(new URL(entriesInSeries[index + 1].url).pathname), `${entry.title}: next link`);
+        assert.match(next[2], new RegExp(`${index + 2}번째 글$`), `${entry.title}: next position in ${series}`);
+      } else {
+        assert.equal(next, null, `${entry.title}: final post must not have a next link`);
+        assert.match(page, /이 시리즈의 마지막 글입니다\./);
+      }
+
+      const previous = /<a href="([^"]+)">이전 글:/.exec(page);
+      if (index > 0) {
+        assert.ok(previous, `${entry.title}: previous post is missing`);
+        assert.equal(decodeURIComponent(new URL(previous[1], entry.url).pathname), decodeURIComponent(new URL(entriesInSeries[index - 1].url).pathname), `${entry.title}: previous link`);
+      } else {
+        assert.equal(previous, null, `${entry.title}: first post must not have a previous link`);
+      }
+    }
+  }
+});
+
 test('math posts load configured inline rendering while other posts do not', async () => {
   const mathPage = await readFile(resolve(siteRoot, 'posts', '1장-시대와지역에따른수학발전', 'index.html'), 'utf8');
   const setPage = await readFile(resolve(siteRoot, 'posts', '2장-수학과무한', 'index.html'), 'utf8');
@@ -76,11 +112,11 @@ test('math posts load configured inline rendering while other posts do not', asy
   const plainPage = await readFile(resolve(siteRoot, 'posts', '9장-수학철학과수학사의종합적고찰', 'index.html'), 'utf8');
 
   assert.match(mathPage, /id="post-content"/);
-  assert.match(mathPage, /elements:\s*\['post-content'\]/);
-  assert.match(mathPage, /inlineMath:\s*\[\['\$',\s*'\$'\]/);
-  assert.match(mathPage, /mathjax\/2\.7\.7\/MathJax\.js/);
+  assert.match(mathPage, /startup:\s*\{\s*elements:\s*\['#post-content'\]/);
+  assert.match(mathPage, /inlineMath:\s*\{\s*'\[\+\]':\s*\[\['\$',\s*'\$'\]\]/);
+  assert.match(mathPage, /<script defer\s+src="https:\/\/cdn\.jsdelivr\.net\/npm\/mathjax@4\.1\.3\/tex-chtml\.js"/);
   assert.ok(setPage.includes('\\mathbb{N} = \\{1, 2, 3, \\dots\\}'), 'literal set braces must survive Markdown');
   assert.ok(probabilityPage.includes('<p>$P(A\\mid B) = \\frac{P(B\\mid A) \\cdot P(A)}{P(B)}$</p>'), 'Bayes formula must remain a single math expression');
   assert.match(probabilityPage, /<li>새로운 정보[\s\S]*?P\(A\\mid B\)\$을 형성<\/li>/, 'conditional probability in a list must remain within its list item');
-  assert.doesNotMatch(plainPage, /mathjax\/2\.7\.7\/MathJax\.js/);
+  assert.doesNotMatch(plainPage, /cdn\.jsdelivr\.net\/npm\/mathjax@4\.1\.3\/tex-chtml\.js/);
 });

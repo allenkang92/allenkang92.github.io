@@ -11,9 +11,9 @@ permalink: /tools/unit-converter/
 
 # 단위 변환기
 
-`단위 변환기`, `길이 변환`, `질량 변환`, `온도 변환`을 찾는 사용자를 위한 안내입니다. 실제 변환은 기존 `/tools/` 페이지의 `Unit Converter / 단위 변환기` 탭에서 할 수 있습니다.
+길이, 질량, 시간, 온도의 변환 방법을 살펴보고, 아래 버튼으로 단위 변환기를 바로 열 수 있습니다.
 
-<p class="tool-landing__cta-row"><a class="tool-landing__cta" href="/tools/">단위 변환기 열기</a></p>
+<p class="tool-landing__cta-row"><a class="tool-landing__cta" href="{{ '/tools/?tab=unit#tool-workspace-title' | relative_url }}">단위 변환기 열기</a></p>
 
 ## 무엇을 변환할 수 있나요?
 

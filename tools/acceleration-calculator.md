@@ -11,9 +11,9 @@ permalink: /tools/acceleration-calculator/
 
 # 가속도 계산기
 
-`가속도 계산기`, `가속도 공식`, `속도 변화량 계산`을 찾는 사용자를 위한 안내입니다. 실제 계산은 기존 `/tools/` 페이지의 `Physics Calculator / 물리 계산기` 탭에서 `Acceleration / 가속도`를 선택해 진행합니다.
+가속도 공식과 입력 방법을 살펴보고, 아래 버튼으로 가속도 계산기를 바로 열 수 있습니다.
 
-<p class="tool-landing__cta-row"><a class="tool-landing__cta" href="/tools/">물리 계산기 열기</a></p>
+<p class="tool-landing__cta-row"><a class="tool-landing__cta" href="{{ '/tools/?tab=physics&formula=acceleration#tool-workspace-title' | relative_url | escape }}">가속도 계산기 열기</a></p>
 
 ## 가속도란?
 

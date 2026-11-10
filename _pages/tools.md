@@ -22,6 +22,7 @@ scripts:
       </div>
       <p>값을 입력한 뒤 결과를 확인하세요.</p>
     </div>
+    <noscript><p>계산기를 사용하려면 브라우저에서 JavaScript를 켜 주세요.</p></noscript>
     <div class="calculator-container">
       <div class="tab-container" role="tablist" aria-label="계산기 종류">
         <button type="button" class="tab-button active" role="tab" aria-selected="true" aria-controls="basic-calculator" id="basic-tab" data-tab="basic">일반 계산</button>

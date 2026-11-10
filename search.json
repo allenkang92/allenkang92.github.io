@@ -34,7 +34,12 @@ layout: null
   {% endfor %}
 
   {% for page in site.pages %}
-    {% if page.path contains '_pages/' and page.title and page.permalink and page.layout != 'xml' %}
+    {% assign page_root = page.path | slice: 0, 6 %}
+    {% assign searchable_page = false %}
+    {% if page_root == 'tools/' or page.path contains '_pages/' %}
+      {% assign searchable_page = true %}
+    {% endif %}
+    {% if searchable_page and page.title and page.permalink and page.layout != 'xml' %}
       {% if has_item %},{% endif %}
       {
         "title": {{ page.title | jsonify }},
@@ -44,7 +49,7 @@ layout: null
         "tags": [],
         "description": {{ page.description | default: page.title | strip_html | normalize_whitespace | jsonify }},
         "content": "",
-        "date": "{{ page.date | default: site.time | date: "%Y-%m-%d" }}",
+        "date": {% if page.date %}{{ page.date | date: "%Y-%m-%d" | jsonify }}{% else %}""{% endif %},
         "series": null,
         "series_index": null
       }

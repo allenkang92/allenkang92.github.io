@@ -100,6 +100,44 @@ test('mergeSearchIndex enriches static posts and only indexes series/tool pages'
   assert.equal(merged.entries[0].href, '/posts/physics/');
 });
 
+test('tool landing pages are searchable without appearing in the default archive', () => {
+  const result = mergeSearchIndex([sciencePost()], [
+    { type: 'page', url: 'https://blog.test/tools/unit-converter/', title: '단위 변환기', description: '온도 변환 공식과 예시' },
+    { type: 'page', url: 'https://blog.test/tools/dsr-calculator/', title: 'DSR 계산기 준비 중', description: '자동 계산 기능은 준비 중입니다' },
+  ], 'https://blog.test/');
+
+  assert.deepEqual(getRankedEntries(result.entries, { query: '', category: 'all', sort: 'date' })
+    .map(item => item.entry.path), ['/posts/physics']);
+  const matches = getRankedEntries(result.entries, { query: '온도', category: 'all', sort: 'relevance' });
+  assert.equal(matches.length, 1);
+  assert.equal(matches[0].entry.path, '/tools/unit-converter');
+  assert.equal(matches[0].entry.kind, 'tool');
+  assert.match(result.entries.find(entry => entry.path === '/tools/dsr-calculator')?.title || '', /준비 중/);
+});
+
+test('undated pages stay undated and follow dated posts when sorting by date', () => {
+  const post = sciencePost({ title: '물리학 글', date: '2024-01-01' });
+  const result = mergeSearchIndex([post], [
+    { type: 'page', url: 'https://blog.test/tools/physics/', title: '물리학 계산기', date: '' },
+  ], 'https://blog.test/');
+  const matches = getRankedEntries(result.entries, { query: '물리학', category: 'all', sort: 'date' });
+  assert.deepEqual(matches.map(item => item.entry.kind), ['post', 'tool']);
+  assert.equal(matches[1].entry.date, '');
+});
+
+test('series and tool pages remain searchable when the site has a base path', () => {
+  const rows = [
+    { type: 'page', url: 'https://blog.test/blog/tools/unit-converter/', title: '단위 변환기' },
+    { type: 'page', url: 'https://blog.test/blog/series/math/', title: '수학 시리즈' },
+    { type: 'page', url: 'https://blog.test/blog-other/tools/ignored/', title: '다른 경로' },
+  ];
+  const result = mergeSearchIndex([], rows, 'https://blog.test/blog');
+  assert.deepEqual(result.entries.map(entry => [entry.path, entry.kind]), [
+    ['/blog/tools/unit-converter', 'tool'],
+    ['/blog/series/math', 'series'],
+  ]);
+});
+
 test('pagination clamps invalid pages and reports an empty range for zero results', () => {
   assert.deepEqual(getPageWindow(19, 2, 10), {
     page: 2, totalPages: 2, startIndex: 10, endIndex: 19, startNumber: 11, endNumber: 19,

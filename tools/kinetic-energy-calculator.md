@@ -11,9 +11,9 @@ permalink: /tools/kinetic-energy-calculator/
 
 # 운동 에너지 계산기
 
-`운동 에너지 계산기`, `운동에너지 공식`, `질량 속도 에너지 계산`을 찾는 사용자를 위한 안내입니다. 실제 계산은 기존 `/tools/` 페이지의 `Physics Calculator / 물리 계산기` 탭에서 `Kinetic Energy / 운동 에너지`를 선택해 진행합니다.
+운동 에너지 공식과 입력 방법을 살펴보고, 아래 버튼으로 운동 에너지 계산기를 바로 열 수 있습니다.
 
-<p class="tool-landing__cta-row"><a class="tool-landing__cta" href="/tools/">물리 계산기 열기</a></p>
+<p class="tool-landing__cta-row"><a class="tool-landing__cta" href="{{ '/tools/?tab=physics&formula=kinetic#tool-workspace-title' | relative_url | escape }}">운동 에너지 계산기 열기</a></p>
 
 ## 운동 에너지란?
 

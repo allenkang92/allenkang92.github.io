@@ -240,6 +240,21 @@
     });
   }
 
+  // Keep a copied URL consistent with the calculator currently shown.
+  function syncToolUrl(tabName) {
+    const url = new URL(window.location.href);
+    if (tabName === 'basic') url.searchParams.delete('tab');
+    else url.searchParams.set('tab', tabName);
+
+    const formula = document.getElementById('physics-formula')?.value;
+    if (tabName === 'physics' && Object.prototype.hasOwnProperty.call(formulas, formula)) {
+      url.searchParams.set('formula', formula);
+    } else {
+      url.searchParams.delete('formula');
+    }
+    window.history.replaceState(window.history.state, '', url);
+  }
+
   function updatePhysicsInputs() {
     const select = document.getElementById('physics-formula');
     const inputs = document.getElementById('physics-inputs');
@@ -380,7 +395,10 @@
 
   function initTabs() {
     document.querySelectorAll('[data-tab]').forEach(tab => {
-      tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+      tab.addEventListener('click', () => {
+        switchTab(tab.dataset.tab);
+        syncToolUrl(tab.dataset.tab);
+      });
       tab.addEventListener('keydown', event => {
         const tabs = Array.from(document.querySelectorAll('[data-tab]'));
         const currentIndex = tabs.indexOf(tab);
@@ -399,6 +417,7 @@
         event.preventDefault();
         nextTab.focus();
         switchTab(nextTab.dataset.tab);
+        syncToolUrl(nextTab.dataset.tab);
       });
     });
   }
@@ -416,7 +435,10 @@
   }
 
   function initPhysics() {
-    document.getElementById('physics-formula')?.addEventListener('change', updatePhysicsInputs);
+    document.getElementById('physics-formula')?.addEventListener('change', () => {
+      updatePhysicsInputs();
+      syncToolUrl('physics');
+    });
     document.getElementById('physics-inputs')?.addEventListener('input', event => {
       if (event.target instanceof HTMLInputElement) {
         invalidateResult('physics-result', '입력이 변경되었습니다. 다시 계산해 주세요.');
@@ -425,12 +447,33 @@
     document.getElementById('physics-calculate')?.addEventListener('click', calculatePhysics);
   }
 
+  // Landing pages and browser history restore the calculator without moving focus.
+  function restoreToolFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    const requestedTab = params.get('tab');
+    const tab = ['basic', 'physics', 'unit'].includes(requestedTab) ? requestedTab : 'basic';
+
+    switchTab(tab);
+    if (tab !== 'physics') return;
+
+    const formula = params.get('formula');
+    const validFormula = Object.prototype.hasOwnProperty.call(formulas, formula) ? formula : '';
+    const select = document.getElementById('physics-formula');
+    if (!select) return;
+    if (select.value !== validFormula) {
+      select.value = validFormula;
+      updatePhysicsInputs();
+    }
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
     if (!document.querySelector('.calculator-container')) return;
     initTabs();
     initCalculator();
     initPhysics();
     initUnits();
+    restoreToolFromUrl();
+    window.addEventListener('popstate', restoreToolFromUrl);
   });
 
   window.switchTab = switchTab;
