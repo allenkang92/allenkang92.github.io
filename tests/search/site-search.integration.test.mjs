@@ -56,6 +56,106 @@ function setup(fetchImpl, url = 'https://blog.test/about/', configure = () => {}
   return browser;
 }
 
+test('50건을 넘는 검색 결과는 같은 목록에서 순서와 페이지 종류를 유지하며 추가로 확인한다', async () => {
+  for (const basePath of ['', '/blog']) {
+    const query = '공통 &+한글';
+    const rows = Array.from({ length: 121 }, (_, index) => searchRow({
+      title: `${query} ${String(index).padStart(3, '0')}`,
+      url: `${basePath}/result/${index}/`,
+      type: index >= 100 ? 'page' : 'post',
+      ...(index >= 110 ? { page_kind: 'achievement' } : {}),
+    }));
+    const browser = setup(async () => ({ ok: true, json: async () => rows }), `https://blog.test${basePath}/about/`, window => {
+      window.document.querySelector('.search-form').dataset.siteBaseUrl = `https://blog.test${basePath}`;
+      window.requestAnimationFrame = callback => { callback(); return 1; };
+    });
+    try {
+      await new Promise(resolve => setTimeout(resolve, 0));
+      browser.document.querySelector('.sidebar-toggle').click();
+      const input = browser.document.querySelector('#search-input');
+      const results = browser.document.querySelector('#search-results');
+      input.value = query;
+      browser.searchFunctions.performSearch(query);
+      const links = () => Array.from(results.querySelectorAll('.search-result-title a'));
+      const button = () => results.querySelector('.search-more-results');
+      assert.equal(links().length, 50);
+      assert.equal(button()?.type, 'button');
+      assert.match(results.textContent, /총 121개 중 50개 표시 중/);
+      assert.match(results.querySelector('.search-results-count').textContent, /121건 중 50건 표시.*목록 끝/);
+      assert.match(browser.document.querySelector('#search-status').textContent, /121건 중 50건 표시.*목록 끝/);
+      assert.equal(new URLSearchParams(browser.location.search).get('q'), query);
+      const first = links()[0];
+      button().focus();
+      button().click();
+      assert.equal(links().length, 100);
+      assert.ok(links()[0] === first, '기존 링크와 포커스 순서를 보존한다');
+      assert.ok(browser.document.activeElement === links()[50], '첫 추가 결과에 포커스한다');
+      assert.match(browser.document.querySelector('#search-status').textContent, /121개 중 100개/);
+      assert.match(results.querySelector('.search-results-count').textContent, /121건 중 100건 표시/);
+      browser.document.activeElement.dispatchEvent(new browser.KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
+      assert.ok(browser.document.activeElement === links()[51], '기존 방향키 이동이 추가 결과에도 적용된다');
+      button().focus();
+      button().click();
+      assert.equal(links().length, 121);
+      assert.ok(button()?.hidden && button()?.disabled, '마지막 버튼은 표시와 키보드 조작에서 제외된다');
+      assert.ok(browser.document.activeElement === links()[100], '마지막 버튼이 숨겨져도 첫 추가 결과에 포커스가 남는다');
+      assert.ok(results.classList.contains('active'), '마지막 버튼의 클릭이 바깥 클릭으로 처리되지 않는다');
+      assert.match(results.querySelector('.search-results-count').textContent, /121건 모두 표시/);
+      assert.match(browser.document.querySelector('#search-status').textContent, /121개 중 121개/);
+      assert.deepEqual(links().map(link => link.getAttribute('href')), rows.slice().reverse().map(row => row.url));
+      assert.equal(new URLSearchParams(browser.location.search).get('q'), query, '추가 표시는 검색 주소를 변경하지 않는다');
+      browser.document.activeElement.dispatchEvent(new browser.KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+      assert.ok(browser.document.activeElement === input, 'Escape 후 검색 입력으로 복귀한다');
+      assert.equal(results.classList.contains('active'), false);
+    } finally {
+      await browser.happyDOM.abort();
+    }
+  }
+});
+
+test('결과가 정확히 50건이면 더 보기 없이 표시하고 새 검색은 이전 추가 결과를 지운다', async () => {
+  const rows = Array.from({ length: 51 }, (_, index) => searchRow({
+    title: `공통 ${String(index).padStart(3, '0')}${index < 50 ? ' 제한' : ''}`,
+    url: `/result/${index}/`,
+  }));
+  const browser = setup(async () => ({ ok: true, json: async () => rows }), 'https://blog.test/about/', window => {
+    window.requestAnimationFrame = callback => { callback(); return 1; };
+  });
+  try {
+    await new Promise(resolve => setTimeout(resolve, 0));
+    const input = browser.document.querySelector('#search-input');
+    const results = browser.document.querySelector('#search-results');
+    input.value = '제한';
+    browser.searchFunctions.performSearch('제한');
+    assert.equal(results.querySelectorAll('.search-result-item').length, 50);
+    assert.equal(results.querySelector('.search-more-results'), null);
+    input.value = '공통';
+    browser.searchFunctions.performSearch('공통');
+    assert.equal(results.querySelectorAll('.search-result-item').length, 50);
+    results.querySelector('.search-more-results').click();
+    assert.equal(results.querySelectorAll('.search-result-item').length, 51);
+    assert.ok(results.querySelector('.search-more-results')?.hidden && results.querySelector('.search-more-results')?.disabled);
+    input.focus();
+    input.value = '제한';
+    input.dispatchEvent(new browser.Event('input', { bubbles: true }));
+    assert.equal(results.querySelectorAll('.search-result-item').length, 0, '새 입력 대기 중 이전 결과를 숨긴다');
+    await new Promise(resolve => setTimeout(resolve, 350));
+    assert.equal(results.querySelectorAll('.search-result-item').length, 50);
+    assert.equal(results.querySelector('.search-more-results'), null);
+    input.value = '공통';
+    browser.searchFunctions.performSearch('공통');
+    results.querySelector('.search-more-results').click();
+    assert.equal(results.querySelectorAll('.search-result-item').length, 51);
+    browser.history.pushState({}, '', '?q=%EC%A0%9C%ED%95%9C');
+    browser.dispatchEvent(new browser.PopStateEvent('popstate'));
+    assert.equal(input.value, '제한');
+    assert.equal(results.querySelectorAll('.search-result-item').length, 50, '이력 복원 후 새 검색의 결과만 표시한다');
+    assert.equal(results.querySelector('.search-more-results'), null);
+  } finally {
+    await browser.happyDOM.abort();
+  }
+});
+
 test('주소가 posts로 끝나는 오류 페이지에서도 사이드바 입력 검색이 작동한다', async () => {
   for (const [url, basePath] of [
     ['https://blog.test/not-found/posts', ''],

@@ -466,6 +466,11 @@ aside#site-sidebar.sidebar-right .navigation .nav-links a.nav-link.active {
   border-color: var(--atlas-border) !important;
 }
 
+.search-results-footer .search-more-results {
+  min-height: 44px;
+  padding: 0.5rem 0.75rem !important;
+}
+
 .search-result-item {
   background: var(--atlas-surface-warm) !important;
   border-color: rgba(184, 216, 208, 0.72) !important;

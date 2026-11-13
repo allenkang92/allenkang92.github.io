@@ -33,6 +33,8 @@
     let originalSearchParams = null;
     let categoryLabels = Object.create(null);
     let indexCompletenessUnknown = false;
+    let currentResults = [];
+    let visibleResults = 0;
 
     // 결과 수 요약만 보조기술에 알린다 (결과 목록 전체 낭독 방지)
     function announceStatus(message) {
@@ -261,6 +263,7 @@
         searchInput.addEventListener('compositionstart', handleCompositionStart);
         searchInput.addEventListener('compositionend', handleCompositionEnd);
         searchContainer.addEventListener('keydown', handleSearchEscape);
+        searchResults.addEventListener('click', handleMoreResults);
         
         // Form submission
         searchForm.addEventListener('submit', handleFormSubmit);
@@ -341,6 +344,8 @@
         // A previous query's links must not remain clickable or keyboard
         // focusable while the new query is waiting for its debounce or IME.
         if (searchInput.value.trim() !== lastRenderedQuery) {
+            currentResults = [];
+            visibleResults = 0;
             searchResults.replaceChildren();
             searchResults.style.display = 'none';
             searchResults.classList.remove('active');
@@ -610,13 +615,11 @@
                       return String(b.post.title || '').localeCompare(a.post.title || '');
                     });
 
-                const filteredResults = allResults
-                    .slice(0, MAX_VISIBLE_SEARCH_RESULTS)
-                    .map(item => item.post);
+                const filteredResults = allResults.map(item => item.post);
                 
                 // Display results
                 if (filteredResults.length > 0) {
-                    displayResults(filteredResults, query, allResults.length);
+                    displayResults(filteredResults, query);
                 } else {
                     showNoResults(`'${query}'에 대한 검색 결과가 없습니다`, query);
                 }
@@ -663,20 +666,38 @@
         return `<p>검색 색인의 완전성을 확인할 수 없습니다.${link}</p>`;
     }
 
-    function displayResults(results, query, totalResults = results.length) {
+    function displayResults(results, query) {
         if (!searchResults) return;
-        
-        // Highlight query terms in results
-        const queryTerms = normalizeSearchText(query).split(/\s+/).filter(term => term.length > 0);
-        
+        currentResults = results;
+        visibleResults = Math.min(results.length, MAX_VISIBLE_SEARCH_RESULTS);
         // Build results HTML
         let html = `
                 <div class="search-results-header">
-                <div class="search-results-count">검색 결과: ${totalResults}건</div>
+                <div class="search-results-count">검색 결과: ${results.length}건${results.length > visibleResults ? ` 중 <span class="search-visible-summary">${visibleResults}</span>건 표시. 목록 끝에서 결과 더 보기` : ''}</div>
                 ${legacyIndexNotice(query)}
             </div>
             <ul class="search-results-list">`;
-        
+        html += renderResultItems(results.slice(0, visibleResults), query);
+        html += `</ul>`;
+
+        if (results.length > visibleResults) {
+            html += `
+                <div class="search-results-footer">
+                    <p>총 ${results.length}개 중 <span class="search-visible-count">${visibleResults}</span>개 표시 중</p>
+                    <button type="button" class="inline-action-btn search-more-results">결과 더 보기</button>
+                </div>`;
+        }
+
+        searchResults.innerHTML = html;
+        lastRenderedQuery = query;
+        searchResults.style.display = 'block';
+        searchResults.classList.add('active');
+        announceStatus(`검색 결과 ${results.length}건${results.length > visibleResults ? ` 중 ${visibleResults}건 표시. 목록 끝에서 결과 더 보기` : ''}${indexCompletenessUnknown ? '. 검색 색인의 완전성을 확인할 수 없습니다.' : ''}`);
+    }
+
+    function renderResultItems(results, query) {
+        const queryTerms = normalizeSearchText(query).split(/\s+/).filter(term => term.length > 0);
+        let html = '';
         results.forEach(result => {
             // Highlight matches in title and excerpt
             const highlightedTitle = highlightText(result.title || '제목 없음', queryTerms);
@@ -736,23 +757,37 @@
                 </li>`;
         });
         
-        html += `
-            </ul>`;
-        
-        // Add footer with result count
-        if (totalResults > results.length) {
-            html += `
-                <div class="search-results-footer">
-                    <p>총 ${totalResults}개 중 ${results.length}개 표시 중</p>
-                </div>`;
+        return html;
+    }
+
+    function handleMoreResults(event) {
+        const button = event.target.closest('.search-more-results');
+        if (!button || !searchResults.contains(button) || !searchResults.classList.contains('active')) return;
+        if (!lastRenderedQuery || searchInput.value.trim() !== lastRenderedQuery) return;
+        const list = searchResults.querySelector('.search-results-list');
+        if (!list || visibleResults >= currentResults.length) return;
+
+        const previousCount = visibleResults;
+        visibleResults = Math.min(currentResults.length, previousCount + MAX_VISIBLE_SEARCH_RESULTS);
+        list.insertAdjacentHTML('beforeend', renderResultItems(currentResults.slice(previousCount, visibleResults), lastRenderedQuery));
+        const count = searchResults.querySelector('.search-visible-count');
+        if (count) count.textContent = String(visibleResults);
+        const summary = searchResults.querySelector('.search-results-count');
+        if (summary) {
+            summary.textContent = visibleResults < currentResults.length
+                ? `검색 결과: ${currentResults.length}건 중 ${visibleResults}건 표시. 목록 끝에서 결과 더 보기`
+                : `검색 결과: ${currentResults.length}건 모두 표시`;
         }
-        
-        // Update the DOM
-        searchResults.innerHTML = html;
-        lastRenderedQuery = query;
-        searchResults.style.display = 'block';
-        searchResults.classList.add('active');
-        announceStatus(`검색 결과 ${totalResults}건${indexCompletenessUnknown ? '. 검색 색인의 완전성을 확인할 수 없습니다.' : ''}`);
+        if (visibleResults === currentResults.length) {
+            // 버블링 중 노드를 제거하면 문서의 바깥 클릭 처리에서 내부 클릭을
+            // 오인할 수 있다. 비활성화·숨김으로 포커스와 접근성 트리에서 제외한다.
+            button.disabled = true;
+            button.hidden = true;
+        }
+
+        // 새 결과가 버튼 앞에 추가되므로 첫 추가 항목으로 이동해야 다음 Tab이 자연스럽다.
+        list.children[previousCount]?.querySelector('a')?.focus();
+        announceStatus(`총 ${currentResults.length}개 중 ${visibleResults}개 표시 중`);
     }
     
     // Show error message
