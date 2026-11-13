@@ -32,6 +32,10 @@
     let pendingIndexHistoryMode = 'none';
     let pendingIndexTrackDraft = false;
     let searchDraft = null;
+    let historySyncFailed = false;
+    let historyWarning;
+    let lastStatusMessage = '';
+    const historyWarningText = '검색어를 주소에 반영하지 못했습니다. 새로고침하거나 공유하면 현재 검색이 유지되지 않을 수 있습니다.';
     let categoryLabels = Object.create(null);
     let indexCompletenessUnknown = false;
     let currentResults = [];
@@ -39,12 +43,27 @@
 
     // 결과 수 요약만 보조기술에 알린다 (결과 목록 전체 낭독 방지)
     function announceStatus(message) {
+        lastStatusMessage = message || '';
         if (!searchStatus) {
             searchStatus = document.getElementById('search-status');
         }
         if (searchStatus) {
-            searchStatus.textContent = message || '';
+            searchStatus.textContent = [lastStatusMessage, historySyncFailed ? historyWarningText : ''].filter(Boolean).join(' ');
         }
+    }
+
+    function setHistoryWarning(failed) {
+        if (historySyncFailed === failed) return;
+        historySyncFailed = failed;
+        if (failed && !historyWarning) {
+            historyWarning = document.createElement('p');
+            historyWarning.className = 'search-history-warning';
+            historyWarning.setAttribute('aria-hidden', 'true');
+            historyWarning.textContent = historyWarningText;
+            searchForm.insertAdjacentElement('afterend', historyWarning);
+        }
+        if (historyWarning) historyWarning.hidden = !failed;
+        announceStatus(lastStatusMessage);
     }
     
     // Initialize the search functionality
@@ -325,6 +344,7 @@
         pendingIndexTrackDraft = false;
         searchDraft = null;
         searchInput.value = new URLSearchParams(window.location.search).get('q') || '';
+        setHistoryWarning(false);
         updateSearchInputState();
         const query = searchInput.value.trim();
         shouldShowSearchFeedback = !!query;
@@ -859,31 +879,46 @@
 
     // Update URL with search query
     function updateUrl(query, options = {}) {
-        if (!history.pushState) return;
-        
-        const url = new URL(window.location);
-        const before = url.href;
-        
-        if (query) {
-            url.searchParams.set('q', query);
-        } else {
-            url.searchParams.delete('q');
-        }
-        
-        if (searchDraft && !isCurrentDraft(searchDraft)) searchDraft = null;
-        if (options.mode === 'push') {
-            if (url.href !== before) {
-                if (searchDraft) window.history.replaceState(window.history.state, '', url);
-                else window.history.pushState(window.history.state, '', url);
+        try {
+            const url = new URL(window.location);
+            const before = url.href;
+
+            if (searchDraft && !isCurrentDraft(searchDraft)) searchDraft = null;
+            // 같은 유효 검색어면 다른 매개변수의 직렬화(%20 등)를 바꾸거나
+            // 실제로 필요 없는 이력 저장을 시도하지 않는다.
+            if ((url.searchParams.get('q') || '').trim() === query.trim()) {
+                if (options.mode === 'push') {
+                    searchDraft = null;
+                    pendingIndexTrackDraft = false;
+                }
+                setHistoryWarning(false);
+                return;
             }
+
+            if (query) url.searchParams.set('q', query);
+            else url.searchParams.delete('q');
+
+            if (options.mode === 'push') {
+                if (url.href !== before) {
+                    if (searchDraft) window.history.replaceState(window.history.state, '', url);
+                    else window.history.pushState(window.history.state, '', url);
+                }
+                searchDraft = null;
+                pendingIndexTrackDraft = false;
+            } else if (url.href !== before) {
+                if (options.trackDraft && !searchDraft) window.history.pushState(window.history.state, '', url);
+                else window.history.replaceState(window.history.state, '', url);
+                if (options.trackDraft) rememberDraft();
+                else searchDraft = null;
+            }
+            setHistoryWarning(false);
+        } catch (error) {
+            // 이력 저장 실패와 검색 색인 실패는 별개다. 실패한 초안을 계속
+            // 사용하면 다음 제출에서 기존 이력 항목을 덮을 수 있다.
             searchDraft = null;
             pendingIndexTrackDraft = false;
-        } else {
-            if (url.href === before) return;
-            if (options.trackDraft && !searchDraft) window.history.pushState(window.history.state, '', url);
-            else window.history.replaceState(window.history.state, '', url);
-            if (options.trackDraft) rememberDraft();
-            else searchDraft = null;
+            if (!historySyncFailed) console.error('검색 주소를 갱신하지 못했습니다:', error);
+            setHistoryWarning(true);
         }
     }
     

@@ -14,7 +14,7 @@ scripts:
 </header>
 
 <section class="tools-container" aria-labelledby="tool-workspace-title" markdown="0">
-  <style>.calculator-container[hidden], #calculator-load-notice[hidden] { display: none !important; }</style>
+  <style>.calculator-container[hidden], #calculator-load-notice[hidden] { display: none !important; } #calculator-url-status:empty { margin: 0; }</style>
   <div class="tool-card">
     <div class="tool-section-heading">
       <div>
@@ -30,6 +30,7 @@ scripts:
         <button type="button" class="tab-button" role="tab" aria-selected="false" aria-controls="physics-calculator" id="physics-tab" data-tab="physics" tabindex="-1">물리 공식</button>
         <button type="button" class="tab-button" role="tab" aria-selected="false" aria-controls="unit-calculator" id="unit-tab" data-tab="unit" tabindex="-1">단위 변환</button>
       </div>
+      <p id="calculator-url-status" role="status" aria-live="polite" aria-atomic="true"></p>
 
       <div id="basic-calculator" class="calculator-tab active" role="tabpanel" aria-labelledby="basic-tab">
         <div class="calculator" role="group" aria-label="일반 계산기" aria-describedby="calculator-error">

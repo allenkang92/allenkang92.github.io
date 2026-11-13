@@ -141,12 +141,17 @@ function categoryLabelFor(category: string, labels: Map<string, string>): string
   return labels.get(category) || category.replace(/_/g, ' ');
 }
 
-function writeHistory(nextState: PostsState, mode: HistoryMode): void {
+function writeHistory(nextState: PostsState, mode: HistoryMode): 'unchanged' | 'written' | 'failed' {
   const href = serializePostsState(window.location.href, nextState);
   const currentHref = `${window.location.pathname}${window.location.search}${window.location.hash}`;
-  if (href === currentHref) return;
-  if (mode === 'push') window.history.pushState(window.history.state, '', href);
-  else window.history.replaceState(window.history.state, '', href);
+  if (href === currentHref) return 'unchanged';
+  try {
+    if (mode === 'push') window.history.pushState(window.history.state, '', href);
+    else window.history.replaceState(window.history.state, '', href);
+    return 'written';
+  } catch {
+    return 'failed';
+  }
 }
 
 interface SearchDraftOrigin {
@@ -416,6 +421,8 @@ export function PostsApp({
   const [canRetry, setCanRetry] = useState(false);
   const [savedScroll, setSavedScroll] = useState<StoredScrollState | null>(readScrollState);
   const [restoreMessage, setRestoreMessage] = useState('');
+  const [historyWriteFailed, setHistoryWriteFailed] = useState(false);
+  const historyWriteFailedRef = useRef(false);
   const stateRef = useRef(state);
   const flushPendingScrollRef = useRef<() => void>(() => {});
   // 실시간 검색은 URL을 갱신하되 명시적으로 제출하기 전의 이력을 보존한다.
@@ -433,6 +440,18 @@ export function PostsApp({
   const restoreControlFocusRef = useRef(false);
   stateRef.current = state;
   entriesRef.current = entries;
+
+  const syncHistory = useCallback((next: PostsState, mode: HistoryMode) => {
+    const result = writeHistory(next, mode);
+    // 공백의 %20/+처럼 직렬화만 다른 경우 실제 공유·복원 상태는 같다.
+    const actual = result === 'failed' ? parsePostsState(window.location.href, validCategories) : next;
+    const outOfSync = result === 'failed' && (actual.query !== next.query || actual.category !== next.category
+      || actual.sort !== next.sort || actual.page !== next.page);
+    historyWriteFailedRef.current = outOfSync;
+    setHistoryWriteFailed(outOfSync);
+    if (result === 'failed') searchDraftOriginRef.current = null;
+    return result;
+  }, [validCategories]);
 
   const rankedEntries = useMemo(
     () => getRankedEntries(entries, { query: state.query, category: state.category, sort: state.sort }),
@@ -693,13 +712,13 @@ export function PostsApp({
     setState(normalizedState);
     const origin = searchDraftOriginRef.current;
     if (origin && !isCurrentDraft(origin)) searchDraftOriginRef.current = null;
-    writeHistory(normalizedState, 'replace');
+    syncHistory(normalizedState, 'replace');
     if (searchDraftOriginRef.current) {
       const identity = currentHistoryIdentity();
       searchDraftOriginRef.current = { lastHref: window.location.href, entryKey: identity?.key || null, entryId: identity?.id || null };
     }
     setSavedScroll(readScrollState());
-  }, [indexStatus, pageWindow.page, state]);
+  }, [indexStatus, pageWindow.page, state, syncHistory]);
 
   useEffect(() => {
     let pending: StoredScrollState | null = null;
@@ -762,6 +781,8 @@ export function PostsApp({
         pendingHistoryFocusRef.current = pending;
       }
       setRestoreMessage('');
+      historyWriteFailedRef.current = false;
+      setHistoryWriteFailed(false);
       setSavedScroll(readScrollState());
       const restored = parsePostsState(window.location.href, validCategories);
       stateRef.current = restored;
@@ -803,14 +824,16 @@ export function PostsApp({
     const changesUrl = serializePostsState(window.location.href, next)
       !== `${window.location.pathname}${window.location.search}${window.location.hash}`;
     if (changesUrl) flushPendingScrollRef.current();
-    if (historyMode === 'push' && changesUrl) saveScrollState(current);
-    writeHistory(next, historyMode);
+    // 이전 쓰기가 실패한 화면은 현재 URL의 이력 항목을 대표하지 않는다.
+    if (historyMode === 'push' && changesUrl && !historyWriteFailedRef.current) saveScrollState(current);
+    const historyResult = syncHistory(next, historyMode);
     if (searchDraftOriginRef.current) {
       const identity = currentHistoryIdentity();
       searchDraftOriginRef.current = { lastHref: window.location.href, entryKey: identity?.key || null, entryId: identity?.id || null };
     }
     setSavedScroll(readScrollState());
-  }, []);
+    return historyResult;
+  }, [syncHistory]);
 
   const clearQueryTimer = useCallback(() => {
     if (queryTimerRef.current !== null) window.clearTimeout(queryTimerRef.current);
@@ -832,9 +855,11 @@ export function PostsApp({
       }
       if (!sameSearch && !searchDraftOriginRef.current) {
         // 최초 변경은 별도 항목으로 남겨, 제출 전 뒤로 가기도 이전 검색을 복원한다.
-        transition({ query: value, page: 1 }, 'push', true);
-        const identity = currentHistoryIdentity();
-        searchDraftOriginRef.current = { lastHref: window.location.href, entryKey: identity?.key || null, entryId: identity?.id || null };
+        const historyResult = transition({ query: value, page: 1 }, 'push', true);
+        if (historyResult === 'written') {
+          const identity = currentHistoryIdentity();
+          searchDraftOriginRef.current = { lastHref: window.location.href, entryKey: identity?.key || null, entryId: identity?.id || null };
+        }
         return;
       }
       transition({ query: value, page: sameSearch ? current.page : 1 }, 'replace', true);
@@ -857,7 +882,9 @@ export function PostsApp({
     const current = stateRef.current;
     const sameSearch = normalizeText(draftQuery) === normalizeText(current.query);
     const hasDraft = !!searchDraftOriginRef.current && isCurrentDraft(searchDraftOriginRef.current);
-    transition({ query: draftQuery, page: sameSearch ? current.page : 1 }, sameSearch || hasDraft ? 'replace' : 'push');
+    // 실패한 이력 쓰기는 기존 항목을 바꾸지 않았으므로 재제출 시 이를 덮지 않는다.
+    const retryFailedWrite = historyWriteFailedRef.current && !hasDraft;
+    transition({ query: draftQuery, page: sameSearch ? current.page : 1 }, !retryFailedWrite && (sameSearch || hasDraft) ? 'replace' : 'push');
     searchDraftOriginRef.current = null;
   };
 
@@ -1051,6 +1078,9 @@ export function PostsApp({
         <div className="posts-controls-meta">
           <div className="posts-info">
             <span id="react-posts-count" role="status" aria-live="polite">{searchPending ? '검색어를 반영하고 있습니다.' : countLabel}</span>
+            <span id="react-posts-history-status" className="posts-search-status" role="status" aria-live="polite">
+              {historyWriteFailed ? '주소를 갱신하지 못했습니다. 현재 화면과 주소가 달라 공유하거나 새로고침하면 표시 내용이 달라질 수 있습니다.' : ''}
+            </span>
             {state.query && state.category !== 'all' && (
               <span className="posts-search-status">카테고리는 글에만 적용됩니다. 성과·시리즈·도구를 검색하려면 전체 주제를 선택하세요.</span>
             )}

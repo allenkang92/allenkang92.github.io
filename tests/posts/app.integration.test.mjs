@@ -35,6 +35,175 @@ const indexedPage = overrides => ({
   ...overrides,
 });
 
+test('이력 추가 실패에도 분류 결과를 유지하고 주소 불일치를 안내하며 복구한다', async () => {
+  const cleanup = installBrowser('https://blog.test/posts/');
+  const browser = globalThis.window;
+  let mounted;
+  try {
+    mounted = await mountPostsApp(browser, posts, async () => ({ ok: true, json: async () => indexedRows }));
+    const original = browser.history.pushState.bind(browser.history);
+    browser.history.pushState = () => { throw new browser.DOMException('이력 거부', 'SecurityError'); };
+    const category = mounted.rootElement.querySelector('#react-posts-category-select');
+    await act(async () => {
+      category.value = 'mathematics_philosophy_history';
+      category.dispatchEvent(new browser.Event('change', { bubbles: true }));
+    });
+    assert.equal(category.value, 'mathematics_philosophy_history');
+    assert.equal(new URL(browser.location.href).searchParams.has('category'), false);
+    const notice = mounted.rootElement.querySelector('#react-posts-history-status');
+    assert.match(notice?.textContent || '', /주소.*갱신|주소.*일치/);
+    assert.equal(notice.getAttribute('role'), 'status');
+    assert.equal(notice.closest('[hidden]'), null, '안내는 시각적으로 숨겨지지 않는다');
+    browser.history.pushState = original;
+    await act(async () => {
+      category.value = 'all';
+      category.dispatchEvent(new browser.Event('change', { bubbles: true }));
+    });
+    assert.equal(notice.textContent, '');
+  } finally {
+    if (mounted) await act(async () => mounted.root.unmount());
+    await cleanup();
+  }
+});
+
+test('초기 페이지 보정의 이력 교체 실패가 검색 화면을 중단시키지 않는다', async () => {
+  const cleanup = installBrowser('https://blog.test/posts/?page=999');
+  const browser = globalThis.window;
+  let mounted;
+  try {
+    browser.history.replaceState = () => { throw new browser.DOMException('이력 거부', 'SecurityError'); };
+    mounted = await mountPostsApp(browser, posts, async () => ({ ok: true, json: async () => indexedRows }));
+    assert.equal(mounted.rootElement.hidden, false);
+    assert.equal(mounted.fallbackElement.hidden, true);
+    assert.equal(mounted.rootElement.querySelector('a[aria-current="page"]')?.getAttribute('aria-label'), '2페이지');
+    assert.match(mounted.rootElement.querySelector('#react-posts-history-status')?.textContent || '', /주소.*갱신|주소.*일치/);
+  } finally {
+    if (mounted) await act(async () => mounted.root.unmount());
+    await cleanup();
+  }
+});
+
+for (const failingMethod of ['pushState', 'replaceState']) {
+  test(`검색 중 ${failingMethod} 실패 뒤 새 검색은 이전 이력을 덮지 않고 복구한다`, async () => {
+    const cleanup = installBrowser('https://blog.test/posts/?q=이전');
+    const browser = globalThis.window;
+    let mounted;
+    try {
+      mounted = await mountPostsApp(browser, posts, async () => ({ ok: true, json: async () => indexedRows }));
+      const input = mounted.rootElement.querySelector('#react-posts-search-input');
+      const type = async value => {
+        await act(async () => {
+          Object.getOwnPropertyDescriptor(browser.HTMLInputElement.prototype, 'value').set.call(input, value);
+          input.dispatchEvent(new browser.InputEvent('input', { bubbles: true, data: value }));
+        });
+        await act(async () => new Promise(resolve => setTimeout(resolve, 280)));
+      };
+      if (failingMethod === 'replaceState') await type('첫 검색');
+      const saved = browser.history[failingMethod].bind(browser.history);
+      browser.history[failingMethod] = () => { throw new browser.DOMException('이력 거부', 'SecurityError'); };
+      const previous = browser.location.href;
+      await type('실패한 검색');
+      assert.equal(input.value, '실패한 검색');
+      assert.equal(browser.location.href, previous);
+      assert.match(mounted.rootElement.querySelector('#react-posts-history-status').textContent, /주소.*갱신/);
+      browser.history[failingMethod] = saved;
+      const length = browser.history.length;
+      await type('복구 검색');
+      assert.equal(new URL(browser.location.href).searchParams.get('q'), '복구 검색');
+      assert.equal(browser.history.length, length + 1, '실패한 초안은 기존 이력을 교체하지 않는다');
+      assert.equal(mounted.rootElement.querySelector('#react-posts-history-status').textContent, '');
+      await act(async () => {
+        const popped = new Promise(resolve => browser.addEventListener('popstate', resolve, { once: true }));
+        browser.history.back();
+        await popped;
+      });
+      assert.equal(browser.location.href, previous);
+      assert.equal(input.value, failingMethod === 'replaceState' ? '첫 검색' : '이전');
+    } finally {
+      if (mounted) await act(async () => mounted.root.unmount());
+      await cleanup();
+    }
+  });
+}
+
+test('저장하지 못한 검색을 다시 제출하면 이전 이력을 보존하고 주소를 복구한다', async () => {
+  const cleanup = installBrowser('https://blog.test/posts/?q=이전');
+  const browser = globalThis.window;
+  let mounted;
+  try {
+    mounted = await mountPostsApp(browser, posts, async () => ({ ok: true, json: async () => indexedRows }));
+    const input = mounted.rootElement.querySelector('#react-posts-search-input');
+    const original = browser.history.pushState.bind(browser.history);
+    browser.history.pushState = () => { throw new browser.DOMException('이력 거부', 'SecurityError'); };
+    await act(async () => {
+      Object.getOwnPropertyDescriptor(browser.HTMLInputElement.prototype, 'value').set.call(input, 'needle');
+      input.dispatchEvent(new browser.InputEvent('input', { bubbles: true, data: 'needle' }));
+    });
+    await act(async () => new Promise(resolve => setTimeout(resolve, 280)));
+    browser.history.pushState = original;
+    const length = browser.history.length;
+    await act(async () => input.form.dispatchEvent(new browser.Event('submit', { bubbles: true, cancelable: true })));
+    assert.equal(browser.history.length, length + 1, '다시 제출할 때 기존 이력을 보존한다');
+    assert.equal(new URL(browser.location.href).searchParams.get('q'), 'needle');
+    assert.equal(mounted.rootElement.querySelector('#react-posts-history-status').textContent, '');
+    await act(async () => {
+      const popped = new Promise(resolve => browser.addEventListener('popstate', resolve, { once: true }));
+      browser.history.back();
+      await popped;
+    });
+    assert.equal(input.value, '이전');
+  } finally {
+    if (mounted) await act(async () => mounted.root.unmount());
+    await cleanup();
+  }
+});
+
+test('주소를 갱신하지 못한 화면이 이전 이력의 스크롤 기록을 덮지 않는다', async () => {
+  const cleanup = installBrowser('https://blog.test/posts/');
+  const browser = globalThis.window;
+  let mounted;
+  try {
+    installScrollHarness(browser, 900);
+    browser.scrollY = 200;
+    mounted = await mountPostsApp(browser, posts, async () => ({ ok: true, json: async () => indexedRows }));
+    browser.history.pushState = () => { throw new browser.DOMException('이력 거부', 'SecurityError'); };
+    const category = mounted.rootElement.querySelector('#react-posts-category-select');
+    await act(async () => {
+      category.value = 'mathematics_philosophy_history';
+      category.dispatchEvent(new browser.Event('change', { bubbles: true }));
+    });
+    const before = browser.sessionStorage.getItem('postsListState');
+    assert.ok(before);
+    const sort = mounted.rootElement.querySelector('#react-posts-sort-select');
+    await act(async () => {
+      sort.value = 'relevance';
+      sort.dispatchEvent(new browser.Event('change', { bubbles: true }));
+    });
+    assert.equal(browser.sessionStorage.getItem('postsListState'), before, '주소와 다른 화면을 기존 이력의 위치로 저장하지 않는다');
+  } finally {
+    if (mounted) await act(async () => mounted.root.unmount());
+    await cleanup();
+  }
+});
+
+test('주소 표기만 다르고 검색 상태가 같으면 이력 저장 실패 경고를 표시하지 않는다', async () => {
+  const cleanup = installBrowser('https://blog.test/posts/?q=a%20b');
+  const browser = globalThis.window;
+  let mounted;
+  try {
+    mounted = await mountPostsApp(browser, posts, async () => ({ ok: true, json: async () => indexedRows }));
+    browser.history.replaceState = () => { throw new browser.DOMException('이력 거부', 'SecurityError'); };
+    const input = mounted.rootElement.querySelector('#react-posts-search-input');
+    await act(async () => input.form.dispatchEvent(new browser.Event('submit', { bubbles: true, cancelable: true })));
+    assert.equal(input.value, 'a b');
+    assert.equal(new URL(browser.location.href).searchParams.get('q'), 'a b');
+    assert.equal(mounted.rootElement.querySelector('#react-posts-history-status').textContent, '');
+  } finally {
+    if (mounted) await act(async () => mounted.root.unmount());
+    await cleanup();
+  }
+});
+
 // 실행 진입점 자체를 변환해 실행하여 React 마운트 전 예외 경로를 확인한다.
 test('부트스트랩 데이터 오류는 정적 목록과 복구 안내를 제공하고 기존 초점을 유지한다', async () => {
   const compiled = ts.transpileModule(await readFile(new URL('../../frontend/posts/main.tsx', import.meta.url), 'utf8'), {

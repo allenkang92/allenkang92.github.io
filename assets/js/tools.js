@@ -449,8 +449,40 @@
     });
   }
 
+  function setToolUrlWarning(mismatch) {
+    const status = document.getElementById('calculator-url-status');
+    if (!status) return;
+    const message = mismatch
+      ? '주소를 갱신하지 못했습니다. 현재 주소를 공유하거나 새로고침하면 선택한 도구나 공식이 다를 수 있습니다.'
+      : '';
+    if (status.textContent !== message) status.textContent = message;
+  }
+
+  function toolStateFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    const requestedTab = params.get('tab');
+    const tab = ['basic', 'physics', 'unit'].includes(requestedTab) ? requestedTab : 'basic';
+    const requestedFormula = params.get('formula');
+    const formula = Object.prototype.hasOwnProperty.call(formulas, requestedFormula) ? requestedFormula : '';
+    return { tab, formula };
+  }
+
+  function toolUrlMatches(tabName) {
+    const saved = toolStateFromUrl();
+    if (saved.tab !== tabName) return false;
+    if (tabName !== 'physics') return true;
+    const selected = document.getElementById('physics-formula')?.value;
+    const formula = Object.prototype.hasOwnProperty.call(formulas, selected) ? selected : '';
+    return saved.formula === formula;
+  }
+
   // Keep a copied URL consistent with the calculator currently shown.
   function syncToolUrl(tabName) {
+    // 다른 기능의 검색어가 %20 등으로 직렬화되어 있어도 도구 상태가 같으면 그대로 둔다.
+    if (toolUrlMatches(tabName)) {
+      setToolUrlWarning(false);
+      return;
+    }
     const url = new URL(window.location.href);
     if (tabName === 'basic') url.searchParams.delete('tab');
     else url.searchParams.set('tab', tabName);
@@ -461,7 +493,15 @@
     } else {
       url.searchParams.delete('formula');
     }
-    window.history.replaceState(window.history.state, '', url);
+    try {
+      if (url.href !== window.location.href) {
+        window.history.replaceState(window.history.state, '', url);
+      }
+      setToolUrlWarning(false);
+    } catch {
+      // 이력 쓰기가 실패해도 계산은 유지하고 주소 불일치만 알린다.
+      setToolUrlWarning(!toolUrlMatches(tabName));
+    }
   }
 
   function updatePhysicsInputs() {
@@ -851,9 +891,7 @@
 
   // Preserve focus unless history changes the selected tab or removes its panel/input.
   function restoreToolFromUrl() {
-    const params = new URLSearchParams(window.location.search);
-    const requestedTab = params.get('tab');
-    const tab = ['basic', 'physics', 'unit'].includes(requestedTab) ? requestedTab : 'basic';
+    const { tab, formula: validFormula } = toolStateFromUrl();
 
     const active = document.activeElement;
     const activePanel = active?.closest('.calculator-tab');
@@ -864,11 +902,10 @@
       targetTab?.focus();
     }
     switchTab(tab);
+    setToolUrlWarning(false);
     if (moveFocusedTab) targetTab?.focus();
     if (tab !== 'physics') return;
 
-    const formula = params.get('formula');
-    const validFormula = Object.prototype.hasOwnProperty.call(formulas, formula) ? formula : '';
     const select = document.getElementById('physics-formula');
     if (!select) return;
     if (select.value !== validFormula) {

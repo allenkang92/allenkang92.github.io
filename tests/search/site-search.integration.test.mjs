@@ -1846,7 +1846,7 @@ test('사이드바 검색은 다른 출처나 사이트 경로 밖의 주소가 
   }
 });
 
-test('검색 처리 중 예외가 발생해도 글 목록으로 검색을 계속할 수 있다', async () => {
+test('이력 저장 실패는 정상 검색 결과를 색인 오류로 바꾸지 않는다', async () => {
   const browser = setup(async () => ({ ok: true, json: async () => [searchRow({ title: '물리', url: '/physics/' })] }));
   try {
     await new Promise(resolve => setTimeout(resolve, 0));
@@ -1857,13 +1857,203 @@ test('검색 처리 중 예외가 발생해도 글 목록으로 검색을 계속
     input.value = '물리';
     browser.searchFunctions.performSearch(input.value);
     frames.shift()();
-    assert.match(browser.document.querySelector('#search-results').textContent, /글 목록에서 검색/);
+    assert.match(browser.document.querySelector('#search-results').textContent, /물리/);
+    assert.equal(browser.document.querySelector('#search-results a')?.getAttribute('href'), '/physics/');
+    assert.doesNotMatch(browser.document.querySelector('#search-results').textContent, /검색 데이터를 불러오지 못했습니다/);
+    assert.match(browser.document.querySelector('.search-history-warning')?.textContent || '', /공유|새로고침/);
+    assert.match(browser.document.querySelector('#search-status').textContent, /주소에 반영하지 못했습니다/);
     const form = browser.document.querySelector('.search-form');
-    assert.equal(form.dispatchEvent(new browser.Event('submit', { bubbles: true, cancelable: true })), true);
+    assert.equal(form.dispatchEvent(new browser.Event('submit', { bubbles: true, cancelable: true })), false);
     assert.equal(new browser.FormData(form).get('q'), '물리');
   } finally {
     await browser.happyDOM.abort();
   }
+});
+
+test('이력 push 실패 후에도 결과와 검색 없음 상태를 유지한다', async () => {
+  const browser = setup(async () => ({ ok: true, json: async () => [searchRow({ title: '물리', url: '/physics/' })] }));
+  try {
+    await new Promise(resolve => setTimeout(resolve, 0));
+    browser.requestAnimationFrame = callback => { callback(); return 1; };
+    browser.history.pushState = () => { throw new browser.DOMException('빈번한 이력 요청', 'SecurityError'); };
+    const input = browser.document.querySelector('#search-input');
+    input.value = '물리';
+    browser.searchFunctions.performSearch('물리', { historyMode: 'push' });
+    const results = browser.document.querySelector('#search-results');
+    assert.equal(results.querySelector('a')?.getAttribute('href'), '/physics/');
+    input.value = '없는단어';
+    browser.searchFunctions.performSearch('없는단어', { historyMode: 'push' });
+    assert.match(results.textContent, /검색 결과가 없습니다/);
+    assert.doesNotMatch(results.textContent, /검색 데이터를 불러오지 못했습니다/);
+  } finally { await browser.happyDOM.abort(); }
+});
+
+test('이력 저장 실패 후 새 제출은 이전 검색 초안을 덮어쓰지 않는다', async () => {
+  const browser = setup(async () => ({ ok: true, json: async () => [searchRow({ title: '물리 수학', url: '/post/' })] }));
+  try {
+    await new Promise(resolve => setTimeout(resolve, 0));
+    browser.requestAnimationFrame = callback => { callback(); return 1; };
+    const input = browser.document.querySelector('#search-input');
+    input.value = '물리';
+    browser.searchFunctions.performSearch('물리', { historyMode: 'replace', trackDraft: true });
+    const previousLength = browser.history.length;
+    const replace = browser.history.replaceState.bind(browser.history);
+    browser.history.replaceState = () => { throw new browser.DOMException('저장 실패', 'SecurityError'); };
+    input.value = '수학';
+    browser.searchFunctions.performSearch('수학', { historyMode: 'replace', trackDraft: true });
+    assert.match(browser.document.querySelector('#search-results').textContent, /물리 수학/);
+    assert.equal(new URL(browser.location.href).searchParams.get('q'), '물리');
+    browser.history.replaceState = replace;
+    const event = new browser.Event('submit', { bubbles: true, cancelable: true });
+    assert.equal(browser.document.querySelector('.search-form').dispatchEvent(event), false);
+    assert.equal(new URL(browser.location.href).searchParams.get('q'), '수학');
+    assert.equal(browser.history.length, previousLength + 1, '실패한 초안을 계속 사용하지 않고 새 이력을 만든다');
+    assert.ok(browser.document.querySelector('.search-history-warning').hidden, '주소 저장이 복구되면 경고를 숨긴다');
+    assert.doesNotMatch(browser.document.querySelector('#search-status').textContent, /주소에 반영하지 못했습니다/);
+  } finally { await browser.happyDOM.abort(); }
+});
+
+test('빈 검색 편집과 제출에 이력 저장이 실패해도 예외 없이 다시 검색할 수 있다', async () => {
+  const browser = setup(async () => ({ ok: true, json: async () => [searchRow({ title: '물리', url: '/physics/' })] }), 'https://blog.test/about/?q=이전');
+  try {
+    await new Promise(resolve => setTimeout(resolve, 0));
+    browser.requestAnimationFrame = callback => { callback(); return 1; };
+    const errors = [];
+    browser.addEventListener('error', event => { errors.push(event.error); event.preventDefault(); });
+    const push = browser.history.pushState.bind(browser.history);
+    const replace = browser.history.replaceState.bind(browser.history);
+    browser.history.pushState = browser.history.replaceState = () => { throw new browser.DOMException('저장 실패', 'SecurityError'); };
+    const input = browser.document.querySelector('#search-input');
+    input.value = '';
+    input.dispatchEvent(new browser.Event('input', { bubbles: true }));
+    browser.document.querySelector('.search-form').dispatchEvent(new browser.Event('submit', { bubbles: true, cancelable: true }));
+    assert.deepEqual(errors, []);
+    assert.match(browser.document.querySelector('.search-history-warning')?.textContent || '', /주소에 반영하지 못했습니다/);
+    browser.history.pushState = push;
+    browser.history.replaceState = replace;
+    input.value = '물리';
+    browser.searchFunctions.performSearch('물리', { historyMode: 'push' });
+    assert.equal(browser.document.querySelector('#search-results a')?.getAttribute('href'), '/physics/');
+    assert.equal(new URL(browser.location.href).searchParams.get('q'), '물리');
+  } finally { await browser.happyDOM.abort(); }
+});
+
+test('늦게 도착한 색인의 검색 결과도 이력 저장 실패에 영향을 받지 않는다', async () => {
+  let resolveFetch;
+  const browser = setup(() => new Promise(resolve => { resolveFetch = resolve; }));
+  try {
+    browser.requestAnimationFrame = callback => { callback(); return 1; };
+    browser.history.pushState = () => { throw new browser.DOMException('저장 실패', 'SecurityError'); };
+    const input = browser.document.querySelector('#search-input');
+    input.value = '물리';
+    input.dispatchEvent(new browser.Event('input', { bubbles: true }));
+    resolveFetch({ ok: true, json: async () => [searchRow({ title: '물리', url: '/physics/' })] });
+    await new Promise(resolve => setTimeout(resolve, 0));
+    assert.equal(browser.document.querySelector('#search-results a')?.getAttribute('href'), '/physics/');
+    assert.doesNotMatch(browser.document.querySelector('#search-results').textContent, /검색 데이터를 불러오지 못했습니다/);
+  } finally { await browser.happyDOM.abort(); }
+});
+
+test('도구 페이지의 검색 이력 복원은 다른 매개변수와 상태를 보존하고 경고를 해제한다', async () => {
+  const browser = setup(async () => ({ ok: true, json: async () => [searchRow({ title: '물리', url: '/physics/' })] }),
+    'https://blog.test/tools/?tab=unit&formula=force&q=이전#calc');
+  try {
+    await new Promise(resolve => setTimeout(resolve, 0));
+    browser.requestAnimationFrame = callback => { callback(); return 1; };
+    browser.history.replaceState({ marker: '유지' }, '', browser.location.href);
+    const replace = browser.history.replaceState.bind(browser.history);
+    browser.history.replaceState = () => { throw new browser.DOMException('저장 실패', 'SecurityError'); };
+    const input = browser.document.querySelector('#search-input');
+    input.value = '물리';
+    browser.searchFunctions.performSearch('물리');
+    assert.equal(browser.document.querySelector('#search-results a')?.getAttribute('href'), '/physics/');
+    assert.equal(new URL(browser.location.href).searchParams.get('tab'), 'unit');
+    assert.equal(new URL(browser.location.href).searchParams.get('formula'), 'force');
+    assert.equal(browser.history.state.marker, '유지');
+    browser.history.replaceState = replace;
+    browser.history.replaceState({ marker: '복원' }, '', '?tab=unit&formula=force&q=물리#calc');
+    browser.dispatchEvent(new browser.PopStateEvent('popstate'));
+    assert.equal(input.value, '물리');
+    assert.ok(browser.document.querySelector('.search-history-warning').hidden);
+    assert.equal(new URL(browser.location.href).searchParams.get('tab'), 'unit');
+    assert.equal(new URL(browser.location.href).searchParams.get('formula'), 'force');
+    assert.equal(browser.location.hash, '#calc');
+    assert.equal(browser.history.state.marker, '복원');
+  } finally { await browser.happyDOM.abort(); }
+});
+
+test('검색어가 현재 주소와 다시 일치하면 쓰기 없이 이력 경고가 사라진다', async () => {
+  const browser = setup(async () => ({ ok: true, json: async () => [searchRow({ title: '물리 수학', url: '/post/' })] }),
+    'https://blog.test/about/?q=물리');
+  try {
+    await new Promise(resolve => setTimeout(resolve, 0));
+    browser.requestAnimationFrame = callback => { callback(); return 1; };
+    browser.history.pushState = browser.history.replaceState = () => { throw new browser.DOMException('저장 실패', 'SecurityError'); };
+    const input = browser.document.querySelector('#search-input');
+    input.value = '수학';
+    browser.searchFunctions.performSearch('수학');
+    assert.equal(browser.document.querySelector('.search-history-warning').hidden, false);
+    input.value = '물리';
+    browser.searchFunctions.performSearch('물리');
+    assert.equal(browser.document.querySelector('.search-history-warning').hidden, true);
+    assert.equal(new URL(browser.location.href).searchParams.get('q'), '물리');
+    assert.equal(browser.document.querySelector('#search-results a')?.getAttribute('href'), '/post/');
+  } finally { await browser.happyDOM.abort(); }
+});
+
+test('다른 매개변수에 %20이 있어도 현재 검색이 같으면 이력을 쓰거나 경고하지 않는다', async () => {
+  for (const [url, query] of [
+    ['https://blog.test/tools/?tab=unit%20length&q=물리#calc', '물리'],
+    ['https://blog.test/tools/?tab=unit%20length&q=%20물리%20#calc', '물리'],
+    ['https://blog.test/tools/?tab=unit%20length&q=물리&q=둘째#calc', '물리'],
+    ['https://blog.test/tools/?tab=unit%20length#calc', ''],
+  ]) {
+    const browser = setup(async () => ({ ok: true, json: async () => [searchRow({ title: '물리', url: '/physics/' })] }), url);
+    try {
+      await new Promise(resolve => setTimeout(resolve, 0));
+      browser.requestAnimationFrame = callback => { callback(); return 1; };
+      const original = browser.location.href;
+      const state = { marker: '유지' };
+      browser.history.replaceState(state, '', original);
+      let writes = 0;
+      browser.history.pushState = browser.history.replaceState = () => { writes += 1; throw new browser.DOMException('저장 실패', 'SecurityError'); };
+      const input = browser.document.querySelector('#search-input');
+      input.value = query;
+      if (query) browser.searchFunctions.performSearch(query, { historyMode: 'push' });
+      else browser.document.querySelector('.search-form').dispatchEvent(new browser.Event('submit', { bubbles: true, cancelable: true }));
+      assert.equal(writes, 0, '유효 검색어가 같은데 이력을 쓰지 않는다');
+      assert.equal(browser.location.href, original, '다른 매개변수의 직렬화도 변경하지 않는다');
+      assert.equal(browser.history.state.marker, '유지');
+      assert.ok(!browser.document.querySelector('.search-history-warning') || browser.document.querySelector('.search-history-warning').hidden);
+      assert.doesNotMatch(browser.document.querySelector('#search-status').textContent, /주소에 반영하지 못했습니다/);
+    } finally { await browser.happyDOM.abort(); }
+  }
+});
+
+test('검색 결과 렌더링 자체의 예외는 계속 글 목록 검색을 제공한다', async () => {
+  const browser = setup(async () => ({ ok: true, json: async () => [searchRow({ title: '물리', url: '/physics/' })] }));
+  try {
+    await new Promise(resolve => setTimeout(resolve, 0));
+    browser.requestAnimationFrame = callback => { callback(); return 1; };
+    const results = browser.document.querySelector('#search-results');
+    const descriptor = Object.getOwnPropertyDescriptor(browser.Element.prototype, 'innerHTML');
+    let failOnce = true;
+    Object.defineProperty(results, 'innerHTML', {
+      configurable: true,
+      get() { return descriptor.get.call(this); },
+      set(value) {
+        if (failOnce) { failOnce = false; throw new Error('결과 생성 실패'); }
+        descriptor.set.call(this, value);
+      },
+    });
+    const input = browser.document.querySelector('#search-input');
+    input.value = '물리';
+    browser.searchFunctions.performSearch('물리');
+    assert.match(results.textContent, /글 목록에서 검색/);
+    const form = browser.document.querySelector('.search-form');
+    assert.equal(form.dispatchEvent(new browser.Event('submit', { bubbles: true, cancelable: true })), true);
+    assert.equal(new browser.FormData(form).get('q'), '물리');
+  } finally { await browser.happyDOM.abort(); }
 });
 
 test('a dismissed search stays closed when the delayed index request fails', async () => {

@@ -16,6 +16,110 @@ function setup(url = 'https://blog.test/tools/') {
   return browser;
 }
 
+test('도구 주소 저장에 실패해도 계산을 유지하고 불일치를 알린 뒤 복구한다', async () => {
+  const browser = setup();
+  try {
+    const doc = browser.document;
+    const realReplace = browser.history.replaceState.bind(browser.history);
+    let calls = 0;
+    browser.history.replaceState = () => { calls += 1; throw new browser.DOMException('저장 실패', 'SecurityError'); };
+    const status = doc.querySelector('#calculator-url-status');
+    assert.ok(status, '주소 불일치 안내 영역');
+    assert.equal(status.getAttribute('role'), 'status');
+    assert.equal(status.textContent.trim(), '');
+    doc.querySelector('#unit-tab').click();
+    assert.equal(calls, 1);
+    assert.equal(doc.querySelector('#unit-tab').getAttribute('aria-selected'), 'true');
+    assert.equal(doc.querySelector('#unit-calculator').hidden, false);
+    assert.equal(new URL(browser.location.href).searchParams.get('tab'), null);
+    assert.match(status.textContent, /주소.*(갱신|변경).*못/);
+    assert.match(status.textContent, /공유|새로고침/);
+    change(browser, doc.querySelector('#unit-category'), 'length');
+    change(browser, doc.querySelector('#from-unit'), 'm');
+    change(browser, doc.querySelector('#to-unit'), 'cm');
+    change(browser, doc.querySelector('#unit-value'), '2', 'input');
+    doc.querySelector('#unit-convert').click();
+    assert.equal(doc.querySelector('#unit-result').textContent, '200 cm');
+    browser.history.replaceState = realReplace;
+    doc.querySelector('#unit-tab').click();
+    assert.equal(new URL(browser.location.href).searchParams.get('tab'), 'unit');
+    assert.equal(status.textContent.trim(), '');
+  } finally { await browser.happyDOM.abort(); }
+});
+
+test('주소 실패 후 일치하는 탭 또는 이력 복원은 안내를 정리한다', async () => {
+  const browser = setup();
+  try {
+    const doc = browser.document;
+    const status = doc.querySelector('#calculator-url-status');
+    assert.ok(status, '주소 불일치 안내 영역');
+    browser.history.replaceState = () => { throw new browser.DOMException('저장 실패', 'SecurityError'); };
+    const basic = doc.querySelector('#basic-tab');
+    basic.focus();
+    basic.dispatchEvent(new browser.KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true, cancelable: true }));
+    assert.equal(doc.activeElement?.id, 'physics-tab');
+    assert.match(status.textContent, /주소/);
+    change(browser, doc.querySelector('#physics-formula'), 'velocity');
+    assert.equal(doc.querySelector('#physics-formula').value, 'velocity');
+    assert.ok(doc.querySelector('#physics-distance'));
+    assert.match(status.textContent, /주소/);
+    basic.click();
+    assert.equal(doc.querySelector('#basic-calculator').hidden, false);
+    assert.equal(status.textContent.trim(), '', '실제 주소와 일치하는 탭에서는 안내를 지운다');
+    doc.querySelector('#unit-tab').click();
+    assert.match(status.textContent, /주소/);
+    browser.history.pushState({}, '', '/tools/?tab=physics&formula=force');
+    browser.dispatchEvent(new browser.PopStateEvent('popstate'));
+    assert.equal(doc.querySelector('#physics-tab').getAttribute('aria-selected'), 'true');
+    assert.equal(doc.querySelector('#physics-formula').value, 'force');
+    assert.equal(status.textContent.trim(), '', '이력에서 복원한 표시와 주소가 일치한다');
+  } finally { await browser.happyDOM.abort(); }
+});
+
+test('다른 검색어 이력 변경은 도구 주소 오류를 지우지 않고 다시 동기화할 때 보존한다', async () => {
+  const browser = setup('https://blog.test/tools/?q=이전#tool-workspace-title');
+  try {
+    const doc = browser.document;
+    const status = doc.querySelector('#calculator-url-status');
+    const realReplace = browser.history.replaceState.bind(browser.history);
+    browser.history.replaceState = () => { throw new browser.DOMException('저장 실패', 'SecurityError'); };
+    doc.querySelector('#unit-tab').click();
+    assert.match(status.textContent, /주소/);
+    browser.history.pushState({}, '', '/tools/?q=변경#tool-workspace-title');
+    assert.match(status.textContent, /주소/, '다른 기능의 이력 변경으로 도구 오류를 해제하지 않는다');
+    browser.history.replaceState = realReplace;
+    doc.querySelector('#unit-tab').click();
+    const current = new URL(browser.location.href);
+    assert.equal(current.searchParams.get('tab'), 'unit');
+    assert.equal(current.searchParams.get('q'), '변경');
+    assert.equal(current.hash, '#tool-workspace-title');
+    assert.equal(status.textContent.trim(), '');
+  } finally { await browser.happyDOM.abort(); }
+});
+
+test('이미 같은 도구와 공식을 나타내는 주소는 검색어 인코딩 때문에 다시 쓰지 않는다', async () => {
+  for (const [query, tab, formula] of [
+    ['?q=hello%20world', 'basic', ''],
+    ['?tab=unit&q=hello%20world', 'unit', ''],
+    ['?tab=physics&formula=velocity&q=hello%20world', 'physics', 'velocity'],
+    ['?tab=unexpected&formula=ignored&q=hello%20world', 'basic', ''],
+    ['?tab=physics&formula=unexpected&q=hello%20world', 'physics', ''],
+  ]) {
+    const browser = setup(`https://blog.test/tools/${query}#tool-workspace-title`);
+    try {
+      const doc = browser.document;
+      const before = browser.location.href;
+      let calls = 0;
+      browser.history.replaceState = () => { calls += 1; throw new browser.DOMException('저장 실패', 'SecurityError'); };
+      doc.querySelector(`#${tab}-tab`).click();
+      if (tab === 'physics') change(browser, doc.querySelector('#physics-formula'), formula);
+      assert.equal(calls, 0, `${query}: 의미가 같은 주소에 기록을 시도하지 않는다`);
+      assert.equal(browser.location.href, before, '검색어 인코딩과 해시를 보존한다');
+      assert.equal(doc.querySelector('#calculator-url-status').textContent.trim(), '', '이미 일치하면 오류를 표시하지 않는다');
+    } finally { await browser.happyDOM.abort(); }
+  }
+});
+
 test('도구 탭은 수정 키 조합과 한글 조합 입력을 가로채지 않는다', async () => {
   const browser = setup();
   try {
