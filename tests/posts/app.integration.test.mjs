@@ -64,9 +64,7 @@ function installScrollHarness(browser, initialLimit = 100) {
 }
 
 function saveTestScroll(browser, scrollY = 600, query = 'needle') {
-  browser.sessionStorage.setItem('postsListState', JSON.stringify({
-    path: '/posts/', query, category: 'all', sort: 'date', page: 1, scrollY,
-  }));
+  writeStoredState(browser, { scrollY, query });
 }
 
 // happy-dom은 텍스트 fragment의 사용자 활성화·강조·이동을 재현하지 못한다.
@@ -98,10 +96,155 @@ function restoreButton(mounted) {
 }
 
 function writeStoredState(browser, overrides = {}) {
-  browser.sessionStorage.setItem('postsListState', JSON.stringify({
+  browser.sessionStorage.setItem('postsListState', JSON.stringify({ version: 2, entries: [{
+    entryKey: browser.navigation.currentEntry.key, entryId: browser.navigation.currentEntry.id,
     path: '/posts/', query: 'needle', category: 'all', sort: 'date', page: 1, scrollY: 600, ...overrides,
-  }));
+  }] }));
 }
+
+test('같은 URL의 다른 이력 항목은 각자의 저장 위치만 제공한다', async () => {
+  const cleanup = installBrowser('https://blog.test/posts/');
+  const browser = globalThis.window;
+  const scroll = installScrollHarness(browser, 1000);
+  const nav = browser.navigation;
+  const first = nav.currentEntry;
+  const entries = [first];
+  nav.entries = () => entries;
+  const push = browser.history.pushState.bind(browser.history);
+  browser.history.pushState = (...args) => {
+    push(...args);
+    nav.currentEntry = { key: `key-${entries.length}`, id: `id-${entries.length}` };
+    entries.push(nav.currentEntry);
+  };
+  let mounted;
+  try {
+    mounted = await mountPostsApp(browser, posts, async () => ({ ok: true, json: async () => indexedRows }));
+    browser.scrollY = 300;
+    await act(async () => mounted.rootElement.querySelector('a[aria-label="2페이지"]').click());
+    const second = nav.currentEntry;
+    browser.scrollY = 450;
+    await act(async () => mounted.rootElement.querySelector('a[aria-label="1페이지"]').click());
+    const third = nav.currentEntry;
+    assert.notEqual(first.key, third.key);
+    browser.scrollY = 700;
+    // 페이지를 떠나지 않고 곧장 뒤로 가더라도 마지막 스크롤을 C에 저장한다.
+    browser.dispatchEvent(new browser.Event('scroll'));
+    for (const entry of [second, first]) {
+      nav.currentEntry = entry;
+      await act(async () => {
+        const popped = new Promise(resolve => browser.addEventListener('popstate', resolve, { once: true }));
+        browser.history.back();
+        await popped;
+      });
+    }
+    assert.ok(restoreButton(mounted));
+    await act(async () => restoreButton(mounted).click());
+    assert.deepEqual(scroll.calls, [300]);
+    for (const entry of [second, third]) {
+      nav.currentEntry = entry;
+      await act(async () => {
+        const popped = new Promise(resolve => browser.addEventListener('popstate', resolve, { once: true }));
+        browser.history.forward();
+        await popped;
+      });
+    }
+    await act(async () => restoreButton(mounted).click());
+    assert.deepEqual(scroll.calls, [300, 700]);
+  } finally {
+    if (mounted) await act(async () => mounted.root.unmount());
+    await cleanup();
+  }
+});
+
+test('이력 식별이 불가능하거나 중복되면 저장 위치를 표시하지 않는다', async () => {
+  for (const failure of ['unsupported', 'missing-id', 'duplicate-key', 'duplicate-id', 'legacy']) {
+    const cleanup = installBrowser('https://blog.test/posts/?q=needle');
+    const browser = globalThis.window;
+    let mounted;
+    try {
+      saveTestScroll(browser);
+      if (failure === 'unsupported') Object.defineProperty(browser, 'navigation', { configurable: true, value: undefined });
+      if (failure === 'missing-id') browser.navigation.currentEntry.id = '';
+      if (failure === 'duplicate-key') browser.navigation.entries = () => [browser.navigation.currentEntry, { key: 'test-key', id: 'other' }];
+      if (failure === 'duplicate-id') browser.navigation.entries = () => [browser.navigation.currentEntry, { key: 'other', id: 'test-id' }];
+      if (failure === 'legacy') browser.sessionStorage.setItem('postsListState', JSON.stringify({ path: '/posts/', query: 'needle', category: 'all', sort: 'date', page: 1, scrollY: 600 }));
+      mounted = await mountPostsApp(browser, posts, async () => ({ ok: true, json: async () => indexedRows }));
+      assert.equal(restoreButton(mounted), null, failure);
+    } finally {
+      if (mounted) await act(async () => mounted.root.unmount());
+      await cleanup();
+    }
+  }
+});
+
+test('복원 버튼 표시 후 외부에서 같은 주소의 이력을 추가해도 다른 위치로 이동하지 않는다', async () => {
+  const cleanup = installBrowser('https://blog.test/posts/?q=needle');
+  const browser = globalThis.window;
+  const scroll = installScrollHarness(browser, 900);
+  let mounted;
+  try {
+    saveTestScroll(browser);
+    mounted = await mountPostsApp(browser, posts, async () => ({ ok: true, json: async () => indexedRows }));
+    const button = restoreButton(mounted);
+    assert.ok(button);
+    browser.history.pushState(['외부'], '', browser.location.href);
+    browser.navigation.currentEntry = { key: 'other-key', id: 'other-id' };
+    await act(async () => button.click());
+    assert.deepEqual(scroll.calls, []);
+    assert.equal(restoreButton(mounted), null);
+    assert.deepEqual(browser.history.state, ['외부']);
+  } finally {
+    if (mounted) await act(async () => mounted.root.unmount());
+    await cleanup();
+  }
+});
+
+test('복귀 후 현재 스크롤은 기존 복원 목표를 선택 전까지 덮어쓰지 않는다', async () => {
+  for (const position of [300, 0]) {
+    const cleanup = installBrowser('https://blog.test/posts/?q=needle');
+    const browser = globalThis.window;
+    const scroll = installScrollHarness(browser, 900);
+    let mounted;
+    try {
+      saveTestScroll(browser, 600);
+      mounted = await mountPostsApp(browser, posts, async () => ({ ok: true, json: async () => indexedRows }));
+      browser.scrollY = position;
+      browser.dispatchEvent(new browser.Event('scroll'));
+      await act(async () => new Promise(resolve => setTimeout(resolve, 180)));
+      await act(async () => restoreButton(mounted).click());
+      assert.deepEqual(scroll.calls, [600], `${position}px에서 기존 복원 위치로 이동`);
+    } finally {
+      if (mounted) await act(async () => mounted.root.unmount());
+      await cleanup();
+    }
+  }
+});
+
+test('같은 검색어를 다시 제출해도 현재 이력의 복원 위치가 유지된다', async () => {
+  const cleanup = installBrowser('https://blog.test/posts/?q=needle');
+  const browser = globalThis.window;
+  const scroll = installScrollHarness(browser, 900);
+  let mounted;
+  try {
+    saveTestScroll(browser, 600);
+    const replace = browser.history.replaceState.bind(browser.history);
+    browser.history.replaceState = (...args) => {
+      replace(...args);
+      browser.navigation.currentEntry = { key: 'test-key', id: 'replacement-id' };
+    };
+    mounted = await mountPostsApp(browser, posts, async () => ({ ok: true, json: async () => indexedRows }));
+    browser.scrollY = 300;
+    browser.dispatchEvent(new browser.Event('scroll'));
+    await act(async () => mounted.rootElement.querySelector('#react-posts-search-form').dispatchEvent(new browser.Event('submit', { bubbles: true, cancelable: true })));
+    assert.equal(browser.navigation.currentEntry.id, 'test-id');
+    assert.ok(restoreButton(mounted));
+    await act(async () => restoreButton(mounted).click());
+    assert.deepEqual(scroll.calls, [600]);
+  } finally {
+    if (mounted) await act(async () => mounted.root.unmount());
+    await cleanup();
+  }
+});
 
 test('유효한 저장 위치는 사용자가 선택했을 때에만 한 번 이동한다', async () => {
   for (const [query, savedQuery] of [['needle', 'needle'], ['needle%23memo', 'needle#memo']]) {
@@ -521,12 +664,15 @@ test('뒤로 가기 조건이 저장값과 다시 일치해도 사용자가 선�
     mounted = await mountPostsApp(browser, posts, async () => ({ ok: true, json: async () => indexedRows }));
     await act(async () => {
       browser.history.pushState({}, '', '/posts/?q=other');
+      browser.navigation.currentEntry = { key: 'other-key', id: 'other-id' };
       browser.dispatchEvent(new browser.PopStateEvent('popstate'));
     });
     assert.equal(Boolean(restoreButton(mounted)), false);
     await act(async () => {
-      browser.history.pushState({}, '', '/posts/?q=needle');
-      browser.dispatchEvent(new browser.PopStateEvent('popstate'));
+      browser.navigation.currentEntry = { key: 'test-key', id: 'test-id' };
+      const popped = new Promise(resolve => browser.addEventListener('popstate', resolve, { once: true }));
+      browser.history.back();
+      await popped;
     });
     await scroll.flush();
     assert.ok(restoreButton(mounted));
@@ -646,6 +792,9 @@ test('records a category change after the React archive mounts', async () => {
 
 function installBrowser(url) {
   const browser = new Window({ url });
+  // happy-dom에는 Navigation API가 없어 테스트에서 이력 식별값을 명시적으로 모의한다.
+  const navigation = { currentEntry: { key: 'test-key', id: 'test-id' }, entries() { return [this.currentEntry]; } };
+  Object.defineProperty(browser, 'navigation', { configurable: true, value: navigation });
   browser.scrollTo = () => {};
   browser.matchMedia = () => ({ matches: true, media: '', addListener() {}, removeListener() {}, addEventListener() {}, removeEventListener() {}, dispatchEvent() { return false; } });
 
@@ -707,6 +856,288 @@ async function mountPostsApp(browser, fallbackPosts, fetchImpl, categoryLabels =
 
   return { root, rootElement, fallbackElement };
 }
+
+test('검색어를 천천히 제출해도 뒤로·앞으로 이전 검색과 주소 상태를 복원한다', async () => {
+  const cleanup = installBrowser('https://blog.test/');
+  const browser = globalThis.window;
+  let mounted;
+  try {
+    browser.history.pushState({ preserved: '외부 상태' }, '', '/posts/?source=home#results');
+    mounted = await mountPostsApp(browser, posts, async () => ({ ok: true, json: async () => indexedRows }));
+    const input = mounted.rootElement.querySelector('#react-posts-search-input');
+    const form = mounted.rootElement.querySelector('#react-posts-search-form');
+    const enter = async value => {
+      await act(async () => {
+        Object.getOwnPropertyDescriptor(browser.HTMLInputElement.prototype, 'value').set.call(input, value);
+        input.dispatchEvent(new browser.InputEvent('input', { bubbles: true, data: value }));
+      });
+      await act(async () => new Promise(resolve => setTimeout(resolve, 280)));
+      assert.equal(new URL(browser.location.href).searchParams.get('q'), value);
+      await act(async () => form.dispatchEvent(new browser.Event('submit', { bubbles: true, cancelable: true })));
+    };
+    await enter('NIST');
+    await enter('NASA');
+    assert.equal(browser.history.state.preserved, '외부 상태');
+    assert.equal(browser.location.hash, '#results');
+    await act(async () => {
+      const popped = new Promise(resolve => browser.addEventListener('popstate', resolve, { once: true }));
+      browser.history.back();
+      await popped;
+    });
+    assert.equal(input.value, 'NIST');
+    assert.equal(new URL(browser.location.href).searchParams.get('source'), 'home');
+    assert.equal(browser.location.hash, '#results');
+    assert.equal(browser.history.state.preserved, '외부 상태');
+    await act(async () => {
+      const popped = new Promise(resolve => browser.addEventListener('popstate', resolve, { once: true }));
+      browser.history.forward();
+      await popped;
+    });
+    assert.equal(input.value, 'NASA');
+    assert.equal(browser.history.state.preserved, '외부 상태');
+  } finally {
+    if (mounted) await act(async () => mounted.root.unmount());
+    await cleanup();
+  }
+});
+
+test('제출하지 않은 검색도 뒤로·앞으로 복원하고 다른 이력 상태를 보존한다', async () => {
+  const cleanup = installBrowser('https://blog.test/posts/?q=NIST&source=home#results');
+  const browser = globalThis.window;
+  let mounted;
+  try {
+    browser.history.replaceState(['외부', 1], '', browser.location.href);
+    mounted = await mountPostsApp(browser, posts, async () => ({ ok: true, json: async () => indexedRows }));
+    const input = mounted.rootElement.querySelector('#react-posts-search-input');
+    const length = browser.history.length;
+    await act(async () => {
+      Object.getOwnPropertyDescriptor(browser.HTMLInputElement.prototype, 'value').set.call(input, 'NASA');
+      input.dispatchEvent(new browser.InputEvent('input', { bubbles: true, data: 'NASA' }));
+    });
+    await act(async () => new Promise(resolve => setTimeout(resolve, 280)));
+    assert.equal(browser.history.length, length + 1);
+    assert.deepEqual(browser.history.state, ['외부', 1]);
+    await act(async () => {
+      const popped = new Promise(resolve => browser.addEventListener('popstate', resolve, { once: true }));
+      browser.history.back();
+      await popped;
+    });
+    assert.equal(input.value, 'NIST');
+    assert.deepEqual(browser.history.state, ['외부', 1]);
+    await act(async () => {
+      const popped = new Promise(resolve => browser.addEventListener('popstate', resolve, { once: true }));
+      browser.history.forward();
+      await popped;
+    });
+    assert.equal(input.value, 'NASA');
+    assert.equal(new URL(browser.location.href).searchParams.get('source'), 'home');
+    assert.equal(browser.location.hash, '#results');
+    assert.deepEqual(browser.history.state, ['외부', 1]);
+  } finally {
+    if (mounted) await act(async () => mounted.root.unmount());
+    await cleanup();
+  }
+});
+
+test('실시간 검색 후 분류 변경은 검색 결과와 각각 별도 이력으로 남는다', async () => {
+  const cleanup = installBrowser('https://blog.test/posts/?q=NIST&source=home#results');
+  const browser = globalThis.window;
+  let mounted;
+  try {
+    mounted = await mountPostsApp(browser, posts, async () => ({ ok: true, json: async () => indexedRows }));
+    const input = mounted.rootElement.querySelector('#react-posts-search-input');
+    await act(async () => {
+      Object.getOwnPropertyDescriptor(browser.HTMLInputElement.prototype, 'value').set.call(input, 'NASA');
+      input.dispatchEvent(new browser.InputEvent('input', { bubbles: true, data: 'NASA' }));
+    });
+    await act(async () => new Promise(resolve => setTimeout(resolve, 280)));
+    const category = mounted.rootElement.querySelector('#react-posts-category-select');
+    await act(async () => {
+      category.value = 'mathematics_philosophy_history';
+      category.dispatchEvent(new browser.Event('change', { bubbles: true }));
+    });
+    for (const expected of ['NASA', 'NIST']) {
+      await act(async () => {
+        const popped = new Promise(resolve => browser.addEventListener('popstate', resolve, { once: true }));
+        browser.history.back();
+        await popped;
+      });
+      assert.equal(input.value, expected);
+      assert.equal(category.value, 'all');
+      assert.equal(new URL(browser.location.href).searchParams.get('source'), 'home');
+      assert.equal(browser.location.hash, '#results');
+    }
+  } finally {
+    if (mounted) await act(async () => mounted.root.unmount());
+    await cleanup();
+  }
+});
+
+test('빠른 제출과 디바운스 전 입력 취소는 이력을 중복시키지 않는다', async () => {
+  const cleanup = installBrowser('https://blog.test/posts/?q=NIST');
+  const browser = globalThis.window;
+  let mounted;
+  try {
+    browser.history.replaceState('외부 상태', '', browser.location.href);
+    mounted = await mountPostsApp(browser, posts, async () => ({ ok: true, json: async () => indexedRows }));
+    const input = mounted.rootElement.querySelector('#react-posts-search-input');
+    const type = async value => act(async () => {
+      Object.getOwnPropertyDescriptor(browser.HTMLInputElement.prototype, 'value').set.call(input, value);
+      input.dispatchEvent(new browser.InputEvent('input', { bubbles: true, data: value }));
+    });
+    const length = browser.history.length;
+    await type('NASA');
+    await type('NIST');
+    await act(async () => new Promise(resolve => setTimeout(resolve, 280)));
+    assert.equal(browser.history.length, length);
+    await type('NASA');
+    await act(async () => mounted.rootElement.querySelector('#react-posts-search-form').dispatchEvent(new browser.Event('submit', { bubbles: true, cancelable: true })));
+    await act(async () => new Promise(resolve => setTimeout(resolve, 280)));
+    assert.equal(browser.history.length, length + 1);
+    assert.equal(browser.history.state, '외부 상태');
+    await act(async () => {
+      const popped = new Promise(resolve => browser.addEventListener('popstate', resolve, { once: true }));
+      browser.history.back();
+      await popped;
+    });
+    assert.equal(input.value, 'NIST');
+  } finally {
+    if (mounted) await act(async () => mounted.root.unmount());
+    await cleanup();
+  }
+});
+
+test('뒤로 이동하면 예약된 검색을 취소하고 새 검색은 앞으로 가기 이력을 교체한다', async () => {
+  const cleanup = installBrowser('https://blog.test/posts/?q=NIST');
+  const browser = globalThis.window;
+  let mounted;
+  try {
+    mounted = await mountPostsApp(browser, posts, async () => ({ ok: true, json: async () => indexedRows }));
+    const input = mounted.rootElement.querySelector('#react-posts-search-input');
+    const type = async value => act(async () => {
+      Object.getOwnPropertyDescriptor(browser.HTMLInputElement.prototype, 'value').set.call(input, value);
+      input.dispatchEvent(new browser.InputEvent('input', { bubbles: true, data: value }));
+    });
+    await type('NASA');
+    await act(async () => new Promise(resolve => setTimeout(resolve, 280)));
+    await type('취소할 검색');
+    await act(async () => {
+      const popped = new Promise(resolve => browser.addEventListener('popstate', resolve, { once: true }));
+      browser.history.back();
+      await popped;
+    });
+    await act(async () => new Promise(resolve => setTimeout(resolve, 280)));
+    assert.equal(input.value, 'NIST');
+    assert.equal(new URL(browser.location.href).searchParams.get('q'), 'NIST');
+    await type('새 검색');
+    await act(async () => new Promise(resolve => setTimeout(resolve, 280)));
+    await act(async () => {
+      const popped = new Promise(resolve => browser.addEventListener('popstate', resolve, { once: true }));
+      browser.history.back();
+      await popped;
+    });
+    await act(async () => {
+      const popped = new Promise(resolve => browser.addEventListener('popstate', resolve, { once: true }));
+      browser.history.forward();
+      await popped;
+    });
+    assert.equal(input.value, '새 검색');
+  } finally {
+    if (mounted) await act(async () => mounted.root.unmount());
+    await cleanup();
+  }
+});
+
+test('검색 초안 중 외부 주소 변경은 제출해도 보존된다', async () => {
+  const cleanup = installBrowser('https://blog.test/posts/?q=NIST');
+  const browser = globalThis.window;
+  let mounted;
+  try {
+    mounted = await mountPostsApp(browser, posts, async () => ({ ok: true, json: async () => indexedRows }));
+    const input = mounted.rootElement.querySelector('#react-posts-search-input');
+    await act(async () => {
+      Object.getOwnPropertyDescriptor(browser.HTMLInputElement.prototype, 'value').set.call(input, 'NASA');
+      input.dispatchEvent(new browser.InputEvent('input', { bubbles: true, data: 'NASA' }));
+    });
+    await act(async () => new Promise(resolve => setTimeout(resolve, 280)));
+    browser.history.pushState({ external: 1 }, '', '/posts/?q=NASA&source=external#new');
+    await act(async () => mounted.rootElement.querySelector('#react-posts-search-form').dispatchEvent(new browser.Event('submit', { bubbles: true, cancelable: true })));
+    assert.equal(new URL(browser.location.href).searchParams.get('source'), 'external');
+    assert.equal(browser.location.hash, '#new');
+    assert.deepEqual(browser.history.state, { external: 1 });
+    await act(async () => {
+      const popped = new Promise(resolve => browser.addEventListener('popstate', resolve, { once: true }));
+      browser.history.back();
+      await popped;
+    });
+    assert.equal(input.value, 'NASA');
+    assert.equal(browser.location.hash, '');
+  } finally {
+    if (mounted) await act(async () => mounted.root.unmount());
+    await cleanup();
+  }
+});
+
+test('검색 초안 중 외부에서 같은 주소를 추가해도 다음 검색은 별도 이력이다', async () => {
+  const cleanup = installBrowser('https://blog.test/posts/?q=NIST');
+  const browser = globalThis.window;
+  let mounted;
+  try {
+    mounted = await mountPostsApp(browser, posts, async () => ({ ok: true, json: async () => indexedRows }));
+    const input = mounted.rootElement.querySelector('#react-posts-search-input');
+    const type = async value => act(async () => {
+      Object.getOwnPropertyDescriptor(browser.HTMLInputElement.prototype, 'value').set.call(input, value);
+      input.dispatchEvent(new browser.InputEvent('input', { bubbles: true, data: value }));
+    });
+    await type('NASA');
+    await act(async () => new Promise(resolve => setTimeout(resolve, 280)));
+    browser.history.pushState({ external: true }, '', browser.location.href);
+    browser.navigation.currentEntry = { key: 'external-key', id: 'external-id' };
+    const length = browser.history.length;
+    await type('ESA');
+    await act(async () => new Promise(resolve => setTimeout(resolve, 280)));
+    assert.equal(browser.history.length, length + 1);
+    assert.equal(new URL(browser.location.href).searchParams.get('q'), 'ESA');
+    await act(async () => {
+      const popped = new Promise(resolve => browser.addEventListener('popstate', resolve, { once: true }));
+      browser.history.back();
+      await popped;
+    });
+    assert.equal(input.value, 'NASA');
+    assert.deepEqual(browser.history.state, { external: true });
+  } finally {
+    if (mounted) await act(async () => mounted.root.unmount());
+    await cleanup();
+  }
+});
+
+test('이미 기록된 검색 초안을 원래 검색어로 되돌리면 같은 이력 항목이 남는다', async () => {
+  const cleanup = installBrowser('https://blog.test/posts/?q=NIST');
+  const browser = globalThis.window;
+  let mounted;
+  try {
+    mounted = await mountPostsApp(browser, posts, async () => ({ ok: true, json: async () => indexedRows }));
+    const input = mounted.rootElement.querySelector('#react-posts-search-input');
+    const length = browser.history.length;
+    for (const value of ['NASA', 'NIST']) {
+      await act(async () => {
+        Object.getOwnPropertyDescriptor(browser.HTMLInputElement.prototype, 'value').set.call(input, value);
+        input.dispatchEvent(new browser.InputEvent('input', { bubbles: true, data: value }));
+      });
+      await act(async () => new Promise(resolve => setTimeout(resolve, 280)));
+    }
+    assert.equal(browser.history.length, length + 1);
+    await act(async () => {
+      const popped = new Promise(resolve => browser.addEventListener('popstate', resolve, { once: true }));
+      browser.history.back();
+      await popped;
+    });
+    assert.equal(input.value, 'NIST');
+  } finally {
+    if (mounted) await act(async () => mounted.root.unmount());
+    await cleanup();
+  }
+});
 
 test('성과 내용 검색에서 임의 경로·언어·한국어 유형 라벨을 보존한다', async () => {
   const cleanup = installBrowser('https://blog.test/posts/?q=Information');

@@ -58,6 +58,8 @@ interface PostsAppProps {
 interface StoredScrollState extends PostsState {
   path: string;
   scrollY: number;
+  entryKey: string;
+  entryId: string;
 }
 
 interface TextSegment {
@@ -142,39 +144,100 @@ function categoryLabelFor(category: string, labels: Map<string, string>): string
 function writeHistory(nextState: PostsState, mode: HistoryMode): void {
   const href = serializePostsState(window.location.href, nextState);
   const currentHref = `${window.location.pathname}${window.location.search}${window.location.hash}`;
-  if (mode === 'push' && href === currentHref) return;
-  if (mode === 'push') window.history.pushState({}, '', href);
-  else window.history.replaceState({}, '', href);
+  if (href === currentHref) return;
+  if (mode === 'push') window.history.pushState(window.history.state, '', href);
+  else window.history.replaceState(window.history.state, '', href);
 }
 
-function saveScrollState(state: PostsState): void {
+interface SearchDraftOrigin {
+  lastHref: string;
+  entryKey: string | null;
+  entryId: string | null;
+}
+
+// 이력 항목과 슬롯을 모두 확인한다. 식별값이 없거나 중복되면 추측해 복원하지 않는다.
+function currentHistoryIdentity(): { key: string; id: string } | null {
   try {
-    const stored: StoredScrollState = {
-      ...state,
-      path: window.location.pathname,
-      scrollY: window.scrollY || window.pageYOffset || 0,
-    };
-    window.sessionStorage.setItem(SCROLL_STATE_KEY, JSON.stringify(stored));
+    const navigation = (window as unknown as { navigation?: {
+      currentEntry: { key: string; id: string } | null;
+      entries: () => Array<{ key: string; id: string }>;
+    } }).navigation;
+    const entry = navigation?.currentEntry;
+    if (!entry || typeof entry.key !== 'string' || !entry.key
+      || typeof entry.id !== 'string' || !entry.id) return null;
+    const entries = navigation.entries();
+    if (!Array.isArray(entries)
+      || entries.filter(item => item.key === entry.key).length !== 1
+      || entries.filter(item => item.id === entry.id).length !== 1) return null;
+    return { key: entry.key, id: entry.id };
+  } catch {
+    return null;
+  }
+}
+
+function readScrollRecords(): StoredScrollState[] {
+  try {
+    const stored: unknown = JSON.parse(window.sessionStorage.getItem(SCROLL_STATE_KEY) || 'null');
+    if (!stored || typeof stored !== 'object') return [];
+    const envelope = stored as { version?: unknown; entries?: unknown };
+    if (envelope.version !== 2 || !Array.isArray(envelope.entries)) return [];
+    return envelope.entries.filter((value: Partial<StoredScrollState> | null): value is StoredScrollState =>
+      !!value && typeof value.entryKey === 'string' && !!value.entryKey
+      && typeof value.entryId === 'string' && !!value.entryId
+      && typeof value.path === 'string' && typeof value.category === 'string'
+      && typeof value.query === 'string' && typeof value.sort === 'string'
+      && Number.isInteger(value.page) && (value.page ?? 0) >= 1
+      && typeof value.scrollY === 'number' && Number.isFinite(value.scrollY)
+      && value.scrollY > 0 && value.scrollY <= Number.MAX_SAFE_INTEGER).slice(-50);
+  } catch {
+    return [];
+  }
+}
+
+function currentScrollSnapshot(state: PostsState): StoredScrollState | null {
+  const identity = currentHistoryIdentity();
+  if (!identity) return null;
+  return {
+    ...state,
+    path: window.location.pathname,
+    scrollY: window.scrollY || window.pageYOffset || 0,
+    entryKey: identity.key,
+    entryId: identity.id,
+  };
+}
+
+function saveScrollSnapshot(stored: StoredScrollState | null): void {
+  try {
+    if (!stored) return;
+    const remaining = readScrollRecords().filter(item => item.entryKey !== stored.entryKey);
+    if (stored.scrollY > 0 && Number.isFinite(stored.scrollY) && stored.scrollY <= Number.MAX_SAFE_INTEGER) remaining.push(stored);
+    window.sessionStorage.setItem(SCROLL_STATE_KEY, JSON.stringify({ version: 2, entries: remaining.slice(-50) }));
   } catch {
     // Storage can be unavailable in private browsing or constrained webviews.
   }
 }
 
+function saveScrollState(state: PostsState): void {
+  saveScrollSnapshot(currentScrollSnapshot(state));
+}
+
 function readScrollState(): StoredScrollState | null {
-  try {
-    const raw = window.sessionStorage.getItem(SCROLL_STATE_KEY);
-    if (!raw) return null;
-    const stored: unknown = JSON.parse(raw);
-    if (!stored || typeof stored !== 'object') return null;
-    const value = stored as Partial<StoredScrollState>;
-    if (typeof value.path !== 'string' || typeof value.category !== 'string'
-      || typeof value.query !== 'string' || typeof value.sort !== 'string'
-      || !Number.isInteger(value.page) || (value.page ?? 0) < 1 || typeof value.scrollY !== 'number'
-      || !Number.isFinite(value.scrollY) || value.scrollY <= 0 || value.scrollY > Number.MAX_SAFE_INTEGER) return null;
-    return value as StoredScrollState;
-  } catch {
-    return null;
-  }
+  const identity = currentHistoryIdentity();
+  if (!identity) return null;
+  return readScrollRecords().find(value => value.entryKey === identity.key && value.entryId === identity.id) || null;
+}
+
+function isCurrentDraft(origin: SearchDraftOrigin): boolean {
+  if (origin.lastHref !== window.location.href) return false;
+  const identity = currentHistoryIdentity();
+  return !origin.entryKey || (!!identity && origin.entryKey === identity.key && origin.entryId === identity.id);
+}
+
+function scrollStateMatches(stored: StoredScrollState | null, state: PostsState): boolean {
+  const identity = currentHistoryIdentity();
+  return !!stored && !!identity && stored.entryKey === identity.key && stored.entryId === identity.id
+    && stored.path === window.location.pathname && stored.category === state.category && stored.page === state.page
+    && stored.query === state.query && stored.sort === state.sort;
 }
 
 // 이동한 화면에 실제로 보이는 내용을 포커스해 키보드 사용자의 위치를 맞춘다.
@@ -338,6 +401,9 @@ export function PostsApp({
   const [savedScroll, setSavedScroll] = useState<StoredScrollState | null>(readScrollState);
   const [restoreMessage, setRestoreMessage] = useState('');
   const stateRef = useRef(state);
+  const flushPendingScrollRef = useRef<() => void>(() => {});
+  // 실시간 검색은 URL을 갱신하되 명시적으로 제출하기 전의 이력을 보존한다.
+  const searchDraftOriginRef = useRef<SearchDraftOrigin | null>(null);
   const queryTimerRef = useRef<number | null>(null);
   const isComposingRef = useRef(false);
   const navigationRevisionRef = useRef(0);
@@ -364,9 +430,7 @@ export function PostsApp({
   // 입력과 결과가 일치할 때까지 기존 결과를 보존하되 선택할 수 없게 한다.
   // 대소문자와 공백만 다른 검색은 같은 결과로 취급한다.
   const searchPending = normalizeText(draftQuery) !== normalizeText(state.query);
-  const hasSavedScroll = !!savedScroll && savedScroll.path === window.location.pathname
-    && savedScroll.category === state.category && savedScroll.page === state.page
-    && savedScroll.query === state.query && savedScroll.sort === state.sort;
+  const hasSavedScroll = scrollStateMatches(savedScroll, state);
   const restoreUnavailable = isLoading || searchPending;
   const showRetry = canRetry && (state.query.length > 0 || hasSavedScroll);
 
@@ -513,11 +577,35 @@ export function PostsApp({
     const normalizedState = { ...state, page: clampedPage };
     stateRef.current = normalizedState;
     setState(normalizedState);
+    const origin = searchDraftOriginRef.current;
+    if (origin && !isCurrentDraft(origin)) searchDraftOriginRef.current = null;
     writeHistory(normalizedState, 'replace');
+    if (searchDraftOriginRef.current) {
+      const identity = currentHistoryIdentity();
+      searchDraftOriginRef.current = { lastHref: window.location.href, entryKey: identity?.key || null, entryId: identity?.id || null };
+    }
+    setSavedScroll(readScrollState());
   }, [indexStatus, pageWindow.page, state]);
 
   useEffect(() => {
-    const saveOnExit = () => saveScrollState(stateRef.current);
+    let pending: StoredScrollState | null = null;
+    const flush = () => {
+      saveScrollSnapshot(pending);
+      pending = null;
+    };
+    flushPendingScrollRef.current = flush;
+    const onScroll = () => {
+      const current = stateRef.current;
+      const actual = parsePostsState(window.location.href, validCategories);
+      if (actual.query !== current.query || actual.category !== current.category
+        || actual.sort !== current.sort || actual.page !== current.page) return;
+      const next = currentScrollSnapshot(current);
+      if (!next) return;
+      if (pending && (pending.entryKey !== next.entryKey || pending.entryId !== next.entryId)) flush();
+      pending = next;
+    };
+    // pagehide에서는 현재 항목이 이미 바뀌었을 수 있어 포착해 둔 값만 기록한다.
+    const saveOnExit = () => flush();
     const refreshOnReturn = (event: PageTransitionEvent) => {
       if (event.persisted) {
         setSavedScroll(readScrollState());
@@ -526,17 +614,25 @@ export function PostsApp({
     };
     window.addEventListener('pagehide', saveOnExit);
     window.addEventListener('pageshow', refreshOnReturn);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    // popstate에서는 이미 목적 이력이 활성화되어 있으므로 이전 스냅샷을 먼저 기록한다.
+    window.addEventListener('popstate', flush);
     return () => {
+      flush();
+      flushPendingScrollRef.current = () => {};
       window.removeEventListener('pagehide', saveOnExit);
       window.removeEventListener('pageshow', refreshOnReturn);
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('popstate', flush);
     };
-  }, []);
+  }, [validCategories]);
 
   useEffect(() => {
     const handlePopState = () => {
       if (queryTimerRef.current !== null) window.clearTimeout(queryTimerRef.current);
       queryTimerRef.current = null;
       navigationRevisionRef.current += 1;
+      searchDraftOriginRef.current = null;
       isComposingRef.current = false;
       focusResultsAfterPageChangeRef.current = false;
       pendingHistoryFocusRef.current?.cleanup();
@@ -552,6 +648,7 @@ export function PostsApp({
         pendingHistoryFocusRef.current = pending;
       }
       setRestoreMessage('');
+      setSavedScroll(readScrollState());
       const restored = parsePostsState(window.location.href, validCategories);
       stateRef.current = restored;
       setState(restored);
@@ -581,7 +678,24 @@ export function PostsApp({
     setRestoreMessage('');
     setState(next);
     if (!preserveDraft) setDraftQuery(next.query);
+    let origin = searchDraftOriginRef.current;
+    // 다른 코드가 주소를 바꿨다면 이미 다른 이력일 수 있어 덮어쓰지 않는다.
+    if (origin && !isCurrentDraft(origin)) {
+      searchDraftOriginRef.current = null;
+      origin = null;
+    }
+    // 분류·정렬·페이지 이동은 사용자가 이미 본 검색 결과 다음의 별도 이력이다.
+    if (historyMode === 'push' && origin) searchDraftOriginRef.current = null;
+    const changesUrl = serializePostsState(window.location.href, next)
+      !== `${window.location.pathname}${window.location.search}${window.location.hash}`;
+    if (changesUrl) flushPendingScrollRef.current();
+    if (historyMode === 'push' && changesUrl) saveScrollState(current);
     writeHistory(next, historyMode);
+    if (searchDraftOriginRef.current) {
+      const identity = currentHistoryIdentity();
+      searchDraftOriginRef.current = { lastHref: window.location.href, entryKey: identity?.key || null, entryId: identity?.id || null };
+    }
+    setSavedScroll(readScrollState());
   }, []);
 
   const clearQueryTimer = useCallback(() => {
@@ -599,6 +713,16 @@ export function PostsApp({
       // is still typing the next term.
       const current = stateRef.current;
       const sameSearch = normalizeText(value) === normalizeText(current.query);
+      if (searchDraftOriginRef.current && !isCurrentDraft(searchDraftOriginRef.current)) {
+        searchDraftOriginRef.current = null;
+      }
+      if (!sameSearch && !searchDraftOriginRef.current) {
+        // 최초 변경은 별도 항목으로 남겨, 제출 전 뒤로 가기도 이전 검색을 복원한다.
+        transition({ query: value, page: 1 }, 'push', true);
+        const identity = currentHistoryIdentity();
+        searchDraftOriginRef.current = { lastHref: window.location.href, entryKey: identity?.key || null, entryId: identity?.id || null };
+        return;
+      }
       transition({ query: value, page: sameSearch ? current.page : 1 }, 'replace', true);
     }, SEARCH_INPUT_DELAY_MS);
   }, [clearQueryTimer, transition]);
@@ -618,7 +742,9 @@ export function PostsApp({
     clearQueryTimer();
     const current = stateRef.current;
     const sameSearch = normalizeText(draftQuery) === normalizeText(current.query);
-    transition({ query: draftQuery, page: sameSearch ? current.page : 1 }, sameSearch ? 'replace' : 'push');
+    const hasDraft = !!searchDraftOriginRef.current && isCurrentDraft(searchDraftOriginRef.current);
+    transition({ query: draftQuery, page: sameSearch ? current.page : 1 }, sameSearch || hasDraft ? 'replace' : 'push');
+    searchDraftOriginRef.current = null;
   };
 
   const handleCompositionStart = () => {
@@ -670,8 +796,6 @@ export function PostsApp({
       transition({ query, page: nextPage }, 'replace');
       return;
     }
-    saveScrollState(stateRef.current);
-    setSavedScroll(readScrollState());
     focusResultsAfterPageChangeRef.current = true;
     // A pending search changes the result set, so start at its first page
     // rather than navigating to a page number from the old results.
@@ -690,7 +814,13 @@ export function PostsApp({
   };
 
   const handleRestoreScroll = () => {
-    if (!hasSavedScroll || !savedScroll || restoreUnavailable) return;
+    const latest = readScrollState();
+    const actualState = parsePostsState(window.location.href, validCategories);
+    if (!hasSavedScroll || !savedScroll || restoreUnavailable || !scrollStateMatches(latest, actualState)
+      || latest?.scrollY !== savedScroll.scrollY) {
+      setSavedScroll(latest);
+      return;
+    }
     try {
       window.scrollTo({ top: savedScroll.scrollY, behavior: 'auto' });
       const limited = window.scrollY < savedScroll.scrollY - 1;
