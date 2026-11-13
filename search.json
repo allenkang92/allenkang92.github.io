@@ -79,6 +79,8 @@ layout: null
         {% elsif page.permalink == '/about/' and page.path == '_pages/about.html' %}
           {% assign about_content = page.content | remove: '<span class="about-list-arrow" aria-hidden="true">›</span>' %}
           {{ about_content | strip_html }}
+        {% elsif page.permalink == '/series/' and page.path == '_pages/series.html' %}
+          {% include components/series-index-search.html %}
         {% elsif page.permalink == '/series/mathematics-philosophy-history/' or page.permalink == '/series/science-philosophy-history/' %}
           {% assign series_record = site.data.series.items | where: 'hub_url', page.permalink | first %}
           {{ series_record.title | escape }} {{ series_record.summary | strip_html }} {{ series_record.reading_order | strip_html }}

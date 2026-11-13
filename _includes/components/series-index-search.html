@@ -1,0 +1,21 @@
+{% assign featured_series = site.data.series.items | where: 'featured', true %}
+{% for item in featured_series %}
+  {% assign item_posts = site.posts | where: 'series', item.key | sort: 'series_order' %}
+  {% assign kicker = item.kicker %}
+  {% case item.key %}
+    {% when 'Mathematics-Philosophy-History' %}{% assign kicker = '수학' %}
+    {% when 'Science_Philosophy_History' %}{% assign kicker = '과학' %}
+  {% endcase %}
+  {{ kicker | escape }} {{ item.title | escape }} {{ item_posts.size }}편 {{ item.summary | strip_html }}
+{% endfor %}
+{% assign series_posts = site.posts | where_exp: 'post', 'post.series != nil' | group_by: 'series' %}
+{% for series in series_posts %}
+  {% assign sorted_posts = series.items | sort: 'series_order' %}
+  {% assign series_record = site.data.series.items | where: 'key', series.name | first %}
+  {% assign series_title = series.name | replace: '_', ' ' | replace: '-', ' ' %}
+  {% if series_record %}{% assign series_title = series_record.title %}{% endif %}
+  {{ series_title | escape }} {{ sorted_posts.size }}편
+  {% for post in sorted_posts %}
+    {{ post.title | escape }} {{ post.description | default: post.excerpt | strip_html | strip_newlines | normalize_whitespace | truncate: 150 }}
+  {% endfor %}
+{% endfor %}

@@ -306,6 +306,35 @@ test('선택한 도구 안내의 색인 본문은 실제 표시 내용과 일치
   }
 });
 
+test('시리즈 목록의 검색 내용은 실제 공개 카드와 글 경로의 표시 문구와 일치한다', async () => {
+  const siteRoot = process.env.SITE_ROOT || fileURLToPath(new URL('../../_site/', import.meta.url));
+  const baseurl = process.env.SITE_BASEURL || '';
+  const entries = JSON.parse(await readFile(resolve(siteRoot, 'search.json'), 'utf8'));
+  const browser = new Window({ settings: { disableJavaScriptEvaluation: true, disableJavaScriptFileLoading: true, disableCSSFileLoading: true } });
+  try {
+    browser.document.write(await readFile(resolve(siteRoot, 'series/index.html'), 'utf8'));
+    const row = entries.find(entry => new URL(entry.url).pathname === `${baseurl}/series/`);
+    assert.ok(row, '시리즈 목록 색인 항목이 있어야 합니다');
+    const visible = [];
+    for (const card of browser.document.querySelectorAll('.series-hub-card')) {
+      for (const selector of ['.series-hub-kicker', 'strong', '.series-hub-count', '.series-hub-summary']) {
+        visible.push(card.querySelector(selector)?.textContent || '');
+      }
+    }
+    for (const group of browser.document.querySelectorAll('.series-catalog-group')) {
+      visible.push(group.querySelector('h3')?.textContent || '', group.querySelector('.series-catalog-count')?.textContent || '');
+      for (const item of group.querySelectorAll('.series-catalog-item-copy')) {
+        visible.push(item.querySelector('a')?.textContent || '', item.querySelector('span')?.textContent || '');
+      }
+    }
+    const decoder = browser.document.createElement('textarea');
+    decoder.innerHTML = row.content.replace(/</g, '&lt;');
+    const normalize = value => value.replace(/\s+/g, ' ').trim();
+    assert.equal(normalize(decoder.value), normalize(visible.join(' ')), '색인은 실제 표시된 카드와 목록만 같은 순서로 담아야 합니다');
+    assert.doesNotMatch(decoder.value, /\{[{%]/, 'Liquid가 색인에 남으면 안 됩니다');
+  } finally { await browser.happyDOM.abort(); }
+});
+
 test('소개와 시리즈 허브의 색인 내용은 실제 표시 내용과 일치한다', async () => {
   const siteRoot = process.env.SITE_ROOT || fileURLToPath(new URL('../../_site/', import.meta.url));
   const baseurl = process.env.SITE_BASEURL || '';
@@ -364,6 +393,7 @@ test('생성된 안내 본문을 사이드바와 글 목록 양쪽에서 검색�
     { query: '인터페이스', target: '/about/' },
     { query: 'Morris Kline', target: '/series/mathematics-philosophy-history/' },
     { query: 'Peter Godfrey-Smith', target: '/series/science-philosophy-history/' },
+    { query: '귀류법', target: '/series/' },
   ];
   const parser = new Window({ settings: { disableJavaScriptFileLoading: true, disableCSSFileLoading: true } });
   let form;

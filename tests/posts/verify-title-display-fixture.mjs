@@ -33,6 +33,10 @@ await writeFile(join(source, '_posts/2025-01-15-title-fixture-recent.md'), front
 const hubPost = (series, permalink) => `---\nlayout: post\ntitle: ${JSON.stringify(specialTitle)}\ndate: 2024-01-01 00:00:00 +0900\npermalink: ${permalink}\nseries: ${series}\nseries_order: 30\n---\n시험 본문\n`;
 await writeFile(join(source, '_posts/2024-01-01-title-fixture-math.md'), hubPost('Mathematics-Philosophy-History', mathTarget));
 await writeFile(join(source, '_posts/2024-01-01-title-fixture-science.md'), hubPost('Science_Philosophy_History', scienceTarget));
+await writeFile(join(source, '_posts/2024-01-02-title-fixture-unregistered.md'), hubPost('Unregistered_Fixture_Group', '/posts/title-fixture-unregistered/').replace(specialTitle, '미등록 공개 경로 <공개> & 단서'));
+await writeFile(join(source, '_posts/2024-01-02-title-fixture-nonfeatured.md'), hubPost('QA-NotFeatured', '/posts/title-fixture-nonfeatured/').replace(specialTitle, '비추천공개글표식'));
+await writeFile(join(source, '_posts/2024-01-03-title-fixture-hidden.md'), hubPost('QA-Title-Display', '/posts/title-fixture-hidden/').replace('layout: post', 'layout: post\npublished: false').replace(specialTitle, '숨긴글검색표식'));
+await writeFile(join(source, '_posts/2099-01-03-title-fixture-future.md'), hubPost('QA-Title-Display', '/posts/title-fixture-future/').replace('date: 2024-01-01', 'date: 2099-01-03').replace(specialTitle, '미래글검색표식'));
 const dataPath = join(source, '_data/series.yml');
 const seriesData = await readFile(dataPath, 'utf8');
 const updatedData = seriesData.replace('title: "수학철학·수학사"', `title: ${JSON.stringify(mathHubTitle)}`)
@@ -40,7 +44,7 @@ const updatedData = seriesData.replace('title: "수학철학·수학사"', `titl
 assert.ok(updatedData.includes(mathHubTitle) && updatedData.includes(scienceHubTitle), '기존 시리즈의 제목 시험 자료가 적용돼야 합니다');
 const mixedData = updatedData.replace('    references:\n      - title: "Morris Kline, Mathematical Thought from Ancient to Modern Times"', `    references:\n      - title: ${JSON.stringify('한국어 <자료> & 설명')}\n        lang: ko\n      - title: ${JSON.stringify('제목 언어 미지정')}\n      - ${JSON.stringify('기존 <em>문자열</em>')}\n      - title: "Morris Kline, Mathematical Thought from Ancient to Modern Times"`);
 assert.notEqual(mixedData, updatedData, '한글·언어 미지정·기존 문자열 참고자료가 적용돼야 합니다');
-await writeFile(dataPath, `${mixedData}\n  - key: QA-Title-Display\n    title: ${JSON.stringify(seriesTitle)}\n    hub_url: ${JSON.stringify('/series/title-fixture/?first=1&second=2')}\n    kicker: ${JSON.stringify('<분류> & 태그')}\n    summary: 시험 시리즈\n    featured: true\n  - key: QA-English-Kicker\n    title: 영어 분류 시험\n    hub_url: /series/english-fixture/\n    kicker: ${JSON.stringify('Research & Practice')}\n    kicker_lang: en\n    summary: 시험 시리즈\n    featured: true\n`);
+await writeFile(dataPath, `${mixedData}\n  - key: QA-Title-Display\n    title: ${JSON.stringify(seriesTitle)}\n    hub_url: ${JSON.stringify('/series/title-fixture/?first=1&second=2')}\n    kicker: ${JSON.stringify('<분류> & 태그')}\n    summary: 시험 시리즈\n    featured: true\n  - key: QA-English-Kicker\n    title: 영어 분류 시험\n    hub_url: /series/english-fixture/\n    kicker: ${JSON.stringify('Research & Practice')}\n    kicker_lang: en\n    summary: 시험 시리즈\n    featured: true\n  - key: QA-NotFeatured\n    title: 비추천비표시제목\n    kicker: 비추천비표시분류\n    summary: 비추천비표시설명\n    featured: false\n`);
 const pagePath = join(source, '_pages/series.html');
 const page = await readFile(pagePath, 'utf8');
 const updatedPage = page.replace(/^title: 시리즈$/m, `title: ${JSON.stringify(seriesPageTitle)}`);
@@ -175,6 +179,27 @@ for (const [name, base] of [['root', ''], ['nested', '/blog']]) {
     }
 
     const index = JSON.parse(await readFile(join(output, 'search.json'), 'utf8'));
+    const seriesRow = index.find(entry => new URL(entry.url, 'https://example.com').pathname === `${base}/series/`);
+    assert.ok(seriesRow, `${name}: 시리즈 목록 색인`);
+    const seriesDecoder = browser.document.createElement('textarea');
+    seriesDecoder.innerHTML = seriesRow.content.replace(/</g, '&lt;');
+    const normalize = value => value.replace(/\s+/g, ' ').trim();
+    const seriesVisible = [];
+    for (const card of series.querySelectorAll('.series-hub-card')) {
+      for (const selector of ['.series-hub-kicker', 'strong', '.series-hub-count', '.series-hub-summary']) {
+        seriesVisible.push(card.querySelector(selector)?.textContent || '');
+      }
+    }
+    for (const item of series.querySelectorAll('.series-catalog-group')) {
+      seriesVisible.push(item.querySelector('h3')?.textContent || '', item.querySelector('.series-catalog-count')?.textContent || '');
+      for (const post of item.querySelectorAll('.series-catalog-item-copy')) seriesVisible.push(post.querySelector('a')?.textContent || '', post.querySelector('span')?.textContent || '');
+    }
+    assert.equal(normalize(seriesDecoder.value), normalize(seriesVisible.join(' ')), `${name}: 목록 표시와 검색 색인이 같은 내용·순서여야 합니다`);
+    assert.ok(seriesDecoder.value.includes('Unregistered Fixture Group') && seriesDecoder.value.includes('미등록 공개 경로 <공개> & 단서'), `${name}: 미등록 공개 시리즈는 화면대로 포함합니다`);
+    assert.ok(seriesDecoder.value.includes('비추천비표시제목') && seriesDecoder.value.includes('비추천공개글표식'), `${name}: 추천하지 않아도 공개 글이 있는 그룹은 목록대로 포함합니다`);
+    for (const hidden of ['숨긴글검색표식', '미래글검색표식', '비추천비표시분류', '비추천비표시설명']) {
+      assert.ok(!seriesDecoder.value.includes(hidden), `${name}: 표시되지 않는 ${hidden}은 색인하지 않습니다`);
+    }
     assert.ok(index.some(entry => entry.type === 'post' && entry.title === specialTitle && new URL(entry.url, 'https://example.com').pathname === `${base}${target}`), `${name}: 검색 색인의 제목 원문`);
     const hubIndex = index.find(entry => new URL(entry.url, 'https://example.com').pathname === `${base}/series/mathematics-philosophy-history/`);
     assert.ok(hubIndex, `${name}: 수학 허브 색인`);
