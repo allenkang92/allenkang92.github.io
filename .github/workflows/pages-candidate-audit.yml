@@ -1,0 +1,114 @@
+# 수동 후보 시험 전용: 현재 GitHub Pages 게시 설정을 변경하지 않는다.
+name: Linux Pages 의존성 후보 검증
+
+'on':
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages-candidate-audit
+  cancel-in-progress: false
+
+jobs:
+  candidate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      BUNDLE_GEMFILE: ${{ github.workspace }}/scripts/security/Gemfile
+      BUNDLE_FROZEN: 'true'
+      JEKYLL_ENV: production
+      TZ: UTC
+      JEKYLL_BUILD_REVISION: ${{ github.sha }}
+      PAGES_REPO_NWO: ${{ github.repository }}
+    steps:
+      - name: 소스 확인
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Node.js 준비
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '22.23.5'
+
+      - name: Ruby와 Bundler 준비
+        uses: ruby/setup-ruby@b3aaceaef7e0ee231b499e7b5f49c03fc1d32199 # v1.338.0
+        with:
+          ruby-version: '3.3.13'
+          bundler: '2.5.22'
+          bundler-cache: false
+
+      - name: 고정 의존성 설치
+        run: |
+          npm ci
+          bundle install
+          bundle check
+
+      - name: 실제 Ruby 네이티브 라이브러리 버전 확인
+        run: |
+          bundle exec ruby -rpsych -rnokogiri -rjson -e '
+            info = Nokogiri::VERSION_INFO
+            puts JSON.pretty_generate({
+              ruby: RUBY_VERSION,
+              psych: Psych::VERSION,
+              libyaml: Psych.libyaml_version,
+              nokogiri: Nokogiri::VERSION,
+              libxml: info.fetch("libxml").slice("source", "compiled", "loaded"),
+              libxslt: info.fetch("libxslt").slice("source", "compiled", "loaded"),
+              other_libraries: info.fetch("other_libraries", {})
+            })
+          '
+          bundle exec ruby -rpsych -rnokogiri -e '
+            extensions = $LOADED_FEATURES.grep(%r{/(?:psych|nokogiri)/?.*\.so\z})
+            abort "Psych 또는 Nokogiri 네이티브 확장을 찾지 못했습니다" if extensions.size < 2
+            extensions.each do |path|
+              puts "연결 라이브러리: #{File.basename(path)}"
+              abort "ldd 실패" unless system("ldd", path)
+            end
+          '
+
+      - name: 기능 검사 및 프런트엔드 빌드
+        run: |
+          npm test
+          npm run verify:frontmatter
+          npm run verify:achievement-defaults
+
+      - name: 후보 Pages 빌드
+        run: bundle exec github-pages build --source "$GITHUB_WORKSPACE" --destination "$GITHUB_WORKSPACE/_site"
+
+      - name: 생성물 및 주요 설정 검사
+        run: |
+          npm run test:comments-liquid
+          SITE_ROOT="$GITHUB_WORKSPACE/_site" npm run test:integration
+          npm run test:post-inventory -- --pages
+          npm run test:post-inventory-fixture
+          npm run test:seo-fixture
+          npm run test:literal-title-seo-fixture
+          npm run test:generic-seo-description-fixture
+          npm run test:post-search-auxiliary-fixture
+          npm run test:seo-name-fixture
+          npm run test:math-page-fixture
+          npm run test:title-display-fixture
+          npm run test:category-label-fixture
+          npm run test:sidebar-labels-fixture
+          npm run test:code-copy-fixture
+          npm run test:achievement-fields-fixture
+          npm run test:achievement-defaults-fixture
+          npm run test:achievement-search-fixture
+          npm run test:achievement-visibility-fixture
+          npm run test:sitemap-visibility-fixture
+          python3 scripts/verify_site.py --site-dir "$GITHUB_WORKSPACE/_site"
+
+      - name: OSV 응답 검증 시험
+        run: python3 -m unittest scripts.security.audit_installed_gems_test
+
+      - name: 설치된 RubyGems 버전 OSV 대조
+        run: python3 scripts/security/audit_installed_gems.py
+
+      - name: 검증 범위 안내
+        run: |
+          echo '이 후보는 현재 공개 Pages 빌드와 다르며 게시되지 않았습니다.'
+          echo 'OSV 결과는 조회한 RubyGems 버전만 다루며 네이티브 라이브러리의 권고별 영향과 취약 코드 도달 여부는 별도 확인해야 합니다.'
+          echo 'SEO 2.8 별도 번들 회귀 시험은 이 후보 실행에 포함하지 않았습니다.'
