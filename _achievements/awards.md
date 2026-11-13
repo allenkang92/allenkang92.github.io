@@ -1,5 +1,6 @@
 ---
 layout: achievement
+content_language: en
 title: Academic Awards
 category: awards
 date: 2024-01-01

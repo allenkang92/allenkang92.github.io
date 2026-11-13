@@ -1,0 +1,81 @@
+{%- comment -%}
+  성과의 date는 정렬용 원본 값이며 발행·수정일인지 확인되지 않았다.
+  이 컬렉션에서만 날짜를 생략하고 다른 페이지는 jekyll-seo-tag를 사용한다.
+{%- endcomment -%}
+{%- assign seo_page_title = page.title | markdownify | strip_html | normalize_whitespace -%}
+{%- assign seo_site_title = site.title | markdownify | strip_html | normalize_whitespace -%}
+{%- assign seo_description = page.description | default: site.description | markdownify | strip_html | normalize_whitespace -%}
+{%- assign description_from_page = page.description | default: '' -%}
+{%- assign seo_plain_description = page.seo_plain_description -%}
+{%- if seo_plain_description == nil and description_from_page == '' -%}
+  {%- assign seo_plain_description = site.seo_plain_description -%}
+{%- endif -%}
+{%- comment -%}
+  Markdown의 HTML 문자 참조를 JSON 문자열에 그대로 넣으면 내용이 바뀐다.
+  Liquid에 범용 문자 참조 해독기가 없으므로 참조가 있는 경우 작성자가
+  평문을 명시해야 한다. 원본 Markdown과의 일치는 생성물 검사에서 확인한다.
+{%- endcomment -%}
+{%- assign plain_title_json = page.seo_plain_title | jsonify -%}
+{%- assign plain_description_json = seo_plain_description | jsonify -%}
+{%- assign plain_title_type = plain_title_json | slice: 0, 1 -%}
+{%- assign plain_description_type = plain_description_json | slice: 0, 1 -%}
+{%- assign plain_title_stripped = page.seo_plain_title | append: '' | url_encode | remove: '+' -%}
+{%- assign plain_description_stripped = seo_plain_description | append: '' | url_encode | remove: '+' -%}
+{%- assign plain_spaces = '%09,%0A,%0B,%0C,%0D,%C2%A0,%E1%9A%80,%E2%80%80,%E2%80%81,%E2%80%82,%E2%80%83,%E2%80%84,%E2%80%85,%E2%80%86,%E2%80%87,%E2%80%88,%E2%80%89,%E2%80%8A,%E2%80%A8,%E2%80%A9,%E2%80%AF,%E2%81%9F,%E3%80%80,%EF%BB%BF' | split: ',' -%}
+{%- for plain_space in plain_spaces -%}
+  {%- assign plain_title_stripped = plain_title_stripped | remove: plain_space -%}
+  {%- assign plain_description_stripped = plain_description_stripped | remove: plain_space -%}
+{%- endfor -%}
+{%- if page.seo_plain_title != nil -%}
+  {%- if plain_title_type != '"' or plain_title_stripped == '' -%}
+    {%- include ERROR_achievement_seo_plain_title_must_be_nonempty_string.html -%}
+  {%- endif -%}
+  {%- assign seo_page_title = page.seo_plain_title | normalize_whitespace -%}
+  {%- assign seo_page_title_html = seo_page_title | escape -%}
+{%- else -%}
+  {%- if seo_page_title contains '&' -%}
+    {%- include ERROR_achievement_seo_plain_title_required.html -%}
+  {%- endif -%}
+  {%- assign seo_page_title_html = seo_page_title | escape_once -%}
+{%- endif -%}
+{%- if seo_plain_description != nil -%}
+  {%- if plain_description_type != '"' or plain_description_stripped == '' -%}
+    {%- include ERROR_achievement_seo_plain_description_must_be_nonempty_string.html -%}
+  {%- endif -%}
+  {%- assign seo_description = seo_plain_description | normalize_whitespace -%}
+  {%- assign seo_description_html = seo_description | escape -%}
+{%- else -%}
+  {%- if seo_description contains '&' -%}
+    {%- include ERROR_achievement_seo_plain_description_required.html -%}
+  {%- endif -%}
+  {%- assign seo_description_html = seo_description | escape_once -%}
+{%- endif -%}
+{%- assign seo_author = page.author | default: site.author -%}
+{%- assign seo_locale = page.locale | default: site.locale | default: page.lang | default: site.lang | default: 'en_US' | replace: '-', '_' -%}
+{%- if page.canonical_url and page.canonical_url != '' -%}
+  {%- assign seo_url = page.canonical_url -%}
+{%- else -%}
+  {%- assign seo_url = page.url | absolute_url -%}
+  {%- assign seo_suffix = seo_url | slice: -11, 11 -%}
+  {%- if seo_suffix == '/index.html' -%}
+    {%- assign seo_length = seo_url.size | minus: 11 -%}
+    {%- assign seo_url = seo_url | slice: 0, seo_length | append: '/' -%}
+  {%- endif -%}
+{%- endif -%}
+{%- assign seo_logo = site.logo | absolute_url -%}
+<title>{{ seo_page_title_html }} | {{ seo_site_title | escape_once }}</title>
+<meta name="generator" content="Jekyll v{{ jekyll.version | escape }}" />
+<meta property="og:title" content="{{ seo_page_title_html }}" />
+{% if seo_author %}<meta name="author" content="{{ seo_author | escape_once }}" />{% endif %}
+<meta property="og:locale" content="{{ seo_locale | escape }}" />
+{% if seo_description %}<meta name="description" content="{{ seo_description_html }}" />
+<meta name="twitter:description" property="og:description" content="{{ seo_description_html }}" />{% endif %}
+<link rel="canonical" href="{{ seo_url | escape_once }}" />
+<meta property="og:url" content="{{ seo_url | escape_once }}" />
+<meta property="og:site_name" content="{{ seo_site_title | escape_once }}" />
+<meta property="og:type" content="website" />
+{% if site.logo %}<meta property="og:image" content="{{ seo_logo | escape_once }}" />{% endif %}
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="{{ seo_page_title_html }}" />
+{% capture seo_json %}{"@context":"https://schema.org","@type":"WebPage","@id":{{ seo_url | jsonify }},{% if seo_author %}"author":{"@type":"Person","name":{{ seo_author | jsonify }}},{% endif %}{% if page.last_modified_at %}"dateModified":{{ page.last_modified_at | date_to_xmlschema | jsonify }},{% endif %}{% if seo_description %}"description":{{ seo_description | jsonify }},{% endif %}"headline":{{ seo_page_title | jsonify }},{% if site.logo %}"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":{{ seo_logo | jsonify }}}{% if seo_author %},"name":{{ seo_author | jsonify }}{% endif %}},{% endif %}"url":{{ seo_url | jsonify }}}{% endcapture %}
+<script type="application/ld+json">{{ seo_json | replace: '<', '\u003c' | replace: '>', '\u003e' | replace: '&', '\u0026' | replace: ' ', '\u2028' | replace: ' ', '\u2029' }}</script>

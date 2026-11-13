@@ -1,0 +1,107 @@
+---
+layout: null
+---
+{%- comment -%}
+  jekyll-sitemap 1.4.0의 기본 템플릿을 기초로 성과 날짜만 조정했다.
+
+  The MIT License (MIT)
+  Copyright (c) 2014-present, GitHub, inc. and the jekyll-sitemap contributors
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in all
+  copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  SOFTWARE.
+{%- endcomment -%}
+<?xml version="1.0" encoding="UTF-8"?>
+{% assign sitemap_xsl = site.static_files | where: 'path', '/sitemap.xsl' | first %}
+{% assign sitemap_xsl_page = site.pages | where: 'url', '/sitemap.xsl' | first %}
+{% if sitemap_xsl or sitemap_xsl_page %}<?xml-stylesheet type="text/xsl" href="{{ '/sitemap.xsl' | absolute_url }}"?>{% endif %}
+<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  {% for collection in site.collections %}
+    {% if collection.output %}
+    {% assign docs = collection.docs | where_exp: 'doc', 'doc.sitemap != false' %}
+    {% for doc in docs %}
+      {% assign sitemap_doc_published = true %}
+      {% assign sitemap_doc_keys = doc.keys %}
+      {% if sitemap_doc_keys contains 'published' %}
+        {% if doc.published == false or doc.published == nil %}
+          {% unless site.unpublished %}{% assign sitemap_doc_published = false %}{% endunless %}
+        {% endif %}
+      {% endif %}
+      {% unless site.future %}
+        {% if doc.date %}
+          {% assign sitemap_doc_time = doc.date | date: '%s' | plus: 0 %}
+          {% assign sitemap_build_time = site.time | date: '%s' | plus: 0 %}
+          {% if sitemap_doc_time > sitemap_build_time %}{% assign sitemap_doc_published = false %}{% endif %}
+        {% endif %}
+      {% endunless %}
+      {% if sitemap_doc_published %}
+      {% assign sitemap_doc_url = doc.url %}
+      {% assign sitemap_doc_suffix = sitemap_doc_url | slice: -11, 11 %}
+      {% if sitemap_doc_suffix == '/index.html' %}
+        {% assign sitemap_doc_length = sitemap_doc_url.size | minus: 11 %}
+        {% assign sitemap_doc_url = sitemap_doc_url | slice: 0, sitemap_doc_length | append: '/' %}
+      {% endif %}
+      <url>
+        <loc>{{ sitemap_doc_url | absolute_url | xml_escape }}</loc>
+        {% if collection.label == 'achievements' %}
+          {% if doc.last_modified_at %}<lastmod>{{ doc.last_modified_at | date_to_xmlschema }}</lastmod>{% endif %}
+        {% else %}
+          {% if doc.last_modified_at or doc.date %}
+            <lastmod>{{ doc.last_modified_at | default: doc.date | date_to_xmlschema }}</lastmod>
+          {% endif %}
+        {% endif %}
+      </url>
+      {% endif %}
+    {% endfor %}
+    {% endif %}
+  {% endfor %}
+  {% assign pages = site.html_pages | where_exp: 'doc', 'doc.sitemap != false' | where_exp: 'doc', 'doc.url != "/404.html"' %}
+  {% for page in pages %}
+    {% assign sitemap_page_url = page.url %}
+    {% assign sitemap_page_suffix = sitemap_page_url | slice: -11, 11 %}
+    {% if sitemap_page_suffix == '/index.html' %}
+      {% assign sitemap_page_length = sitemap_page_url.size | minus: 11 %}
+      {% assign sitemap_page_url = sitemap_page_url | slice: 0, sitemap_page_length | append: '/' %}
+    {% endif %}
+    <url>
+      <loc>{{ sitemap_page_url | absolute_url | xml_escape }}</loc>
+      {% if page.last_modified_at %}<lastmod>{{ page.last_modified_at | date_to_xmlschema }}</lastmod>{% endif %}
+    </url>
+  {% endfor %}
+  {% assign static_files = site.static_files | where_exp: 'file', 'file.sitemap != false' %}
+  {% assign sitemap_root_url = '/' | absolute_url %}
+  {% for file in static_files %}
+    {% if file.extname == '.htm' or file.extname == '.html' or file.extname == '.xhtml' or file.extname == '.pdf' %}
+      {% unless file.name == '404.html' %}
+        {% assign sitemap_file_url = file.path %}
+        {% assign sitemap_file_suffix = sitemap_file_url | slice: -11, 11 %}
+        {% if sitemap_file_suffix == '/index.html' %}
+          {% assign sitemap_file_length = sitemap_file_url.size | minus: 11 %}
+          {% assign sitemap_file_url = sitemap_file_url | slice: 0, sitemap_file_length | append: '/' %}
+        {% endif %}
+        {% assign sitemap_file_last = sitemap_file_url | slice: -1, 1 %}
+        {% assign sitemap_file_parts = sitemap_file_url | split: '/' %}
+        {% capture sitemap_file_encoded %}{% for part in sitemap_file_parts %}{% unless forloop.first %}/{% endunless %}{{ part | url_encode | replace: '+', '%20' }}{% endfor %}{% if sitemap_file_last == '/' %}/{% endif %}{% endcapture %}
+        {% assign sitemap_file_relative = sitemap_file_encoded | remove_first: '/' %}
+        <url>
+          <loc>{{ sitemap_root_url | append: sitemap_file_relative | xml_escape }}</loc>
+          <lastmod>{{ file.modified_time | date_to_xmlschema }}</lastmod>
+        </url>
+      {% endunless %}
+    {% endif %}
+  {% endfor %}
+</urlset>

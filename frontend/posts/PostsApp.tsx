@@ -15,11 +15,14 @@ import type {
   ReactNode,
 } from 'react';
 import {
+  decodeFallbackPosts,
   getPageWindow,
   getPaginationItems,
   getRankedEntries,
   mergeSearchIndex,
   normalizeText,
+  normalizeQuery,
+  normalizedTextMap,
   parsePostsState,
   serializePostsState,
 } from './model';
@@ -27,7 +30,14 @@ import type { CatalogEntry, PostsState, SortMode } from './model';
 
 const POSTS_PER_PAGE = 10;
 const SEARCH_INPUT_DELAY_MS = 250;
+const SEARCH_INDEX_TIMEOUT_MS = 12000;
 const SCROLL_STATE_KEY = 'postsListState';
+const DYNAMIC_POST_CONTROL = '#react-posts-results a[href], #react-posts-results button, #react-posts-achievements-link, #react-posts-retry-search-index, #react-posts-restore-scroll, .posts-reset';
+
+function isUnavailableControl(control: HTMLElement): boolean {
+  return !control.isConnected || control.matches(':disabled')
+    || !!control.closest('[hidden], [inert], [aria-hidden="true"]');
+}
 
 type SearchIndexStatus = 'loading' | 'ready' | 'incomplete' | 'failed';
 type HistoryMode = 'push' | 'replace';
@@ -38,6 +48,9 @@ interface PostsAppProps {
   searchIndexUrl: string;
   siteBaseUrl: string;
   postsUrl: string;
+  achievementsUrl: string;
+  expectedPagePaths: readonly string[];
+  expectedAchievementPaths: readonly string[];
   rootElement: HTMLElement;
   fallbackElement: HTMLElement;
 }
@@ -57,18 +70,18 @@ function normalizedTextContent(value: string): string {
 }
 
 function textSegments(value: string, query: string): TextSegment[] {
-  const text = value.normalize('NFC');
+  const text = value;
   const terms = normalizeText(query).split(' ').filter(Boolean);
   if (!text || terms.length === 0) return [{ text, highlighted: false }];
 
-  const searchable = text.toLocaleLowerCase('ko-KR');
+  const { normalized: searchable, starts, ends } = normalizedTextMap(text);
   const ranges: Array<[number, number]> = [];
   terms.forEach(term => {
     let start = 0;
     let match = -1;
     while ((match = searchable.indexOf(term, start)) !== -1) {
-      ranges.push([match, match + term.length]);
-      start = match + term.length;
+      ranges.push([starts[match], ends[match + term.length - 1]]);
+      start = match + 1;
     }
   });
   if (ranges.length === 0) return [{ text, highlighted: false }];
@@ -102,14 +115,15 @@ function getExcerpt(entry: CatalogEntry, query: string): string {
   const source = terms.some(term => descriptionSearch.includes(term)) ? description : content || description;
   if (source.length <= 180) return source;
 
-  const searchable = source.normalize('NFC').toLocaleLowerCase('ko-KR');
+  const searchable = normalizeText(source);
   const firstMatch = terms
     .map(term => searchable.indexOf(term))
     .filter(index => index >= 0)
     .reduce((minimum, index) => Math.min(minimum, index), Number.POSITIVE_INFINITY);
   if (!Number.isFinite(firstMatch)) return `${source.slice(0, 177)}…`;
 
-  const start = Math.max(0, firstMatch - 60);
+  const { starts } = normalizedTextMap(source, firstMatch);
+  const start = Math.max(0, starts[firstMatch] - 60);
   const end = Math.min(source.length, start + 170);
   const excerpt = source.slice(start, end).trim();
   return `${start > 0 ? '…' : ''}${excerpt}${end < source.length ? '…' : ''}`;
@@ -146,25 +160,103 @@ function saveScrollState(state: PostsState): void {
   }
 }
 
+function readScrollState(): StoredScrollState | null {
+  try {
+    const raw = window.sessionStorage.getItem(SCROLL_STATE_KEY);
+    if (!raw) return null;
+    const stored: unknown = JSON.parse(raw);
+    if (!stored || typeof stored !== 'object') return null;
+    const value = stored as Partial<StoredScrollState>;
+    if (typeof value.path !== 'string' || typeof value.category !== 'string'
+      || typeof value.query !== 'string' || typeof value.sort !== 'string'
+      || !Number.isInteger(value.page) || (value.page ?? 0) < 1 || typeof value.scrollY !== 'number'
+      || !Number.isFinite(value.scrollY) || value.scrollY <= 0 || value.scrollY > Number.MAX_SAFE_INTEGER) return null;
+    return value as StoredScrollState;
+  } catch {
+    return null;
+  }
+}
+
+// 이동한 화면에 실제로 보이는 내용을 포커스해 키보드 사용자의 위치를 맞춘다.
+function focusVisibleScrollDestination(): void {
+  const candidates = Array.from(document.querySelectorAll<HTMLElement>(
+    '#react-posts-list .post-preview h2 a, #react-posts-list .post-excerpt, #react-posts-pagination, footer',
+  ));
+  const isVisible = (element: HTMLElement) => {
+    if (element.closest('[hidden], [inert], [aria-hidden="true"]') || element.matches(':disabled')) return false;
+    const style = window.getComputedStyle(element);
+    if (style.display === 'none' || style.visibility === 'hidden') return false;
+    const rect = element.getBoundingClientRect();
+    return rect.bottom > 0 && rect.top < window.innerHeight && rect.right > 0 && rect.left < window.innerWidth;
+  };
+  const visible = candidates.filter(isVisible)
+    .sort((left, right) => Math.abs(left.getBoundingClientRect().top) - Math.abs(right.getBoundingClientRect().top));
+  const point = typeof document.elementFromPoint === 'function'
+    ? document.elementFromPoint(Math.max(0, window.innerWidth / 2), Math.max(0, window.innerHeight / 2))
+    : null;
+  const pointTarget = point instanceof HTMLElement && point !== document.body
+    && point !== document.documentElement && isVisible(point) ? point : null;
+  // 빈 공간을 클릭 위치로 선택했더라도 가능한 한 문서 순서 안의 실제 내용을 사용한다.
+  const otherVisible = Array.from(document.querySelectorAll<HTMLElement>(
+    'main a[href], main button, main p, main h1, main h2, main h3, main article, main nav, footer, footer a[href]',
+  )).filter(isVisible).sort((left, right) => Math.abs(left.getBoundingClientRect().top) - Math.abs(right.getBoundingClientRect().top));
+  const target = visible[0] || pointTarget || otherVisible[0];
+  if (target) {
+    const previousTabIndex = target.getAttribute('tabindex');
+    const cleanup = () => {
+      target.classList.remove('posts-restore-focus');
+      if (previousTabIndex === null) target.removeAttribute('tabindex');
+      else target.setAttribute('tabindex', previousTabIndex);
+    };
+    if (target.tabIndex < 0) target.setAttribute('tabindex', '-1');
+    target.classList.add('posts-restore-focus');
+    target.addEventListener('blur', cleanup, { once: true });
+    target.focus({ preventScroll: true });
+    if (document.activeElement === target) return;
+    target.removeEventListener('blur', cleanup);
+    cleanup();
+  }
+  // 화면에 보이는 본문 요소를 찾지 못한 드문 경우에도 포커스를 화면 안에 둔다.
+  const marker = document.createElement('div');
+  marker.className = 'posts-scroll-location posts-restore-focus';
+  marker.tabIndex = -1;
+  marker.textContent = '이동한 위치';
+  marker.addEventListener('blur', () => marker.remove(), { once: true });
+  const footer = document.querySelector('footer');
+  if (footer?.parentNode) footer.parentNode.insertBefore(marker, footer);
+  else document.body.append(marker);
+  marker.focus({ preventScroll: true });
+  if (document.activeElement !== marker) marker.remove();
+}
+
 function StatusMessage({
   query,
   status,
   missingPostCount,
+  missingPageCount,
+  invalidRowCount,
   totalPosts,
 }: {
   query: string;
   status: SearchIndexStatus;
   missingPostCount: number;
+  missingPageCount: number;
+  invalidRowCount: number;
   totalPosts: number;
 }) {
   if (!query) return null;
   if (status === 'ready') return null;
 
-  let message = '전체 본문 인덱스를 불러오는 중입니다. 지금은 제목·요약·태그와 본문 앞부분을 검색합니다.';
+  let message = '검색 인덱스를 불러오는 중입니다. 지금은 글 목록의 제목·요약·태그와 본문 앞부분만 검색하며, 성과·시리즈·도구 페이지는 아직 검색되지 않습니다.';
   if (status === 'failed') {
-    message = '전체 본문 인덱스를 불러오지 못했습니다. 현재 목록의 제목·요약·태그와 본문 앞부분에서 검색합니다.';
+    message = '전체 본문 인덱스를 불러오지 못했습니다. 현재 글 목록의 제목·요약·태그와 본문 앞부분에서 검색합니다. 성과·시리즈·도구 페이지는 검색되지 않습니다.';
   } else if (status === 'incomplete') {
-    message = `전체 ${totalPosts}개 글 중 ${missingPostCount}개의 본문 인덱스를 불러오지 못했습니다. 현재 목록 데이터도 함께 검색합니다.`;
+    const missingPosts = missingPostCount > 0
+      ? `전체 ${totalPosts}개 글 중 ${missingPostCount}개의 본문 인덱스를 불러오지 못했습니다. `
+      : '';
+    const missingPages = missingPageCount > 0 ? `${missingPageCount}개 안내 페이지(성과 포함)가 검색 인덱스에서 누락됐습니다. ` : '';
+    const invalidRows = invalidRowCount > 0 ? '검색 인덱스 일부를 읽지 못해 결과가 누락될 수 있습니다. ' : '';
+    message = `${missingPosts}${missingPages}${invalidRows}현재 확인된 데이터와 글 목록을 함께 검색합니다.`;
   }
 
   return <span id="react-posts-search-status" className="posts-search-status" role="status" aria-live="polite">{message}</span>;
@@ -210,23 +302,38 @@ export function PostsApp({
   searchIndexUrl,
   siteBaseUrl,
   postsUrl,
+  achievementsUrl,
+  expectedPagePaths,
+  expectedAchievementPaths,
   rootElement,
   fallbackElement,
 }: PostsAppProps) {
+  const decodedFallbackPosts = useMemo(() => decodeFallbackPosts(fallbackPosts), [fallbackPosts]);
   const validCategories = useMemo(() => new Set(categoryLabels.keys()), [categoryLabels]);
   const [state, setState] = useState(() => parsePostsState(window.location.href, validCategories));
   const [draftQuery, setDraftQuery] = useState(state.query);
-  const [entries, setEntries] = useState(fallbackPosts);
+  const [entries, setEntries] = useState(decodedFallbackPosts);
   const [indexStatus, setIndexStatus] = useState<SearchIndexStatus>('loading');
   const [missingPostCount, setMissingPostCount] = useState(0);
+  const [missingPageCount, setMissingPageCount] = useState(0);
+  const [invalidRowCount, setInvalidRowCount] = useState(0);
   const [canRetry, setCanRetry] = useState(false);
+  const [savedScroll, setSavedScroll] = useState<StoredScrollState | null>(readScrollState);
+  const [restoreMessage, setRestoreMessage] = useState('');
   const stateRef = useRef(state);
   const queryTimerRef = useRef<number | null>(null);
   const isComposingRef = useRef(false);
   const navigationRevisionRef = useRef(0);
   const compositionRevisionRef = useRef(0);
+  const indexRequestRef = useRef<{ id: number; cancel: () => void } | null>(null);
+  const indexRequestIdRef = useRef(0);
   const focusResultsAfterPageChangeRef = useRef(false);
+  const entriesRef = useRef(entries);
+  const pendingIndexFocusRef = useRef<{ control: HTMLElement; resultLink: boolean; cancelled: boolean; cleanup: () => void } | null>(null);
+  const pendingHistoryFocusRef = useRef<{ control: HTMLElement; cancelled: boolean; cleanup: () => void } | null>(null);
+  const restoreControlFocusRef = useRef(false);
   stateRef.current = state;
+  entriesRef.current = entries;
 
   const rankedEntries = useMemo(
     () => getRankedEntries(entries, { query: state.query, category: state.category, sort: state.sort }),
@@ -236,61 +343,150 @@ export function PostsApp({
   const visibleEntries = rankedEntries.slice(pageWindow.startIndex, pageWindow.endIndex);
   const categoryOptions = Array.from(categoryLabels.entries()).sort((left, right) => left[1].localeCompare(right[1], 'ko-KR'));
   const isLoading = indexStatus === 'loading';
-  const showRetry = canRetry && state.query.length > 0;
   const statusMessage = state.query && indexStatus !== 'ready';
+  // 입력과 결과가 일치할 때까지 기존 결과를 보존하되 선택할 수 없게 한다.
+  // 대소문자와 공백만 다른 검색은 같은 결과로 취급한다.
+  const searchPending = normalizeText(draftQuery) !== normalizeText(state.query);
+  const hasSavedScroll = !!savedScroll && savedScroll.path === window.location.pathname
+    && savedScroll.category === state.category && savedScroll.page === state.page
+    && savedScroll.query === state.query && savedScroll.sort === state.sort;
+  const restoreUnavailable = isLoading || searchPending;
+  const showRetry = canRetry && (state.query.length > 0 || hasSavedScroll);
+
 
   useLayoutEffect(() => {
     rootElement.hidden = false;
     fallbackElement.hidden = true;
-
-    try {
-      const saved = window.sessionStorage.getItem(SCROLL_STATE_KEY);
-      if (!saved) return;
-      const stored = JSON.parse(saved) as StoredScrollState;
-      if (
-        stored.path !== window.location.pathname ||
-        stored.category !== stateRef.current.category ||
-        stored.page !== stateRef.current.page ||
-        stored.query !== stateRef.current.query ||
-        stored.sort !== stateRef.current.sort ||
-        !Number.isFinite(stored.scrollY)
-      ) return;
-      window.requestAnimationFrame(() => window.scrollTo({ top: stored.scrollY, behavior: 'auto' }));
-    } catch {
-      // Ignore stale or malformed navigation state.
-    }
   }, [fallbackElement, rootElement]);
 
   useLayoutEffect(() => {
-    if (!focusResultsAfterPageChangeRef.current) return;
-    rootElement.querySelector<HTMLAnchorElement>('#react-posts-list .post-preview h2 a')?.focus();
-    focusResultsAfterPageChangeRef.current = false;
-  }, [rootElement, state.page]);
+    if (hasSavedScroll || !restoreControlFocusRef.current) return;
+    restoreControlFocusRef.current = false;
+    if (document.activeElement === document.body) {
+      rootElement.querySelector<HTMLInputElement>('#react-posts-search-input')?.focus();
+    }
+  }, [hasSavedScroll, rootElement]);
 
-  const loadSearchIndex = useCallback(async (): Promise<boolean> => {
+  useLayoutEffect(() => {
+    if (!focusResultsAfterPageChangeRef.current) return;
+    const focusTarget = rootElement.querySelector<HTMLElement>(
+      '#react-posts-list .post-preview h2 a, #react-posts-clear-filters',
+    ) || rootElement.querySelector<HTMLInputElement>('#react-posts-search-input');
+    focusTarget?.focus();
+    focusResultsAfterPageChangeRef.current = false;
+  }, [rootElement, state.page, state.query]);
+
+  // 이력 이동으로 포커스한 결과·페이지·임시 안내의 조작 대상이 제거되거나
+  // 비활성화된 경우에만 검색 입력으로 복구한다.
+  useLayoutEffect(() => {
+    const pending = pendingHistoryFocusRef.current;
+    if (!pending) return;
+    pendingHistoryFocusRef.current = null;
+    pending.cleanup();
+    const control = pending.control;
+    if (pending.cancelled || !isUnavailableControl(control)
+      || (document.activeElement !== document.body && document.activeElement !== control)) return;
+    rootElement.querySelector<HTMLInputElement>('#react-posts-search-input')?.focus();
+  }, [rootElement, state]);
+
+  // 색인 갱신으로 기존 조작 대상이 없어지거나 비활성화될 때만 포커스를 복구한다.
+  useLayoutEffect(() => {
+    const pending = pendingIndexFocusRef.current;
+    if (!pending) return;
+    pendingIndexFocusRef.current = null;
+    pending.cleanup();
+    const control = pending.control;
+    if (pending.cancelled || !isUnavailableControl(control)
+      || (document.activeElement !== document.body && document.activeElement !== control)) return;
+    const links = Array.from(rootElement.querySelectorAll<HTMLElement>('#react-posts-list .post-preview h2 a'));
+    const target = !pending.resultLink || searchPending
+      ? rootElement.querySelector<HTMLInputElement>('#react-posts-search-input')
+      : links.find(link => link.getAttribute('href') === control.getAttribute('href'))
+        || links[0]
+        || rootElement.querySelector<HTMLElement>('#react-posts-clear-filters')
+        || rootElement.querySelector<HTMLInputElement>('#react-posts-search-input');
+    target?.focus();
+  }, [entries, rootElement, searchPending]);
+
+  const replaceIndexEntries = useCallback((nextEntries: CatalogEntry[]) => {
+    pendingIndexFocusRef.current?.cleanup();
+    pendingIndexFocusRef.current = null;
+    const active = document.activeElement;
+    if (nextEntries !== entriesRef.current && active instanceof HTMLElement
+      && rootElement.contains(active) && active.matches(DYNAMIC_POST_CONTROL)) {
+      const pending = { control: active, resultLink: active.matches('#react-posts-list .post-preview h2 a'), cancelled: false, cleanup: () => {} };
+      const cancelRecovery = () => { pending.cancelled = true; };
+      const eventTypes = ['focusin', 'pointerdown', 'keydown'] as const;
+      eventTypes.forEach(type => document.addEventListener(type, cancelRecovery, true));
+      pending.cleanup = () => eventTypes.forEach(type => document.removeEventListener(type, cancelRecovery, true));
+      pendingIndexFocusRef.current = pending;
+    }
+    setEntries(nextEntries);
+  }, [rootElement]);
+
+  const loadSearchIndex = useCallback(async (retry = false): Promise<boolean> => {
+    indexRequestRef.current?.cancel();
+    const id = ++indexRequestIdRef.current;
+    const controller = new AbortController();
+    let rejectInterruption: (reason?: unknown) => void = () => {};
+    const interruption = new Promise<never>((_, reject) => { rejectInterruption = reject; });
+    const timeout = window.setTimeout(() => {
+      controller.abort();
+      rejectInterruption(new Error('Search index request timed out.'));
+    }, SEARCH_INDEX_TIMEOUT_MS);
+    indexRequestRef.current = {
+      id,
+      cancel: () => {
+        controller.abort();
+        rejectInterruption(new Error('Search index request cancelled.'));
+      },
+    };
     setIndexStatus('loading');
     try {
       const resolvedUrl = new URL(searchIndexUrl, window.location.href).href;
-      const response = await window.fetch(resolvedUrl);
-      if (!response.ok) throw new Error(`Search index request failed: ${response.status}`);
-      const payload: unknown = await response.json();
-      const merged = mergeSearchIndex(fallbackPosts, payload, siteBaseUrl);
-      setEntries(merged.entries);
+      const payload: unknown = await Promise.race([
+        window.fetch(resolvedUrl, { signal: controller.signal, cache: retry ? 'reload' : 'default' }).then(response => {
+          if (!response.ok) throw new Error(`Search index request failed: ${response.status}`);
+          return response.json();
+        }),
+        interruption,
+      ]);
+      if (indexRequestRef.current?.id !== id) return false;
+      const merged = mergeSearchIndex(decodedFallbackPosts, payload, siteBaseUrl, expectedPagePaths, expectedAchievementPaths);
+      replaceIndexEntries(merged.entries);
       setMissingPostCount(merged.missingPostCount);
-      setCanRetry(merged.missingPostCount > 0);
-      setIndexStatus(merged.missingPostCount > 0 ? 'incomplete' : 'ready');
-      return merged.missingPostCount === 0;
+      setMissingPageCount(merged.missingPageCount);
+      setInvalidRowCount(merged.invalidRowCount);
+      const incomplete = merged.missingPostCount > 0 || merged.missingPageCount > 0 || merged.invalidRowCount > 0;
+      setCanRetry(incomplete);
+      setIndexStatus(incomplete ? 'incomplete' : 'ready');
+      return !incomplete;
     } catch {
-      setEntries(fallbackPosts);
-      setMissingPostCount(fallbackPosts.length);
+      if (indexRequestRef.current?.id !== id) return false;
+      replaceIndexEntries(decodedFallbackPosts);
+      setMissingPostCount(decodedFallbackPosts.length);
+      setMissingPageCount(0);
+      setInvalidRowCount(0);
       setCanRetry(true);
       setIndexStatus('failed');
       return false;
+    } finally {
+      window.clearTimeout(timeout);
+      if (indexRequestRef.current?.id === id) indexRequestRef.current = null;
     }
-  }, [fallbackPosts, searchIndexUrl, siteBaseUrl]);
+  }, [expectedPagePaths, expectedAchievementPaths, decodedFallbackPosts, replaceIndexEntries, searchIndexUrl, siteBaseUrl]);
 
   useEffect(() => {
     void loadSearchIndex();
+    return () => {
+      const pending = indexRequestRef.current;
+      indexRequestRef.current = null;
+      pending?.cancel();
+      pendingIndexFocusRef.current?.cleanup();
+      pendingIndexFocusRef.current = null;
+      pendingHistoryFocusRef.current?.cleanup();
+      pendingHistoryFocusRef.current = null;
+    };
   }, [loadSearchIndex]);
 
   useEffect(() => {
@@ -305,8 +501,18 @@ export function PostsApp({
 
   useEffect(() => {
     const saveOnExit = () => saveScrollState(stateRef.current);
+    const refreshOnReturn = (event: PageTransitionEvent) => {
+      if (event.persisted) {
+        setSavedScroll(readScrollState());
+        setRestoreMessage('');
+      }
+    };
     window.addEventListener('pagehide', saveOnExit);
-    return () => window.removeEventListener('pagehide', saveOnExit);
+    window.addEventListener('pageshow', refreshOnReturn);
+    return () => {
+      window.removeEventListener('pagehide', saveOnExit);
+      window.removeEventListener('pageshow', refreshOnReturn);
+    };
   }, []);
 
   useEffect(() => {
@@ -315,6 +521,20 @@ export function PostsApp({
       queryTimerRef.current = null;
       navigationRevisionRef.current += 1;
       isComposingRef.current = false;
+      focusResultsAfterPageChangeRef.current = false;
+      pendingHistoryFocusRef.current?.cleanup();
+      pendingHistoryFocusRef.current = null;
+      const active = document.activeElement;
+      if (active instanceof HTMLElement && rootElement.contains(active)
+        && active.matches(DYNAMIC_POST_CONTROL)) {
+        const pending = { control: active, cancelled: false, cleanup: () => {} };
+        const cancelRecovery = () => { pending.cancelled = true; };
+        const eventTypes = ['focusin', 'pointerdown', 'keydown'] as const;
+        eventTypes.forEach(type => document.addEventListener(type, cancelRecovery, true));
+        pending.cleanup = () => eventTypes.forEach(type => document.removeEventListener(type, cancelRecovery, true));
+        pendingHistoryFocusRef.current = pending;
+      }
+      setRestoreMessage('');
       const restored = parsePostsState(window.location.href, validCategories);
       stateRef.current = restored;
       setState(restored);
@@ -322,7 +542,7 @@ export function PostsApp({
     };
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
-  }, [validCategories]);
+  }, [rootElement, validCategories]);
 
   useEffect(() => () => {
     if (queryTimerRef.current !== null) window.clearTimeout(queryTimerRef.current);
@@ -331,17 +551,19 @@ export function PostsApp({
   const transition = useCallback((
     changes: Partial<PostsState>,
     historyMode: HistoryMode,
+    preserveDraft = false,
   ) => {
     const current = stateRef.current;
     const next: PostsState = {
       ...current,
       ...changes,
-      query: normalizeText(changes.query ?? current.query),
+      query: normalizeQuery(changes.query ?? current.query),
       page: changes.page ?? current.page,
     };
     stateRef.current = next;
+    setRestoreMessage('');
     setState(next);
-    setDraftQuery(next.query);
+    if (!preserveDraft) setDraftQuery(next.query);
     writeHistory(next, historyMode);
   }, []);
 
@@ -356,7 +578,11 @@ export function PostsApp({
     queryTimerRef.current = window.setTimeout(() => {
       queryTimerRef.current = null;
       if (revision !== navigationRevisionRef.current) return;
-      transition({ query: value, page: 1 }, 'replace');
+      // Applying the search must not erase a trailing space while the reader
+      // is still typing the next term.
+      const current = stateRef.current;
+      const sameSearch = normalizeText(value) === normalizeText(current.query);
+      transition({ query: value, page: sameSearch ? current.page : 1 }, 'replace', true);
     }, SEARCH_INPUT_DELAY_MS);
   }, [clearQueryTimer, transition]);
 
@@ -373,7 +599,9 @@ export function PostsApp({
     const nativeEvent = event.nativeEvent as SubmitEvent & { isComposing?: boolean };
     if (isComposingRef.current || nativeEvent.isComposing) return;
     clearQueryTimer();
-    transition({ query: draftQuery, page: 1 }, 'push');
+    const current = stateRef.current;
+    const sameSearch = normalizeText(draftQuery) === normalizeText(current.query);
+    transition({ query: draftQuery, page: sameSearch ? current.page : 1 }, sameSearch ? 'replace' : 'push');
   };
 
   const handleCompositionStart = () => {
@@ -407,30 +635,73 @@ export function PostsApp({
     rootElement.querySelector<HTMLInputElement>('#react-posts-search-input')?.focus();
   };
 
+  const applyPageChange = (page: number) => {
+    // Pagination still describes the previous results while an IME composition
+    // is active. Let the composition finish before changing the result set.
+    if (isComposingRef.current) return;
+    clearQueryTimer();
+    const current = stateRef.current;
+    const query = normalizeQuery(draftQuery);
+    const sameSearch = normalizeText(query) === normalizeText(current.query);
+    const nextPage = sameSearch ? page : 1;
+    // Reselecting the current page creates no render to consume a focus request.
+    // Do not let that stale request move focus after a later search.
+    if (query === current.query && nextPage === current.page) return;
+    if (sameSearch && nextPage === current.page) {
+      // A spelling-only change doesn't move the user to the results or add a
+      // duplicate history entry, but it must be reflected in the input and URL.
+      transition({ query, page: nextPage }, 'replace');
+      return;
+    }
+    saveScrollState(stateRef.current);
+    setSavedScroll(readScrollState());
+    focusResultsAfterPageChangeRef.current = true;
+    // A pending search changes the result set, so start at its first page
+    // rather than navigating to a page number from the old results.
+    transition({ query, page: nextPage }, 'push');
+  };
+
   const handlePageClick = (event: MouseEvent<HTMLAnchorElement>, page: number) => {
     if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
     event.preventDefault();
-    clearQueryTimer();
-    saveScrollState(stateRef.current);
-    focusResultsAfterPageChangeRef.current = true;
-    transition({ page }, 'push');
+    applyPageChange(page);
   };
 
   const handleStepPage = (page: number) => {
     if (page < 1 || page > pageWindow.totalPages) return;
-    clearQueryTimer();
-    saveScrollState(stateRef.current);
-    focusResultsAfterPageChangeRef.current = true;
-    transition({ page }, 'push');
+    applyPageChange(page);
+  };
+
+  const handleRestoreScroll = () => {
+    if (!hasSavedScroll || !savedScroll || restoreUnavailable) return;
+    try {
+      window.scrollTo({ top: savedScroll.scrollY, behavior: 'auto' });
+      const limited = window.scrollY < savedScroll.scrollY - 1;
+      setRestoreMessage(limited
+        ? '페이지 길이가 달라 이전 위치까지 이동하지 못했습니다. 현재 가능한 위치로 이동했습니다.'
+        : '이전 위치로 이동했습니다.');
+      focusVisibleScrollDestination();
+    } catch {
+      setRestoreMessage('이전 위치로 이동하지 못했습니다. 직접 스크롤해 주세요.');
+    }
   };
 
   const handleRetry = async () => {
-    if (isLoading) return;
+    // state 렌더 전에 연속 입력이 들어와도 진행 중인 요청을 중복하지 않는다.
+    if (isLoading || indexRequestRef.current) return;
     const retryButton = rootElement.querySelector<HTMLButtonElement>('#react-posts-retry-search-index');
     const hadFocus = document.activeElement === retryButton;
-    const complete = await loadSearchIndex();
-    if (hadFocus && complete) {
-      rootElement.querySelector<HTMLInputElement>('#react-posts-search-input')?.focus();
+    let userMovedOn = false;
+    const noteInteraction = () => { userMovedOn = true; };
+    const eventTypes = ['focusin', 'pointerdown', 'keydown'] as const;
+    if (hadFocus) eventTypes.forEach(type => document.addEventListener(type, noteInteraction, true));
+    try {
+      const complete = await loadSearchIndex(true);
+      if (hadFocus && !userMovedOn && complete && (document.activeElement === retryButton || document.activeElement === document.body)) {
+        rootElement.querySelector<HTMLInputElement>('#react-posts-search-input')?.focus();
+      }
+    } finally {
+      if (hadFocus) eventTypes.forEach(type => document.removeEventListener(type, noteInteraction, true));
     }
   };
 
@@ -477,7 +748,7 @@ export function PostsApp({
                       type="search"
                       name="q"
                       value={draftQuery}
-                      placeholder="글 제목이나 본문 키워드"
+                      placeholder="글·성과·도구 검색"
                       autoComplete="off"
                       inputMode="search"
                       aria-describedby="react-posts-search-instructions"
@@ -492,7 +763,7 @@ export function PostsApp({
                       </svg>
                     </button>
                   </div>
-                  <span id="react-posts-search-instructions" className="visually-hidden">제목과 본문에서 검색합니다. 입력하면 결과가 자동으로 바뀝니다.</span>
+                  <span id="react-posts-search-instructions" className="visually-hidden">글과 성과, 시리즈, 도구의 제목과 내용에서 검색합니다. 입력하면 결과가 자동으로 바뀝니다.</span>
                 </form>
               </div>
             </div>
@@ -518,32 +789,64 @@ export function PostsApp({
 
         <div className="posts-controls-meta">
           <div className="posts-info">
-            <span id="react-posts-count" role="status" aria-live="polite">{countLabel}</span>
+            <span id="react-posts-count" role="status" aria-live="polite">{searchPending ? '검색어를 반영하고 있습니다.' : countLabel}</span>
+            {state.query && state.category !== 'all' && (
+              <span className="posts-search-status">카테고리는 글에만 적용됩니다. 성과·시리즈·도구를 검색하려면 전체 주제를 선택하세요.</span>
+            )}
             <StatusMessage
               query={state.query}
               status={indexStatus}
               missingPostCount={missingPostCount}
+              missingPageCount={missingPageCount}
+              invalidRowCount={invalidRowCount}
               totalPosts={fallbackPosts.length}
             />
+            {state.query && indexStatus !== 'ready' && (
+              <a id="react-posts-achievements-link" className="posts-search-status" href={achievementsUrl}>성과 목록 보기</a>
+            )}
             {showRetry && (
               <button
                 id="react-posts-retry-search-index"
                 className="inline-action-btn posts-search-retry"
                 type="button"
                 aria-controls="react-posts-list"
-                disabled={isLoading}
+                aria-disabled={isLoading || undefined}
                 onClick={handleRetry}
               >
                 {isLoading ? '검색 인덱스를 다시 불러오는 중…' : '검색 인덱스 다시 시도'}
               </button>
             )}
+          <span id="react-posts-restore-status" className="posts-restore-status" role="status" aria-live="polite">
+            {hasSavedScroll && restoreUnavailable
+              ? isLoading ? '검색 목록을 불러온 뒤 이전 위치로 이동할 수 있습니다.' : '검색어를 반영한 뒤 이전 위치로 이동할 수 있습니다.'
+              : hasSavedScroll && (indexStatus === 'failed' || indexStatus === 'incomplete')
+                ? restoreMessage
+                  ? `${restoreMessage} 현재 불러온 내용 기준이며, 검색 인덱스를 다시 불러오면 결과가 달라질 수 있습니다.`
+                  : '현재 불러온 내용에서 이전 위치로 이동합니다. 검색 인덱스를 다시 불러오면 결과가 달라질 수 있습니다.'
+                : hasSavedScroll ? restoreMessage : ''}
+          </span>
           </div>
-          {(state.query || state.category !== 'all' || state.sort !== 'date') && rankedEntries.length > 0 && (
-            <button type="button" className="inline-action-btn posts-reset" onClick={handleReset}>검색 조건 초기화</button>
-          )}
+          <div className="posts-meta-actions">
+            {hasSavedScroll && (
+              <button
+                id="react-posts-restore-scroll"
+                type="button"
+                className="inline-action-btn posts-restore"
+                aria-disabled={restoreUnavailable || undefined}
+                aria-describedby="react-posts-restore-status"
+                onFocus={() => { restoreControlFocusRef.current = true; }}
+                onBlur={() => { restoreControlFocusRef.current = false; }}
+                onClick={handleRestoreScroll}
+              >이전 위치로 이동</button>
+            )}
+            {(state.query || state.category !== 'all' || state.sort !== 'date') && rankedEntries.length > 0 && (
+              <button type="button" className="inline-action-btn posts-reset" onClick={handleReset}>검색 조건 초기화</button>
+            )}
+          </div>
         </div>
       </div>
 
+      <div id="react-posts-results" hidden={searchPending} style={{ display: searchPending ? 'none' : undefined }}>
       <div id="react-posts-list" className={rankedEntries.length > 0 ? 'posts-list' : undefined}>
         {rankedEntries.length > 0 ? (
           <>
@@ -551,15 +854,15 @@ export function PostsApp({
             const excerpt = getExcerpt(entry, state.query);
             const metaLabels = entry.kind === 'post'
               ? entry.categories.map(category => categoryLabelFor(category, categoryLabels))
-              : [entry.kind === 'series' ? '시리즈' : '도구'];
+              : [entry.kind === 'series' ? '시리즈' : entry.kind === 'achievement' ? '성과' : '도구'];
             return (
               <article className="post-preview visible" key={`${entry.kind}:${entry.path}`}>
-                <h2><a href={entry.href}><span className="post-title-text"><HighlightedText text={entry.title} query={state.query} /></span></a></h2>
+                <h2><a href={entry.href}><span className="post-title-text" lang={entry.language}><HighlightedText text={entry.title} query={state.query} /></span></a></h2>
                 <div className="post-meta">
                   {entry.date && <time dateTime={entry.date}>{formatDate(entry.date)}</time>}
                   {metaLabels.map((label, index) => <span className="category" key={`${label}:${index}`}>{label}</span>)}
                 </div>
-                <p className="post-excerpt"><HighlightedText text={excerpt} query={state.query} /></p>
+                <p className="post-excerpt" lang={entry.language}><HighlightedText text={excerpt} query={state.query} /></p>
               </article>
             );
           })}
@@ -595,6 +898,7 @@ export function PostsApp({
           <button id="react-posts-next-page" className="page-btn" type="button" disabled={pageWindow.page === pageWindow.totalPages} onClick={() => handleStepPage(pageWindow.page + 1)}>다음</button>
         </nav>
       )}
+      </div>
     </div>
   );
 }

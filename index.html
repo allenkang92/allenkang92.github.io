@@ -61,10 +61,10 @@ styles:
       </time>
     </div>
     <h2 id="featured-title">
-      <a href="{{ featured_post.url | relative_url }}">{{ featured_post.title }}</a>
+      <a href="{{ featured_post.url | relative_url | escape }}">{{ featured_post.title | escape }}</a>
     </h2>
     <p>{{ featured_post.description | default: featured_post.excerpt | strip_html | strip_newlines | normalize_whitespace | truncate: 180 }}</p>
-    <a class="home-featured-link" href="{{ featured_post.url | relative_url }}">
+    <a class="home-featured-link" href="{{ featured_post.url | relative_url | escape }}">
       이 글 읽기 <span aria-hidden="true">→</span>
     </a>
   </section>
@@ -119,7 +119,7 @@ styles:
       {% for post in site.posts offset:1 limit:4 %}
         <article class="post-card">
           <h3 class="post-title">
-            <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+            <a href="{{ post.url | relative_url | escape }}">{{ post.title | escape }}</a>
           </h3>
           <div class="post-meta">
             <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%Y년 %m월 %d일" }}</time>

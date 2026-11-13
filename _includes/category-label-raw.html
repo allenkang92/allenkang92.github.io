@@ -1,0 +1,4 @@
+{%- assign category_key = include.category -%}
+{%- assign category_item = site.data.categories.main[category_key] -%}
+{%- assign category_title = category_item.title | default: '' | strip -%}
+{%- if category_title != '' -%}{{- category_title -}}{%- else -%}{{- category_key | replace: '_', ' ' | capitalize -}}{%- endif -%}

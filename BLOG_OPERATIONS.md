@@ -80,6 +80,22 @@
 - [ ] 맞춤법, 용어, 날짜, 수치, 인용 출처를 확인한다.
 - [ ] 로컬 빌드 또는 가능한 정적 검증을 실행한다.
 
+`npm run verify`는 빌드와 검색·피드·수식·게시 글 목록 검사를 함께 실행한다. 게시 글 목록 검사는 Jekyll이 실제 선택한 글을 검색 색인 및 사이트맵과 비교한다. 별도 산출물을 직접 검사할 때 `bundle exec ruby scripts/verify_post_inventory.rb --site-dir 경로`를 사용할 수 있으며, 산출물과 검증 시점의 빌드 시각, 환경, `--baseurl`, `--future`, `--unpublished` 설정이 같아야 한다. GitHub Pages 진입점으로 생성한 산출물은 `--pages`도 지정한다.
+
+제목의 `<자격증>`처럼 꺾쇠나 `&`를 글자 그대로 표시해야 하는 게시 글에는 front matter에 `seo_title_literal: true`를 지정할 수 있다. 이때 화면에 보이는 `title` 문자열을 브라우저 제목, 공유 제목과 JSON-LD 제목에도 그대로 사용한다. 해당 설정은 `title_category` 또는 페이지 번호가 있는 paginator와 함께 사용할 수 없고, 빈 제목이나 검사하는 제목 필드·JSON-LD 형식이 예상과 다르면 빌드를 중단한다. Liquid는 플러그인 출력을 전체 HTML로 구문 분석하지 않으므로 모든 형식 변형의 탐지를 보장하지 않는다. SEO 플러그인을 바꾸거나 업그레이드할 때는 이 경로의 격리 빌드·테스트를 함께 확인한다. 설정하지 않은 문서에는 기존 플러그인 제목 처리를 유지한다.
+
+성과 제목이나 설명의 Markdown 변환 결과에 HTML 문자 참조가 생기면 `seo_plain_title` 또는 `seo_plain_description`에 브라우저에서 읽히는 평문을 각각 지정한다. 예를 들어 `description: "Research & **Practice**"`의 평문은 `seo_plain_description: "Research & Practice"`이다. 사이트 기본 설명을 상속하는 성과에 공통으로 쓸 평문은 `_config.yml`의 `seo_plain_description`에 지정할 수 있다. 평문은 문자 참조를 한 번 해석한 텍스트이며, `&amp;`라는 글자 자체가 보여야 한다면 평문에도 `&amp;`를 그대로 쓴다. 누락되거나 빈 값·문자열이 아닌 값을 입력하면 빌드를 중단한다. 사람이 입력한 평문이 원본 Markdown과 실제로 일치하는지는 Liquid만으로 판별할 수 없으므로 발행 전 `npm run verify`의 생성물 검사를 실행한다.
+
+일반 글과 페이지에서도 SEO 플러그인이 선택한 설명에 HTML 문자 참조가 생기면 해당 페이지의 front matter에 `seo_plain_description`을 지정한다. 이 평문은 자동 발췌와 단어 수 제한까지 반영된 최종 설명이어야 한다. 설명이 사이트 기본값에서 왔더라도 성과와 달리 페이지별로 지정해야 하며, 사이트의 `seo_plain_description`은 자동 상속하지 않는다. 누락·빈 값·문자열이 아닌 값이나 검사하는 플러그인 출력 형식의 불일치는 빌드를 중단한다. 평문 보정은 루트 JSON 필드의 순서를 확인한 `jekyll-seo-tag` 2.8.0과 2.9.1 형식을 지원하며 다른 버전에서는 보정이 필요한 경우 빌드를 중단한다. 플러그인 출력은 HTML 전체를 구문 분석하지 않으므로 모든 변형이나 평문의 의미 일치를 보장하지 않는다. 발행 전 `npm run verify`의 생성물 검사를 실행한다.
+
+일반 페이지의 JSON-LD `name`은 페이지의 `seo.name`을 우선하고, 홈페이지와 소개 페이지에서는 명시된 이름이 없을 때 사이트의 `social.name` 또는 `title`을 사용한다. 선택된 이름의 Markdown 변환 결과에 HTML 문자 참조가 생기면 해당 페이지에 `seo_plain_name`을 지정한다. 사이트 이름이 선택된 경우에만 `_config.yml`의 `seo_plain_name`을 공통으로 사용할 수 있으며 페이지 설정이 우선한다. 예를 들어 `social.name: "연구 & **기록**"`의 평문은 `seo_plain_name: "연구 & 기록"`이다. 평문은 문자 참조를 한 번 해석한 텍스트로 입력한다. 페이지 `seo.name`이 선택되면 사이트 평문을 대신 사용하지 않는다. 원본 이름을 변경할 때 공통 평문도 함께 갱신해야 하며, 값의 의미가 일치하는지 Liquid나 GitHub Pages 기본 빌드만으로는 보장하지 못하므로 발행 전 `npm run verify`의 생성물 검사를 실행한다.
+
+성과의 `certificate_image`와 `project_detail`에는 문자열 주소를 입력한다. 상속된 값을 비활성화하려면 `false`를 사용한다. `null`은 Jekyll에서 기본값을 상속할 수 있다. 명시적 스킴은 `http://`와 `https://`만 허용하며 내부·문서 상대 주소와 `//`로 시작하는 외부 주소도 사용할 수 있다. `mailto:`, `tel:`, `data:`와 제어문자, 역슬래시, 주소 앞뒤 공백은 허용하지 않는다. 정책에 맞지 않는 값은 페이지에서 이미지나 링크를 표시하지 않으며, `npm run verify:frontmatter`는 명시된 값의 파일·필드명과 거부 사유를 안내한다. `npm run verify:achievement-defaults`는 Bundler와 Jekyll을 사용해 실제로 적용된 기본값까지 검사한다. `npm run verify`에는 두 검사가 모두 포함된다. 이 정책은 모든 URL과 호스트의 유효성이나 대상의 실제 존재를 확인하지 않으므로 주소를 직접 확인한다.
+
+GitHub Pages 공식 버전표에 표시된 SEO 태그 2.8.0의 JSON-LD는 스크립트 문맥에 안전하게 출력하도록 보정한다. 이 버전의 작성자·이미지 등 메타 속성에 예상 밖의 따옴표나 추가 태그가 생기면 보수적으로 빌드를 중단한다. 검사는 지원하는 2.8 출력 형식에 한정되며 범용 HTML 파서는 아니다. 로컬에서 현재 Jekyll 환경에 2.8 플러그인을 섞은 시험을 했지만 GitHub Pages 232 전체 실행 환경을 재현한 것은 아니다. GitHub Pages의 실제 의존성 변경이나 게시 결과는 별도로 확인한다.
+
+내부 루트 상대 주소를 입력할 때는 기저 경로를 제외하는 것을 권장한다. 예를 들어 `/assets/example.png`로 입력하면 `/blog`에 배포할 때 `/blog/assets/example.png`가 된다. 이미 기저 경로가 포함된 `/blog/assets/example.png`도 중복 접두하지 않으며 `/blogger`는 다른 경로로 구분한다. 단, 기저 경로와 같은 이름의 실제 사이트 내부 경로는 모호하므로 `/blog` 배포에서 실제 `/blog/notes` 경로를 가리키려면 `/blog/blog/notes`처럼 배포 주소를 명시한다. 점 구간(`..`, `%2e%2e` 등)은 브라우저가 주소를 정규화할 수 있으므로 정규화된 주소를 입력한다.
+
 ### 발행 후
 
 - [ ] 배포된 URL이 정상적으로 열리는지 확인한다.

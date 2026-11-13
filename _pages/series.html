@@ -10,7 +10,7 @@ permalink: /series/
 
 <section class="series-index-hero" aria-labelledby="series-index-title">
   <p class="series-eyebrow">주제별 읽기 경로</p>
-  <h1 id="series-index-title">{{ page.title }}</h1>
+  <h1 id="series-index-title">{{ page.title | escape }}</h1>
   <p>
     긴 글을 주제별 경로로 다시 묶었습니다. 수학철학·수학사와 과학철학·현대물리학 글은
     허브에서 순서, 핵심 질문, 참고자료를 함께 볼 수 있습니다.
@@ -19,15 +19,15 @@ permalink: /series/
 <section class="series-hub-grid" aria-label="주요 시리즈 허브">
   {% for item in featured_series %}
     {% assign item_posts = site.posts | where: "series", item.key | sort: "series_order" %}
-    <a class="series-hub-card" href="{{ item.hub_url | relative_url }}">
+    <a class="series-hub-card" href="{{ item.hub_url | relative_url | escape }}">
       <span class="series-hub-kicker">
         {% case item.key %}
           {% when 'Mathematics-Philosophy-History' %}수학
           {% when 'Science_Philosophy_History' %}과학
-          {% else %}{{ item.kicker }}
+          {% else %}{{ item.kicker | escape }}
         {% endcase %}
       </span>
-      <strong>{{ item.title }}</strong>
+      <strong>{{ item.title | escape }}</strong>
       <span class="series-hub-count">{{ item_posts.size }}편</span>
       <span class="series-hub-summary">{{ item.summary }}</span>
     </a>
@@ -47,11 +47,11 @@ permalink: /series/
     {% endif %}
     <article class="series-catalog-group">
       <div class="series-catalog-header">
-        <h3>{{ series_title }}</h3>
+        <h3>{{ series_title | escape }}</h3>
         <div class="series-catalog-meta">
           <span class="series-catalog-count">{{ sorted_posts.size }}편</span>
           {% if hub_url %}
-            <a href="{{ hub_url | relative_url }}">허브 보기</a>
+            <a href="{{ hub_url | relative_url | escape }}" aria-label="{{ series_title | escape }} 허브 보기">허브 보기</a>
           {% endif %}
         </div>
       </div>
@@ -60,7 +60,7 @@ permalink: /series/
           <li>
             <span class="series-catalog-order" aria-hidden="true">{{ forloop.index }}</span>
             <div class="series-catalog-item-copy">
-              <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+              <a href="{{ post.url | relative_url | escape }}">{{ post.title | escape }}</a>
               <span>{{ post.description | default: post.excerpt | strip_html | strip_newlines | normalize_whitespace | truncate: 150 }}</span>
             </div>
           </li>

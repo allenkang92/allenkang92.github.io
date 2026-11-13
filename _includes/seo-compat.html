@@ -1,0 +1,34 @@
+{%- comment -%}
+  SEO 태그 2.8의 JSON-LD 전체를 스크립트 문맥에 맞게 이스케이프하고
+  2.8과 2.9의 공유 메타 태그 표기를 맞춘다. 예상 범위를 벗어나면 중단한다.
+{%- endcomment -%}
+{%- assign compat_source = include.source -%}
+{%- assign compat_count = compat_source | prepend: 'x' | append: 'x' -%}
+{%- assign legacy_version = compat_count | split: '<!-- Begin Jekyll SEO tag v2.8.0 -->' | size -%}
+{%- if legacy_version > 2 -%}
+  {%- include ERROR_seo_compat_plugin_output_mismatch.html -%}
+{%- endif -%}
+{%- if legacy_version == 2 -%}
+  {%- assign script_open = '<script type="application/ld+json">' -%}
+  {%- assign end_comment = '<!-- End Jekyll SEO tag -->' -%}
+  {%- assign openings = compat_count | split: script_open | size -%}
+  {%- assign endings = compat_count | split: end_comment | size -%}
+  {%- unless openings == 2 and endings == 2 -%}
+    {%- include ERROR_seo_compat_plugin_output_mismatch.html -%}
+  {%- endunless -%}
+  {%- assign before_script = compat_source | split: script_open | first -%}
+  {%- assign after_script = compat_source | split: script_open | last -%}
+  {%- include seo-legacy-metadata-guard.html source=before_script -%}
+  {%- assign script_with_close = after_script | split: end_comment | first | rstrip -%}
+  {%- assign close_tag = script_with_close | slice: -9, 9 -%}
+  {%- unless close_tag == '</script>' -%}
+    {%- include ERROR_seo_compat_plugin_output_mismatch.html -%}
+  {%- endunless -%}
+  {%- assign body_length = script_with_close.size | minus: 9 -%}
+  {%- assign json_body = script_with_close | slice: 0, body_length | replace: '<', '\u003c' | replace: '>', '\u003e' | replace: '&', '\u0026' | replace: ' ', '\u2028' | replace: ' ', '\u2029' -%}
+  {%- assign before_script = before_script | replace: '<meta property="og:description" content="', '<meta name="twitter:description" property="og:description" content="' | replace: '<meta property="twitter:title" content="', '<meta name="twitter:title" content="' | replace: '<meta property="twitter:image" content="', '<meta name="twitter:image" content="' -%}
+  {{- before_script -}}{{- script_open -}}{{- json_body -}}</script>
+<!-- End Jekyll SEO tag -->
+{%- else -%}
+  {{- compat_source -}}
+{%- endif -%}

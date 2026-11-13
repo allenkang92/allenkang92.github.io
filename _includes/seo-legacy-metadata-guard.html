@@ -1,0 +1,102 @@
+{%- comment -%}2.8이 이스케이프하지 않는 속성에 추가 태그·속성이 섞이면 중단한다.{%- endcomment -%}
+{%- comment -%}
+  원시 속성의 줄바꿈은 별도의 정상 메타 태그를 만들어 행 검사만으로는
+  구분할 수 없다. 사용 가능한 원천값의 실제 CR·LF를 먼저 거부한다.
+  JSON에서 두 역슬래시를 제거하면 문자 그대로의 역슬래시+n은 허용된다.
+{%- endcomment -%}
+{%- assign page_author_json = page.author | jsonify -%}
+{%- assign first_author_json = page.authors.first | jsonify -%}
+{%- if page_author_json != 'null' and page_author_json != '""' -%}
+  {%- assign selected_author = page.author -%}
+{%- elsif first_author_json != 'null' and first_author_json != '""' -%}
+  {%- assign selected_author = page.authors.first -%}
+{%- else -%}
+  {%- assign selected_author = site.author -%}
+{%- endif -%}
+{%- assign selected_author_json = selected_author | jsonify -%}
+{%- assign selected_author_type = selected_author_json | slice: 0, 1 -%}
+{%- assign selected_locale = page.locale -%}
+{%- if selected_locale == nil or selected_locale == false -%}{%- assign selected_locale = site.locale -%}{%- endif -%}
+{%- if selected_locale == nil or selected_locale == false -%}{%- assign selected_locale = page.lang -%}{%- endif -%}
+{%- if selected_locale == nil or selected_locale == false -%}{%- assign selected_locale = site.lang -%}{%- endif -%}
+{%- assign selected_card = page.twitter.card | default: site.twitter.card | default: 'summary_large_image' -%}
+{%- capture legacy_inputs -%}
+  {%- if selected_author_type == '{' -%}{{- selected_author.name | jsonify -}}{{- selected_author.twitter | jsonify -}}
+  {%- else -%}{{- selected_author_json -}}{{- site.data.authors[selected_author].name | jsonify -}}{{- site.data.authors[selected_author].twitter | jsonify -}}{%- endif -%}
+  {%- assign image_json = page.image | jsonify -%}
+  {%- assign image_type = image_json | slice: 0, 1 -%}
+  {%- if image_type == '{' -%}
+    {%- assign selected_image = page.image.path -%}
+    {%- if selected_image == nil or selected_image == false -%}{%- assign selected_image = page.image.facebook -%}{%- endif -%}
+    {%- if selected_image == nil or selected_image == false -%}{%- assign selected_image = page.image.twitter -%}{%- endif -%}
+    {{- selected_image | jsonify -}}
+    {%- if include.source contains '<meta property="og:image" content="' -%}
+      {{- page.image.height | jsonify -}}{{- page.image.width | jsonify -}}{{- page.image.alt | jsonify -}}
+    {%- endif -%}
+  {%- else -%}{{- image_json -}}{%- endif -%}
+  {{- page.canonical_url | jsonify -}}{{- page.url | jsonify -}}
+  {{- selected_locale | jsonify -}}
+  {%- if include.source contains '<meta property="og:image" content="' -%}{{- selected_card | jsonify -}}{%- endif -%}
+  {{- site.twitter.username | jsonify -}}
+  {{- site.facebook.admins | jsonify -}}{{- site.facebook.publisher | jsonify -}}{{- site.facebook.app_id | jsonify -}}
+  {%- if site.webmaster_verifications -%}
+    {{- site.webmaster_verifications.google | jsonify -}}{{- site.webmaster_verifications.bing | jsonify -}}{{- site.webmaster_verifications.alexa | jsonify -}}
+    {{- site.webmaster_verifications.yandex | jsonify -}}{{- site.webmaster_verifications.baidu | jsonify -}}{{- site.webmaster_verifications.facebook | jsonify -}}
+  {%- else -%}{{- site.google_site_verification | jsonify -}}{%- endif -%}
+  {{- site.url | jsonify -}}{{- site.baseurl | jsonify -}}{{- paginator.previous_page_path | jsonify -}}{{- paginator.next_page_path | jsonify -}}
+{%- endcapture -%}
+{%- assign legacy_input_escapes = legacy_inputs | replace: '\\', '' -%}
+{%- if legacy_input_escapes contains '\n' or legacy_input_escapes contains '\r' -%}
+  {%- include ERROR_seo_compat_unsafe_html_metadata.html -%}
+{%- endif -%}
+{%- assign legacy_names = 'generator,author,description,twitter:card,twitter:title,twitter:image,twitter:image:alt,twitter:site,twitter:creator,google-site-verification,msvalidate.01,alexaVerifyID,yandex-verification,baidu-site-verification,facebook-domain-verification' | split: ',' -%}
+{%- assign legacy_properties = 'og:title,og:locale,og:description,og:url,og:site_name,og:image,og:image:height,og:image:width,og:image:alt,og:type,article:published_time,twitter:image,twitter:title,fb:admins,article:publisher,fb:app_id' | split: ',' -%}
+{%- assign legacy_links = 'canonical,prev,next' | split: ',' -%}
+{%- assign legacy_seen = '|' -%}
+{%- comment -%}원래 출력에 같은 표식이 있으면 줄 분리를 위장할 수 있다.{%- endcomment -%}
+{%- if include.source contains '<br />' -%}
+  {%- include ERROR_seo_compat_unsafe_html_metadata.html -%}
+{%- endif -%}
+{%- assign legacy_lines = include.source | newline_to_br | split: '<br />' -%}
+{%- for raw_line in legacy_lines -%}
+  {%- assign line = raw_line | strip -%}
+  {%- if line == '' or line == '<!-- Begin Jekyll SEO tag v2.8.0 -->' -%}
+  {%- elsif line contains '<title>' -%}
+    {%- assign title_rest = line | remove_first: '<title>' | remove_first: '</title>' -%}
+    {%- assign title_prefix = line | slice: 0, 7 -%}
+    {%- assign title_suffix = line | slice: -8, 8 -%}
+    {%- if title_prefix != '<title>' or title_suffix != '</title>' or title_rest contains '<' or legacy_seen contains '|title|' -%}
+      {%- include ERROR_seo_compat_unsafe_html_metadata.html -%}
+    {%- endif -%}
+    {%- assign legacy_seen = legacy_seen | append: 'title|' -%}
+  {%- elsif line contains '<meta name="twitter:description" property="og:description" content="' -%}
+    {%- assign tail = line | slice: 1, line.size -%}
+    {%- assign pieces = line | split: '"' -%}
+    {%- assign prefix = line | slice: 0, 64 -%}
+    {%- if pieces.size != 7 or tail contains '<' or pieces[6] != ' />' or pieces[2] != ' property=' or pieces[3] != 'og:description' or pieces[4] != ' content=' or legacy_seen contains '|normalized-description|' -%}
+      {%- include ERROR_seo_compat_unsafe_html_metadata.html -%}
+    {%- endif -%}
+    {%- assign legacy_seen = legacy_seen | append: 'normalized-description|' -%}
+  {%- else -%}
+    {%- assign tail = line | slice: 1, line.size -%}
+    {%- assign pieces = line | split: '"' -%}
+    {%- assign first = pieces[0] -%}
+    {%- assign key = pieces[1] -%}
+    {%- assign middle = pieces[2] -%}
+    {%- assign suffix = pieces[4] -%}
+    {%- assign marker = '|' | append: first | append: key | append: '|' -%}
+    {%- if pieces.size != 5 or tail contains '<' or suffix != ' />' or legacy_seen contains marker -%}
+      {%- include ERROR_seo_compat_unsafe_html_metadata.html -%}
+    {%- endif -%}
+    {%- if first == '<meta name=' -%}
+      {%- unless legacy_names contains key and middle == ' content=' -%}{%- include ERROR_seo_compat_unsafe_html_metadata.html -%}{%- endunless -%}
+    {%- elsif first == '<meta property=' -%}
+      {%- unless legacy_properties contains key and middle == ' content=' -%}{%- include ERROR_seo_compat_unsafe_html_metadata.html -%}{%- endunless -%}
+    {%- elsif first == '<link rel=' -%}
+      {%- unless legacy_links contains key and middle == ' href=' -%}{%- include ERROR_seo_compat_unsafe_html_metadata.html -%}{%- endunless -%}
+    {%- else -%}
+      {%- include ERROR_seo_compat_unsafe_html_metadata.html -%}
+    {%- endif -%}
+    {%- assign legacy_seen = legacy_seen | append: marker -%}
+  {%- endif -%}
+{%- endfor -%}

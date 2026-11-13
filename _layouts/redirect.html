@@ -1,0 +1,39 @@
+---
+layout: null
+---
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <title>페이지를 이동하고 있습니다</title>
+  <link rel="canonical" href="{{ page.redirect.to | escape }}">
+  <script>
+    (() => {
+      const destination = new URL({{ page.redirect.to | jsonify }});
+      if (window.location.hash && !destination.hash) destination.hash = window.location.hash;
+      // 정식 사이트 내부 주소만 미리보기의 호스트로 바꾸고 인코딩된 경로는 유지한다.
+      try {
+        const site = new URL({{ site.url | append: site.baseurl | jsonify }});
+        const current = new URL(window.location.href);
+        const basePath = site.pathname.replace(/\/+$/, '');
+        const isSitePath = !basePath || destination.pathname === basePath || destination.pathname.startsWith(`${basePath}/`);
+        if (['http:', 'https:'].includes(site.protocol) && ['http:', 'https:'].includes(current.protocol)
+            && destination.origin === site.origin && !destination.username && !destination.password
+            && !destination.pathname.startsWith('//') && isSitePath) {
+          destination.protocol = current.protocol;
+          destination.host = current.host;
+        }
+      } catch {
+        // 잘못된 사이트 설정에서는 기존의 정식 이동 주소를 사용한다.
+      }
+      window.location.href = destination.href;
+    })();
+  </script>
+  <meta http-equiv="refresh" content="0; url={{ page.redirect.to | escape }}">
+  <meta name="robots" content="noindex">
+</head>
+<body>
+  <h1>페이지를 이동하고 있습니다</h1>
+  <p>자동으로 이동하지 않으면 <a href="{{ page.redirect.to | escape }}">이 글로 이동하기</a>를 눌러 주세요.</p>
+</body>
+</html>

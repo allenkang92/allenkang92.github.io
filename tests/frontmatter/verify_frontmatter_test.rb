@@ -1,4 +1,6 @@
 require 'minitest/autorun'
+require 'tmpdir'
+require 'fileutils'
 
 require_relative '../../scripts/verify_frontmatter'
 
@@ -134,5 +136,161 @@ class FrontmatterVerifierTest < Minitest::Test
     errors = FrontmatterVerifier.validate_series_order_collisions(records)
 
     assert_includes errors.join("\n"), 'duplicate series_order 0'
+  end
+
+  def test_achievement_url_policy_accepts_relative_and_web_urls
+    ['/assets/a.png', '../project', '?q=a:b', '#section', '//example.org/p', 'HTTPS://example.org/p'].each do |value|
+      assert_nil FrontmatterVerifier.achievement_url_error(value), value.inspect
+    end
+    errors = FrontmatterVerifier.validate_achievement_urls(
+      data: { 'certificate_image' => '/a.png', 'project_detail' => 'javascript:alert(1)' },
+      path: '_achievements/example.md',
+    )
+    assert_equal 1, errors.length
+    assert_includes errors.first, '_achievements/example.md'
+    assert_includes errors.first, 'project_detail'
+    assert_includes errors.first, 'http://'
+    assert_empty FrontmatterVerifier.validate_achievement_urls(
+      data: { 'certificate_image' => false, 'project_detail' => nil }, path: '_achievements/example.md'
+    )
+  end
+
+  def test_achievement_url_policy_rejects_unsafe_or_invalid_input
+    [nil, false, 42, Date.new(2025, 1, 1), [], {}, '', ' https://example.org', "https://example.org\u00a0",
+     "java\tscript:alert(1)", "a\u0000b", '/\\example.org', 'data:image/png;base64,AAAA',
+     'mailto:person@example.org', 'http:example.org', 'https://', '//', '//?x=1',
+     '///example.org/path'].each do |value|
+      refute_nil FrontmatterVerifier.achievement_url_error(value), value.inspect
+    end
+  end
+
+  def test_verify_reads_achievement_url_fields
+    Dir.mktmpdir('frontmatter-achievement-') do |directory|
+      posts = File.join(directory, '_posts')
+      achievements = File.join(directory, '_achievements')
+      FileUtils.mkdir_p([posts, achievements])
+      categories = File.join(directory, 'categories.yml')
+      series = File.join(directory, 'series.yml')
+      File.write(categories, YAML.dump('main' => { CATEGORIES.first => {} }))
+      File.write(series, YAML.dump('items' => [{ 'key' => SERIES.first }]))
+      File.write(File.join(posts, 'post.md'), "#{YAML.dump(@metadata)}---\n본문\n")
+      achievement = File.join(achievements, 'example.md')
+      File.write(achievement, "---\nproject_detail: 'javascript:alert(1)'\n---\n본문\n")
+      arguments = { posts_dir: posts, categories_path: categories, series_path: series, achievements_dir: achievements }
+      errors = FrontmatterVerifier.verify(**arguments)
+      assert_includes errors.join("\n"), "'project_detail'"
+      File.write(achievement, "---\nproject_detail: '/projects/example/'\n---\n본문\n")
+      assert_empty FrontmatterVerifier.verify(**arguments)
+
+      html = File.join(achievements, 'unsafe.html')
+      text = File.join(achievements, 'unsafe.txt')
+      File.write(html, "---\nproject_detail: 'javascript:alert(1)'\n---\n본문\n")
+      File.write(text, "---\ncertificate_image: 'data:image/png;base64,AAAA'\n---\n본문\n")
+      File.binwrite(File.join(achievements, 'static.png'), "\x89PNG\x00".b)
+      errors = FrontmatterVerifier.verify(**arguments)
+      assert_includes errors.join("\n"), 'unsafe.html'
+      assert_includes errors.join("\n"), 'unsafe.txt'
+      refute_includes errors.join("\n"), 'static.png'
+
+      File.write(html, "---\nproject_detail: '/ok'\n---\n본문\n")
+      File.write(text, "---\ncertificate_image: '/ok.png'\n---\n본문\n")
+      File.write(File.join(achievements, 'no-header.md'), "정적 파일입니다.\n")
+      assert_empty FrontmatterVerifier.verify(**arguments)
+    end
+  end
+
+  def test_verify_reads_internal_file_symlink_as_achievement
+    with_achievement_site do |directory, achievements, arguments|
+      target = File.join(directory, 'source.md')
+      link = File.join(achievements, 'linked.md')
+      File.write(target, "---\nproject_detail: 'javascript:alert(1)'\n---\n본문\n")
+      File.symlink('../source.md', link)
+
+      errors = FrontmatterVerifier.verify(**arguments)
+      assert_includes errors.join("\n"), 'linked.md'
+      assert_includes errors.join("\n"), "'project_detail'"
+
+      File.write(target, "---\nproject_detail: '/safe'\n---\n본문\n")
+      assert_empty FrontmatterVerifier.verify(**arguments)
+
+      File.write(target, "정적 파일입니다.\n")
+      assert_empty FrontmatterVerifier.verify(**arguments)
+
+      image = File.join(directory, 'image.png')
+      File.binwrite(image, "\x89PNG\x00".b)
+      File.symlink('../image.png', File.join(achievements, 'image.png'))
+      assert_empty FrontmatterVerifier.verify(**arguments)
+    end
+  end
+
+  def test_verify_reports_external_broken_and_directory_symlinks
+    with_achievement_site do |directory, achievements, arguments|
+      Dir.mktmpdir('frontmatter-outside-') do |outside|
+        outside_file = File.join(outside, 'outside.md')
+        File.write(outside_file, "---\nproject_detail: '/safe'\n---\n")
+        File.symlink(outside_file, File.join(achievements, 'external.md'))
+        File.symlink(outside_file, File.join(achievements, '.external.md'))
+        File.symlink('not-found.md', File.join(achievements, 'missing.md'))
+        File.symlink('self.md', File.join(achievements, 'self.md'))
+        # A link to the site root would create a cycle if traversed.
+        File.symlink(directory, File.join(achievements, 'cycle'))
+        # Hidden regular documents are excluded by default and should not be read.
+        File.write(File.join(achievements, '.ignored.md'), "---\nproject_detail: 'javascript:alert(1)'\n---\n")
+
+        errors = FrontmatterVerifier.verify(**arguments)
+        assert_equal 4, errors.length
+        assert_match(/external\.md: symbolic link target is outside the site root/, errors.join("\n"))
+        refute_match(/\.external\.md/, errors.join("\n"))
+        assert_match(/missing\.md: symbolic link target cannot be resolved/, errors.join("\n"))
+        assert_match(/self\.md: symbolic link target cannot be resolved/, errors.join("\n"))
+        assert_match(/cycle: symbolic link must target a regular file/, errors.join("\n"))
+      end
+    end
+  end
+
+  def test_verify_rejects_symlinked_achievement_directory_even_with_trailing_slash
+    with_achievement_site do |directory, _achievements, arguments|
+      Dir.mktmpdir('frontmatter-outside-directory-') do |outside|
+        File.write(File.join(outside, 'file.md'), "---\nproject_detail: '/safe'\n---\n")
+        link = File.join(directory, 'linked-achievements')
+        File.symlink(outside, link)
+
+        errors = FrontmatterVerifier.verify(**arguments.merge(achievements_dir: "#{link}/"))
+        assert_equal 1, errors.length
+        assert_includes errors.first, 'achievement directory cannot be a symbolic link'
+      end
+    end
+  end
+
+  def test_verify_rejects_sibling_with_site_root_as_string_prefix
+    with_achievement_site do |directory, achievements, arguments|
+      prefix = "#{File.basename(directory)}-other-"
+      Dir.mktmpdir(prefix, File.dirname(directory)) do |outside|
+        target = File.join(outside, 'file.md')
+        File.write(target, "---\nproject_detail: '/safe'\n---\n")
+        File.symlink(target, File.join(achievements, 'sibling.md'))
+
+        errors = FrontmatterVerifier.verify(**arguments)
+        assert_equal 1, errors.length
+        assert_match(/sibling\.md: symbolic link target is outside the site root/, errors.first)
+      end
+    end
+  end
+
+  private
+
+  def with_achievement_site
+    Dir.mktmpdir('frontmatter-achievement-links-') do |directory|
+      posts = File.join(directory, '_posts')
+      achievements = File.join(directory, '_achievements')
+      FileUtils.mkdir_p([posts, achievements])
+      categories = File.join(directory, 'categories.yml')
+      series = File.join(directory, 'series.yml')
+      File.write(categories, YAML.dump('main' => { CATEGORIES.first => {} }))
+      File.write(series, YAML.dump('items' => [{ 'key' => SERIES.first }]))
+      File.write(File.join(posts, 'post.md'), "#{YAML.dump(@metadata)}---\n본문\n")
+      arguments = { posts_dir: posts, categories_path: categories, series_path: series, achievements_dir: achievements }
+      yield directory, achievements, arguments
+    end
   end
 end

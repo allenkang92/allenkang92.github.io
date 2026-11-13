@@ -136,3 +136,43 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+.posts-react-root .posts-meta-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: flex-start;
+}
+
+.posts-react-root .posts-restore {
+  min-height: 44px;
+  padding: 0.45rem 0.7rem !important;
+}
+
+.posts-react-root .posts-restore[aria-disabled="true"] {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.posts-react-root .posts-restore-status:not(:empty) {
+  color: var(--atlas-ink-soft);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.posts-restore-focus:focus {
+  outline: 3px solid var(--atlas-teal, #087f78);
+  outline-offset: 3px;
+}
+
+.posts-scroll-location {
+  position: fixed;
+  z-index: 100;
+  right: 1rem;
+  bottom: 1rem;
+  padding: 0.65rem 0.9rem;
+  border: 1px solid var(--atlas-border);
+  border-radius: 0.5rem;
+  color: var(--atlas-ink);
+  background: var(--atlas-surface-warm);
+}

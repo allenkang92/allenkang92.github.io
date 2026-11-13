@@ -20,7 +20,14 @@
     <meta name="robots" content="index, follow">
     
     <!-- 검색 엔진 및 소셜 마크업 -->
-    {% seo %}
+    {% if page.collection == 'achievements' %}
+      {% include achievement-seo.html %}
+    {% else %}
+      {% capture page_seo_output %}{% if page.seo_title_literal == true %}{% include post-literal-seo.html %}{% else %}{% seo %}{% endif %}{% endcapture %}
+      {% capture compatible_seo_output %}{% include seo-compat.html source=page_seo_output %}{% endcapture %}
+      {% capture named_seo_output %}{% include seo-name.html source=compatible_seo_output %}{% endcapture %}
+      {% include seo-description.html source=named_seo_output %}
+    {% endif %}
     {% feed_meta %}
     
     <!-- 파비콘 및 앱 아이콘 -->
@@ -35,7 +42,8 @@
     <!-- Google tag (gtag.js): production 빌드에서만 삽입, 런타임 hostname 체크는 이중 안전장치 -->
     <script>
         (function () {
-          if (!/^(localhost|127\.0\.0\.1)$/.test(window.location.hostname)) {
+          var localHosts = ['localhost', '127.0.0.1', '0.0.0.0', '::1', '[::1]', ''];
+          if (localHosts.indexOf(window.location.hostname) === -1) {
             var gaScript = document.createElement('script');
             gaScript.async = true;
             gaScript.src = 'https://www.googletagmanager.com/gtag/js?id={{ analytics_id }}';
@@ -59,6 +67,11 @@
     <link rel="stylesheet" href="{{ "/assets/css/theme-atlas.css" | relative_url }}?v={{ asset_version }}">
     <link rel="stylesheet" href="{{ '/assets/css/reading-refinement.css' | relative_url }}?v={{ asset_version }}">
     <link rel="stylesheet" href="{{ '/assets/css/nav-refinement.css' | relative_url }}?v={{ asset_version }}">
+    {% if layout.math_notice_in_post %}
+      {% unless page.styles contains '/assets/css/code-copy.css' %}
+        <link rel="stylesheet" href="{{ '/assets/css/code-copy.css' | relative_url }}?v={{ asset_version }}">
+      {% endunless %}
+    {% endif %}
     {% if page.styles %}
       {% for style in page.styles %}
         <link rel="stylesheet" href="{{ style | relative_url }}?v={{ asset_version }}">

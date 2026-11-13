@@ -1,0 +1,6 @@
+{%- comment -%}글 화면에서 표시하는 앞의 세 학습 목표만 검색에 포함한다.{%- endcomment -%}
+{%- if include.post.learning_outcomes -%}
+  {%- for outcome in include.post.learning_outcomes limit: 3 -%}
+    {{ outcome | strip_html | append: ' ' }}
+  {%- endfor -%}
+{%- endif -%}

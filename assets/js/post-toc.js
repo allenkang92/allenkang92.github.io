@@ -35,6 +35,13 @@
       .map(element => element.id)
       .filter(Boolean)
   );
+  // 기존 fragment는 id가 없는 경우에도 <a name>을 가리킬 수 있다.
+  // 새 ID 생성에만 예약해, 이미 존재하는 제목 ID의 우선순위는 보존한다.
+  const anchorNames = new Set(
+    Array.from(document.querySelectorAll('a[name]'))
+      .map(element => element.getAttribute('name'))
+      .filter(Boolean)
+  );
   const reservedHeadingIds = new Set(headings.map(heading => heading.id).filter(Boolean));
   const usedIds = new Set();
   const createUniqueId = (value, fallback, reservedId = '') => {
@@ -45,6 +52,7 @@
     while (
       usedIds.has(candidate) ||
       pageIds.has(candidate) ||
+      anchorNames.has(candidate) ||
       (reservedHeadingIds.has(candidate) && candidate !== reservedId)
     ) {
       candidate = `${baseId}-${suffix}`;
@@ -59,10 +67,12 @@
 
   headings.forEach(heading => {
     const title = (heading.textContent || '').trim();
-    if (!title) return;
+    const existingId = heading.id;
+    // Empty headings do not appear in the table of contents, but their IDs
+    // still occupy a fragment target and must participate in collision checks.
+    if (!title && !existingId) return;
 
     const titleSlug = createHeadingId(title);
-    const existingId = heading.id;
     let resolvedId = existingId;
 
     if (!resolvedId || usedIds.has(resolvedId) || pageIds.has(resolvedId)) {
@@ -72,6 +82,7 @@
     }
 
     usedIds.add(resolvedId);
+    if (!title) return;
 
     const item = document.createElement('li');
     const link = document.createElement('a');

@@ -1,0 +1,108 @@
+{%- comment -%}
+  플러그인이 선택한 루트 name의 HTML 문자 참조를 JSON 평문으로 바로잡는다.
+  평문은 작성자가 명시하며 원본과의 의미 일치는 별도 생성물 검사에서 확인한다.
+  JSON 문자열 안의 중괄호와 이스케이프를 구분해 루트 키만 찾으므로
+  같은 값을 가진 작성자·이미지·발행자의 name은 교체하지 않는다.
+{%- endcomment -%}
+{%- assign name_source = include.source -%}
+{%- assign plugin_name = '' -%}
+{%- if page.seo.name != nil and page.seo.name != false -%}
+  {%- assign plugin_name = page.seo.name | markdownify | strip_html | normalize_whitespace | escape_once -%}
+{%- endif -%}
+{%- assign name_origin = 'page' -%}
+{%- if plugin_name == empty -%}
+  {%- assign name_origin = '' -%}
+  {%- assign is_home_or_about = false -%}
+  {%- if page.url == '/' or page.url == '/index.htm' or page.url == '/index.html' or page.url == '/about/' or page.url == '/about/index.htm' or page.url == '/about/index.html' -%}
+    {%- assign is_home_or_about = true -%}
+  {%- endif -%}
+  {%- if is_home_or_about -%}
+    {%- if site.social.name != nil and site.social.name != false -%}
+      {%- assign plugin_name = site.social.name | markdownify | strip_html | normalize_whitespace | escape_once -%}
+    {%- else -%}
+      {%- assign site_name = site.title -%}
+      {%- if site_name == nil or site_name == false -%}{%- assign site_name = site.name -%}{%- endif -%}
+      {%- assign plugin_name = site_name | markdownify | strip_html | normalize_whitespace | escape_once -%}
+    {%- endif -%}
+    {%- if plugin_name != empty -%}{%- assign name_origin = 'site' -%}{%- endif -%}
+  {%- endif -%}
+{%- endif -%}
+{%- assign plain_name = page.seo_plain_name -%}
+{%- if plain_name == nil and name_origin == 'site' -%}{%- assign plain_name = site.seo_plain_name -%}{%- endif -%}
+{%- if name_origin == '' -%}
+  {%- if page.seo_plain_name != nil -%}{%- include ERROR_seo_plain_name_without_source.html -%}{%- endif -%}
+  {{- name_source -}}
+{%- elsif plain_name == nil and plugin_name contains '&' -%}
+  {%- include ERROR_seo_plain_name_required.html -%}
+{%- elsif plain_name == nil -%}
+  {{- name_source -}}
+{%- else -%}
+  {%- assign plain_json = plain_name | jsonify -%}
+  {%- assign plain_type = plain_json | slice: 0, 1 -%}
+  {%- assign plain_content = plain_name | append: '' | url_encode | remove: '+' -%}
+  {%- assign plain_spaces = '%09,%0A,%0B,%0C,%0D,%C2%A0,%E1%9A%80,%E2%80%80,%E2%80%81,%E2%80%82,%E2%80%83,%E2%80%84,%E2%80%85,%E2%80%86,%E2%80%87,%E2%80%88,%E2%80%89,%E2%80%8A,%E2%80%A8,%E2%80%A9,%E2%80%AF,%E2%81%9F,%E3%80%80,%EF%BB%BF' | split: ',' -%}
+  {%- for space in plain_spaces -%}{%- assign plain_content = plain_content | remove: space -%}{%- endfor -%}
+  {%- if plain_type != '"' or plain_content == '' -%}{%- include ERROR_seo_plain_name_must_be_nonempty_string.html -%}{%- endif -%}
+  {%- assign plugin_json = plugin_name | jsonify | replace: '<', '\u003c' | replace: '>', '\u003e' | replace: '&', '\u0026' | replace: ' ', '\u2028' | replace: ' ', '\u2029' -%}
+  {%- assign plain_text = plain_name | normalize_whitespace -%}
+  {%- assign replacement_json = plain_text | jsonify | replace: '<', '\u003c' | replace: '>', '\u003e' | replace: '&', '\u0026' | replace: ' ', '\u2028' | replace: ' ', '\u2029' -%}
+  {%- assign script_open = '<script type="application/ld+json">' -%}
+  {%- assign script_close = '</script>' -%}
+  {%- assign counted_source = name_source | prepend: 'x' | append: 'x' -%}
+  {%- assign scripts = counted_source | split: script_open | size -%}
+  {%- if scripts != 2 -%}{%- include ERROR_seo_name_plugin_output_mismatch.html -%}{%- endif -%}
+  {%- assign script_after_open = name_source | split: script_open | last -%}
+  {%- assign json_body = script_after_open | split: script_close | first -%}
+  {%- assign json_chars = json_body | split: '' -%}
+  {%- assign depth = 0 -%}
+  {%- assign in_string = false -%}
+  {%- assign escaped = false -%}
+  {%- assign root_name_count = 0 -%}
+  {%- assign root_name_index = -1 -%}
+  {%- for character in json_chars -%}
+    {%- if in_string -%}
+      {%- if escaped -%}
+        {%- assign escaped = false -%}
+      {%- elsif character == '\' -%}
+        {%- assign escaped = true -%}
+      {%- elsif character == '"' -%}
+        {%- assign in_string = false -%}
+      {%- endif -%}
+    {%- else -%}
+      {%- if character == '"' -%}
+        {%- if depth == 1 -%}
+          {%- assign candidate = json_body | slice: forloop.index0, 7 -%}
+          {%- if candidate == '"name":' -%}
+            {%- assign root_name_count = root_name_count | plus: 1 -%}
+            {%- assign root_name_index = forloop.index0 -%}
+          {%- endif -%}
+        {%- endif -%}
+        {%- assign in_string = true -%}
+      {%- elsif character == '{' or character == '[' -%}
+        {%- assign depth = depth | plus: 1 -%}
+      {%- elsif character == '}' or character == ']' -%}
+        {%- assign depth = depth | minus: 1 -%}
+      {%- endif -%}
+    {%- endif -%}
+  {%- endfor -%}
+  {%- capture expected_token -%}"name":{{ plugin_json }}{%- endcapture -%}
+  {%- assign actual_token = json_body | slice: root_name_index, expected_token.size -%}
+  {%- assign next_index = root_name_index | plus: expected_token.size -%}
+  {%- assign next_character = json_body | slice: next_index, 1 -%}
+  {%- unless root_name_count == 1 and depth == 0 and in_string == false and actual_token == expected_token -%}
+    {%- include ERROR_seo_name_plugin_output_mismatch.html -%}
+  {%- endunless -%}
+  {%- unless next_character == ',' or next_character == '}' -%}{%- include ERROR_seo_name_plugin_output_mismatch.html -%}{%- endunless -%}
+  {%- assign prefix = json_body | slice: 0, root_name_index -%}
+  {%- assign suffix_length = json_body.size | minus: next_index -%}
+  {%- assign suffix = json_body | slice: next_index, suffix_length -%}
+  {%- comment -%}replace_first의 교체값은 역슬래시를 해석하므로 원본을 직접 이어 붙인다.{%- endcomment -%}
+  {%- assign source_prefix = name_source | split: script_open | first -%}
+  {%- assign close_offset = json_body.size -%}
+  {%- assign actual_close = script_after_open | slice: close_offset, script_close.size -%}
+  {%- unless actual_close == script_close -%}{%- include ERROR_seo_name_plugin_output_mismatch.html -%}{%- endunless -%}
+  {%- assign remainder_offset = close_offset | plus: script_close.size -%}
+  {%- assign remainder_length = script_after_open.size | minus: remainder_offset -%}
+  {%- assign source_suffix = script_after_open | slice: remainder_offset, remainder_length -%}
+  {{- source_prefix -}}{{- script_open -}}{{- prefix -}}"name":{{- replacement_json -}}{{- suffix -}}{{- script_close -}}{{- source_suffix -}}
+{%- endif -%}

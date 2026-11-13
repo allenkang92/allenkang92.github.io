@@ -1,5 +1,6 @@
 ---
 layout: achievement
+content_language: en
 title: Research Publications
 category: publications
 date: 2024-01-01

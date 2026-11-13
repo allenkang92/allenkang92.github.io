@@ -15,6 +15,10 @@
 
         <div class="content-wrapper">
             <main id="main-content" class="main-content" role="main">
+                {% capture default_math_required %}{% include components/math-required.html %}{% endcapture %}
+                {% unless layout.math_notice_in_post %}
+                  {% if default_math_required == 'true' %}{% include components/math-status.html %}{% endif %}
+                {% endunless %}
                 {{ content }}
             </main>
             

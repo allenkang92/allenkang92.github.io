@@ -13,7 +13,7 @@ permalink: /tools/dsr-calculator/
 
 DSR 계산기는 아직 자동 입력 기능을 제공하지 않습니다. 이 페이지는 `DSR 계산기`, `총부채원리금상환비율 계산`, `대출 DSR 계산 방법`을 찾는 사용자가 먼저 확인할 수 있도록 공식, 예시, 주의사항을 정직하게 정리한 기준 안내입니다.
 
-<p class="tool-landing__cta-row"><a class="tool-landing__cta" href="/tools/">기본 계산기로 수동 계산하기</a></p>
+<p class="tool-landing__cta-row"><a class="tool-landing__cta" href="{{ '/tools/' | relative_url }}">기본 계산기로 수동 계산하기</a></p>
 
 ## DSR이란?
 

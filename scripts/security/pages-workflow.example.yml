@@ -1,0 +1,98 @@
+# 검토 전용 예시: 이 경로에서는 실행되지 않으며 실제 Linux·배포 검증을 거치지 않았다.
+# 현재 GitHub Pages 설정을 변경하지 않는다. 활성화 전에 운영-전환-검토.md를 확인한다.
+name: 검토용 Pages 빌드 및 게시
+
+'on':
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages-candidate-build
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    env:
+      BUNDLE_GEMFILE: ${{ github.workspace }}/scripts/security/Gemfile
+      BUNDLE_FROZEN: 'true'
+      JEKYLL_ENV: production
+      TZ: UTC
+      JEKYLL_BUILD_REVISION: ${{ github.sha }}
+      PAGES_REPO_NWO: ${{ github.repository }}
+    steps:
+      - name: 소스 확인
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Node.js 준비
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '22.17.1'
+
+      - name: Ruby와 Bundler 준비
+        uses: ruby/setup-ruby@b3aaceaef7e0ee231b499e7b5f49c03fc1d32199 # v1.338.0
+        with:
+          ruby-version: '3.3.13'
+          bundler: '2.5.22'
+          bundler-cache: false
+
+      - name: 의존성 설치
+        run: |
+          npm ci
+          bundle install
+          bundle check
+
+      - name: 기능 검사 및 프런트엔드 빌드
+        run: |
+          npm test
+          npm run verify:frontmatter
+
+      - name: Pages 빌드
+        env:
+          JEKYLL_GITHUB_TOKEN: ${{ github.token }}
+        run: bundle exec github-pages build --source "$GITHUB_WORKSPACE" --destination "$GITHUB_WORKSPACE/_site"
+
+      - name: 생성물 검사
+        run: |
+          npm run test:comments-liquid
+          SITE_ROOT="$GITHUB_WORKSPACE/_site" npm run test:integration
+          npm run test:post-inventory -- --pages
+          npm run test:post-inventory-fixture
+          npm run test:seo-fixture
+          npm run test:literal-title-seo-fixture
+          npm run test:generic-seo-description-fixture
+          npm run test:post-search-auxiliary-fixture
+          npm run test:seo-name-fixture
+          npm run test:math-page-fixture
+          npm run test:code-copy-fixture
+          python3 scripts/verify_site.py --site-dir "$GITHUB_WORKSPACE/_site"
+
+      - name: Pages 산출물 보관
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: _site
+
+  deploy:
+    # 게시 경로는 의도적으로 비활성화했다. 운영 전환 전 별도 검토가 필요하다.
+    if: ${{ false && github.ref == 'refs/heads/main' }}
+    needs: build
+    runs-on: ubuntu-24.04
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Pages 게시
+        id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1

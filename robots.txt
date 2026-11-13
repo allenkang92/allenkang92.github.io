@@ -1,11 +1,14 @@
+---
+layout: null
+---
 User-agent: *
 Allow: /
 
 # 사이트맵 위치
-Sitemap: https://allenkang92.github.io/sitemap.xml
+Sitemap: {{ '/sitemap.xml' | absolute_url }}
 
 # 크롤링 제한
 Crawl-delay: 10
 
 # 제외할 페이지 (언더스코어 디렉토리는 빌드 산출물에 없어 규칙 불필요)
-Disallow: /404.html
+Disallow: {{ '/404.html' | relative_url }}

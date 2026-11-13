@@ -1,0 +1,67 @@
+{%- assign achievement_target_url = include.url -%}
+{%- assign achievement_url_json = achievement_target_url | jsonify -%}
+{%- assign achievement_url_type = achievement_url_json | slice: 0, 1 -%}
+{%- assign achievement_url_allowed = true -%}
+{%- assign achievement_trimmed_url = achievement_target_url | strip -%}
+{%- if achievement_url_type != '"' or achievement_target_url == '' or achievement_target_url != achievement_trimmed_url -%}
+  {%- assign achievement_url_allowed = false -%}
+{%- endif -%}
+{%- assign achievement_encoded_url = achievement_target_url | url_encode -%}
+{%- assign achievement_edge_spaces = '%C2%85,%C2%A0,%E1%9A%80,%E2%80%80,%E2%80%81,%E2%80%82,%E2%80%83,%E2%80%84,%E2%80%85,%E2%80%86,%E2%80%87,%E2%80%88,%E2%80%89,%E2%80%8A,%E2%80%A8,%E2%80%A9,%E2%80%AF,%E2%81%9F,%E3%80%80' | split: ',' -%}
+{%- for achievement_space in achievement_edge_spaces -%}
+  {%- assign achievement_space_length = achievement_space.size -%}
+  {%- assign achievement_space_front = achievement_encoded_url | slice: 0, achievement_space_length -%}
+  {%- assign achievement_space_offset = 0 | minus: achievement_space_length -%}
+  {%- assign achievement_space_back = achievement_encoded_url | slice: achievement_space_offset, achievement_space_length -%}
+  {%- if achievement_space_front == achievement_space or achievement_space_back == achievement_space -%}{%- assign achievement_url_allowed = false -%}{%- endif -%}
+{%- endfor -%}
+{%- assign achievement_controls = '00,01,02,03,04,05,06,07,08,09,0A,0B,0C,0D,0E,0F,10,11,12,13,14,15,16,17,18,19,1A,1B,1C,1D,1E,1F,7F' | split: ',' -%}
+{%- for achievement_control in achievement_controls -%}
+  {%- assign achievement_control_escape = '%' | append: achievement_control -%}
+  {%- if achievement_encoded_url contains achievement_control_escape -%}{%- assign achievement_url_allowed = false -%}{%- endif -%}
+{%- endfor -%}
+{%- if achievement_target_url contains '\' -%}{%- assign achievement_url_allowed = false -%}{%- endif -%}
+{%- assign achievement_lower_url = achievement_target_url | downcase -%}
+{%- assign achievement_scheme_head = achievement_target_url | split: '/' | first | split: '?' | first | split: '#' | first -%}
+{%- assign achievement_http = achievement_lower_url | slice: 0, 7 -%}
+{%- assign achievement_https = achievement_lower_url | slice: 0, 8 -%}
+{%- assign achievement_first_pair = achievement_target_url | slice: 0, 2 -%}
+{%- if achievement_scheme_head contains ':' -%}
+  {%- if achievement_http != 'http://' and achievement_https != 'https://' -%}{%- assign achievement_url_allowed = false -%}{%- endif -%}
+{%- endif -%}
+{%- assign achievement_authority = '' -%}
+{%- if achievement_http == 'http://' -%}
+  {%- assign achievement_authority = achievement_target_url | slice: 7, achievement_target_url.size -%}
+{%- elsif achievement_https == 'https://' -%}
+  {%- assign achievement_authority = achievement_target_url | slice: 8, achievement_target_url.size -%}
+{%- elsif achievement_first_pair == '//' -%}
+  {%- assign achievement_authority = achievement_target_url | slice: 2, achievement_target_url.size -%}
+{%- endif -%}
+{%- if achievement_http == 'http://' or achievement_https == 'https://' or achievement_first_pair == '//' -%}
+  {%- assign achievement_authority = achievement_authority | split: '/' | first | split: '?' | first | split: '#' | first -%}
+  {%- if achievement_authority == nil or achievement_authority == '' -%}{%- assign achievement_url_allowed = false -%}{%- endif -%}
+{%- endif -%}
+{%- if achievement_url_allowed -%}
+{%- assign achievement_first_char = achievement_target_url | slice: 0, 1 -%}
+{%- if achievement_first_char == '/' and achievement_first_pair != '//' -%}
+  {%- assign achievement_base = site.baseurl | default: '' -%}
+  {%- assign achievement_base_last = achievement_base | slice: -1, 1 -%}
+  {%- if achievement_base_last == '/' -%}
+    {%- assign achievement_base_length = achievement_base.size | minus: 1 -%}
+    {%- assign achievement_base = achievement_base | slice: 0, achievement_base_length -%}
+  {%- endif -%}
+  {%- assign achievement_base_length = achievement_base.size -%}
+  {%- assign achievement_prefix = achievement_target_url | slice: 0, achievement_base_length -%}
+  {%- assign achievement_after_prefix = achievement_target_url | slice: achievement_base_length, 1 -%}
+  {%- assign achievement_has_base = false -%}
+  {%- if achievement_base != '' and achievement_prefix == achievement_base -%}
+    {%- if achievement_target_url == achievement_base or achievement_after_prefix == '/' or achievement_after_prefix == '?' or achievement_after_prefix == '#' -%}
+      {%- assign achievement_has_base = true -%}
+    {%- endif -%}
+  {%- endif -%}
+  {%- unless achievement_has_base -%}
+    {%- assign achievement_target_url = achievement_base | append: achievement_target_url -%}
+  {%- endunless -%}
+{%- endif -%}
+{{- achievement_target_url | escape -}}
+{%- endif -%}

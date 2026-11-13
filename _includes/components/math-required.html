@@ -1,0 +1,7 @@
+{%- if page.math -%}
+true
+{%- elsif layout.math_notice_in_post and page.math != false and page.content contains '$' -%}
+true
+{%- else -%}
+false
+{%- endif -%}

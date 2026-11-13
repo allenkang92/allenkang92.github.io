@@ -17,6 +17,7 @@ layout: null
       {% endfor %}
     {% endif %}
 
+    {% capture post_search_content %}{{ post.content | strip_html }} {% include components/post-search-outcomes.html post=post %} {% include components/post-search-references.html post=post %}{% endcapture %}
     {% if has_item %},{% endif %}
     {
       "title": {{ post.title | jsonify }},
@@ -25,12 +26,44 @@ layout: null
       "type": "post",
       "tags": {% if post.tags %}{{ post.tags | jsonify }}{% else %}[]{% endif %},
       "description": {{ post.description | default: post.excerpt | strip_html | normalize_whitespace | jsonify }},
-      "content": {{ post.content | strip_html | normalize_whitespace | jsonify }},
+      "content": {{ post_search_content | normalize_whitespace | jsonify }},
       "date": "{{ post.date | date: "%Y-%m-%d" }}",
       "series": {% if post.series %}{{ post.series | jsonify }}{% else %}null{% endif %},
       "series_index": {% if series_index %}{{ series_index }}{% else %}null{% endif %}
     }
     {% assign has_item = true %}
+  {% endfor %}
+
+  {% for achievement in site.achievements %}
+    {% capture achievement_eligible %}{% include components/achievement-searchable.html achievement=achievement %}{% endcapture %}
+    {% if achievement_eligible == 'true' %}
+      {% capture achievement_search_content %}
+        {{ achievement.overview | escape }}
+        {{ achievement.institution | escape }}
+        {{ achievement.credential_id | escape }}
+        {{ achievement.certificate_description | escape }}
+        {% for item in achievement.highlights %}{{ item | escape }} {% endfor %}
+        {% for item in achievement.tech_stack %}{{ item | escape }} {% endfor %}
+        {% for item in achievement.skills %}{{ item | escape }} {% endfor %}
+        {{ achievement.content | strip_html }}
+      {% endcapture %}
+      {% if has_item %},{% endif %}
+      {
+        "title": {{ achievement.title | append: '' | jsonify }},
+        "url": {{ achievement.url | absolute_url | jsonify }},
+        "category": "Uncategorized",
+        "type": "page",
+        "page_kind": "achievement",
+        "language": {{ achievement.content_language | default: '' | append: '' | jsonify }},
+        "tags": [],
+        "description": {{ achievement.overview | default: achievement.title | escape | normalize_whitespace | jsonify }},
+        "content": {{ achievement_search_content | normalize_whitespace | jsonify }},
+        "date": "",
+        "series": null,
+        "series_index": null
+      }
+      {% assign has_item = true %}
+    {% endif %}
   {% endfor %}
 
   {% for page in site.pages %}

@@ -5,7 +5,7 @@
       <div class="profile-logo"></div>
     </div>
     <div class="blog-title">
-      <a class="site-title" href="{{ '/' | relative_url }}">{{ site.title }}</a>
+      <a class="site-title" href="{{ '/' | relative_url | escape }}">{{ site.title | escape }}</a>
       <p>{{ site.description | newline_to_br }}</p>
     </div>
   </div>
@@ -32,9 +32,9 @@
         {% elsif page.url contains item.url %}
           {% assign is_active = true %}
         {% endif %}
-      <a href="{{ item.url | relative_url }}"
+      <a href="{{ item.url | relative_url | escape }}"
          class="nav-link{% if is_active %} active{% endif %}"
-         {% if is_active %}aria-current="{% if page.url == item.url %}page{% else %}location{% endif %}"{% endif %}><span>{{ item.title }}</span>{% if is_active %}<span class="nav-current" aria-hidden="true">현재</span>{% endif %}</a>
+         {% if is_active %}aria-current="{% if page.url == item.url %}page{% else %}location{% endif %}"{% endif %}><span>{{ item.title | escape }}</span>{% if is_active %}<span class="nav-current" aria-hidden="true">현재</span>{% endif %}</a>
       {% endfor %}
     </div>
   </nav>

@@ -15,5 +15,8 @@ test('pages expose the generated Atom feed for readers and feed discovery', asyn
   assert.ok(meta[0].includes(`href="https://allenkang92.github.io${baseurl}/feed.xml"`));
   assert.ok(page.includes(`href="${baseurl}/feed.xml" type="application/atom+xml">글 구독 (Atom 피드)</a>`));
   assert.match(feed, /<feed\b[^>]*xmlns="http:\/\/www\.w3\.org\/2005\/Atom"/);
+  assert.match(feed, /<feed\b[^>]*xml:lang="ko-KR"/);
+  assert.match(feed, /<link\b[^>]*hreflang="ko-KR"/);
+  assert.match(page, /<meta\s+property="og:locale"\s+content="ko_KR"/);
   assert.match(feed, /<entry\b/);
 });

@@ -1,0 +1,40 @@
+.post-content .highlighter-rouge > .highlight > pre.highlight {
+  box-sizing: border-box;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.post-content .highlighter-rouge > .highlight > pre.highlight:focus-visible {
+  outline: 3px solid var(--atlas-focus, #006b68);
+  outline-offset: 3px;
+}
+
+.post-content .code-copy-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin: 0.4rem 0 0.15rem;
+}
+
+.post-content .code-copy-status {
+  flex: 1 1 auto;
+  font-size: 0.875rem;
+  color: var(--atlas-ink, #222);
+}
+
+.post-content .code-copy-button {
+  flex: 0 0 auto;
+  min-height: 44px;
+  padding: 0.4rem 0.7rem;
+  border: 1px solid var(--atlas-teal, #1f746a);
+  border-radius: 0.35rem;
+  background: var(--atlas-paper, #fff);
+  color: var(--atlas-ink, #222);
+  cursor: pointer;
+}
+
+.post-content .code-copy-button:focus-visible {
+  outline: 3px solid var(--atlas-focus, #006b68);
+  outline-offset: 3px;
+}

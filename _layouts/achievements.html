@@ -4,9 +4,9 @@ layout: default
 <div class="achievements-container">
   <header class="achievements-header">
     <p class="section-kicker">커리어 아카이브</p>
-    <h1>{{ page.title }}</h1>
+    <h1>{{ page.title | escape }}</h1>
     {% if page.description %}
-    <p class="achievements-description">{{ page.description }}</p>
+    <p class="achievements-description">{{ page.description | escape }}</p>
     {% endif %}
   </header>
 
@@ -14,12 +14,13 @@ layout: default
 
   <section class="achievements-timeline" aria-label="성과 목록">
     {% assign sorted_achievements = site.achievements | sort: 'date' | reverse %}
+    {% assign has_visible_achievement = false %}
     {% for achievement in sorted_achievements %}
+      {% capture achievement_visible %}{% include components/achievement-searchable.html achievement=achievement %}{% endcapture %}
+      {% unless achievement_visible == 'true' %}{% continue %}{% endunless %}
+      {% assign has_visible_achievement = true %}
       <article class="achievement-card">
         <div class="achievement-meta">
-          <time datetime="{{ achievement.date | date_to_xmlschema }}" class="achievement-date">
-            {{ achievement.date | date: "%Y-%m-%d" }}
-          </time>
           {% if achievement.category %}
             <span class="achievement-category">
               {% case achievement.category %}
@@ -28,23 +29,23 @@ layout: default
                 {% when 'certifications' %}자격
                 {% when 'education' %}학력
                 {% when 'leadership' %}리더십
-                {% else %}{{ achievement.category }}
+                {% else %}{{ achievement.category | escape }}
               {% endcase %}
             </span>
           {% endif %}
         </div>
 
         <div class="achievement-content">
-          <h2 class="achievement-title">{{ achievement.title }}</h2>
+          <h2 class="achievement-title"><a href="{{ achievement.url | relative_url | escape }}"{% if achievement.content_language %} lang="{{ achievement.content_language | escape }}"{% endif %}>{{ achievement.title | escape }}</a></h2>
           
           {% if achievement.overview %}
-            <p class="achievement-overview">{{ achievement.overview }}</p>
+            <p class="achievement-overview"{% if achievement.content_language %} lang="{{ achievement.content_language | escape }}"{% endif %}>{{ achievement.overview | escape }}</p>
           {% endif %}
 
           {% if achievement.highlights %}
             <ul class="achievement-highlights">
               {% for highlight in achievement.highlights %}
-                <li>{{ highlight }}</li>
+                <li{% if achievement.content_language %} lang="{{ achievement.content_language | escape }}"{% endif %}>{{ highlight | escape }}</li>
               {% endfor %}
             </ul>
           {% endif %}
@@ -54,14 +55,15 @@ layout: default
               <h3>관련 분야</h3>
               <ul class="tech-stack">
                 {% for tech in achievement.tech_stack %}
-                  <li>{{ tech }}</li>
+                  <li{% if achievement.content_language %} lang="{{ achievement.content_language | escape }}"{% endif %}>{{ tech | escape }}</li>
                 {% endfor %}
               </ul>
             </div>
           {% endif %}
 
-          {% if achievement.project_detail %}
-            <a href="{{ achievement.project_detail }}" class="project-detail-link">
+          {% capture project_url %}{% include components/achievement-url.html url=achievement.project_detail %}{% endcapture %}
+          {% if project_url != '' %}
+            <a href="{{ project_url }}" class="project-detail-link">
               프로젝트 상세 보기
               <span class="icon" aria-hidden="true">→</span>
             </a>
@@ -69,5 +71,8 @@ layout: default
         </div>
       </article>
     {% endfor %}
+    {% unless has_visible_achievement %}
+      <p>현재 표시할 성과가 없습니다.</p>
+    {% endunless %}
   </section>
 </div>

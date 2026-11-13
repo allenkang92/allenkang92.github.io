@@ -482,6 +482,12 @@ aside#site-sidebar.sidebar-right .navigation .nav-links a.nav-link.active {
   min-height: 44px !important;
   display: inline-flex !important;
   align-items: center !important;
+  max-width: 100%;
+}
+
+.search-result-title-text {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .search-result-content,
@@ -1497,6 +1503,21 @@ body.sidebar-modal-open::before {
   min-height: 48px;
 }
 
+.unit-converter details > summary {
+  min-height: 44px;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--atlas-border);
+  border-radius: 8px;
+  background: var(--atlas-paper);
+  color: var(--atlas-ink);
+  cursor: pointer;
+}
+
+.unit-converter details > summary:focus-visible {
+  outline: 3px solid var(--atlas-focus);
+  outline-offset: 2px;
+}
+
 .tools-container .formula,
 .tools-container .result,
 .tools-container .calculator-error {
@@ -1695,6 +1716,7 @@ body.sidebar-modal-open::before {
 .previous-operand,
 .current-operand {
   color: inherit !important;
+  overflow-wrap: anywhere;
 }
 
 .current-operand {
@@ -2128,6 +2150,9 @@ mark {
 .series-hub-card:hover,
 .series-hub-card:focus-visible {
   border-color: var(--atlas-teal) !important;
+}
+
+.series-hub-card:hover:not(:focus-visible) {
   outline: 3px solid rgba(31, 116, 106, 0.18) !important;
   outline-offset: 2px !important;
 }
@@ -3092,5 +3117,55 @@ mark {
     animation-iteration-count: 1 !important;
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* 성과 탐색의 각 목적지를 분리해 긴 제목과 작은 화면에서도 알아볼 수 있게 한다. */
+.achievement-navigation {
+  margin-top: 2rem;
+}
+
+.achievement-navigation .nav-links {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.achievement-navigation .nav-links > a {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.25rem;
+  min-width: 0;
+  min-height: 44px;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--atlas-border);
+  border-radius: 0.5rem;
+  background: var(--atlas-surface);
+  text-decoration: none;
+}
+
+.achievement-navigation .nav-links > a:only-child {
+  grid-column: 1 / -1;
+}
+
+.achievement-navigation .nav-links > a:hover {
+  background: var(--atlas-teal-soft);
+}
+
+.achievement-navigation .nav-label {
+  color: var(--atlas-ink-soft);
+  font-size: 0.875rem;
+}
+
+.achievement-navigation .nav-title {
+  color: var(--atlas-teal);
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 36rem) {
+  .achievement-navigation .nav-links {
+    grid-template-columns: minmax(0, 1fr);
   }
 }

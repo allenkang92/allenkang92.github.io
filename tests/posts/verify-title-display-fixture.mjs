@@ -1,0 +1,117 @@
+// 홈과 시리즈 탐색에서 제목 원문 및 링크가 보존되는지 실제 빌드로 확인한다.
+import assert from 'node:assert/strict';
+import { execFileSync } from 'node:child_process';
+import { cp, mkdtemp, readFile, realpath, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join, resolve } from 'node:path';
+import { Window } from 'happy-dom';
+
+const repository = resolve('.');
+const temp = await realpath(await mkdtemp(join(tmpdir(), 'post-title-display-fixture-')));
+const source = join(temp, 'source');
+const paths = ['_config.yml', '_includes', '_layouts', '_achievements', '_pages', '_posts', '_data', 'assets', 'tools', 'sitemap.xml', 'robots.txt', 'index.html', '404.html', 'search.json', 'manifest.json', 'favicon.ico', 'apple-touch-icon.png'];
+for (const path of paths) await cp(join(repository, path), join(source, path), { recursive: true });
+
+const specialTitle = '<자격증> 기업재난관리사 실무분야 합격 후기 & 정보글';
+const recentTitle = '<최근> 둘러보기 & 기록';
+const relatedTitle = '<관련> & 자료';
+const referenceTitle = '<참고> & 출처';
+const seriesTitle = '<시리즈> & 탐색';
+const seriesPageTitle = '<목록> & 시리즈';
+const mathHubTitle = '<수학> & 허브';
+const scienceHubTitle = '<과학> & 허브';
+const target = '/posts/title-fixture-special/';
+const firstTarget = '/posts/title-fixture-first/';
+const recentTarget = '/posts/title-fixture-recent/';
+const mathTarget = '/posts/title-fixture-math/';
+const scienceTarget = '/posts/title-fixture-science/';
+const queryTarget = `${target}?first=1&second=2`;
+const frontmatter = (title, order, permalink, date) => `---\nlayout: post\ntitle: ${JSON.stringify(title)}\ndate: ${date} 00:00:00 +0900\npermalink: ${permalink}\nseries: QA-Title-Display\nseries_order: ${order}\nrelated_items:\n  - title: ${JSON.stringify(relatedTitle)}\n    url: ${JSON.stringify(queryTarget)}\nreferences:\n  - title: ${JSON.stringify(referenceTitle)}\n    url: ${JSON.stringify('https://example.com/?first=1&second=2')}\n---\n시험 본문\n`;
+await writeFile(join(source, '_posts/2025-01-01-title-fixture-first.md'), frontmatter('일반 제목', 1, firstTarget, '2025-01-01'));
+await writeFile(join(source, '_posts/2025-02-01-title-fixture-special.md'), frontmatter(specialTitle, 2, target, '2025-02-01'));
+await writeFile(join(source, '_posts/2025-01-15-title-fixture-recent.md'), frontmatter(recentTitle, 3, recentTarget, '2025-01-15'));
+const hubPost = (series, permalink) => `---\nlayout: post\ntitle: ${JSON.stringify(specialTitle)}\ndate: 2024-01-01 00:00:00 +0900\npermalink: ${permalink}\nseries: ${series}\nseries_order: 30\n---\n시험 본문\n`;
+await writeFile(join(source, '_posts/2024-01-01-title-fixture-math.md'), hubPost('Mathematics-Philosophy-History', mathTarget));
+await writeFile(join(source, '_posts/2024-01-01-title-fixture-science.md'), hubPost('Science_Philosophy_History', scienceTarget));
+const dataPath = join(source, '_data/series.yml');
+const seriesData = await readFile(dataPath, 'utf8');
+const updatedData = seriesData.replace('title: "수학철학·수학사"', `title: ${JSON.stringify(mathHubTitle)}`)
+  .replace('title: "과학철학·현대물리학"', `title: ${JSON.stringify(scienceHubTitle)}`);
+assert.ok(updatedData.includes(mathHubTitle) && updatedData.includes(scienceHubTitle), '기존 시리즈의 제목 시험 자료가 적용돼야 합니다');
+await writeFile(dataPath, `${updatedData}\n  - key: QA-Title-Display\n    title: ${JSON.stringify(seriesTitle)}\n    hub_url: ${JSON.stringify('/series/title-fixture/?first=1&second=2')}\n    kicker: ${JSON.stringify('<분류> & 태그')}\n    summary: 시험 시리즈\n    featured: true\n`);
+const pagePath = join(source, '_pages/series.html');
+const page = await readFile(pagePath, 'utf8');
+const updatedPage = page.replace(/^title: 시리즈$/m, `title: ${JSON.stringify(seriesPageTitle)}`);
+assert.notEqual(updatedPage, page, '시리즈 화면 제목 시험 자료가 적용돼야 합니다');
+await writeFile(pagePath, updatedPage);
+
+const env = { ...process.env, BUNDLE_GEMFILE: process.env.BUNDLE_GEMFILE || join(repository, 'Gemfile'), JEKYLL_ENV: 'production', TZ: 'UTC' };
+const bundle = process.env.BUNDLE_BIN || 'bundle';
+for (const [name, base] of [['root', ''], ['nested', '/blog']]) {
+  const output = join(temp, name);
+  execFileSync(bundle, ['exec', 'jekyll', 'build', '--source', source, '--destination', output, '--baseurl', base], { cwd: repository, env, stdio: 'inherit' });
+  const browser = new Window({ settings: { disableJavaScriptEvaluation: true, disableJavaScriptFileLoading: true, disableCSSFileLoading: true } });
+  const readDocument = async path => {
+    const html = await readFile(join(output, path), 'utf8');
+    return new browser.DOMParser().parseFromString(html, 'text/html');
+  };
+  const assertLink = (link, label, href) => {
+    assert.ok(link, `${name}: ${label} 링크가 있어야 합니다`);
+    assert.equal(link.textContent.trim(), label, `${name}: 표시 제목 원문`);
+    assert.equal(link.getAttribute('href'), href, `${name}: 경로와 쿼리 보존`);
+    assert.equal(link.children.length, 0, `${name}: 제목이 HTML 요소로 해석되지 않아야 합니다`);
+  };
+  try {
+    const home = await readDocument('index.html');
+    assertLink(home.querySelector('#featured-title a'), specialTitle, `${base}${target}`);
+    const recent = [...home.querySelectorAll('.post-title a')].find(link => link.getAttribute('href') === `${base}${recentTarget}`);
+    assertLink(recent, recentTitle, `${base}${recentTarget}`);
+    const normal = [...home.querySelectorAll('.post-title a')].find(link => link.getAttribute('href') === `${base}${firstTarget}`);
+    assertLink(normal, '일반 제목', `${base}${firstTarget}`);
+
+    const series = await readDocument('series/index.html');
+    assert.equal(series.querySelector('#series-index-title')?.textContent, seriesPageTitle);
+    const card = [...series.querySelectorAll('.series-hub-card')].find(link => link.textContent.includes(seriesTitle));
+    assert.ok(card, `${name}: 추천 시리즈 제목 원문`);
+    assert.equal(card.getAttribute('href'), `${base}/series/title-fixture/?first=1&second=2`);
+    assert.equal(card.querySelector('strong')?.textContent, seriesTitle);
+    assert.equal(card.querySelector('.series-hub-kicker')?.textContent.trim(), '<분류> & 태그');
+    const group = [...series.querySelectorAll('.series-catalog-group')].find(element => element.querySelector('h3')?.textContent === seriesTitle);
+    assert.ok(group, `${name}: 시리즈 목록 제목 원문`);
+    assert.equal(group.querySelector('.series-catalog-meta a')?.getAttribute('aria-label'), `${seriesTitle} 허브 보기`);
+    assertLink([...group.querySelectorAll('ol a')].find(link => link.getAttribute('href') === `${base}${target}`), specialTitle, `${base}${target}`);
+
+    for (const [path, hubTitle, postTarget] of [
+      ['series/mathematics-philosophy-history/index.html', mathHubTitle, mathTarget],
+      ['series/science-philosophy-history/index.html', scienceHubTitle, scienceTarget],
+    ]) {
+      const hub = await readDocument(path);
+      assert.equal(hub.querySelector('#series-hub-title')?.textContent, hubTitle, `${name}: 허브 제목 원문`);
+      assertLink([...hub.querySelectorAll('.series-path-item h3 a')].find(link => link.getAttribute('href') === `${base}${postTarget}`), specialTitle, `${base}${postTarget}`);
+    }
+
+    const first = await readDocument('posts/title-fixture-first/index.html');
+    assert.equal(first.querySelector('.series-next-link .series-kicker')?.textContent.trim(), `${seriesTitle} 2번째 글`);
+    assert.equal(first.querySelector('.series-next-link span:last-child')?.textContent, specialTitle);
+    assert.equal(first.querySelector('.series-next-link')?.getAttribute('href'), `${base}${target}`);
+    assertLink([...first.querySelectorAll('.post-series-panel a')].find(link => link.getAttribute('href') === `${base}/series/title-fixture/?first=1&second=2`), `${seriesTitle} 허브`, `${base}/series/title-fixture/?first=1&second=2`);
+    assertLink([...first.querySelectorAll('.post-series-panel a')].find(link => link.getAttribute('href') === `${base}${queryTarget}`), relatedTitle, `${base}${queryTarget}`);
+    assertLink([...first.querySelectorAll('.post-series-panel a')].find(link => link.getAttribute('href') === 'https://example.com/?first=1&second=2'), referenceTitle, 'https://example.com/?first=1&second=2');
+    assertLink([...first.querySelectorAll('.series-navigation a')].find(link => link.getAttribute('href') === `${base}${target}`), specialTitle, `${base}${target}`);
+
+    const special = await readDocument('posts/title-fixture-special/index.html');
+    assert.equal(special.querySelector('h1.post-title')?.textContent, specialTitle);
+    assert.equal(special.querySelector('.series-navigation li.current')?.textContent.trim(), specialTitle);
+    assertLink([...special.querySelectorAll('.post-series-panel a')].find(link => link.getAttribute('href') === `${base}${firstTarget}`), '이전 글: 일반 제목', `${base}${firstTarget}`);
+    const last = await readDocument('posts/title-fixture-recent/index.html');
+    assertLink([...last.querySelectorAll('.post-series-panel a')].find(link => link.getAttribute('href') === `${base}${target}`), `이전 글: ${specialTitle}`, `${base}${target}`);
+
+    const index = JSON.parse(await readFile(join(output, 'search.json'), 'utf8'));
+    assert.ok(index.some(entry => entry.type === 'post' && entry.title === specialTitle && new URL(entry.url, 'https://example.com').pathname === `${base}${target}`), `${name}: 검색 색인의 제목 원문`);
+    const posts = await readDocument('posts/index.html');
+    assertLink([...posts.querySelectorAll('.post-preview h2 a')].find(link => link.getAttribute('href') === `${base}${target}`), specialTitle, `${base}${target}`);
+  } finally {
+    await browser.happyDOM.abort();
+  }
+}
+console.log(`제목 표시 격리 빌드 검증 통과: ${temp}`);

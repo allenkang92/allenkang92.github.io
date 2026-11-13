@@ -1,5 +1,6 @@
 ---
 layout: default
+math_notice_in_post: true
 ---
 
 <article class="post">
@@ -57,6 +58,10 @@ layout: default
   </details>
   {% endif %}
 
+  {% capture math_required %}{% include components/math-required.html %}{% endcapture %}
+  {% if math_required == 'true' %}
+    {% include components/math-status.html %}
+  {% endif %}
   <div id="post-content" class="post-content">
     {{ content }}
   </div>
@@ -99,14 +104,14 @@ layout: default
     <section class="post-series-panel" aria-labelledby="post-next-heading">
       <h2 id="post-next-heading">다음 글</h2>
       {% if next_series_post %}
-        <a class="series-next-link" href="{{ next_series_post.url | relative_url }}">
-          <span class="series-kicker">{{ series_label }} {{ next_series_position }}번째 글</span>
-          <span>{{ next_series_post.title }}</span>
+        <a class="series-next-link" href="{{ next_series_post.url | relative_url | escape }}">
+          <span class="series-kicker">{{ series_label | escape }} {{ next_series_position }}번째 글</span>
+          <span>{{ next_series_post.title | escape }}</span>
         </a>
       {% else %}
         <p>이 시리즈의 마지막 글입니다.</p>
         {% if series_hub_url %}
-          <a href="{{ series_hub_url | relative_url }}">시리즈 허브에서 전체 흐름 보기</a>
+          <a href="{{ series_hub_url | relative_url | escape }}">시리즈 허브에서 전체 흐름 보기</a>
         {% endif %}
       {% endif %}
     </section>
@@ -115,14 +120,14 @@ layout: default
       <h2 id="post-related-heading">관련 글</h2>
       <ul>
         {% if series_hub_url %}
-          <li><a href="{{ series_hub_url | relative_url }}">{{ series_label }} 허브</a></li>
+          <li><a href="{{ series_hub_url | relative_url | escape }}">{{ series_label | escape }} 허브</a></li>
         {% endif %}
         {% if previous_series_post %}
-          <li><a href="{{ previous_series_post.url | relative_url }}">이전 글: {{ previous_series_post.title }}</a></li>
+          <li><a href="{{ previous_series_post.url | relative_url | escape }}">이전 글: {{ previous_series_post.title | escape }}</a></li>
         {% endif %}
         {% if page.related_items %}
           {% for item in page.related_items %}
-            <li><a href="{{ item.url | relative_url }}">{{ item.title }}</a></li>
+            <li><a href="{{ item.url | relative_url | escape }}">{{ item.title | escape }}</a></li>
           {% endfor %}
         {% endif %}
         {% unless series_hub_url or previous_series_post or page.related_items %}
@@ -138,9 +143,9 @@ layout: default
           {% for reference in page.references %}
             <li>
               {% if reference.url %}
-                <a href="{{ reference.url }}">{{ reference.title }}</a>
+                <a href="{{ reference.url | escape }}">{{ reference.title | escape }}</a>
               {% else %}
-                {{ reference.title }}
+                {{ reference.title | escape }}
               {% endif %}
               {% if reference.note %}
                 <span class="reference-note">{{ reference.note }}</span>
@@ -163,9 +168,9 @@ layout: default
       {% for post in series_posts %}
         <li {% if post.url == page.url %}class="current" aria-current="page"{% endif %}>
           {% if post.url == page.url %}
-            {{ post.title }}
+            {{ post.title | escape }}
           {% else %}
-            <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+            <a href="{{ post.url | relative_url | escape }}">{{ post.title | escape }}</a>
           {% endif %}
         </li>
       {% endfor %}
@@ -173,15 +178,22 @@ layout: default
   </div>
   {% endif %}
 
+  {% assign comment_issue_raw = page.comment_issue_number | append: '' | strip %}
+  {% assign comment_issue_number = comment_issue_raw | plus: 0 | floor %}
+  {% assign comment_issue_canonical = comment_issue_number | append: '' %}
+  {% assign valid_comment_issue = false %}
+  {% if comment_issue_number > 0 and comment_issue_raw == comment_issue_canonical %}
+    {% assign valid_comment_issue = true %}
+  {% endif %}
   <section id="comments" class="comments-section" aria-labelledby="comments-heading">
     <h2 id="comments-heading">댓글</h2>
     <p class="comments-note">
       GitHub 계정으로 이어지는 Utterances 댓글입니다. 댓글 창이 보이지 않으면
-      <a href="https://github.com/allenkang92/allenkang92.github.io/issues" target="_blank" rel="noopener noreferrer">GitHub Issues에서 확인</a>할 수 있습니다.
+      <a href="https://github.com/allenkang92/allenkang92.github.io/issues{% if valid_comment_issue %}/{{ comment_issue_number }}{% endif %}" target="_blank" rel="noopener noreferrer">GitHub Issues에서 확인</a>할 수 있습니다.
     </p>
     <script src="https://utteranc.es/client.js"
             repo="allenkang92/allenkang92.github.io"
-            issue-term="pathname"
+            {% if valid_comment_issue %}issue-number="{{ comment_issue_number }}"{% else %}issue-term="pathname"{% endif %}
             theme="github-light"
             label="comment"
             crossorigin="anonymous"

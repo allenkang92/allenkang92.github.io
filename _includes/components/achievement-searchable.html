@@ -1,0 +1,36 @@
+{%- assign searchable_achievement = include.achievement -%}
+{%- assign achievement_is_searchable = true -%}
+{%- assign achievement_collection = site.collections | where: 'label', 'achievements' | first -%}
+{%- assign achievement_title_json = searchable_achievement.title | jsonify -%}
+{%- assign achievement_title_type = achievement_title_json | slice: 0, 1 -%}
+{%- assign achievement_title_text = searchable_achievement.title | append: '' | url_encode | remove: '+' -%}
+{%- assign achievement_title_spaces = '%09,%0A,%0B,%0C,%0D,%C2%A0,%E1%9A%80,%E2%80%80,%E2%80%81,%E2%80%82,%E2%80%83,%E2%80%84,%E2%80%85,%E2%80%86,%E2%80%87,%E2%80%88,%E2%80%89,%E2%80%8A,%E2%80%A8,%E2%80%A9,%E2%80%AF,%E2%81%9F,%E3%80%80,%EF%BB%BF' | split: ',' -%}
+{%- for achievement_title_space in achievement_title_spaces -%}
+  {%- assign achievement_title_text = achievement_title_text | remove: achievement_title_space -%}
+{%- endfor -%}
+{%- unless achievement_collection.output and achievement_title_type == '"' and achievement_title_text != '' and searchable_achievement.url -%}
+  {%- assign achievement_is_searchable = false -%}
+{%- endunless -%}
+{%- assign achievement_keys = searchable_achievement.keys -%}
+{%- if achievement_keys contains 'published' -%}
+  {%- if searchable_achievement.published == false or searchable_achievement.published == nil -%}
+    {%- unless site.unpublished -%}{%- assign achievement_is_searchable = false -%}{%- endunless -%}
+  {%- endif -%}
+{%- endif -%}
+{%- unless site.future -%}
+  {%- if searchable_achievement.date -%}
+    {%- assign achievement_time = searchable_achievement.date | date: '%s' | plus: 0 -%}
+    {%- assign search_build_time = site.time | date: '%s' | plus: 0 -%}
+    {%- if achievement_time > search_build_time -%}{%- assign achievement_is_searchable = false -%}{%- endif -%}
+  {%- endif -%}
+{%- endunless -%}
+{%- assign achievement_route = searchable_achievement.url | default: '' | downcase -%}
+{%- assign achievement_route_last = achievement_route | slice: -1, 1 -%}
+{%- assign achievement_route_html = achievement_route | slice: -5, 5 -%}
+{%- assign achievement_route_htm = achievement_route | slice: -4, 4 -%}
+{%- assign achievement_route_basename = achievement_route | split: '/' | last -%}
+{%- if achievement_route_last != '/' and achievement_route_html != '.html' and achievement_route_htm != '.htm' -%}
+  {%- if achievement_route_basename contains '.' -%}{%- assign achievement_is_searchable = false -%}{%- endif -%}
+{%- endif -%}
+{%- if achievement_route contains '?' or achievement_route contains '#' -%}{%- assign achievement_is_searchable = false -%}{%- endif -%}
+{{- achievement_is_searchable -}}

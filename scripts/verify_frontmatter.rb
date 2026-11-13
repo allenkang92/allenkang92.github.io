@@ -88,7 +88,7 @@ module FrontmatterVerifier
     errors
   end
 
-  def verify(posts_dir:, categories_path:, series_path:)
+  def verify(posts_dir:, categories_path:, series_path:, achievements_dir: nil)
     errors = []
     categories_data, categories_errors = read_yaml_file(categories_path)
     series_data, series_errors = read_yaml_file(series_path)
@@ -128,9 +128,94 @@ module FrontmatterVerifier
     end
 
     errors.concat(validate_series_order_collisions(records))
+    if achievements_dir
+      # Jekyll collections accept YAML-front-matter documents of any extension,
+      # while entries without front matter are static files.
+      achievement_paths(achievements_dir, errors).each do |achievement_path, source_path|
+        has_header = File.open(source_path, 'rb') { |file| file.gets.to_s.match?(/\A---[ \t]*\r?\n/) }
+        next unless has_header
+
+        content = File.read(source_path, encoding: 'UTF-8')
+        data, parse_errors = parse_front_matter(content, achievement_path)
+        errors.concat(parse_errors)
+        next unless data
+
+        errors.concat(validate_achievement_urls(data: data, path: achievement_path))
+      rescue SystemCallError, EncodingError => error
+        errors << "#{display_path(achievement_path)}: unable to read UTF-8 achievement (#{error.class})"
+      end
+    end
     errors
   rescue SystemCallError, EncodingError => error
     ["Front matter registry could not be read (#{error.class})"]
+  end
+
+  # Follow internal file links like Jekyll does, but never traverse directory
+  # links or read targets outside the site root. Report skipped links explicitly.
+  def achievement_paths(directory, errors)
+    directory_path = File.expand_path(directory.to_s)
+    if File.symlink?(directory_path)
+      errors << "#{display_path(directory)}: achievement directory cannot be a symbolic link"
+      return []
+    end
+
+    site_root = File.realpath(File.dirname(directory_path))
+    root_prefix = site_root.end_with?(File::SEPARATOR) ? site_root : site_root + File::SEPARATOR
+    Dir.glob(File.join(directory_path, '**', '*')).sort.each_with_object([]) do |path, paths|
+      if File.symlink?(path)
+        begin
+          target = File.realpath(path)
+          unless target == site_root || target.start_with?(root_prefix)
+            errors << "#{display_path(path)}: symbolic link target is outside the site root"
+            next
+          end
+          unless File.file?(target)
+            errors << "#{display_path(path)}: symbolic link must target a regular file, not a directory"
+            next
+          end
+          paths << [path, target]
+        rescue SystemCallError => error
+          errors << "#{display_path(path)}: symbolic link target cannot be resolved (#{error.class})"
+        end
+      elsif File.file?(path)
+        paths << [path, path]
+      end
+    end
+  end
+
+  # Keep this policy aligned with _includes/components/achievement-url.html.
+  # It rejects dangerous URL forms; it is not a complete URL or host parser.
+  def achievement_url_error(value)
+    return '문자열이어야 합니다' unless value.is_a?(String)
+    return '빈 주소는 사용할 수 없습니다' if value.empty?
+    return '주소 앞뒤에 공백을 사용할 수 없습니다' if value != value.strip || value.match?(/\A[[:space:]]|[[:space:]]\z/u)
+    return '제어문자와 역슬래시는 사용할 수 없습니다' if value.match?(/[\x00-\x1f\x7f\\]/)
+
+    lower = value.downcase
+    http_prefix = lower.start_with?('http://')
+    https_prefix = lower.start_with?('https://')
+    protocol_relative = value.start_with?('//')
+    head = value.split(/[\/?#]/, 2).first.to_s
+    if head.include?(':') && !http_prefix && !https_prefix
+      return '명시적 스킴은 http:// 또는 https://만 허용합니다'
+    end
+
+    if http_prefix || https_prefix || protocol_relative
+      authority = value[(https_prefix ? 8 : http_prefix ? 7 : 2)..-1].to_s.split(/[\/?#]/, 2).first.to_s
+      return '호스트가 비어 있습니다' if authority.empty?
+    end
+    nil
+  end
+
+  def validate_achievement_urls(data:, path:)
+    fields = data.transform_keys(&:to_s)
+    %w[certificate_image project_detail].each_with_object([]) do |field, errors|
+      # Explicit false is a conventional way to disable an inherited field.
+      next unless fields.key?(field) && !fields[field].nil? && fields[field] != false
+
+      reason = achievement_url_error(fields[field])
+      errors << "#{display_path(path)}: '#{field}' #{reason}" if reason
+    end
   end
 
   def read_yaml_file(path)
@@ -240,11 +325,12 @@ if $PROGRAM_NAME == __FILE__
     posts_dir: root.join('_posts'),
     categories_path: root.join('_data', 'categories.yml'),
     series_path: root.join('_data', 'series.yml'),
+    achievements_dir: root.join('_achievements'),
   )
 
   if errors.empty?
     post_count = Dir.glob(File.join(root.join('_posts').to_s, '**', '*.{md,markdown}')).length
-    puts "PASS: #{post_count} posts have valid front matter, categories, dates, and series order"
+    puts "PASS: #{post_count} posts have valid front matter, categories, dates, and series order; explicit achievement URLs follow the input policy"
   else
     warn "FAIL: #{errors.length} front matter issue(s)"
     errors.each { |error| warn "- #{error}" }

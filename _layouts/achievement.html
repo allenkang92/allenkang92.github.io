@@ -3,25 +3,23 @@ layout: default
 ---
 <article class="achievement">
   <header class="achievement-header">
-    <h1>{{ page.title }}</h1>
-    <time datetime="{{ page.date | date_to_xmlschema }}" class="achievement-date">
-      {{ page.date | date: "%B %-d, %Y" }}
-    </time>
+    <h1 id="achievement-title"{% if page.content_language %} lang="{{ page.content_language | escape }}"{% endif %}>{{ page.title | escape }}</h1>
   </header>
 
   <div class="achievement-content">
-    {% if page.certificate_image %}
+    {% capture certificate_url %}{% include components/achievement-url.html url=page.certificate_image %}{% endcapture %}
+    {% if certificate_url != '' %}
       <figure class="certificate">
-        <img src="{{ page.certificate_image }}" 
-             alt="{{ page.title }} Certificate" 
+        <img src="{{ certificate_url }}"
+             alt="증명서 이미지"
              loading="lazy"
              onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
         <figcaption class="image-error" style="display: none;" role="alert">
-          Image could not be loaded
+          이미지를 불러오지 못했습니다.
         </figcaption>
         {% if page.certificate_description %}
-          <figcaption class="certificate-description">
-            {{ page.certificate_description }}
+          <figcaption class="certificate-description"{% if page.content_language %} lang="{{ page.content_language | escape }}"{% endif %}>
+            {{ page.certificate_description | escape }}
           </figcaption>
         {% endif %}
       </figure>
@@ -30,20 +28,20 @@ layout: default
     <div class="achievement-details">
       {% if page.institution %}
         <p class="institution">
-          <strong>Institution:</strong> {{ page.institution }}
+          <strong>기관:</strong> <span{% if page.content_language %} lang="{{ page.content_language | escape }}"{% endif %}>{{ page.institution | escape }}</span>
         </p>
       {% endif %}
       
       {% if page.credential_id %}
         <p class="credential">
-          <strong>Credential ID:</strong> 
-          <span class="credential-id">{{ page.credential_id }}</span>
+          <strong>자격 번호:</strong>
+          <span class="credential-id">{{ page.credential_id | escape }}</span>
         </p>
       {% endif %}
     </div>
 
     {% if page.overview %}
-      <p class="achievement-overview">{{ page.overview | escape }}</p>
+      <p class="achievement-overview"{% if page.content_language %} lang="{{ page.content_language | escape }}"{% endif %}>{{ page.overview | escape }}</p>
     {% endif %}
 
     {% if page.highlights and page.highlights.size > 0 %}
@@ -51,7 +49,7 @@ layout: default
         <h2 id="achievement-highlights-heading">주요 내용</h2>
         <ul class="achievement-highlights">
           {% for highlight in page.highlights %}
-            <li>{{ highlight | escape }}</li>
+            <li{% if page.content_language %} lang="{{ page.content_language | escape }}"{% endif %}>{{ highlight | escape }}</li>
           {% endfor %}
         </ul>
       </section>
@@ -62,7 +60,7 @@ layout: default
         <h2 id="achievement-tech-heading">관련 분야</h2>
         <ul class="tech-stack">
           {% for tech in page.tech_stack %}
-            <li>{{ tech | escape }}</li>
+            <li{% if page.content_language %} lang="{{ page.content_language | escape }}"{% endif %}>{{ tech | escape }}</li>
           {% endfor %}
         </ul>
       </section>
@@ -70,12 +68,12 @@ layout: default
 
     {{ content | replace: '<img src="', '<img loading="lazy" src="' }}
 
-    {% if page.project_detail %}
+    {% capture project_url %}{% include components/achievement-url.html url=page.project_detail %}{% endcapture %}
+    {% if project_url != '' %}
       <div class="project-detail-link">
-        <a href="{{ page.project_detail }}" 
-           class="button project-button"
-           aria-label="View detailed project information for {{ page.title }}">
-          View Project Details
+        <a href="{{ project_url }}"
+           class="button project-button" aria-labelledby="achievement-project-detail-label achievement-title">
+          <span id="achievement-project-detail-label">프로젝트 상세 보기</span>
           <span class="icon" aria-hidden="true">→</span>
         </a>
       </div>
@@ -83,67 +81,80 @@ layout: default
 
     {% if page.skills %}
       <section class="skills" aria-labelledby="skills-heading">
-        <h2 id="skills-heading">Related Skills</h2>
+        <h2 id="skills-heading">관련 기술</h2>
         <ul class="skill-list">
           {% for skill in page.skills %}
-            <li class="skill-item">{{ skill }}</li>
+            <li class="skill-item"{% if page.content_language %} lang="{{ page.content_language | escape }}"{% endif %}>{{ skill | escape }}</li>
           {% endfor %}
         </ul>
       </section>
     {% endif %}
 
     {% if page.related_achievements %}
+      {% capture related_achievement_items %}
+        {% for achievement in site.achievements %}
+          {% capture achievement_visible %}{% include components/achievement-searchable.html achievement=achievement %}{% endcapture %}
+          {% if achievement_visible == 'true' and page.related_achievements contains achievement.title %}
+            <li class="achievement-item">
+              <a href="{{ achievement.url | relative_url | escape }}" class="achievement-link">
+                <h3 class="achievement-title"{% if achievement.content_language %} lang="{{ achievement.content_language | escape }}"{% endif %}>{{ achievement.title | escape }}</h3>
+                {% if achievement.description %}
+                  <p class="achievement-description"{% if achievement.content_language %} lang="{{ achievement.content_language | escape }}"{% endif %}>{{ achievement.description | escape }}</p>
+                {% endif %}
+              </a>
+            </li>
+          {% endif %}
+        {% endfor %}
+      {% endcapture %}
+      {% assign related_achievement_items = related_achievement_items | strip %}
+      {% if related_achievement_items != '' %}
       <section class="related-achievements" aria-labelledby="related-heading">
-        <h2 id="related-heading">Related Achievements</h2>
+        <h2 id="related-heading">관련 성과</h2>
         <ul class="achievement-list">
-          {% for achievement in site.achievements %}
-            {% if page.related_achievements contains achievement.title %}
-              <li class="achievement-item">
-                <a href="{{ achievement.url }}" class="achievement-link">
-                  <h3 class="achievement-title">{{ achievement.title }}</h3>
-                  <time datetime="{{ achievement.date | date_to_xmlschema }}" class="achievement-date">
-                    {{ achievement.date | date: "%B %-d, %Y" }}
-                  </time>
-                  {% if achievement.description %}
-                    <p class="achievement-description">{{ achievement.description }}</p>
-                  {% endif %}
-                </a>
-              </li>
-            {% endif %}
-          {% endfor %}
+          {{ related_achievement_items }}
         </ul>
       </section>
+      {% endif %}
     {% endif %}
   </div>
 
-  <nav class="achievement-navigation" aria-label="Achievement Navigation">
-    {% assign achievements = site.achievements | sort: 'date' | reverse %}
-    {% for achievement in achievements %}
-      {% if achievement.url == page.url %}
-        {% assign achievement_index = forloop.index0 %}
-        {% assign prev_index = achievement_index | plus: 1 %}
-        {% assign next_index = achievement_index | minus: 1 %}
-        
+  {% assign achievements = site.achievements | sort: 'date' | reverse %}
+  {% assign previous_visible = nil %}
+  {% assign next_achievement = nil %}
+  {% assign prev_achievement = nil %}
+  {% assign found_current = false %}
+  {% for achievement in achievements %}
+    {% capture achievement_visible %}{% include components/achievement-searchable.html achievement=achievement %}{% endcapture %}
+    {% unless achievement_visible == 'true' %}{% continue %}{% endunless %}
+    {% if found_current %}
+      {% assign prev_achievement = achievement %}
+      {% break %}
+    {% endif %}
+    {% if achievement.url == page.url %}
+      {% assign next_achievement = previous_visible %}
+      {% assign found_current = true %}
+    {% endif %}
+    {% assign previous_visible = achievement %}
+  {% endfor %}
+  {% if prev_achievement or next_achievement %}
+  <nav class="achievement-navigation" aria-label="성과 탐색">
         <div class="nav-links">
-          {% if prev_index < achievements.size %}
-            {% assign prev_achievement = achievements[prev_index] %}
-            <a href="{{ prev_achievement.url }}" class="nav-previous">
-              <span class="nav-label">Previous Achievement:</span>
-              <span class="nav-title">{{ prev_achievement.title }}</span>
+          {% if prev_achievement %}
+            <a href="{{ prev_achievement.url | relative_url | escape }}" class="nav-previous">
+              <span class="nav-label">이전 성과:</span>
+              <span class="nav-title"{% if prev_achievement.content_language %} lang="{{ prev_achievement.content_language | escape }}"{% endif %}>{{ prev_achievement.title | escape }}</span>
             </a>
           {% endif %}
 
-          {% if next_index >= 0 %}
-            {% assign next_achievement = achievements[next_index] %}
-            <a href="{{ next_achievement.url }}" class="nav-next">
-              <span class="nav-label">Next Achievement:</span>
-              <span class="nav-title">{{ next_achievement.title }}</span>
+          {% if next_achievement %}
+            <a href="{{ next_achievement.url | relative_url | escape }}" class="nav-next">
+              <span class="nav-label">다음 성과:</span>
+              <span class="nav-title"{% if next_achievement.content_language %} lang="{{ next_achievement.content_language | escape }}"{% endif %}>{{ next_achievement.title | escape }}</span>
             </a>
           {% endif %}
         </div>
-      {% endif %}
-    {% endfor %}
   </nav>
+  {% endif %}
 </article>
 
 <script>

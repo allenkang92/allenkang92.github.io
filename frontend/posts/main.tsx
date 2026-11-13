@@ -48,6 +48,15 @@ if (rootElement instanceof HTMLElement && fallbackElement instanceof HTMLElement
     const searchIndexUrl = rootElement.dataset.searchIndexUrl || '/search.json';
     const siteBaseUrl = rootElement.dataset.siteBaseUrl || window.location.origin;
     const postsUrl = rootElement.dataset.postsUrl || '/posts/';
+    const achievementsUrl = rootElement.dataset.achievementsUrl || '/achievements/';
+    const expectedPagePaths: unknown = JSON.parse(rootElement.dataset.expectedSearchPages || 'null');
+    if (!Array.isArray(expectedPagePaths) || !expectedPagePaths.every(path => typeof path === 'string')) {
+      throw new TypeError('Searchable page paths are unavailable.');
+    }
+    const expectedAchievementPaths: unknown = JSON.parse(rootElement.dataset.expectedAchievementPaths || 'null');
+    if (!Array.isArray(expectedAchievementPaths) || !expectedAchievementPaths.every(path => typeof path === 'string')) {
+      throw new TypeError('Searchable achievement paths are unavailable.');
+    }
     const root = createRoot(rootElement);
 
     root.render(
@@ -58,6 +67,9 @@ if (rootElement instanceof HTMLElement && fallbackElement instanceof HTMLElement
           searchIndexUrl={searchIndexUrl}
           siteBaseUrl={siteBaseUrl}
           postsUrl={postsUrl}
+          achievementsUrl={achievementsUrl}
+          expectedPagePaths={expectedPagePaths}
+          expectedAchievementPaths={expectedAchievementPaths}
           rootElement={rootElement}
           fallbackElement={fallbackElement}
         />

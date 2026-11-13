@@ -1,5 +1,6 @@
 ---
 layout: achievement
+content_language: en
 title: Professional Certifications
 category: certifications
 date: 2024-01-01

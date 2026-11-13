@@ -1,7 +1,49 @@
 <!-- Search Form Component -->
+{% capture search_index_url %}{% include components/search-index-url.html %}{% endcapture %}
 <div class="search-widget">
   <div class="search-container" id="search-container">
-    <form class="search-form" role="search" aria-label="{{ include.aria_label | default: '사이트 검색' }}" action="{{ '/posts/' | relative_url }}" method="get" data-search-url="{{ '/search.json' | relative_url }}">
+    <form class="search-form" role="search" aria-label="{{ include.aria_label | default: '사이트 검색' }}" action="{{ '/posts/' | relative_url }}" method="get" data-search-url="{{ search_index_url | escape }}" data-site-base-url="{{ site.url | append: site.baseurl | escape }}" data-category-labels="{
+      {%- assign has_category_label = false -%}
+      {%- for category in site.data.categories.main -%}
+        {%- assign category_key = category[0] -%}
+        {%- if has_category_label -%},{%- endif -%}
+        {%- capture category_label -%}{%- include category-label-raw.html category=category_key -%}{%- endcapture -%}
+        {{- category_key | jsonify | escape -}}:{{- category_label | jsonify | escape -}}
+        {%- assign has_category_label = true -%}
+      {%- endfor -%}
+      {%- for category in site.categories -%}
+        {%- assign category_key = category[0] -%}
+        {%- assign category_configuration = site.data.categories.main[category_key] -%}
+        {%- if category_configuration == nil -%}
+          {%- if has_category_label -%},{%- endif -%}
+          {%- capture category_label -%}{%- include category-label-raw.html category=category_key -%}{%- endcapture -%}
+          {{- category_key | jsonify | escape -}}:{{- category_label | jsonify | escape -}}
+          {%- assign has_category_label = true -%}
+        {%- endif -%}
+      {%- endfor -%}
+    }" data-expected-post-paths="[{% for post in site.posts %}{% unless forloop.first %},{% endunless %}{{ post.url | relative_url | jsonify | escape }}{% endfor %}]" data-expected-page-paths="[
+      {%- assign has_expected_page = false -%}
+      {%- for search_page in site.pages -%}
+        {%- assign page_root = search_page.path | slice: 0, 6 -%}
+        {%- assign searchable_page = false -%}
+        {%- if page_root == 'tools/' or search_page.path contains '_pages/' -%}
+          {%- assign searchable_page = true -%}
+        {%- endif -%}
+        {%- if searchable_page and search_page.title and search_page.permalink and search_page.layout != 'xml' -%}
+          {%- if has_expected_page -%},{%- endif -%}
+          {{- search_page.url | relative_url | jsonify | escape -}}
+          {%- assign has_expected_page = true -%}
+        {%- endif -%}
+      {%- endfor -%}
+      {%- for achievement in site.achievements -%}
+        {%- capture achievement_eligible -%}{%- include components/achievement-searchable.html achievement=achievement -%}{%- endcapture -%}
+        {%- if achievement_eligible == 'true' -%}
+          {%- if has_expected_page -%},{%- endif -%}
+          {{- achievement.url | relative_url | jsonify | escape -}}
+          {%- assign has_expected_page = true -%}
+        {%- endif -%}
+      {%- endfor -%}
+    ]">
         <label for="search-input" class="visually-hidden">{{ include.input_label | default: '검색어 입력' }}</label>
         <div class="search-input-wrapper">
             <input

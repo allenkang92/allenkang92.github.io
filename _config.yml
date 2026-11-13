@@ -2,7 +2,8 @@
 title: Allen's Blog
 description: Striving for a better tomorrow, together with you.
 url: "https://allenkang92.github.io" # 웨사이트 주소
-lang: ko_KR
+lang: ko-KR
+timezone: Asia/Seoul
 github_username: allenkang92
 author: Allen Kang
 email: ksw8841@knou.ac.kr
@@ -61,6 +62,7 @@ exclude:
   - Gemfile
   - Gemfile.lock
   - node_modules
+  - build
   - frontend
   - scripts
   - tests

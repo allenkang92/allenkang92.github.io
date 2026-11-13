@@ -4,12 +4,14 @@
 from __future__ import annotations
 
 import argparse
+import ipaddress
 import json
+import re
 import sys
 from collections import Counter
 from html.parser import HTMLParser
 from pathlib import Path
-from urllib.parse import SplitResult, unquote, urljoin, urlsplit
+from urllib.parse import SplitResult, quote, unquote, urljoin, urlsplit
 
 
 REFERENCE_ATTRIBUTES = (
@@ -25,12 +27,25 @@ VOID_ELEMENTS = {
     "area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta",
     "param", "source", "track", "wbr",
 }
+# WHATWG URL fragment serialization percent-encodes controls, non-ASCII,
+# space, double quote, <, > and backtick; existing percent escapes stay intact.
+FRAGMENT_SAFE = "".join(chr(code) for code in range(0x21, 0x7F) if chr(code) not in '\"<>`')
+ASCII_WHITESPACE = "\t\n\f\r "
+
+
+def statically_hidden(attrs: dict[str, str]) -> bool:
+    # This is a markup-only approximation. CSS can override HTML hidden and
+    # JavaScript can change either attribute after the document is parsed.
+    return "hidden" in attrs or attrs.get("aria-hidden", "").strip().lower() == "true"
 
 
 class PageParser(HTMLParser):
     def __init__(self) -> None:
         super().__init__(convert_charrefs=True)
         self.ids: Counter[str] = Counter()
+        self.empty_id_count = 0
+        self.fragment_ids: set[str] = set()
+        self.fragment_names: set[str] = set()
         self.urls: list[tuple[str, str]] = []
         self.references: list[tuple[str, str, str]] = []
         self.html_lang = ""
@@ -45,11 +60,29 @@ class PageParser(HTMLParser):
         self.form_controls: list[dict[str, str | bool]] = []
         self.named_elements: list[dict[str, str]] = []
         self._stack: list[dict[str, object]] = []
+        self._template_depth = 0
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        # The template element itself is in the document, but its content is
+        # stored in a separate fragment rather than the document tree.
+        if self._template_depth:
+            if tag == "template":
+                self._template_depth += 1
+            return
         values = {name: value or "" for name, value in attrs}
         attribute_names = {name for name, _value in attrs}
-        element_id = values.get("id", "").strip()
+        hidden_for_name = statically_hidden(values) or any(
+            statically_hidden(ancestor.get("attrs", {})) for ancestor in self._stack
+        )
+        raw_id = values.get("id", "")
+        if "id" in attribute_names and not raw_id:
+            self.empty_id_count += 1
+        if raw_id:
+            self.fragment_ids.add(raw_id)
+        if tag == "a" and values.get("name", ""):
+            self.fragment_names.add(values["name"])
+        # IDs are exact strings. Trimming invents an ID that the DOM does not have.
+        element_id = raw_id
         if element_id:
             self.ids[element_id] += 1
 
@@ -74,12 +107,18 @@ class PageParser(HTMLParser):
             self.has_canonical = True
 
         if tag == "img":
-            self.image_alternatives.append(("alt" in attribute_names, values.get("alt", "").strip() != "", values.get("aria-hidden", "").lower() == "true"))
-            for frame in self._stack:
-                if frame["tag"] in {"a", "button"} and values.get("alt", "").strip():
+            self.image_alternatives.append(("alt" in attribute_names, values.get("alt", "").strip() != "", hidden_for_name))
+            hidden_image = statically_hidden(values)
+            for index, frame in enumerate(self._stack):
+                hidden_ancestor = any(
+                    statically_hidden(ancestor.get("attrs", {}))
+                    for ancestor in self._stack[index + 1:]
+                )
+                if (frame["tag"] in {"a", "button"} and values.get("alt", "").strip()
+                        and not hidden_image and not hidden_ancestor):
                     frame["image_alt"] = f"{frame.get('image_alt', '')} {values['alt'].strip()}"
 
-        label_target = values.get("for", "").strip()
+        label_target = values.get("for", "")
         if tag == "label" and label_target:
             self.label_targets.add(label_target)
 
@@ -88,14 +127,17 @@ class PageParser(HTMLParser):
             if value:
                 self.urls.append((attribute, value))
 
-        if label_target:
+        if tag == "label" and label_target:
             self.references.append(("for", label_target, tag))
+        elif tag == "output":
+            for target in filter(None, re.split(r"[\t\n\f\r ]+", label_target)):
+                self.references.append(("for", target, tag))
 
         for attribute in REFERENCE_ATTRIBUTES:
-            for target in values.get(attribute, "").split():
+            for target in filter(None, re.split(r"[\t\n\f\r ]+", values.get(attribute, ""))):
                 self.references.append((attribute, target, tag))
 
-        if tag in {"input", "select", "textarea"} and values.get("type", "").lower() != "hidden" and values.get("aria-hidden", "").lower() != "true":
+        if tag in {"input", "select", "textarea"} and values.get("type", "").lower() != "hidden" and not hidden_for_name:
             self.form_controls.append({
                 "tag": tag,
                 "id": element_id,
@@ -109,17 +151,33 @@ class PageParser(HTMLParser):
         if tag in {"a", "button"}:
             frame["name_text"] = ""
             frame["image_alt"] = ""
+            frame["hidden_for_name"] = hidden_for_name
         if tag not in VOID_ELEMENTS:
             self._stack.append(frame)
+        if tag == "template":
+            self._template_depth = 1
 
     def handle_data(self, data: str) -> None:
-        for frame in self._stack:
+        if self._template_depth:
+            return
+        for index, frame in enumerate(self._stack):
             if frame.get("document_title"):
                 frame["text"] = f"{frame.get('text', '')}{data}"
             if "name_text" in frame:
-                frame["name_text"] = f"{frame.get('name_text', '')}{data}"
+                hidden_descendant = any(
+                    statically_hidden(descendant.get("attrs", {}))
+                    for descendant in self._stack[index + 1:]
+                )
+                if not hidden_descendant:
+                    frame["name_text"] = f"{frame.get('name_text', '')}{data}"
 
     def handle_endtag(self, tag: str) -> None:
+        if self._template_depth:
+            if tag != "template":
+                return
+            self._template_depth -= 1
+            if self._template_depth:
+                return
         for index in range(len(self._stack) - 1, -1, -1):
             if self._stack[index]["tag"] != tag:
                 continue
@@ -128,6 +186,13 @@ class PageParser(HTMLParser):
                     self.document_titles.append(str(frame.get("text", "")).strip())
                 if frame["tag"] in {"a", "button"}:
                     attrs = frame.get("attrs", {})
+                    if frame.get("hidden_for_name"):
+                        continue
+                    # Anchors without href are not links. Keep checking href=""
+                    # and elements explicitly given a role or tabindex.
+                    if (frame["tag"] == "a" and "href" not in attrs
+                            and "role" not in attrs and "tabindex" not in attrs):
+                        continue
                     self.named_elements.append({
                         "tag": str(frame["tag"]),
                         "href": str(attrs.get("href", "")),
@@ -164,6 +229,12 @@ def accessibility_findings(document: PageParser, relative_page: Path) -> list[st
         if not has_alt and not aria_hidden:
             findings.append(f"{page}: img has no alt attribute")
 
+    if document.empty_id_count:
+        findings.append(f"{page}: empty id ({document.empty_id_count} occurrences)")
+    for element_id in document.ids:
+        if any(character in ASCII_WHITESPACE for character in element_id):
+            findings.append(f"{page}: id contains ASCII whitespace: {element_id!r}")
+
     for control in document.form_controls:
         control_id = str(control["id"])
         has_name = bool(
@@ -186,19 +257,120 @@ def accessibility_findings(document: PageParser, relative_page: Path) -> list[st
 
 
 def canonical_path(value: str) -> str:
-    path = unquote(value).split("?", 1)[0].rstrip("/")
+    # The caller passes urlsplit().path, where the actual query is already
+    # separated. A decoded %3F belongs to the filename, not to the query.
+    path = unquote(value).rstrip("/")
     return path or "/"
 
 
+def http_origin(url: SplitResult) -> tuple[str, str, int] | None:
+    """Compare HTTP origins without accepting credentials or malformed ports."""
+    try:
+        scheme = url.scheme.lower()
+        if scheme not in {"http", "https"} or not url.netloc or "\\" in url.netloc:
+            return None
+        if url.username is not None or url.password is not None:
+            return None
+        host = url.hostname
+        port = url.port
+        if not host or any(char.isspace() or char in "#/%?\\@" for char in host):
+            return None
+        try:
+            host = ipaddress.ip_address(host).compressed
+        except ValueError:
+            # Do not approximate browser IDNA or nonstandard IPv4 parsing;
+            # compare the hostname spelling conservatively instead.
+            host = host.lower()
+        return scheme, host, port if port is not None else (443 if scheme == "https" else 80)
+    except ValueError:
+        return None
+
+
+def has_ambiguous_backslash(raw_url: str, site_origin: str) -> bool:
+    """Reject special-URL path/authority backslashes instead of misresolving them."""
+    try:
+        raw = urlsplit(raw_url)
+        if raw.scheme and raw.scheme.lower() not in {"http", "https"}:
+            return False
+        if "\\" in raw.netloc:
+            return True
+        if "\\" not in raw.path:
+            return False
+        if not raw.netloc:
+            return True
+        expected = http_origin(urlsplit(site_origin))
+        candidate = urlsplit(urljoin(site_origin, raw_url))
+        return expected is not None and http_origin(candidate) == expected
+    except ValueError:
+        return False
+
+
+def has_invalid_url_authority(raw_url: str) -> bool:
+    """Do not silently treat an unparsable authority as an external URL."""
+    try:
+        raw = urlsplit(raw_url)
+        if raw.netloc:
+            # Accessors validate bracketed IPv6 and port ranges/syntax.
+            _ = raw.hostname, raw.port
+        elif raw.scheme.lower() in {"http", "https"}:
+            # With three or more slashes, browsers may treat the following
+            # component as an authority while urllib treats it as a path.
+            cleaned = raw_url.strip("\x00\t\n\r ").replace("\t", "").replace("\n", "").replace("\r", "")
+            if cleaned.split(":", 1)[-1].startswith("//"):
+                return True
+        return False
+    except ValueError:
+        return True
+
+
 def parse_local_url(page: Path, raw_url: str, site_origin: str) -> tuple[SplitResult | None, str]:
-    raw = urlsplit(raw_url)
-    if raw.scheme or raw.netloc:
-        origin = f"{raw.scheme}://{raw.netloc}" if raw.scheme and raw.netloc else ""
-        if origin != site_origin:
-            return None, ""
-        return raw, unquote(raw.fragment)
-    joined = urlsplit(urljoin("/" + page.as_posix(), raw_url))
-    return joined, unquote(joined.fragment)
+    # All callers, including search.json checks, share the same rejection
+    # boundary used by HTML link checks.
+    if has_invalid_url_authority(raw_url) or has_ambiguous_backslash(raw_url, site_origin):
+        return None, ""
+    try:
+        raw = urlsplit(raw_url)
+        if raw.scheme or raw.netloc:
+            expected = http_origin(urlsplit(site_origin))
+            document_base = urljoin(site_origin.rstrip("/") + "/", "/" + page.as_posix())
+            joined = urlsplit(urljoin(document_base, raw_url))
+            if expected is None or http_origin(joined) != expected:
+                return None, ""
+            if not joined.path:
+                # HTTP(S) authority-only URLs navigate to /, not the document.
+                joined = joined._replace(path="/")
+            return joined, quote(joined.fragment, safe=FRAGMENT_SAFE)
+        joined = urlsplit(urljoin("/" + page.as_posix(), raw_url))
+        return joined, quote(joined.fragment, safe=FRAGMENT_SAFE)
+    except ValueError:
+        # Invalid IPv6 literals and ports are not usable local links.
+        return None, ""
+
+
+def fragment_target(document: PageParser, fragment: str) -> tuple[str, str] | None:
+    """Resolve a serialized fragment in the HTML indicated-element order."""
+    if not fragment:
+        return "top", ""
+
+    def lookup(value: str) -> tuple[str, str] | None:
+        if value in document.fragment_ids:
+            return "id", value
+        if value in document.fragment_names:
+            return "name", value
+        return None
+
+    target = lookup(fragment)
+    if target:
+        return target
+    # URL percent decoding followed by UTF-8 decode without BOM; Python's
+    # default replacement mode preserves the BOM and replaces invalid bytes.
+    decoded = unquote(fragment, encoding="utf-8", errors="replace")
+    target = lookup(decoded)
+    if target:
+        return target
+    if decoded.isascii() and decoded.lower() == "top":
+        return "top", ""
+    return None
 
 
 def resolve_target(site_root: Path, page: Path, raw_url: str, site_origin: str) -> tuple[Path | None, str]:
@@ -279,6 +451,12 @@ def verify(site_root: Path) -> int:
                 errors.append(f"{relative_page}: <{tag}> {attribute} references missing id '{target_id}'")
 
         for attribute, raw_url in document.urls:
+            if has_invalid_url_authority(raw_url):
+                errors.append(f"{relative_page}: invalid {attribute} URL '{raw_url}'")
+                continue
+            if has_ambiguous_backslash(raw_url, site_origin):
+                errors.append(f"{relative_page}: {attribute} URL has a backslash in its path or authority '{raw_url}'")
+                continue
             target, fragment = resolve_target(site_root, page, raw_url, site_origin)
             joined, _ = parse_local_url(page.relative_to(site_root), raw_url, site_origin)
             if joined is None:
@@ -294,7 +472,7 @@ def verify(site_root: Path) -> int:
                     target_document = read_page(target) if target.suffix.lower() == ".html" else None
                     if target_document is not None:
                         parsed[target] = target_document
-                if target_document is not None and fragment not in target_document.ids:
+                if target_document is not None and fragment_target(target_document, fragment) is None:
                     errors.append(f"{relative_page}: {attribute} '{raw_url}' targets missing id '{fragment}'")
 
     search_entries: list[dict[str, object]] = []
@@ -361,8 +539,8 @@ def verify(site_root: Path) -> int:
     print(
         "PASS: "
         f"{len(pages)} HTML pages, {local_url_count} local URLs, {fragment_count} fragments, "
-        f"{len(search_entries)} search entries; semantic landmarks, accessible names, image alternatives, "
-        "IDs, and ARIA/label references are valid"
+        f"{len(search_entries)} search entries; basic static checks for landmarks, names, image alternatives, "
+        "IDs, and ARIA/label references passed (not a full accessibility audit)"
     )
     return 0
 

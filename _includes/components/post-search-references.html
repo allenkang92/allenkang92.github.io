@@ -1,0 +1,6 @@
+{%- comment -%}글 화면에서 표시하는 시리즈 참고자료의 제목과 설명만 검색에 포함한다.{%- endcomment -%}
+{%- if include.post.series and include.post.references -%}
+  {%- for reference in include.post.references -%}
+    {{ reference.title | escape | append: ' ' }}{% if reference.note %}{{ reference.note | strip_html | append: ' ' }}{% endif %}
+  {%- endfor -%}
+{%- endif -%}

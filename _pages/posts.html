@@ -1,25 +1,67 @@
 ---
 layout: default
-title: Posts
-description: Browse all blog posts by category
+title: 전체 글
+description: 글을 주제별로 살펴보고 글과 성과, 시리즈, 도구를 검색할 수 있습니다.
 permalink: /posts/
 styles:
   - /assets/css/posts-refinement.css
 ---
 
+{% capture search_index_url %}{% include components/search-index-url.html %}{% endcapture %}
 <header class="posts-page-header">
   <p class="section-kicker">글 아카이브</p>
   <h1>전체 글</h1>
-  <p class="posts-intro">관심 있는 주제나 본문의 단어로 글을 찾아보세요.</p>
+  <p class="posts-intro">글을 둘러보거나 글·성과·시리즈·도구를 검색해 보세요.</p>
 </header>
 
 <div
   id="posts-react-root"
   class="posts-react-root"
   hidden
-  data-search-index-url="{{ '/search.json' | relative_url }}"
+  data-search-index-url="{{ search_index_url | escape }}"
   data-site-base-url="{{ site.url | append: site.baseurl | escape }}"
   data-posts-url="{{ '/posts/' | relative_url }}"
+  data-achievements-url="{{ '/achievements/' | relative_url }}"
+  data-expected-search-pages="[
+    {%- assign has_expected_page = false -%}
+    {%- for search_page in site.pages -%}
+      {%- assign source_root = search_page.path | slice: 0, 6 -%}
+      {%- assign route_with_slash = search_page.url | append: '/' -%}
+      {%- assign tool_route = route_with_slash | slice: 0, 7 -%}
+      {%- assign series_route = route_with_slash | slice: 0, 8 -%}
+      {%- assign achievement_route = route_with_slash | slice: 0, 14 -%}
+      {%- assign eligible_source = false -%}
+      {%- if source_root == 'tools/' or search_page.path contains '_pages/' -%}
+        {%- assign eligible_source = true -%}
+      {%- endif -%}
+      {%- if eligible_source and search_page.title and search_page.permalink and search_page.layout != 'xml' -%}
+        {%- if tool_route == '/tools/' or series_route == '/series/' or achievement_route == '/achievements/' -%}
+          {%- if has_expected_page -%},{%- endif -%}
+          {{- search_page.url | relative_url | jsonify | escape -}}
+          {%- assign has_expected_page = true -%}
+        {%- endif -%}
+      {%- endif -%}
+    {%- endfor -%}
+    {%- for achievement in site.achievements -%}
+      {%- capture achievement_is_searchable -%}{%- include components/achievement-searchable.html achievement=achievement -%}{%- endcapture -%}
+      {%- if achievement_is_searchable == 'true' -%}
+        {%- if has_expected_page -%},{%- endif -%}
+        {{- achievement.url | relative_url | jsonify | escape -}}
+        {%- assign has_expected_page = true -%}
+      {%- endif -%}
+    {%- endfor -%}
+  ]"
+  data-expected-achievement-paths="[
+    {%- assign has_expected_achievement = false -%}
+    {%- for achievement in site.achievements -%}
+      {%- capture achievement_is_searchable -%}{%- include components/achievement-searchable.html achievement=achievement -%}{%- endcapture -%}
+      {%- if achievement_is_searchable == 'true' -%}
+        {%- if has_expected_achievement -%},{%- endif -%}
+        {{- achievement.url | relative_url | jsonify | escape -}}
+        {%- assign has_expected_achievement = true -%}
+      {%- endif -%}
+    {%- endfor -%}
+  ]"
 ></div>
 
 <section id="posts-static-fallback" class="posts-static-fallback" aria-label="전체 글 목록">
@@ -28,22 +70,23 @@ styles:
       <div class="posts-controls-meta">
         <div class="posts-info">
           <span id="posts-count" role="status">전체 {{ site.posts.size }}개 글</span>
-          <p class="posts-fallback-note">검색 기능을 사용할 수 없어도 전체 글 목록은 계속 볼 수 있습니다.</p>
+          <p class="posts-fallback-note">아래는 전체 글 목록입니다. 이 목록에는 검색어와 주제·정렬·페이지 조건이 적용되지 않으며 성과·시리즈·도구 페이지는 포함되지 않습니다. <a href="{{ '/achievements/' | relative_url }}">성과 목록 보기</a></p>
         </div>
       </div>
     </div>
 
     <div id="posts-list" class="posts-list">
       {% for post in site.posts %}
-        <article class="post-preview" data-date="{{ post.date | date_to_xmlschema }}" data-categories="{{ post.categories | join: ' ' | escape }}" data-title="{{ post.title | escape }}" data-description="{{ post.description | default: post.excerpt | strip_html | normalize_whitespace | truncate: 120 | escape }}" data-content="{{ post.content | strip_html | normalize_whitespace | truncate: 2400 | escape }}" data-tags="{{ post.tags | join: ' ' | default: '' | escape }}">
-          <h2><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
+        {% capture fallback_search_content %}{{ post.content | strip_html | normalize_whitespace | truncate: 2400 }} {% include components/post-search-outcomes.html post=post %} {% include components/post-search-references.html post=post %}{% endcapture %}
+        <article class="post-preview" data-date="{{ post.date | date_to_xmlschema }}" data-categories="{{ post.categories | join: ' ' | escape }}" data-title="{{ post.title | escape }}" data-description="{{ post.description | default: post.excerpt | strip_html | normalize_whitespace | truncate: 120 | escape }}" data-content="{{ fallback_search_content | normalize_whitespace | escape }}" data-tags="{{ post.tags | join: ' ' | default: '' | escape }}">
+          <h2><a href="{{ post.url | relative_url | escape }}">{{ post.title | escape }}</a></h2>
           <div class="post-meta">
             <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%Y년 %m월 %d일" }}</time>
             {% for category in post.categories %}
               <span class="category">{% include category-label.html category=category %}</span>
             {% endfor %}
           </div>
-          <p class="post-excerpt">{{ post.description | default: post.excerpt | strip_html | normalize_whitespace | truncate: 120 }}</p>
+          <p class="post-excerpt">{{ post.description | default: post.excerpt | strip_html | normalize_whitespace | truncate: 120 | escape_once }}</p>
         </article>
       {% endfor %}
     </div>

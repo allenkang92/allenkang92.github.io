@@ -1,0 +1,6 @@
+{%- if jekyll.environment == 'production' and site.github.build_revision -%}
+  {%- assign search_index_version = site.github.build_revision -%}
+{%- else -%}
+  {%- assign search_index_version = site.time | date: '%s' -%}
+{%- endif -%}
+{{- '/search.json' | relative_url -}}?v={{- search_index_version | url_encode -}}

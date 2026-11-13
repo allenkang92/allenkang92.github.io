@@ -1,0 +1,44 @@
+{%- comment -%}
+  플러그인의 다른 메타데이터는 유지하고 화면에 표시되는 제목 원문을
+  HTML과 JSON-LD에 사용한다. 검사하는 플러그인 출력 형식이 바뀌거나
+  지원하지 않는 제목 조합을 사용하면 빌드를 중단한다.
+{%- endcomment -%}
+{%- capture original_seo -%}{% seo %}{%- endcapture -%}
+{%- capture original_seo -%}{%- include seo-compat.html source=original_seo -%}{%- endcapture -%}
+{%- assign literal_title_json = page.title | jsonify -%}
+{%- assign literal_title_json_prefix = literal_title_json | slice: 0, 1 -%}
+{%- assign plugin_page_title = page.title | markdownify | strip_html | normalize_whitespace | escape_once -%}
+{%- assign plugin_site_title = site.title | default: site.name | markdownify | strip_html | normalize_whitespace | escape_once -%}
+{%- if page.collection != 'posts' or page.title_category or paginator.page or literal_title_json_prefix != '"' or plugin_page_title == empty or plugin_site_title == empty or plugin_page_title == plugin_site_title -%}
+  {%- include ERROR_literal_seo_unsupported_title_configuration.html -%}
+{%- endif -%}
+{%- assign literal_title_html = page.title | escape -%}
+{%- capture plugin_title -%}<title>{{ plugin_page_title }} | {{ plugin_site_title }}</title>{%- endcapture -%}
+{%- capture literal_title -%}<title>{{ literal_title_html }} | {{ plugin_site_title }}</title>{%- endcapture -%}
+{%- capture plugin_og -%}<meta property="og:title" content="{{ plugin_page_title }}" />{%- endcapture -%}
+{%- capture literal_og -%}<meta property="og:title" content="{{ literal_title_html }}" />{%- endcapture -%}
+{%- capture plugin_twitter -%}<meta name="twitter:title" content="{{ plugin_page_title }}" />{%- endcapture -%}
+{%- capture literal_twitter -%}<meta name="twitter:title" content="{{ literal_title_html }}" />{%- endcapture -%}
+{%- assign plugin_json_title = plugin_page_title | jsonify | replace: '<', '\u003c' | replace: '>', '\u003e' | replace: '&', '\u0026' | replace: ' ', '\u2028' | replace: ' ', '\u2029' -%}
+{%- assign literal_json_title = literal_title_json | replace: '<', '\u003c' | replace: '>', '\u003e' | replace: '&', '\u0026' | replace: ' ', '\u2028' | replace: ' ', '\u2029' -%}
+{%- capture plugin_headline -%}"headline":{{ plugin_json_title }}{%- endcapture -%}
+{%- capture literal_headline -%}"headline":{{ literal_json_title }}{%- endcapture -%}
+{%- comment -%}Liquid split은 끝의 빈 조각을 버리므로 개수를 셀 때 표식을 붙인다.{%- endcomment -%}
+{%- assign seo_for_count = original_seo | append: 'x' -%}
+{%- assign title_parts = seo_for_count | split: plugin_title | size -%}
+{%- assign og_parts = seo_for_count | split: plugin_og | size -%}
+{%- assign twitter_parts = seo_for_count | split: plugin_twitter | size -%}
+{%- assign headline_parts = seo_for_count | split: plugin_headline | size -%}
+{%- assign title_fields = seo_for_count | split: '<title>' | size -%}
+{%- assign og_fields = seo_for_count | split: '<meta property="og:title"' | size -%}
+{%- assign twitter_fields = seo_for_count | split: '<meta name="twitter:title"' | size -%}
+{%- assign headline_fields = seo_for_count | split: '"headline":' | size -%}
+{%- assign json_scripts = seo_for_count | split: '<script type="application/ld+json">' | size -%}
+{%- unless title_parts == 2 and og_parts == 2 and twitter_parts == 2 and headline_parts == 2 and title_fields == 2 and og_fields == 2 and twitter_fields == 2 and headline_fields == 2 and json_scripts == 2 -%}
+  {%- include ERROR_literal_seo_plugin_output_mismatch.html -%}
+{%- endunless -%}
+{%- comment -%}Liquid replace는 교체 값의 역슬래시를 해석하므로 원문은 join으로 결합한다.{%- endcomment -%}
+{%- assign literal_seo = original_seo | split: plugin_title | join: literal_title -%}
+{%- assign literal_seo = literal_seo | split: plugin_og | join: literal_og -%}
+{%- assign literal_seo = literal_seo | split: plugin_twitter | join: literal_twitter -%}
+{{- literal_seo | split: plugin_headline | join: literal_headline -}}

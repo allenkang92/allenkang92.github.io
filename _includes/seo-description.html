@@ -1,0 +1,79 @@
+{%- comment -%}
+  플러그인이 실제로 선택하고 자른 설명을 기준으로 HTML과 JSON의 텍스트를 맞춘다.
+  Liquid는 HTML 문자 참조를 범용으로 해독하지 못하므로 문자 참조가 생기는
+  경우에는 페이지마다 최종 표시 평문을 명시한다. 원본과의 의미 일치는
+  별도 생성물 검사로 확인하며, 예상한 출력 형태가 아니면 빌드를 중단한다.
+{%- endcomment -%}
+{%- assign description_seo_source = include.source -%}
+{%- assign count_source = description_seo_source | prepend: 'x' | append: 'x' -%}
+{%- assign meta_marker = '<meta name="description" content="' -%}
+{%- assign og_marker = '<meta name="twitter:description" property="og:description" content="' -%}
+{%- assign meta_count = count_source | split: meta_marker | size -%}
+{%- assign og_count = count_source | split: og_marker | size -%}
+{%- assign script_count = count_source | split: '<script type="application/ld+json">' | size -%}
+{%- unless script_count == 2 -%}
+  {%- include ERROR_seo_description_plugin_output_mismatch.html -%}
+{%- endunless -%}
+{%- if meta_count == 1 and og_count == 1 and page.seo_plain_description == nil -%}
+  {{- description_seo_source -}}
+{%- else -%}
+  {%- unless meta_count == 2 and og_count == 2 -%}
+    {%- include ERROR_seo_description_plugin_output_mismatch.html -%}
+  {%- endunless -%}
+  {%- assign plugin_description = description_seo_source | split: meta_marker | last | split: '" />' | first -%}
+  {%- capture old_meta -%}<meta name="description" content="{{ plugin_description }}" />{%- endcapture -%}
+  {%- capture old_og -%}<meta name="twitter:description" property="og:description" content="{{ plugin_description }}" />{%- endcapture -%}
+  {%- assign meta_parts = count_source | split: old_meta | size -%}
+  {%- assign og_parts = count_source | split: old_og | size -%}
+  {%- unless meta_parts == 2 and og_parts == 2 -%}
+    {%- include ERROR_seo_description_plugin_output_mismatch.html -%}
+  {%- endunless -%}
+  {%- if page.seo_plain_description == nil -%}
+    {%- if plugin_description contains '&' -%}
+      {%- include ERROR_seo_plain_description_required_for_page.html -%}
+    {%- endif -%}
+    {{- description_seo_source -}}
+  {%- else -%}
+    {%- comment -%}
+      SEO 태그 2.8.0과 2.9.1은 JSON 루트 키를 정렬하며 description보다 앞선
+      author에는 description이 없다. 이 지원 버전에서 첫 description만
+      교체해 같은 값을 가진 이미지의 중첩 설명은 보존한다.
+    {%- endcomment -%}
+    {%- assign plugin_json = plugin_description | jsonify | replace: '<', '\u003c' | replace: '>', '\u003e' | replace: '&', '\u0026' | replace: ' ', '\u2028' | replace: ' ', '\u2029' -%}
+    {%- capture old_json -%}"description":{{ plugin_json }}{%- endcapture -%}
+    {%- assign json_parts = count_source | split: old_json | size -%}
+    {%- assign supported_version_parts = count_source | split: '<!-- Begin Jekyll SEO tag v2.9.1 -->' | size -%}
+    {%- assign legacy_version_parts = count_source | split: '<!-- Begin Jekyll SEO tag v2.8.0 -->' | size -%}
+    {%- assign before_first_description = description_seo_source | split: '"description":' | first -%}
+    {%- assign before_expected_description = description_seo_source | split: old_json | first -%}
+    {%- unless json_parts > 1 and before_first_description == before_expected_description -%}
+      {%- include ERROR_seo_description_plugin_output_mismatch.html -%}
+    {%- endunless -%}
+    {%- unless supported_version_parts == 2 or legacy_version_parts == 2 -%}
+      {%- include ERROR_seo_description_plugin_output_mismatch.html -%}
+    {%- endunless -%}
+    {%- assign plain_json = page.seo_plain_description | jsonify -%}
+    {%- assign plain_type = plain_json | slice: 0, 1 -%}
+    {%- assign plain_content = page.seo_plain_description | append: '' | url_encode | remove: '+' -%}
+    {%- assign plain_spaces = '%09,%0A,%0B,%0C,%0D,%C2%A0,%E1%9A%80,%E2%80%80,%E2%80%81,%E2%80%82,%E2%80%83,%E2%80%84,%E2%80%85,%E2%80%86,%E2%80%87,%E2%80%88,%E2%80%89,%E2%80%8A,%E2%80%A8,%E2%80%A9,%E2%80%AF,%E2%81%9F,%E3%80%80,%EF%BB%BF' | split: ',' -%}
+    {%- for space in plain_spaces -%}
+      {%- assign plain_content = plain_content | remove: space -%}
+    {%- endfor -%}
+    {%- if plain_type != '"' or plain_content == '' -%}
+      {%- include ERROR_seo_plain_description_must_be_nonempty_string.html -%}
+    {%- endif -%}
+    {%- assign plain_text = page.seo_plain_description | normalize_whitespace -%}
+    {%- assign plain_html = plain_text | escape -%}
+    {%- assign plain_json = plain_text | jsonify | replace: '<', '\u003c' | replace: '>', '\u003e' | replace: '&', '\u0026' | replace: ' ', '\u2028' | replace: ' ', '\u2029' -%}
+    {%- capture new_meta -%}<meta name="description" content="{{ plain_html }}" />{%- endcapture -%}
+    {%- capture new_og -%}<meta name="twitter:description" property="og:description" content="{{ plain_html }}" />{%- endcapture -%}
+    {%- capture new_json -%}"description":{{ plain_json }}{%- endcapture -%}
+    {%- comment -%}교체 값의 역슬래시는 재해석하지 않고 앞뒤 조각을 직접 결합한다.{%- endcomment -%}
+    {%- assign description_seo = description_seo_source | split: old_meta | join: new_meta -%}
+    {%- assign description_seo = description_seo | split: old_og | join: new_og -%}
+    {%- assign json_before = description_seo | split: old_json | first -%}
+    {%- assign json_after_start = json_before.size | plus: old_json.size -%}
+    {%- assign json_after = description_seo | slice: json_after_start, description_seo.size -%}
+    {{- json_before | append: new_json | append: json_after -}}
+  {%- endif -%}
+{%- endif -%}
