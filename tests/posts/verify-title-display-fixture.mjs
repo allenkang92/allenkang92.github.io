@@ -26,7 +26,7 @@ const recentTarget = '/posts/title-fixture-recent/';
 const mathTarget = '/posts/title-fixture-math/';
 const scienceTarget = '/posts/title-fixture-science/';
 const queryTarget = `${target}?first=1&second=2`;
-const frontmatter = (title, order, permalink, date) => `---\nlayout: post\ntitle: ${JSON.stringify(title)}\ndate: ${date} 00:00:00 +0900\npermalink: ${permalink}\nseries: QA-Title-Display\nseries_order: ${order}\nrelated_items:\n  - title: ${JSON.stringify(relatedTitle)}\n    url: ${JSON.stringify(queryTarget)}\nreferences:\n  - title: ${JSON.stringify(referenceTitle)}\n    url: ${JSON.stringify('https://example.com/?first=1&second=2')}\n---\n시험 본문\n`;
+const frontmatter = (title, order, permalink, date) => `---\nlayout: post\ntitle: ${JSON.stringify(title)}\ndate: ${date} 00:00:00 +0900\npermalink: ${permalink}\nseries: QA-Title-Display\nseries_order: ${order}\nrelated_items:\n  - title: ${JSON.stringify(relatedTitle)}\n    url: ${JSON.stringify(queryTarget)}\nreferences:\n  - title: ${JSON.stringify(referenceTitle)}\n    url: ${JSON.stringify('https://example.com/?first=1&second=2')}\n  - title: ${JSON.stringify('English <title> & link')}\n    url: https://example.com/english\n    lang: en\n    note: 한국어 설명\n  - title: ${JSON.stringify('English <book> & text')}\n    lang: en\n    note: 한국어 설명\n  - title: 한국어 참고자료\n  - title: 언어 속성 이스케이프\n    lang: ${JSON.stringify('en" data-injected="yes')}\n---\n시험 본문\n`;
 await writeFile(join(source, '_posts/2025-01-01-title-fixture-first.md'), frontmatter('일반 제목', 1, firstTarget, '2025-01-01'));
 await writeFile(join(source, '_posts/2025-02-01-title-fixture-special.md'), frontmatter(specialTitle, 2, target, '2025-02-01'));
 await writeFile(join(source, '_posts/2025-01-15-title-fixture-recent.md'), frontmatter(recentTitle, 3, recentTarget, '2025-01-15'));
@@ -136,6 +136,21 @@ for (const [name, base] of [['root', ''], ['nested', '/blog']]) {
     assertLink([...first.querySelectorAll('.post-series-panel a')].find(link => link.getAttribute('href') === `${base}/series/title-fixture/?first=1&second=2`), `${seriesTitle} 허브`, `${base}/series/title-fixture/?first=1&second=2`);
     assertLink([...first.querySelectorAll('.post-series-panel a')].find(link => link.getAttribute('href') === `${base}${queryTarget}`), relatedTitle, `${base}${queryTarget}`);
     assertLink([...first.querySelectorAll('.post-series-panel a')].find(link => link.getAttribute('href') === 'https://example.com/?first=1&second=2'), referenceTitle, 'https://example.com/?first=1&second=2');
+    const referenceSection = first.querySelector('#post-references-heading')?.parentElement;
+    const references = [...referenceSection.querySelectorAll('li')];
+    const englishLink = references.find(item => item.textContent.includes('English <title> & link'));
+    assertLink(englishLink?.querySelector('a'), 'English <title> & link', 'https://example.com/english');
+    assert.equal(englishLink?.querySelector('a')?.getAttribute('lang'), 'en', `${name}: 영어 링크 제목에만 언어 적용`);
+    assert.equal(englishLink?.querySelector('.reference-note')?.getAttribute('lang'), null, `${name}: 한국어 설명은 문서 언어 상속`);
+    assert.equal(englishLink?.querySelector('.reference-note')?.textContent.trim(), '한국어 설명');
+    const englishText = references.find(item => item.textContent.includes('English <book> & text'));
+    assert.equal(englishText?.querySelector('[lang="en"]')?.textContent, 'English <book> & text', `${name}: 링크 없는 제목에 언어 적용 및 원문 보존`);
+    assert.equal(englishText?.querySelector('.reference-note')?.getAttribute('lang'), null, `${name}: 링크 없는 제목의 한국어 설명은 상속`);
+    const korean = references.find(item => item.textContent.includes('한국어 참고자료'));
+    assert.equal(korean?.querySelector('[lang]'), null, `${name}: 언어 미지정 제목은 상속`);
+    const escaped = references.find(item => item.textContent.includes('언어 속성 이스케이프'));
+    assert.equal(escaped?.querySelector('[lang]')?.getAttribute('lang'), 'en" data-injected="yes', `${name}: 언어 속성 값 이스케이프`);
+    assert.equal(escaped?.querySelector('[data-injected]'), null, `${name}: 언어 값으로 속성이 추가되지 않음`);
     assertLink([...first.querySelectorAll('.series-navigation a')].find(link => link.getAttribute('href') === `${base}${target}`), specialTitle, `${base}${target}`);
 
     const special = await readDocument('posts/title-fixture-special/index.html');
@@ -144,6 +159,20 @@ for (const [name, base] of [['root', ''], ['nested', '/blog']]) {
     assertLink([...special.querySelectorAll('.post-series-panel a')].find(link => link.getAttribute('href') === `${base}${firstTarget}`), '이전 글: 일반 제목', `${base}${firstTarget}`);
     const last = await readDocument('posts/title-fixture-recent/index.html');
     assertLink([...last.querySelectorAll('.post-series-panel a')].find(link => link.getAttribute('href') === `${base}${target}`), `이전 글: ${specialTitle}`, `${base}${target}`);
+
+    for (const [postPath, title, linked] of [
+      ['posts/3장-수학에서의논리체계/index.html', 'Elliott Mendelson, Introduction to Mathematical Logic', false],
+      ['posts/3장-수학에서의논리체계/index.html', 'Stanford Encyclopedia of Philosophy, Classical Logic', true],
+      ['posts/css정리/index.html', 'MDN Web Docs, CSS: Cascading Style Sheets', true],
+      ['posts/1장-표준-모형-현대물리학의종합/index.html', 'Particle Data Group, Review of Particle Physics', false],
+    ]) {
+      const actual = await readDocument(postPath);
+      const section = actual.querySelector('#post-references-heading')?.parentElement;
+      const reference = [...section.querySelectorAll('li')].find(item => item.textContent.trim() === title);
+      const element = reference?.querySelector(linked ? 'a' : 'span');
+      assert.equal(element?.textContent, title, `${name}: 실제 게시글 참고자료 원문 보존`);
+      assert.equal(element?.getAttribute('lang'), 'en', `${name}: 실제 게시글 영어 제목 언어`);
+    }
 
     const index = JSON.parse(await readFile(join(output, 'search.json'), 'utf8'));
     assert.ok(index.some(entry => entry.type === 'post' && entry.title === specialTitle && new URL(entry.url, 'https://example.com').pathname === `${base}${target}`), `${name}: 검색 색인의 제목 원문`);

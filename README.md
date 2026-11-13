@@ -78,6 +78,8 @@ references:
 
 마이그레이션 글은 `migrated_from`을 추가하고, 원문 작성일과 현재 블로그 갱신일을 구분합니다.
 
+글 참고자료의 제목이 문서 언어와 다르면 해당 항목에 `lang: en`처럼 언어를 명시합니다. 언어 속성은 제목에만 적용되며, 생략하면 문서 언어를 상속합니다. `note`는 별도로 문서 언어를 상속합니다.
+
 `categories`는 `_data/categories.yml`에 등록된 키를 배열로 사용합니다. 시리즈 글은 `_data/series.yml`의 `key`와 일치하는 `series`, 0 이상의 고유한 `series_order`가 필요합니다. 시리즈에 속하지 않는 글은 두 필드를 생략합니다. `date_modified`와 `last_modified_at`을 함께 쓰면 값이 같아야 합니다. 이 계약은 `npm run verify:frontmatter`로 확인할 수 있습니다.
 
 ## 데이터 registry

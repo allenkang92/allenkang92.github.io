@@ -143,9 +143,9 @@ math_notice_in_post: true
           {% for reference in page.references %}
             <li>
               {% if reference.url %}
-                <a href="{{ reference.url | escape }}">{{ reference.title | escape }}</a>
+                <a href="{{ reference.url | escape }}"{% if reference.lang %} lang="{{ reference.lang | escape }}"{% endif %}>{{ reference.title | escape }}</a>
               {% else %}
-                {{ reference.title | escape }}
+                {% if reference.lang %}<span lang="{{ reference.lang | escape }}">{{ reference.title | escape }}</span>{% else %}{{ reference.title | escape }}{% endif %}
               {% endif %}
               {% if reference.note %}
                 <span class="reference-note">{{ reference.note }}</span>
