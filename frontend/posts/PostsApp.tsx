@@ -353,22 +353,38 @@ function HighlightedText({ text, query }: { text: string; query: string }) {
 function PostsFallbackBoundary({
   children,
   onError,
+  hadFocus,
 }: {
   children: ReactNode;
-  onError: () => void;
+  onError: (restoreFocus: boolean) => () => void;
+  hadFocus: () => boolean;
 }) {
-  return <PostsErrorBoundary onError={onError}>{children}</PostsErrorBoundary>;
+  return <PostsErrorBoundary onError={onError} hadFocus={hadFocus}>{children}</PostsErrorBoundary>;
 }
 
-class PostsErrorBoundary extends Component<{ children: ReactNode; onError: () => void }, { failed: boolean }> {
+class PostsErrorBoundary extends Component<{ children: ReactNode; onError: (restoreFocus: boolean) => () => void; hadFocus: () => boolean }, { failed: boolean }> {
   state = { failed: false };
+  private restoreFocus = false;
+  private cleanupError: (() => void) | null = null;
 
   static getDerivedStateFromError(): { failed: boolean } {
     return { failed: true };
   }
 
+  getSnapshotBeforeUpdate(_previousProps: Readonly<{ children: ReactNode; onError: (restoreFocus: boolean) => () => void; hadFocus: () => boolean }>, previousState: Readonly<{ failed: boolean }>): boolean {
+    return !previousState.failed && this.state.failed && this.props.hadFocus();
+  }
+
+  componentDidUpdate(_previousProps: Readonly<{ children: ReactNode; onError: (restoreFocus: boolean) => () => void; hadFocus: () => boolean }>, _previousState: Readonly<{ failed: boolean }>, snapshot: boolean): void {
+    this.restoreFocus = snapshot;
+  }
+
   componentDidCatch(): void {
-    this.props.onError();
+    this.cleanupError = this.props.onError(this.restoreFocus);
+  }
+
+  componentWillUnmount(): void {
+    this.cleanupError?.();
   }
 
   render(): ReactNode {
@@ -1167,9 +1183,19 @@ export function PostsAppBoundary({ children, fallbackElement, rootElement }: {
   rootElement: HTMLElement;
 }) {
   return (
-    <PostsFallbackBoundary onError={() => {
+    <PostsFallbackBoundary hadFocus={() => rootElement.contains(document.activeElement)} onError={(restoreFocus) => {
       fallbackElement.hidden = false;
       rootElement.hidden = true;
+      const notice = document.createElement('p');
+      notice.className = 'posts-fallback-note';
+      notice.setAttribute('role', 'alert');
+      notice.tabIndex = -1;
+      notice.textContent = '검색 화면을 불러오지 못했습니다. 아래에는 검색·주제·정렬 조건이 적용되지 않은 전체 글 목록이 표시됩니다. 페이지를 새로고침해 다시 시도할 수 있습니다.';
+      fallbackElement.prepend(notice);
+      if (restoreFocus && (document.activeElement === document.body || document.activeElement === document.documentElement)) {
+        notice.focus();
+      }
+      return () => notice.remove();
     }}>
       {children}
     </PostsFallbackBoundary>

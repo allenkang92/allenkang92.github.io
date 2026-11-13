@@ -858,6 +858,89 @@ async function mountPostsApp(browser, fallbackPosts, fetchImpl, categoryLabels =
   return { root, rootElement, fallbackElement };
 }
 
+test('동적 검색 화면의 렌더 오류는 정적 목록 안내와 포커스를 복구한다', async () => {
+  const cleanup = installBrowser('https://blog.test/posts/?q=needle');
+  const browser = globalThis.window;
+  let root;
+  try {
+    browser.document.body.innerHTML = '<div id="mount"></div><section id="fallback" hidden><a href="/posts/first/">첫 글</a></section><button id="outside">바깥</button>';
+    const rootElement = browser.document.getElementById('mount');
+    const fallbackElement = browser.document.getElementById('fallback');
+    const [{ createRoot }, { PostsAppBoundary }] = await Promise.all([
+      import('react-dom/client'), import('../../build/tests/frontend/posts/PostsApp.js'),
+    ]);
+    root = createRoot(rootElement, { onCaughtError() {} });
+    function Explode() { throw new Error('렌더 실패'); }
+    const draw = child => createElement(PostsAppBoundary, { rootElement, fallbackElement }, child);
+    await act(async () => { root.render(draw(createElement('input', { 'aria-label': '검색' }))); });
+    rootElement.querySelector('input').focus();
+    await act(async () => { root.render(draw(createElement(Explode))); });
+    assert.equal(fallbackElement.hidden, false);
+    assert.equal(rootElement.hidden, true);
+    assert.match(fallbackElement.textContent, /검색.*사용할 수 없|검색.*불러오지 못/);
+    assert.ok(fallbackElement.contains(browser.document.activeElement), '검색 화면에서 이탈한 사용자가 정적 안내로 돌아간다');
+    assert.match(fallbackElement.querySelector('[role="alert"]').textContent, /조건이 적용되지 않은/);
+    await act(async () => root.unmount());
+    root = null;
+    assert.equal(fallbackElement.querySelector('[role="alert"]'), null, '앱 제거 시 오류 안내를 정리한다');
+  } finally {
+    if (root) await act(async () => root.unmount());
+    await cleanup();
+  }
+});
+
+test('동적 화면의 초기 렌더 실패는 바깥 포커스를 유지하고 재시도 안내를 표시한다', async () => {
+  const cleanup = installBrowser('https://blog.test/posts/');
+  const browser = globalThis.window;
+  let root;
+  try {
+    browser.document.body.innerHTML = '<div id="mount" hidden></div><section id="fallback"><a href="/posts/first/">첫 글</a></section><button id="outside">바깥</button>';
+    const rootElement = browser.document.getElementById('mount');
+    const fallbackElement = browser.document.getElementById('fallback');
+    const [{ createRoot }, { PostsAppBoundary }] = await Promise.all([
+      import('react-dom/client'), import('../../build/tests/frontend/posts/PostsApp.js'),
+    ]);
+    root = createRoot(rootElement, { onCaughtError() {} });
+    browser.document.getElementById('outside').focus();
+    function Explode() { throw new Error('초기 렌더 실패'); }
+    await act(async () => { root.render(createElement(PostsAppBoundary, { rootElement, fallbackElement }, createElement(Explode))); });
+    assert.equal(browser.document.activeElement.id, 'outside');
+    assert.equal(rootElement.hidden, true);
+    assert.equal(fallbackElement.hidden, false);
+    assert.match(fallbackElement.querySelector('[role="alert"]').textContent, /새로고침/);
+  } finally {
+    if (root) await act(async () => root.unmount());
+    await cleanup();
+  }
+});
+
+test('렌더 오류 전 사용자가 목록 밖으로 옮긴 포커스는 빼앗지 않는다', async () => {
+  const cleanup = installBrowser('https://blog.test/posts/');
+  const browser = globalThis.window;
+  let root;
+  try {
+    browser.document.body.innerHTML = '<div id="mount"></div><section id="fallback" hidden><a href="/posts/first/">첫 글</a></section><button id="outside">바깥</button>';
+    const rootElement = browser.document.getElementById('mount');
+    const fallbackElement = browser.document.getElementById('fallback');
+    const [{ createRoot }, { PostsAppBoundary }] = await Promise.all([
+      import('react-dom/client'), import('../../build/tests/frontend/posts/PostsApp.js'),
+    ]);
+    root = createRoot(rootElement, { onCaughtError() {} });
+    function Explode() { throw new Error('렌더 실패'); }
+    const draw = child => createElement(PostsAppBoundary, { rootElement, fallbackElement }, child);
+    await act(async () => { root.render(draw(createElement('input', { 'aria-label': '검색' }))); });
+    rootElement.querySelector('input').focus();
+    browser.document.getElementById('outside').focus();
+    await act(async () => { root.render(draw(createElement(Explode))); });
+    assert.equal(browser.document.activeElement.id, 'outside');
+    assert.equal(fallbackElement.hidden, false);
+    assert.match(fallbackElement.textContent, /검색.*사용할 수 없|검색.*불러오지 못/);
+  } finally {
+    if (root) await act(async () => root.unmount());
+    await cleanup();
+  }
+});
+
 test('정적 목록을 키보드로 사용하는 동안 동적 전환을 기다리고 목록 밖의 포커스는 유지한다', async () => {
   const cleanup = installBrowser('https://blog.test/posts/?q=needle&page=2');
   const browser = globalThis.window;
