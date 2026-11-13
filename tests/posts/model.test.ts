@@ -103,6 +103,25 @@ test('예상되지 않은 성과 종류와 손상된 언어 태그를 구분한�
   assert.equal(mismatchedPost.entries[0].kind, 'post');
 });
 
+test('소개 검색은 기대 경로와 같은 출처·기저 경로를 지키고 누락을 알린다', () => {
+  const expected = ['/blog/about/'];
+  const row = indexRow({ url: 'https://blog.test/blog/about/', title: '소개', content: '인터페이스' });
+  const valid = mergeSearchIndex([], [row], 'https://blog.test/blog', expected);
+  assert.equal(valid.missingPageCount, 0);
+  assert.equal(valid.entries[0]?.kind, 'page');
+  assert.equal(valid.entries[0]?.content, '인터페이스');
+  const missing = mergeSearchIndex([], [], 'https://blog.test/blog', expected);
+  assert.equal(missing.missingPageCount, 1);
+  const external = mergeSearchIndex([], [indexRow({ url: 'https://evil.test/blog/about/', title: '외부' })], 'https://blog.test/blog', expected);
+  assert.equal(external.entries.length, 0);
+  assert.equal(external.missingPageCount, 1);
+  const sibling = mergeSearchIndex([], [indexRow({ url: 'https://blog.test/blog/about/other/', title: '다른 경로' })], 'https://blog.test/blog', expected);
+  assert.equal(sibling.entries.length, 0);
+  assert.equal(sibling.missingPageCount, 1);
+  const older = mergeSearchIndex([], [], 'https://blog.test/blog', []);
+  assert.equal(older.missingPageCount, 0, '이전 HTML의 기대 경로는 그 자체를 유지한다');
+});
+
 test('normalizeText applies NFC, case folding, and whitespace normalization', () => {
   assert.equal(normalizeText('  CAFÉ\t수 학\n'), 'café 수 학');
   assert.equal(normalizeText('cafe\u0301'), 'café');
@@ -206,7 +225,7 @@ test('relevance sort prioritizes title matches and uses date as a stable tie-bre
   assert.ok(results[0].score > results[2].score);
 });
 
-test('mergeSearchIndex enriches static posts and only indexes series/tool pages', () => {
+test('mergeSearchIndex enriches static posts and indexes allowed pages', () => {
   const fallback = [
     sciencePost(),
     sciencePost({ path: '/posts/missing/', href: '/posts/missing/', title: '누락된 글' }),
@@ -222,7 +241,7 @@ test('mergeSearchIndex enriches static posts and only indexes series/tool pages'
   const merged = mergeSearchIndex(fallback, rows, 'https://blog.test/');
 
   assert.equal(merged.missingPostCount, 1);
-  assert.deepEqual(merged.entries.map(entry => entry.kind), ['post', 'post', 'series', 'tool']);
+  assert.deepEqual(merged.entries.map(entry => entry.kind), ['post', 'post', 'series', 'tool', 'page']);
   assert.equal(merged.entries[0].content, '전체 본문');
   assert.equal(merged.entries[0].categories[0], 'science_philosophy_history');
   assert.equal(merged.entries[0].href, '/posts/physics/');
@@ -318,7 +337,7 @@ test('예상 글 및 안내 페이지 밖의 오래된 항목은 검색에서 �
     indexRow({ url: '/tools/old/', title: '오래된 도구' }),
     indexRow({ url: '/about/', title: '소개' }),
   ], 'https://blog.test/', ['/tools/unit-converter/']);
-  assert.equal(result.invalidRowCount, 2);
+  assert.equal(result.invalidRowCount, 3);
   assert.equal(result.missingPostCount, 0);
   assert.equal(result.missingPageCount, 0);
   assert.deepEqual(result.entries.map(entry => entry.title), ['역학', '현재 도구']);

@@ -1,4 +1,4 @@
-export type EntryKind = 'post' | 'series' | 'tool' | 'achievement';
+export type EntryKind = 'post' | 'series' | 'tool' | 'achievement' | 'page';
 export type SortMode = 'date' | 'relevance';
 
 export interface CatalogEntry {
@@ -234,6 +234,7 @@ function pageKind(path: string, siteBaseUrl: string): EntryKind | null {
   if (localPath === '/series' || localPath.startsWith('/series/')) return 'series';
   if (localPath === '/tools' || localPath.startsWith('/tools/')) return 'tool';
   if (localPath === '/achievements' || localPath.startsWith('/achievements/')) return 'achievement';
+  if (localPath === '/about') return 'page';
   return null;
 }
 

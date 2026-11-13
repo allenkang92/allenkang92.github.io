@@ -1128,7 +1128,7 @@ export function PostsApp({
             const excerpt = getExcerpt(entry, state.query);
             const metaLabels = entry.kind === 'post'
               ? entry.categories.map(category => categoryLabelFor(category, categoryLabels))
-              : [entry.kind === 'series' ? '시리즈' : entry.kind === 'achievement' ? '성과' : '도구'];
+              : [entry.kind === 'series' ? '시리즈' : entry.kind === 'achievement' ? '성과' : entry.kind === 'tool' ? '도구' : '페이지'];
             return (
               <article className="post-preview visible" key={`${entry.kind}:${entry.path}`}>
                 <h2><a href={entry.href}><span className="post-title-text" lang={entry.language}><HighlightedText text={entry.title} query={state.query} /></span></a></h2>

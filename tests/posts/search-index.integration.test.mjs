@@ -230,7 +230,8 @@ test('생성된 글 목록의 기대 페이지가 검색 인덱스의 도구·�
       return entry.page_kind === 'achievement'
         || path === `${baseurl}/tools` || path.startsWith(`${baseurl}/tools/`)
         || path === `${baseurl}/series` || path.startsWith(`${baseurl}/series/`)
-        || path.replace(/\/+$/, '') === `${baseurl}/achievements`;
+        || path.replace(/\/+$/, '') === `${baseurl}/achievements`
+        || path.replace(/\/+$/, '') === `${baseurl}/about`;
     }).map(entry => new URL(entry.url, browser.location.href).pathname);
     assert.ok(expected.length > 0, '검색할 안내 페이지를 한 개 이상 렌더링한다');
     assert.deepEqual([...new Set(expected.map(normalize))].sort(), [...new Set(indexed.map(normalize))].sort());
@@ -305,7 +306,49 @@ test('선택한 도구 안내의 색인 본문은 실제 표시 내용과 일치
   }
 });
 
-test('생성된 도구 안내 본문을 사이드바와 글 목록 양쪽에서 검색한다', async () => {
+test('소개와 시리즈 허브의 색인 내용은 실제 표시 내용과 일치한다', async () => {
+  const siteRoot = process.env.SITE_ROOT || fileURLToPath(new URL('../../_site/', import.meta.url));
+  const baseurl = process.env.SITE_BASEURL || '';
+  const entries = JSON.parse(await readFile(resolve(siteRoot, 'search.json'), 'utf8'));
+  const source = await readFile(new URL('../../_pages/about.html', import.meta.url), 'utf8');
+  const body = source.replace(/^---[\s\S]*?---\s*/, '');
+  const allowedArrow = '<span class="about-list-arrow" aria-hidden="true">›</span>';
+  const safeBody = body.split(allowedArrow).join('');
+  assert.doesNotMatch(safeBody.replace('<div class="about-avatar" aria-hidden="true"></div>', ''), /<(?:script|style|template|noscript)\b|\s(?:hidden|aria-hidden|style)\s*(?:=|>|\s)/i);
+  assert.doesNotMatch(safeBody.replace(/<[^>]*>/g, ''), /\{[{%]/, '소개 표시 텍스트에 Liquid를 넣지 않는다');
+  const cases = [
+    { path: '/about/', file: 'about/index.html', selector: '.about-page', full: true },
+    { path: '/series/mathematics-philosophy-history/', file: 'series/mathematics-philosophy-history/index.html', selector: '.series-hub h1, .series-hub > p:not(.series-hub-eyebrow), .series-hub-facts div:last-child dd, .series-reference-note li' },
+    { path: '/series/science-philosophy-history/', file: 'series/science-philosophy-history/index.html', selector: '.series-hub h1, .series-hub > p:not(.series-hub-eyebrow), .series-hub-facts div:last-child dd, .series-reference-note li' },
+  ];
+  for (const item of cases) {
+    const browser = new Window({ settings: { disableJavaScriptEvaluation: true, disableJavaScriptFileLoading: true } });
+    try {
+      browser.document.write(await readFile(resolve(siteRoot, item.file), 'utf8'));
+      const rows = entries.filter(entry => new URL(entry.url).pathname === `${baseurl}${item.path}`);
+      assert.equal(rows.length, 1, `${item.path}: 검색 항목은 하나여야 합니다`);
+      const decoder = browser.document.createElement('textarea');
+      decoder.innerHTML = rows[0].content;
+      const norm = value => value.replace(/\s+/g, ' ').trim();
+      const content = norm(decoder.value);
+      assert.doesNotMatch(content, /\{[{%]|<[^>]*>/);
+      const elements = [...browser.document.querySelectorAll(item.selector)];
+      assert.ok(elements.length, `${item.path}: 표시 내용을 찾아야 합니다`);
+      if (item.full) {
+        const clone = elements[0].cloneNode(true);
+        clone.querySelectorAll('[aria-hidden="true"]').forEach(element => element.remove());
+        assert.equal(content, norm(clone.textContent), '소개 본문과 색인은 같아야 합니다');
+      } else {
+        for (const element of elements) {
+          const text = norm(element.textContent);
+          if (text) assert.ok(content.includes(text), `${item.path}: 표시 문구 누락 ${text}`);
+        }
+      }
+    } finally { await browser.happyDOM.abort(); }
+  }
+});
+
+test('생성된 안내 본문을 사이드바와 글 목록 양쪽에서 검색한다', async () => {
   const siteRoot = process.env.SITE_ROOT || fileURLToPath(new URL('../../_site/', import.meta.url));
   const baseurl = process.env.SITE_BASEURL || '';
   const entries = JSON.parse(await readFile(resolve(siteRoot, 'search.json'), 'utf8'));
@@ -314,10 +357,13 @@ test('생성된 도구 안내 본문을 사이드바와 글 목록 양쪽에서 
   const sidebarScript = await readFile(new URL('../../assets/js/simple-search.js', import.meta.url), 'utf8');
   const url = `https://allenkang92.github.io${baseurl}`;
   const cases = [
-    { query: '스트레스 DSR', target: 'dsr-calculator' },
-    { query: '중도상환수수료', target: 'dsr-calculator' },
-    { query: '비상자금', target: 'dsr-calculator' },
-    { query: '3 km -> m', target: 'unit-converter' },
+    { query: '스트레스 DSR', target: '/tools/dsr-calculator/' },
+    { query: '중도상환수수료', target: '/tools/dsr-calculator/' },
+    { query: '비상자금', target: '/tools/dsr-calculator/' },
+    { query: '3 km -> m', target: '/tools/unit-converter/' },
+    { query: '인터페이스', target: '/about/' },
+    { query: 'Morris Kline', target: '/series/mathematics-philosophy-history/' },
+    { query: 'Peter Godfrey-Smith', target: '/series/science-philosophy-history/' },
   ];
   const parser = new Window({ settings: { disableJavaScriptFileLoading: true, disableCSSFileLoading: true } });
   let form;
@@ -346,7 +392,7 @@ test('생성된 도구 안내 본문을 사이드바와 글 목록 양쪽에서 
     await new Promise(resolve => setTimeout(resolve, 0));
     for (const { query, target } of cases) {
       sidebar.searchFunctions.performSearch(query);
-      assert.ok(sidebar.document.querySelector(`#search-results a[href="${baseurl}/tools/${target}/"]`), `${query}: 사이드바 결과가 있어야 합니다`);
+      assert.ok(sidebar.document.querySelector(`#search-results a[href="${baseurl}${target}"]`), `${query}: 사이드바 결과가 있어야 합니다`);
     }
   } finally { await sidebar.happyDOM.abort(); }
   for (const { query, target } of cases) {
@@ -355,10 +401,10 @@ test('생성된 도구 안내 본문을 사이드바와 글 목록 양쪽에서 
       browser.document.body.innerHTML = archive.join('');
       browser.fetch = async () => ({ ok: true, json: async () => entries });
       browser.eval(bundle);
-      for (let attempt = 0; attempt < 30 && !browser.document.querySelector(`#posts-react-root a[href="${baseurl}/tools/${target}/"]`); attempt++) {
+      for (let attempt = 0; attempt < 30 && !browser.document.querySelector(`#posts-react-root a[href="${baseurl}${target}"]`); attempt++) {
         await new Promise(resolve => setTimeout(resolve, 10));
       }
-      assert.ok(browser.document.querySelector(`#posts-react-root a[href="${baseurl}/tools/${target}/"]`), `${query}: 글 목록 결과가 있어야 합니다`);
+      assert.ok(browser.document.querySelector(`#posts-react-root a[href="${baseurl}${target}"]`), `${query}: 글 목록 결과가 있어야 합니다`);
     } finally { await browser.happyDOM.abort(); }
   }
 });

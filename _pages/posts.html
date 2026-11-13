@@ -12,7 +12,7 @@ styles:
   <p class="section-kicker">글 아카이브</p>
   <h1>전체 글</h1>
   <p class="posts-intro">글을 둘러보거나 글·성과·시리즈·도구를 검색해 보세요.</p>
-  <p class="posts-intro">글·성과와 일부 도구 안내는 본문도 검색합니다. 그 밖의 페이지는 제목과 소개를 검색합니다.</p>
+  <p class="posts-intro">글·성과와 소개, 일부 시리즈·도구 안내는 본문도 검색합니다. 그 밖의 페이지는 제목과 소개를 검색합니다.</p>
 </header>
 
 <div
@@ -36,7 +36,7 @@ styles:
         {%- assign eligible_source = true -%}
       {%- endif -%}
       {%- if eligible_source and search_page.title and search_page.permalink and search_page.layout != 'xml' -%}
-        {%- if tool_route == '/tools/' or series_route == '/series/' or achievement_route == '/achievements/' -%}
+        {%- if tool_route == '/tools/' or series_route == '/series/' or achievement_route == '/achievements/' or search_page.url == '/about/' -%}
           {%- if has_expected_page -%},{%- endif -%}
           {{- search_page.url | relative_url | jsonify | escape -}}
           {%- assign has_expected_page = true -%}

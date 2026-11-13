@@ -176,6 +176,14 @@ for (const [name, base] of [['root', ''], ['nested', '/blog']]) {
 
     const index = JSON.parse(await readFile(join(output, 'search.json'), 'utf8'));
     assert.ok(index.some(entry => entry.type === 'post' && entry.title === specialTitle && new URL(entry.url, 'https://example.com').pathname === `${base}${target}`), `${name}: 검색 색인의 제목 원문`);
+    const hubIndex = index.find(entry => new URL(entry.url, 'https://example.com').pathname === `${base}/series/mathematics-philosophy-history/`);
+    assert.ok(hubIndex, `${name}: 수학 허브 색인`);
+    const decoder = browser.document.createElement('textarea');
+    decoder.innerHTML = hubIndex.content.replace(/</g, '&lt;');
+    for (const value of [mathHubTitle, '한국어 <자료> & 설명', '제목 언어 미지정', '기존 문자열']) {
+      assert.ok(decoder.value.includes(value), `${name}: 허브 색인의 표시 문구 ${value}`);
+    }
+    assert.doesNotMatch(decoder.value, /<em>|\{[{%]/, `${name}: 허브 원시 마크업·템플릿 제외`);
     const posts = await readDocument('posts/index.html');
     assertLink([...posts.querySelectorAll('.post-preview h2 a')].find(link => link.getAttribute('href') === `${base}${target}`), specialTitle, `${base}${target}`);
   } finally {
