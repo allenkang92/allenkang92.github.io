@@ -329,18 +329,19 @@ test('the generated search index includes the tool landing pages with readable d
 
 test('선택한 도구 안내의 색인 본문은 실제 표시 내용과 일치하고 템플릿 표현식을 포함하지 않는다', async () => {
   const siteRoot = process.env.SITE_ROOT || fileURLToPath(new URL('../../_site/', import.meta.url));
+  const sourceRoot = process.env.SITE_SOURCE_ROOT || fileURLToPath(new URL('../..', import.meta.url));
   const names = ['acceleration-calculator', 'dsr-calculator', 'kinetic-energy-calculator', 'unit-converter'];
   const entries = JSON.parse(await readFile(resolve(siteRoot, 'search.json'), 'utf8'));
-  const toolsDir = new URL('../../tools/', import.meta.url);
+  const toolsDir = resolve(sourceRoot, 'tools');
   const opted = [];
   for (const file of await readdir(toolsDir)) {
     if (!file.endsWith('.md')) continue;
-    const text = await readFile(new URL(file, toolsDir), 'utf8');
+    const text = await readFile(resolve(toolsDir, file), 'utf8');
     if (/^search_index_body:\s*true\s*$/m.test(text)) opted.push(file.slice(0, -3));
   }
   assert.deepEqual(opted.sort(), [...names].sort(), '본문 색인 대상을 늘리면 공개 본문 비교 검사에도 추가해야 합니다');
   for (const name of names) {
-    const source = await readFile(new URL(`../../tools/${name}.md`, import.meta.url), 'utf8');
+    const source = await readFile(resolve(toolsDir, `${name}.md`), 'utf8');
     assert.match(source, /^search_index_body:\s*true\s*$/m, `${name}: 본문 색인이 명시돼야 합니다`);
     const contentSource = source.replace(/^---[\s\S]*?---\s*/, '');
     assert.doesNotMatch(contentSource, /<(?:script|style|template|noscript)\b|\s(?:hidden|aria-hidden|style)\s*(?:=|>|\s)/i,

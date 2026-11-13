@@ -1,6 +1,6 @@
 // 홈과 시리즈 탐색에서 제목 원문 및 링크가 보존되는지 실제 빌드로 확인한다.
 import assert from 'node:assert/strict';
-import { execFileSync } from 'node:child_process';
+import { execFileSync, spawnSync } from 'node:child_process';
 import { cp, mkdtemp, readFile, realpath, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
@@ -220,6 +220,30 @@ for (const [name, base] of [['root', ''], ['nested', '/blog']]) {
       env: { ...env, SITE_ROOT: output, SITE_SOURCE_ROOT: source, SITE_BASEURL: base },
       stdio: 'inherit',
     });
+    // 생성물과 다른 저장소 원본을 검사하지 않도록, 실제 fixture 원본을 변경해
+    // 도구 본문 정책 검사가 각 위험 구문을 거부하는지 확인한다.
+    const toolSource = join(source, 'tools/dsr-calculator.md');
+    const originalToolSource = await readFile(toolSource, 'utf8');
+    const toolTestArgs = [
+      '--test', '--test-name-pattern=^선택한 도구 안내의 색인 본문',
+      join(repository, 'tests/posts/search-index.integration.test.mjs'),
+    ];
+    const toolTestEnv = { ...env, SITE_ROOT: output, SITE_SOURCE_ROOT: source, SITE_BASEURL: base };
+    execFileSync(process.execPath, toolTestArgs, { cwd: repository, env: toolTestEnv, stdio: 'inherit' });
+    try {
+      for (const [label, injection, message] of [
+        ['숨김', '\n<span hidden>숨김 표식</span>\n', '숨긴 내용이나 실행 코드'],
+        ['스크립트', '\n<script>위험 표식</script>\n', '숨긴 내용이나 실행 코드'],
+        ['Liquid', '\n{{ 위험_표식 }}\n', '표시 텍스트에 Liquid'],
+      ]) {
+        await writeFile(toolSource, originalToolSource + injection);
+        const result = spawnSync(process.execPath, toolTestArgs, { cwd: repository, env: toolTestEnv, encoding: 'utf8' });
+        assert.equal(result.status, 1, `${name}: ${label} 원본은 검사에서 실패해야 합니다`);
+        assert.ok(`${result.stdout}\n${result.stderr}`.includes(message), `${name}: ${label} 실패가 fixture 원본 정책에서 나와야 합니다`);
+      }
+    } finally {
+      await writeFile(toolSource, originalToolSource);
+    }
   } finally {
     await browser.happyDOM.abort();
   }
