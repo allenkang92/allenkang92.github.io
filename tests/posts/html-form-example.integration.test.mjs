@@ -55,6 +55,19 @@ test('폼 예제는 입력을 이름과 선택값으로 구분해 제출 데이�
     assert.equal(data.get('bio'), '안녕하세요');
     assert.ok(data.get('profile') instanceof browser.File);
     assert.equal(data.get('profile').name, 'sample.png');
+
+    const reset = form.querySelector('button[type="reset"]');
+    assert.equal(reset.textContent.trim(), '초기화', '초기화 동작을 명확히 표시');
+    form.querySelector('#hobby-movies').checked = false;
+    reset.click();
+    assert.equal(form.querySelector('#userid').value, '');
+    assert.equal(form.querySelector('#userpw').value, '');
+    assert.equal(form.querySelector('#bio').value, '');
+    assert.equal(form.querySelector('#male').checked, true);
+    assert.equal(form.querySelector('#female').checked, false);
+    assert.equal(form.querySelector('#hobby-movies').checked, true);
+    assert.equal(form.querySelector('#hobby-music').checked, false);
+    assert.equal(form.querySelector('#region').value, 'jeju');
   } finally { await browser.happyDOM.abort(); }
 });
 
