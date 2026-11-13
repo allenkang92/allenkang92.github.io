@@ -4,10 +4,23 @@ import { mkdtempSync, mkdirSync, readFileSync, readdirSync, rmdirSync, unlinkSyn
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createHash } from 'node:crypto';
 import test from 'node:test';
 
 const projectRoot = resolve(fileURLToPath(new URL('../..', import.meta.url)));
 const viteCli = join(projectRoot, 'node_modules/vite/bin/vite.js');
+
+test('과거 배포 페이지가 참조하는 번들의 원본을 보존한다', () => {
+  // 2026-11-10에 배포된 두 manifest의 파일을 예전 HTML 캐시에서 요청할 수 있다.
+  for (const [name, expected] of [
+    ['main-BTyvt83f.js', 'f07657be913719259ce35db5a26201fc8bc7a4f1'],
+    ['main-BPoTMtH0.js', 'db7126ece0cf6f6b3ac9bc6105a394ea52397d71'],
+  ]) {
+    const bytes = readFileSync(join(projectRoot, 'assets/js/dist/assets', name));
+    const header = Buffer.from(`blob ${bytes.length}\0`);
+    assert.equal(createHash('sha1').update(header).update(bytes).digest('hex'), expected, `${name}: 기존 배포의 원본과 일치해야 한다`);
+  }
+});
 
 test('프런트엔드 빌드는 기존 번들을 보존하고 최신 진입점을 기록한다', () => {
   const output = mkdtempSync(join(tmpdir(), 'blog-vite-output-'));
