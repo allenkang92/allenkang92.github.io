@@ -73,6 +73,7 @@ layout: null
       {% assign searchable_page = true %}
     {% endif %}
     {% if searchable_page and page.title and page.permalink and page.layout != 'xml' %}
+      {% capture page_search_content %}{% if page_root == 'tools/' and page.search_index_body == true %}{{ page.content | markdownify | strip_html }}{% endif %}{% endcapture %}
       {% if has_item %},{% endif %}
       {
         "title": {{ page.title | jsonify }},
@@ -81,7 +82,7 @@ layout: null
         "type": "page",
         "tags": [],
         "description": {{ page.description | default: page.title | strip_html | normalize_whitespace | jsonify }},
-        "content": "",
+        "content": {{ page_search_content | normalize_whitespace | jsonify }},
         "date": {% if page.date %}{{ page.date | date: "%Y-%m-%d" | jsonify }}{% else %}""{% endif %},
         "series": null,
         "series_index": null

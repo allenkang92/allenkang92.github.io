@@ -3,6 +3,7 @@ layout: default
 title: 운동 에너지 계산기 - 질량과 속도로 J 계산
 description: 운동 에너지 계산 공식 K = 1/2mv², 질량 kg과 속도 m/s 입력 예시, 단위 주의사항과 FAQ를 한국어로 정리했습니다.
 permalink: /tools/kinetic-energy-calculator/
+search_index_body: true
 ---
 
 <div class="tool-landing" markdown="1">

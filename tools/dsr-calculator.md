@@ -3,6 +3,7 @@ layout: default
 title: DSR 계산기 준비 중 - 총부채원리금상환비율 공식과 기준 안내
 description: DSR 계산 공식, 연소득과 연간 원리금 예시, 대출 심사 전 확인해야 할 주의사항을 정리한 한국어 안내 페이지입니다. 자동 DSR 계산 기능은 준비 중입니다.
 permalink: /tools/dsr-calculator/
+search_index_body: true
 ---
 
 <div class="tool-landing" markdown="1">

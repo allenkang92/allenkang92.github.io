@@ -3,6 +3,7 @@ layout: default
 title: 가속도 계산기 - 속도 변화량과 시간으로 m/s² 계산
 description: 가속도 계산 공식 a = Δv / t, 속도 변화량과 시간 입력 예시, 음의 가속도와 단위 주의사항, FAQ를 한국어로 정리했습니다.
 permalink: /tools/acceleration-calculator/
+search_index_body: true
 ---
 
 <div class="tool-landing" markdown="1">

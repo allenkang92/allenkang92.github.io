@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { readFile } from 'node:fs/promises';
+import { readFile, readdir } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import test from 'node:test';
@@ -259,4 +259,106 @@ test('the generated search index includes the tool landing pages with readable d
   }
   const series = entries.find(entry => entry.type === 'page' && new URL(entry.url).pathname === `${baseurl}/series/`);
   assert.equal(series?.date, '', 'undated series pages must not receive a build date');
+});
+
+test('선택한 도구 안내의 색인 본문은 실제 표시 내용과 일치하고 템플릿 표현식을 포함하지 않는다', async () => {
+  const siteRoot = process.env.SITE_ROOT || fileURLToPath(new URL('../../_site/', import.meta.url));
+  const names = ['acceleration-calculator', 'dsr-calculator', 'kinetic-energy-calculator', 'unit-converter'];
+  const entries = JSON.parse(await readFile(resolve(siteRoot, 'search.json'), 'utf8'));
+  const toolsDir = new URL('../../tools/', import.meta.url);
+  const opted = [];
+  for (const file of await readdir(toolsDir)) {
+    if (!file.endsWith('.md')) continue;
+    const text = await readFile(new URL(file, toolsDir), 'utf8');
+    if (/^search_index_body:\s*true\s*$/m.test(text)) opted.push(file.slice(0, -3));
+  }
+  assert.deepEqual(opted.sort(), [...names].sort(), '본문 색인 대상을 늘리면 공개 본문 비교 검사에도 추가해야 합니다');
+  for (const name of names) {
+    const source = await readFile(new URL(`../../tools/${name}.md`, import.meta.url), 'utf8');
+    assert.match(source, /^search_index_body:\s*true\s*$/m, `${name}: 본문 색인이 명시돼야 합니다`);
+    const contentSource = source.replace(/^---[\s\S]*?---\s*/, '');
+    assert.doesNotMatch(contentSource, /<(?:script|style|template|noscript)\b|\s(?:hidden|aria-hidden|style)\s*(?:=|>|\s)/i,
+      `${name}: 숨긴 내용이나 실행 코드는 본문 색인에 포함할 수 없습니다`);
+    assert.doesNotMatch(contentSource.replace(/<[^>]*>/g, ''), /\{[{%]/,
+      `${name}: 표시 텍스트에 Liquid 표현식을 사용할 수 없습니다`);
+    const browser = new Window({ settings: { disableJavaScriptEvaluation: true, disableJavaScriptFileLoading: true } });
+    try {
+      browser.document.write(await readFile(resolve(siteRoot, `tools/${name}/index.html`), 'utf8'));
+      const landing = browser.document.querySelector('.tool-landing');
+      assert.ok(landing, `${name}: 도구 안내 본문이 있어야 합니다`);
+      assert.ok(!landing.querySelector('script,style,template,noscript,[hidden],[aria-hidden="true"]'),
+        `${name}: 숨긴 내용이나 실행 코드는 본문 색인에 포함할 수 없습니다`);
+      const rows = entries.filter(entry => new URL(entry.url).pathname.replace(/\/+$/, '').endsWith(`/tools/${name}`));
+      assert.equal(rows.length, 1, `${name}: 색인 항목이 하나여야 합니다`);
+      assert.doesNotMatch(rows[0].content, /\{[{%]|<[^>]*>/, `${name}: 원시 템플릿이나 HTML이 남으면 안 됩니다`);
+      const decoder = browser.document.createElement('textarea');
+      decoder.innerHTML = rows[0].content;
+      const normalize = value => value.replace(/\s+/g, ' ').trim();
+      assert.equal(normalize(decoder.value), normalize(landing.textContent), `${name}: 검색 본문과 표시 본문이 달라졌습니다`);
+    } finally {
+      await browser.happyDOM.abort();
+    }
+  }
+  const dsr = entries.find(entry => new URL(entry.url).pathname.replace(/\/+$/, '').endsWith('/tools/dsr-calculator'));
+  for (const term of ['스트레스 DSR', '중도상환수수료', '비상자금']) {
+    assert.ok(dsr.content.includes(term), `${term}: DSR 안내 본문이 검색돼야 합니다`);
+  }
+});
+
+test('생성된 도구 안내 본문을 사이드바와 글 목록 양쪽에서 검색한다', async () => {
+  const siteRoot = process.env.SITE_ROOT || fileURLToPath(new URL('../../_site/', import.meta.url));
+  const baseurl = process.env.SITE_BASEURL || '';
+  const entries = JSON.parse(await readFile(resolve(siteRoot, 'search.json'), 'utf8'));
+  const about = await readFile(resolve(siteRoot, 'about/index.html'), 'utf8');
+  const posts = await readFile(resolve(siteRoot, 'posts/index.html'), 'utf8');
+  const sidebarScript = await readFile(new URL('../../assets/js/simple-search.js', import.meta.url), 'utf8');
+  const url = `https://allenkang92.github.io${baseurl}`;
+  const cases = [
+    { query: '스트레스 DSR', target: 'dsr-calculator' },
+    { query: '중도상환수수료', target: 'dsr-calculator' },
+    { query: '비상자금', target: 'dsr-calculator' },
+    { query: '3 km -> m', target: 'unit-converter' },
+  ];
+  const parser = new Window({ settings: { disableJavaScriptFileLoading: true, disableCSSFileLoading: true } });
+  let form;
+  let archive;
+  let bundlePath;
+  try {
+    parser.document.write(about);
+    form = parser.document.querySelector('.search-form')?.outerHTML;
+    parser.document.body.innerHTML = posts;
+    archive = [parser.document.querySelector('#posts-react-root')?.outerHTML, parser.document.querySelector('#posts-static-fallback')?.outerHTML];
+    const script = parser.document.querySelector('script[src*="/assets/js/dist/assets/main-"]');
+    assert.ok(script, '실제 생성 글 목록에 번들이 있어야 합니다');
+    const source = script.getAttribute('src').split('?')[0];
+    assert.ok(source.startsWith(`${baseurl}/assets/js/dist/assets/main-`));
+    bundlePath = source.slice(baseurl.length + 1);
+    assert.ok(form && archive.every(Boolean), '실제 생성 폼과 글 목록이 있어야 합니다');
+  } finally { await parser.happyDOM.abort(); }
+  const bundle = await readFile(resolve(siteRoot, bundlePath), 'utf8');
+  const sidebar = new Window({ url: `${url}/about/`, settings: { disableJavaScriptFileLoading: true, disableCSSFileLoading: true } });
+  try {
+    sidebar.document.body.innerHTML = `<div id="search-container">${form}<div id="search-status"></div><div id="search-results"></div></div>`;
+    sidebar.fetch = async () => ({ ok: true, json: async () => entries });
+    sidebar.requestAnimationFrame = callback => { callback(); return 1; };
+    sidebar.eval(sidebarScript);
+    if (sidebar.document.readyState === 'loading') sidebar.document.dispatchEvent(new sidebar.Event('DOMContentLoaded'));
+    await new Promise(resolve => setTimeout(resolve, 0));
+    for (const { query, target } of cases) {
+      sidebar.searchFunctions.performSearch(query);
+      assert.ok(sidebar.document.querySelector(`#search-results a[href="${baseurl}/tools/${target}/"]`), `${query}: 사이드바 결과가 있어야 합니다`);
+    }
+  } finally { await sidebar.happyDOM.abort(); }
+  for (const { query, target } of cases) {
+    const browser = new Window({ url: `${url}/posts/?q=${encodeURIComponent(query)}`, settings: { disableJavaScriptFileLoading: true, disableCSSFileLoading: true } });
+    try {
+      browser.document.body.innerHTML = archive.join('');
+      browser.fetch = async () => ({ ok: true, json: async () => entries });
+      browser.eval(bundle);
+      for (let attempt = 0; attempt < 30 && !browser.document.querySelector(`#posts-react-root a[href="${baseurl}/tools/${target}/"]`); attempt++) {
+        await new Promise(resolve => setTimeout(resolve, 10));
+      }
+      assert.ok(browser.document.querySelector(`#posts-react-root a[href="${baseurl}/tools/${target}/"]`), `${query}: 글 목록 결과가 있어야 합니다`);
+    } finally { await browser.happyDOM.abort(); }
+  }
 });
