@@ -21,8 +21,16 @@ async function setupMath() {
     assert.ok(notice?.hidden, '초기 수식 오류 안내는 숨겨져 있어야 합니다');
     const delay = parser.document.getElementById('math-load-delay');
     assert.ok(delay?.hidden, '초기 지연 안내는 숨겨져 있어야 합니다');
-    assert.equal(delay.querySelectorAll('[role="status"]').length, 1, '지연 상태만 별도로 알립니다');
-    browser.document.body.innerHTML = delay.outerHTML + notice.outerHTML;
+    const status = parser.document.getElementById('math-load-status');
+    assert.ok(status && !status.hidden && !status.closest('[hidden]'), '라이브 영역은 처음부터 노출돼야 합니다');
+    assert.equal(status.getAttribute('role'), 'status');
+    assert.equal(status.getAttribute('aria-atomic'), 'true');
+    assert.equal(status.textContent, '', '처음에는 상태 메시지가 없어야 합니다');
+    assert.equal(delay.querySelectorAll('[role="status"]').length, 0, '시각 안내를 중복 알리지 않습니다');
+    assert.equal(delay.querySelector('p').getAttribute('aria-hidden'), 'true', '시각 요약은 라이브 영역과 중복해서 노출하지 않습니다');
+    assert.equal(delay.querySelectorAll('p')[1].getAttribute('aria-hidden'), null, '상세 복구 절차는 탐색할 수 있습니다');
+    assert.equal(notice.getAttribute('aria-hidden'), 'true', '시각 오류 안내는 라이브 영역과 중복해서 노출하지 않습니다');
+    browser.document.body.innerHTML = status.outerHTML + delay.outerHTML + notice.outerHTML;
     const timers = new Map();
     let nextTimer = 0;
     browser.setTimeout = (callback, duration) => {
@@ -53,6 +61,7 @@ test('MathJax 정상 조판은 기본 결과를 유지하고 오류 안내를 �
     assert.equal(calls, 1);
     assert.equal(browser.document.getElementById('math-load-error').hidden, true);
     assert.equal(browser.document.getElementById('math-load-delay').hidden, true);
+    assert.equal(browser.document.getElementById('math-load-status').textContent, '', '지연 없는 정상 완료는 알리지 않습니다');
     assert.equal(browser.testMathTimers.size, 0);
   } finally {
     await browser.happyDOM.abort();
@@ -67,6 +76,7 @@ test('MathJax 초기 조판 실패는 안내하면서 실패를 그대로 전파
     await assert.rejects(browser.MathJax.startup.pageReady(), reason => reason === error);
     assert.equal(browser.document.getElementById('math-load-error').hidden, false);
     assert.equal(browser.document.getElementById('math-load-delay').hidden, true);
+    assert.equal(browser.document.getElementById('math-load-status').textContent, browser.document.getElementById('math-load-error').textContent);
     assert.equal(browser.testMathTimers.size, 0);
   } finally {
     await browser.happyDOM.abort();
@@ -81,6 +91,7 @@ test('MathJax 초기 조판의 동기 예외도 그대로 전파하고 타이머
     assert.throws(() => browser.MathJax.startup.pageReady(), reason => reason === error);
     assert.equal(browser.document.getElementById('math-load-error').hidden, false);
     assert.equal(browser.document.getElementById('math-load-delay').hidden, true);
+    assert.equal(browser.document.getElementById('math-load-status').textContent, browser.document.getElementById('math-load-error').textContent);
     assert.equal(browser.testMathTimers.size, 0);
   } finally {
     await browser.happyDOM.abort();
@@ -113,7 +124,10 @@ test('수식 로드가 지연되면 기다림을 안내하고 늦게 조판되�
     assert.equal(delay.hidden, false);
     assert.match(delay.textContent, /지연/);
     assert.match(delay.textContent, /수식 음성이 나오지 않는다면/);
-    assert.match(delay.querySelector('[role="status"]').textContent, /Speech → Language → English를 선택한 뒤 새로고침/);
+    const status = browser.document.getElementById('math-load-status');
+    assert.equal(status.textContent, delay.querySelector('p').textContent, '지연 시 시각 요약과 같은 내용을 알립니다');
+    assert.equal(status.querySelector('[lang="en"]').textContent, 'Speech → Language → English', '영어 메뉴의 언어 정보를 보존합니다');
+    assert.match(status.textContent, /Speech → Language → English를 선택한 뒤 새로고침/);
     assert.match(delay.textContent, /오른쪽 방향키로 하위 메뉴/);
     assert.match(delay.textContent, /Speech → Language → English/);
     assert.match(delay.textContent, /영어 음성 설정은 이후에도 유지될 수 있습니다/);
@@ -124,6 +138,7 @@ test('수식 로드가 지연되면 기다림을 안내하고 늦게 조판되�
     assert.equal(await browser.MathJax.startup.pageReady(), '늦은 완료');
     assert.equal(delay.hidden, true);
     assert.equal(failure.hidden, true);
+    assert.equal(status.textContent, '수식 표시 준비가 완료되었습니다.', '지연이 끝나면 완료 상태를 알립니다');
     assert.equal(browser.testMathTimers.size, 0);
   } finally {
     await browser.happyDOM.abort();
@@ -140,6 +155,7 @@ test('지연 후 수식 로드 실패는 지연 안내 대신 오류 안내를 �
     script.dispatchEvent(new browser.Event('error'));
     assert.equal(browser.document.getElementById('math-load-delay').hidden, true);
     assert.equal(browser.document.getElementById('math-load-error').hidden, false);
+    assert.equal(browser.document.getElementById('math-load-status').textContent, browser.document.getElementById('math-load-error').textContent);
     assert.equal(browser.testMathTimers.size, 0);
   } finally {
     await browser.happyDOM.abort();
@@ -156,7 +172,62 @@ test('구성요소 오류 뒤 조판이 끝나도 기존 오류 안내를 숨기
     assert.equal(await browser.MathJax.startup.pageReady(), '부분 완료');
     assert.equal(browser.document.getElementById('math-load-delay').hidden, true);
     assert.equal(browser.document.getElementById('math-load-error').hidden, false);
+    assert.equal(browser.document.getElementById('math-load-status').textContent, browser.document.getElementById('math-load-error').textContent, '부분 완료 후에도 실패 상태를 유지합니다');
     assert.equal(browser.testMathTimers.size, 0);
+  } finally {
+    await browser.happyDOM.abort();
+  }
+});
+
+test('중복 실패와 취소된 지연 콜백은 알림 상태를 다시 바꾸지 않는다', async () => {
+  const browser = await setupMath();
+  try {
+    const status = browser.document.getElementById('math-load-status');
+    const delay = browser.document.getElementById('math-load-delay');
+    const failure = browser.document.getElementById('math-load-error');
+    const timer = [...browser.testMathTimers.values()][0];
+    const focus = browser.document.createElement('button');
+    browser.document.body.append(focus);
+    focus.focus();
+    browser.console.error = () => {};
+    browser.MathJax.loader.failed(new Error('첫 실패'));
+    const firstChild = status.firstChild;
+    browser.MathJax.loader.failed(new Error('두 번째 실패'));
+    timer(); // 취소 이후 이미 대기열에 있던 콜백을 모의한다.
+    assert.ok(status.firstChild === firstChild, '같은 실패를 반복 알리지 않습니다');
+    assert.equal(status.textContent, failure.textContent);
+    assert.equal(delay.hidden, true, '실패 뒤 늦은 타이머가 지연 안내를 다시 열지 않습니다');
+    assert.ok(browser.document.activeElement === focus, '상태 알림은 포커스를 이동하지 않습니다');
+  } finally {
+    await browser.happyDOM.abort();
+  }
+});
+
+test('정상 완료 뒤 취소된 지연 콜백은 지연 상태를 열지 않는다', async () => {
+  const browser = await setupMath();
+  try {
+    const timer = [...browser.testMathTimers.values()][0];
+    browser.MathJax.startup.defaultPageReady = () => Promise.resolve();
+    await browser.MathJax.startup.pageReady();
+    timer();
+    assert.equal(browser.document.getElementById('math-load-delay').hidden, true);
+    assert.equal(browser.document.getElementById('math-load-status').textContent, '');
+  } finally {
+    await browser.happyDOM.abort();
+  }
+});
+
+test('정상 완료 후 늦은 구성요소 오류는 실패를 알린다', async () => {
+  const browser = await setupMath();
+  try {
+    browser.console.error = () => {};
+    browser.MathJax.startup.defaultPageReady = () => Promise.resolve();
+    await browser.MathJax.startup.pageReady();
+    browser.MathJax.loader.failed(new Error('늦은 구성요소 오류'));
+    const failure = browser.document.getElementById('math-load-error');
+    assert.equal(failure.hidden, false);
+    assert.equal(browser.document.getElementById('math-load-delay').hidden, true);
+    assert.equal(browser.document.getElementById('math-load-status').textContent, failure.textContent);
   } finally {
     await browser.happyDOM.abort();
   }

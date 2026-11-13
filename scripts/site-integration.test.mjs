@@ -247,7 +247,10 @@ test('수식 스크립트 실패와 자바스크립트 비활성 상태에서 �
     const loader = browser.document.querySelector('script[src*="mathjax@4.1.3/tex-chtml.js"]');
     assert.ok(notice && content && loader, '수식 글에 안내와 로더가 있어야 합니다');
     assert.equal(notice.hidden, true, '정상 로딩 전 오류 안내는 숨겨야 합니다');
-    assert.equal(notice.getAttribute('role'), 'status');
+    const status = browser.document.getElementById('math-load-status');
+    assert.ok(status && !status.hidden && !status.closest('[hidden]'), '상태 알림 영역은 처음부터 사용할 수 있어야 합니다');
+    assert.equal(status.getAttribute('role'), 'status');
+    assert.equal(status.getAttribute('aria-atomic'), 'true');
     assert.match(notice.textContent, /새로고침/);
     assert.ok(notice.compareDocumentPosition(content) & browser.Node.DOCUMENT_POSITION_FOLLOWING,
       '실패 안내는 수식 본문보다 먼저 있어야 합니다');
@@ -260,6 +263,22 @@ test('수식 스크립트 실패와 자바스크립트 비활성 상태에서 �
     loader.addEventListener('error', () => browser.eval(handler));
     loader.dispatchEvent(new browser.Event('error'));
     assert.equal(notice.hidden, false, '스크립트 로딩 실패 후 안내가 보여야 합니다');
+    assert.equal(status.textContent, notice.textContent, '오류 폴백도 준비된 라이브 영역에 상태를 알립니다');
+    const first = status.firstChild;
+    loader.dispatchEvent(new browser.Event('error'));
+    assert.ok(status.firstChild === first, '중복 오류는 같은 내용을 다시 알리지 않습니다');
+    // 별도 설정 스크립트가 실행되지 않았더라도 인라인 폴백은 독립적으로 동작한다.
+    const fallback = new Window();
+    try {
+      fallback.document.body.innerHTML = status.outerHTML.replace(status.innerHTML, '') + notice.outerHTML.replace('id="math-load-error"', 'id="math-load-error" hidden');
+      fallback.eval(handler);
+      const fallbackNotice = fallback.document.getElementById('math-load-error');
+      const fallbackStatus = fallback.document.getElementById('math-load-status');
+      assert.equal(fallbackNotice.hidden, false);
+      assert.equal(fallbackStatus.textContent, fallbackNotice.textContent);
+    } finally {
+      await fallback.happyDOM.abort();
+    }
     assert.doesNotMatch(plainPage, /id="math-load-error"|자바스크립트를 켜고 페이지를 다시 열어/,
       '수식이 없는 글에는 안내를 추가하지 않습니다');
   } finally {

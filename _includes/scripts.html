@@ -93,16 +93,36 @@
   (() => {
     const delayNotice = document.getElementById('math-load-delay');
     const failureNotice = document.getElementById('math-load-error');
+    const status = document.getElementById('math-load-status');
+    let mathState = 'loading';
+    const announce = source => {
+      if (status && source) {
+        // 언어 속성을 보존하고 화면의 안내와 같은 내용을 전달한다.
+        status.replaceChildren(...Array.from(source.childNodes, node => node.cloneNode(true)));
+      }
+    };
     const delayTimer = window.setTimeout(() => {
-      if (delayNotice && failureNotice && failureNotice.hidden) delayNotice.hidden = false;
+      if (mathState !== 'loading' || !delayNotice || !failureNotice) return;
+      mathState = 'delayed';
+      delayNotice.hidden = false;
+      announce(delayNotice.querySelector('p'));
     }, 12000);
     const finishWaiting = () => {
       window.clearTimeout(delayTimer);
       if (delayNotice) delayNotice.hidden = true;
+      // 부분 구성요소 실패 후 조판이 끝나도 실패 상태는 유지한다.
+      if (mathState === 'failed') return;
+      const wasDelayed = mathState === 'delayed';
+      mathState = 'ready';
+      if (wasDelayed && status) status.textContent = '수식 표시 준비가 완료되었습니다.';
     };
     const showMathFailure = () => {
-      finishWaiting();
+      window.clearTimeout(delayTimer);
+      if (delayNotice) delayNotice.hidden = true;
+      if (mathState === 'failed') return;
+      mathState = 'failed';
       if (failureNotice) failureNotice.hidden = false;
+      announce(failureNotice);
     };
     // 외부 스크립트 자체가 실패한 경우에도 지연 타이머를 정리한다.
     document.addEventListener('error', event => {
@@ -140,7 +160,7 @@
 <script defer
     src="https://cdn.jsdelivr.net/npm/mathjax@4.1.3/tex-chtml.js"
     id="mathjax-loader"
-    onerror="document.getElementById('math-load-error').hidden = false">
+    onerror="const n=document.getElementById('math-load-error'),s=document.getElementById('math-load-status');if(n){n.hidden=false;if(s&amp;&amp;s.textContent!==n.textContent)s.replaceChildren(...Array.from(n.childNodes,node=>node.cloneNode(true)));}">
 </script>
 {% endif %}
 
