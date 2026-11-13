@@ -21,7 +21,7 @@ async function setupMath() {
     assert.ok(notice?.hidden, '초기 수식 오류 안내는 숨겨져 있어야 합니다');
     const delay = parser.document.getElementById('math-load-delay');
     assert.ok(delay?.hidden, '초기 지연 안내는 숨겨져 있어야 합니다');
-    assert.equal(delay.getAttribute('role'), 'status');
+    assert.equal(delay.querySelectorAll('[role="status"]').length, 1, '지연 상태만 별도로 알립니다');
     browser.document.body.innerHTML = delay.outerHTML + notice.outerHTML;
     const timers = new Map();
     let nextTimer = 0;
@@ -112,6 +112,13 @@ test('수식 로드가 지연되면 기다림을 안내하고 늦게 조판되�
     timer();
     assert.equal(delay.hidden, false);
     assert.match(delay.textContent, /지연/);
+    assert.match(delay.textContent, /수식 음성이 나오지 않는다면/);
+    assert.match(delay.querySelector('[role="status"]').textContent, /Speech → Language → English를 선택한 뒤 새로고침/);
+    assert.match(delay.textContent, /오른쪽 방향키로 하위 메뉴/);
+    assert.match(delay.textContent, /Speech → Language → English/);
+    assert.match(delay.textContent, /영어 음성 설정은 이후에도 유지될 수 있습니다/);
+    assert.deepEqual(Array.from(delay.querySelectorAll('[lang="en"]'), element => element.textContent), ['Speech → Language → English', 'Accessibility', 'Speech → Language → English']);
+    assert.equal(delay.querySelectorAll('a, button, input, select, textarea, summary, [tabindex]').length, 0, '지연 안내가 사라질 때 포커스를 잃을 새 조작 요소는 없습니다');
     assert.equal(failure.hidden, true, '지연을 실패로 단정하지 않습니다');
     browser.MathJax.startup.defaultPageReady = () => Promise.resolve('늦은 완료');
     assert.equal(await browser.MathJax.startup.pageReady(), '늦은 완료');
