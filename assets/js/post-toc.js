@@ -29,6 +29,13 @@
   }
 
   const headingSet = new Set(headings);
+  const idElements = new Map();
+  Array.from(document.querySelectorAll('[id]')).forEach(element => {
+    if (!element.id) return;
+    const matches = idElements.get(element.id) || [];
+    matches.push(element);
+    idElements.set(element.id, matches);
+  });
   const pageIds = new Set(
     Array.from(document.querySelectorAll('[id]'))
       .filter(element => !headingSet.has(element))
@@ -43,6 +50,27 @@
       .filter(Boolean)
   );
   const reservedHeadingIds = new Set(headings.map(heading => heading.id).filter(Boolean));
+  // 공유한 목차 주소가 JS 없이도 유지되도록 작성된 정적 별칭만 사용한다.
+  const getStaticAlias = heading => {
+    const alias = heading.getAttribute('data-toc-fragment');
+    if (!alias || !/^[A-Za-z][A-Za-z0-9._-]*$/.test(alias) || anchorNames.has(alias)) return null;
+    const matches = idElements.get(alias);
+    if (!matches || matches.length !== 1) return null;
+    const target = matches[0];
+    if (target.tagName.toLowerCase() !== 'span' || target !== heading.firstElementChild
+      || target.childNodes.length !== 0) return null;
+    for (let sibling = target.previousSibling; sibling; sibling = sibling.previousSibling) {
+      if (sibling.nodeType === Node.TEXT_NODE && sibling.textContent.trim()) return null;
+    }
+    for (let element = target; element; element = element.parentElement) {
+      const style = window.getComputedStyle(element);
+      if (element.hasAttribute('hidden') || style.display === 'none'
+        || (element === target && style.display === 'contents')
+        || style.visibility === 'hidden' || style.visibility === 'collapse'
+        || style.contentVisibility === 'hidden') return null;
+    }
+    return alias;
+  };
   const usedIds = new Set();
   const createUniqueId = (value, fallback, reservedId = '') => {
     const baseId = value || fallback || 'section';
@@ -86,7 +114,7 @@
 
     const item = document.createElement('li');
     const link = document.createElement('a');
-    link.href = `#${resolvedId}`;
+    link.href = `#${getStaticAlias(heading) || resolvedId}`;
     link.textContent = title;
 
     item.appendChild(link);

@@ -24,6 +24,12 @@
   overflow-wrap: anywhere;
 }
 
+/* 정적 목차 별칭도 제목과 같은 위치 여유를 갖도록 한다. */
+.post-content h2[data-toc-fragment] > span[id]:first-child,
+.post-content h3[data-toc-fragment] > span[id]:first-child {
+  scroll-margin-top: 1.5rem;
+}
+
 .post-content a,
 .series-catalog-item-copy a {
   text-decoration: underline !important;

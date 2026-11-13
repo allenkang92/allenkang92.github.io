@@ -55,6 +55,31 @@ function fragmentTarget(document, link) {
   return findTarget(new TextDecoder('utf-8', { ignoreBOM: true }).decode(Uint8Array.from(decodedBytes)));
 }
 
+function assertStaticTocAlias(document, heading, context) {
+  const alias = heading.getAttribute('data-toc-fragment');
+  if (alias === null) return null;
+  assert.match(alias, /^[A-Za-z][A-Za-z0-9._-]*$/, `${context}: 목차 별칭은 안전한 ASCII 식별자여야 합니다`);
+  const targets = [...document.querySelectorAll('[id]')].filter(element => element.id === alias);
+  assert.equal(targets.length, 1, `${context}: 목차 별칭은 문서 전체에서 유일해야 합니다`);
+  const target = targets[0];
+  assert.ok(target.tagName === 'SPAN' && heading.contains(target), `${context}: 목차 별칭은 해당 제목 내부의 정적 span이어야 합니다`);
+  assert.equal(target.childNodes.length, 0, `${context}: 목차 별칭은 빈 span이어야 합니다`);
+  assert.ok(target === heading.firstElementChild, `${context}: 별칭은 제목의 첫 요소여야 합니다`);
+  for (let sibling = target.previousSibling; sibling; sibling = sibling.previousSibling) {
+    assert.ok(sibling.nodeType !== 3 || !sibling.textContent.trim(), `${context}: 별칭 앞에 제목 텍스트가 없어야 합니다`);
+  }
+  for (let element = target; element; element = element.parentElement) {
+    const style = document.defaultView.getComputedStyle(element);
+    assert.ok(!element.hasAttribute('hidden') && style.display !== 'none'
+      && !(element === target && style.display === 'contents')
+      && style.visibility !== 'hidden' && style.visibility !== 'collapse'
+      && style.contentVisibility !== 'hidden', `${context}: 별칭이나 그 조상이 숨겨져 있으면 안 됩니다`);
+  }
+  assert.equal([...document.querySelectorAll('a[name]')].filter(anchor => anchor.getAttribute('name') === alias).length, 0,
+    `${context}: 목차 별칭은 기존 앵커 이름과 겹치면 안 됩니다`);
+  return target;
+}
+
 test('생성된 모든 글의 목차가 제목과 고유한 이동 대상을 가리킨다', async () => {
   const postsDir = resolve(siteRoot, 'posts');
   const directories = (await readdir(postsDir, { withFileTypes: true }))
@@ -84,6 +109,9 @@ test('생성된 모든 글의 목차가 제목과 고유한 이동 대상을 가
 
       const headings = [...content.querySelectorAll('h2, h3')]
         .filter(heading => heading.textContent.trim());
+      for (const heading of content.querySelectorAll('h2[data-toc-fragment], h3[data-toc-fragment]')) {
+        assertStaticTocAlias(document, heading, `${slug}: ${heading.id || '(제목 ID 없음)'}`);
+      }
       const links = [...toc.querySelectorAll('.toc-list a')];
       assert.equal(toc.hidden, headings.length === 0, `${slug}: 제목이 있을 때만 목차가 보여야 합니다`);
       assert.equal(links.length, headings.length, `${slug}: 목차 항목과 빈 제목을 제외한 본문 제목 수가 같아야 합니다`);
@@ -94,7 +122,8 @@ test('생성된 모든 글의 목차가 제목과 고유한 이동 대상을 가
         const link = links[index];
         assert.ok(id, `${slug}: 제목에 이동 대상이 있어야 합니다`);
         assert.equal(ids.filter(value => value === id).length, 1, `${slug}: ${id} 식별자는 문서에서 유일해야 합니다`);
-        assert.ok(fragmentTarget(document, link) === heading, `${slug}: 목차 링크가 해당 제목으로 이동해야 합니다`);
+        const alias = assertStaticTocAlias(document, heading, `${slug}: ${id}`);
+        assert.ok(fragmentTarget(document, link) === (alias || heading), `${slug}: 목차 링크가 해당 제목 또는 정적 별칭으로 이동해야 합니다`);
         assert.equal(document.getElementById(id), heading, `${slug}: 목차 대상이 해당 제목이어야 합니다`);
         assert.equal(link.textContent, heading.textContent.trim(), `${slug}: 목차에 올바른 제목이 표시되어야 합니다`);
       });
@@ -228,6 +257,75 @@ test('원문 퍼센트 ID를 디코딩보다 먼저 찾고 인코딩 별칭 충�
     assert.ok(fragmentTarget(document, encoded) === headings[1], '무조건 재인코딩하면 다른 ID에 도달할 수 있다');
   } finally {
     await browser.happyDOM.abort();
+  }
+});
+
+test('명시한 고유 정적 별칭은 충돌한 제목의 공유 가능한 목차 주소가 된다', async () => {
+  const html = `<!doctype html><html lang="ko"><body>
+    <details class="table-of-contents" hidden><summary>목차</summary><ul class="toc-list"></ul></details>
+    <div class="post-content">
+      <h2 id="가" data-toc-fragment="toc-korean"><span id="toc-korean"></span>한글 제목</h2>
+      <h2 id="%EA%B0%80">원문 퍼센트 제목</h2>
+    </div>
+  </body></html>`;
+  const browser = createDocument(html);
+  const noScript = new Window({ url: 'https://blog.test/posts/example/', settings: { disableJavaScriptEvaluation: true } });
+  noScript.document.write(html);
+  try {
+    const document = browser.document;
+    const headings = [...document.querySelectorAll('.post-content h2')];
+    const links = [...document.querySelectorAll('.toc-list a')];
+    assert.deepEqual(headings.map(heading => heading.id), ['가', '%EA%B0%80'], '기존 외부 주소의 ID를 바꾸지 않는다');
+    assert.equal(links[0].getAttribute('href'), '#toc-korean');
+    assert.ok(fragmentTarget(document, links[0]) === headings[0].querySelector('span'));
+    assert.ok(fragmentTarget(document, links[1]) === headings[1]);
+    const copied = noScript.document.createElement('a');
+    copied.href = new URL(links[0].getAttribute('href'), document.baseURI).href;
+    assert.ok(fragmentTarget(noScript.document, copied) === noScript.document.querySelector('#toc-korean'),
+      '복사한 주소는 JavaScript가 없는 문서의 정적 별칭에도 도달한다');
+    const legacy = document.createElement('a');
+    legacy.href = '#%EA%B0%80';
+    assert.ok(fragmentTarget(document, legacy) === headings[1], '기존 퍼센트 원문 주소의 의미를 유지한다');
+  } finally {
+    await browser.happyDOM.abort();
+    await noScript.happyDOM.abort();
+  }
+});
+
+test('잘못된 정적 별칭은 사용하지 않으며 작성 검증에서 실패한다', async () => {
+  const cases = [
+    { name: '비어 있는 속성', alias: '', before: '', inner: '<span id="safe"></span>' },
+    { name: '안전하지 않은 문자', alias: 'bad%20id', before: '', inner: '<span id="bad%20id"></span>' },
+    { name: '없는 대상', alias: 'missing', before: '', inner: '' },
+    { name: '제목 외부 대상', alias: 'outside', before: '<span id="outside"></span>', inner: '' },
+    { name: '다른 요소', alias: 'wrong', before: '', inner: '<i id="wrong"></i>' },
+    { name: '중복 ID', alias: 'duplicate', before: '<div id="duplicate"></div>', inner: '<span id="duplicate"></span>' },
+    { name: '레거시 이름 충돌', alias: 'legacy', before: '<a name="legacy"></a>', inner: '<span id="legacy"></span>' },
+    { name: '숨김 속성', alias: 'hidden-alias', before: '', inner: '<span id="hidden-alias" hidden></span>' },
+    { name: '인라인 숨김', alias: 'inline-hidden', before: '', inner: '<span id="inline-hidden" style="display:none"></span>' },
+    { name: '스타일 숨김', alias: 'class-hidden', before: '<style>.invisible { display:none }</style>', inner: '<span id="class-hidden" class="invisible"></span>' },
+    { name: '숨겨진 조상', alias: 'hidden-parent', before: '', parent: 'hidden', inner: '<span id="hidden-parent"></span>' },
+    { name: '가시성 숨김', alias: 'invisible', before: '', inner: '<span id="invisible" style="visibility:hidden"></span>' },
+    { name: '상자 없는 별칭', alias: 'no-box', before: '', inner: '<span id="no-box" style="display:contents"></span>' },
+    { name: '내용이 있는 별칭', alias: 'nonempty', before: '', inner: '<span id="nonempty">앞부분</span>' },
+    { name: '제목 중간 별칭', alias: 'late', before: '', inner: '앞부분<span id="late"></span>' },
+    { name: '다른 요소 뒤 별칭', alias: 'late-element', before: '', inner: '<i>앞부분</i><span id="late-element"></span>' },
+  ];
+  for (const item of cases) {
+    const browser = createDocument(`<!doctype html><html><body>${item.before}
+      <details class="table-of-contents" hidden><summary>목차</summary><ul class="toc-list"></ul></details>
+      <div class="post-content" ${item.parent || ''}><h2 id="heading" data-toc-fragment="${item.alias}">${item.inner}제목</h2></div>
+    </body></html>`);
+    try {
+      const document = browser.document;
+      const heading = document.querySelector('h2');
+      const link = document.querySelector('.toc-list a');
+      assert.equal(link.getAttribute('href'), '#heading', `${item.name}: 기존 제목 주소를 유지한다`);
+      assert.throws(() => assertStaticTocAlias(document, heading, item.name), { name: 'AssertionError' },
+        `${item.name}: 작성 검증에서 잘못된 설정을 거부한다`);
+    } finally {
+      await browser.happyDOM.abort();
+    }
   }
 });
 
