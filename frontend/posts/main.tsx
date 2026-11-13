@@ -1,5 +1,5 @@
 import { createRoot } from 'react-dom/client';
-import { PostsApp, PostsAppBoundary } from './PostsApp';
+import { PostsApp, PostsAppBoundary, showPostsFallbackError } from './PostsApp';
 import type { CatalogEntry } from './model';
 
 function readFallbackPosts(fallbackElement: HTMLElement): {
@@ -76,7 +76,6 @@ if (rootElement instanceof HTMLElement && fallbackElement instanceof HTMLElement
       </PostsAppBoundary>,
     );
   } catch {
-    rootElement.hidden = true;
-    fallbackElement.hidden = false;
+    showPostsFallbackError(fallbackElement, rootElement, rootElement.contains(document.activeElement));
   }
 }

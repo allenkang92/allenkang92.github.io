@@ -3,6 +3,8 @@ import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 import { Window } from 'happy-dom';
 import { act, createElement } from 'react';
+import { runInNewContext } from 'node:vm';
+import ts from 'typescript';
 
 const posts = Array.from({ length: 12 }, (_, index) => ({
   path: `/posts/entry-${index + 1}/`,
@@ -31,6 +33,94 @@ const indexedRows = posts.map(post => ({
 const indexedPage = overrides => ({
   type: 'page', category: 'Uncategorized', tags: [], description: '', content: '', date: '',
   ...overrides,
+});
+
+// 실행 진입점 자체를 변환해 실행하여 React 마운트 전 예외 경로를 확인한다.
+test('부트스트랩 데이터 오류는 정적 목록과 복구 안내를 제공하고 기존 초점을 유지한다', async () => {
+  const compiled = ts.transpileModule(await readFile(new URL('../../frontend/posts/main.tsx', import.meta.url), 'utf8'), {
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, jsx: ts.JsxEmit.ReactJSX },
+  }).outputText;
+  for (const attributes of ['', 'data-expected-search-pages="bad"', 'data-expected-search-pages="[]" data-expected-achievement-paths="bad"']) {
+    const cleanup = installBrowser('https://blog.test/posts/?q=needle');
+    const browser = globalThis.window;
+    try {
+      browser.document.body.innerHTML = `<button id="outside">외부</button><div id="posts-react-root" ${attributes} hidden></div><section id="posts-static-fallback"><a href="/posts/a/">정적 글</a></section>`;
+      const fallback = browser.document.getElementById('posts-static-fallback');
+      fallback.querySelector('a').focus();
+      const appModule = await import('../../build/tests/frontend/posts/PostsApp.js');
+      let rootCalls = 0;
+      runInNewContext(compiled, {
+        exports: {}, document: browser.document, window: browser, HTMLElement: browser.HTMLElement,
+        require(name) {
+          if (name === './PostsApp') return appModule;
+          if (name === 'react-dom/client') return { createRoot() { rootCalls += 1; throw new Error('데이터 검사 전 마운트 금지'); } };
+          if (name === 'react/jsx-runtime') return {};
+          throw new Error(`예상하지 못한 모듈: ${name}`);
+        },
+      });
+      assert.equal(browser.document.getElementById('posts-react-root').hidden, true);
+      assert.equal(fallback.hidden, false);
+      assert.equal(rootCalls, 0, '유효하지 않은 데이터는 React 마운트 전에 거부한다');
+      assert.equal(browser.document.activeElement, fallback.querySelector('a'));
+      assert.match(fallback.querySelector('[role="alert"]')?.textContent || '', /검색 화면을 불러오지 못했습니다.*새로고침/);
+    } finally {
+      await cleanup();
+    }
+  }
+});
+
+test('부트스트랩 마운트 예외에서도 외부 포커스를 유지하며 정적 복구를 안내한다', async () => {
+  const cleanup = installBrowser('https://blog.test/posts/');
+  const browser = globalThis.window;
+  try {
+    browser.document.body.innerHTML = `<button id="outside">외부</button><div id="posts-react-root" data-expected-search-pages="[]" data-expected-achievement-paths="[]" hidden></div><section id="posts-static-fallback">정적 글</section>`;
+    browser.document.getElementById('outside').focus();
+    const compiled = ts.transpileModule(await readFile(new URL('../../frontend/posts/main.tsx', import.meta.url), 'utf8'), {
+      compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, jsx: ts.JsxEmit.ReactJSX },
+    }).outputText;
+    const appModule = await import('../../build/tests/frontend/posts/PostsApp.js');
+    runInNewContext(compiled, {
+      exports: {}, document: browser.document, window: browser, HTMLElement: browser.HTMLElement,
+      require(name) {
+        if (name === './PostsApp') return appModule;
+        if (name === 'react-dom/client') return { createRoot() { throw new Error('마운트 실패'); } };
+        if (name === 'react/jsx-runtime') return {};
+        throw new Error(`예상하지 못한 모듈: ${name}`);
+      },
+    });
+    const fallback = browser.document.getElementById('posts-static-fallback');
+    assert.equal(browser.document.activeElement.id, 'outside');
+    assert.equal(fallback.hidden, false);
+    assert.match(fallback.querySelector('[role="alert"]')?.textContent || '', /검색 화면을 불러오지 못했습니다/);
+  } finally {
+    await cleanup();
+  }
+});
+
+test('부트스트랩 데이터가 유효하면 오류 안내 없이 React 렌더를 시작한다', async () => {
+  const cleanup = installBrowser('https://blog.test/posts/');
+  const browser = globalThis.window;
+  try {
+    browser.document.body.innerHTML = '<div id="posts-react-root" data-expected-search-pages="[]" data-expected-achievement-paths="[]" hidden></div><section id="posts-static-fallback"><a href="/posts/a/">정적 글</a></section>';
+    const compiled = ts.transpileModule(await readFile(new URL('../../frontend/posts/main.tsx', import.meta.url), 'utf8'), {
+      compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, jsx: ts.JsxEmit.ReactJSX },
+    }).outputText;
+    const appModule = await import('../../build/tests/frontend/posts/PostsApp.js');
+    let renderCalls = 0;
+    runInNewContext(compiled, {
+      exports: {}, document: browser.document, window: browser, HTMLElement: browser.HTMLElement,
+      require(name) {
+        if (name === './PostsApp') return appModule;
+        if (name === 'react-dom/client') return { createRoot() { return { render() { renderCalls += 1; } }; } };
+        if (name === 'react/jsx-runtime') return { jsx(type, props) { return { type, props }; } };
+        throw new Error(`예상하지 못한 모듈: ${name}`);
+      },
+    });
+    assert.equal(renderCalls, 1);
+    assert.equal(browser.document.querySelector('#posts-static-fallback [role="alert"]'), null);
+  } finally {
+    await cleanup();
+  }
 });
 
 // 브라우저의 스크롤 제한과 프레임 실행을 명시적으로 모의한다.
