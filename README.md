@@ -39,13 +39,13 @@ npm run serve
 
 ## 검증
 
-변경 후 기본적으로 확인합니다.
+변경 후 기본적으로 확인합니다. 최초 1회는 [SEO 2.8 격리 회귀 시험 설치 안내](tests/seo/legacy/README.md)에 따라 별도 번들을 설치하고, 이후 전체 검증을 실행할 셸에서 `SEO_LEGACY_BUNDLE_PATH`에 설치 경로를 지정합니다. 이 경로가 없거나 잘못됐으면 `npm run verify`는 실패하며 해당 시험을 조용히 건너뛰지 않습니다.
 
 ```bash
 npm run verify
 ```
 
-`npm run verify`는 TypeScript 검사, 검색 모델·React DOM 테스트, front matter 테스트와 실제 `_posts` 메타데이터 검사, Vite 번들, Jekyll 산출물 연결, 생성 HTML의 의미 구조·접근 가능한 이름 단서·이미지 대체 텍스트·ID 참조·내부 링크·검색 데이터를 순서대로 검사합니다. 이 구조 검사는 WCAG 적합성 판정이나 실제 스크린 리더 동작 검증을 대신하지 않습니다. Jekyll 실행은 Ruby에 UTF-8 인코딩을 전달하므로 `LC_ALL=C` 환경에서도 별도 설정 없이 빌드할 수 있습니다. 소스 코드는 `frontend/posts/`에 두고, 브랜치 기반 GitHub Pages 배포가 그대로 정적 파일을 제공하도록 생성 번들과 `_data/vite_manifest.json`도 갱신 후 함께 커밋합니다. 저장소의 실제 Pages publish source는 아직 확인하지 않았으므로 배포 설정은 변경하지 않습니다.
+`npm run verify`는 TypeScript 검사, 검색 모델·React DOM 테스트, front matter 테스트와 실제 `_posts` 메타데이터 검사, Vite 번들, Jekyll 산출물 연결, SEO 2.8 격리 회귀 시험, 생성 HTML의 의미 구조·접근 가능한 이름 단서·이미지 대체 텍스트·ID 참조·내부 링크·검색 데이터를 순서대로 검사합니다. 이 구조 검사는 WCAG 적합성 판정이나 실제 스크린 리더 동작 검증을 대신하지 않습니다. SEO 격리 시험도 GitHub Pages 전체 환경의 재현은 아닙니다. Jekyll 실행은 Ruby에 UTF-8 인코딩을 전달하므로 `LC_ALL=C` 환경에서도 별도 설정 없이 빌드할 수 있습니다. 소스 코드는 `frontend/posts/`에 두고, 브랜치 기반 GitHub Pages 배포가 그대로 정적 파일을 제공하도록 생성 번들과 `_data/vite_manifest.json`도 갱신 후 함께 커밋합니다.
 
 시각 변경이 있으면 모바일 390px, 데스크톱 폭에서 `/`, `/posts/`, 대표 포스트, `/series/`, `/tools/`, `/about/`를 확인합니다.
 

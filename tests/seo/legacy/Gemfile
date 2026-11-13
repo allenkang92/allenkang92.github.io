@@ -1,0 +1,7 @@
+source "https://rubygems.org"
+
+# 실제 Pages에서 확인된 SEO 2.8을 Jekyll 3.10과 별도 번들로 시험한다.
+# 이 번들은 GitHub Pages 전체 실행 환경을 재현하지 않는다.
+gem "jekyll", "= 3.10.0"
+gem "jekyll-seo-tag", "= 2.8.0"
+gem "kramdown-parser-gfm", "= 1.1.0"
