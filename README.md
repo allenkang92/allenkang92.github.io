@@ -47,6 +47,8 @@ npm run verify
 
 `npm run verify`는 TypeScript 검사, 검색 모델·React DOM 테스트, front matter 테스트와 실제 `_posts` 메타데이터 검사, Vite 번들, Jekyll 산출물 연결, SEO 2.8 격리 회귀 시험, 생성 HTML의 의미 구조·접근 가능한 이름 단서·이미지 대체 텍스트·ID 참조·내부 링크·검색 데이터를 순서대로 검사합니다. 이 구조 검사는 WCAG 적합성 판정이나 실제 스크린 리더 동작 검증을 대신하지 않습니다. SEO 격리 시험도 GitHub Pages 전체 환경의 재현은 아닙니다. Jekyll 실행은 Ruby에 UTF-8 인코딩을 전달하므로 `LC_ALL=C` 환경에서도 별도 설정 없이 빌드할 수 있습니다. 소스 코드는 `frontend/posts/`에 두고, 브랜치 기반 GitHub Pages 배포가 그대로 정적 파일을 제공하도록 생성 번들과 `_data/vite_manifest.json`도 갱신 후 함께 커밋합니다.
 
+프런트엔드 빌드는 캐시된 이전 HTML에서 참조할 수 있는 기존 해시 번들을 자동 삭제하지 않습니다. 매니페스트는 최신 번들을 가리킵니다. 이전 번들이 쌓일 수 있으므로 배포 환경의 HTML 캐시 정책과 참조 관계를 확인해 보존 기간을 정하고, 정리 전에 이전 페이지에 미치는 영향을 확인합니다.
+
 시각 변경이 있으면 모바일 390px, 데스크톱 폭에서 `/`, `/posts/`, 대표 포스트, `/series/`, `/tools/`, `/about/`를 확인합니다.
 
 ## 글 front matter

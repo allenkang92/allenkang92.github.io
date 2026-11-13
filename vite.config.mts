@@ -10,7 +10,8 @@ export default defineConfig({
   base: '/assets/js/dist/',
   build: {
     outDir: resolve(projectRoot, 'assets/js/dist'),
-    emptyOutDir: true,
+    // 배포 전에 열린 이전 HTML이 참조하는 해시 번들도 보존한다.
+    emptyOutDir: false,
     manifest: 'manifest.json',
     rollupOptions: {
       input: resolve(projectRoot, 'frontend/posts/main.tsx'),

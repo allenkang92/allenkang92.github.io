@@ -8,7 +8,7 @@
         "build:jekyll": "node scripts/run_jekyll.mjs build",
         "build": "npm run build:frontend && npm run build:jekyll",
         "typecheck": "tsc --noEmit",
-        "test:unit": "tsc --project tsconfig.test.json --pretty false && node --test build/tests/tests/posts/model.test.js tests/analytics/preview-hosts.test.mjs tests/analytics/tools-events.integration.test.mjs tests/posts/app.integration.test.mjs tests/posts/code-copy.integration.test.mjs tests/posts/css-media-example.test.mjs tests/search/site-search.integration.test.mjs tests/sidebar/storage.integration.test.mjs tests/sidebar/no-js.integration.test.mjs tests/sidebar/search-submit.integration.test.mjs tests/sidebar/navigation.integration.test.mjs tests/tools/results.integration.test.mjs",
+        "test:unit": "tsc --project tsconfig.test.json --pretty false && node --test build/tests/tests/posts/model.test.js tests/vite/vite-output.integration.test.mjs tests/analytics/preview-hosts.test.mjs tests/analytics/tools-events.integration.test.mjs tests/posts/app.integration.test.mjs tests/posts/code-copy.integration.test.mjs tests/posts/css-media-example.test.mjs tests/search/site-search.integration.test.mjs tests/sidebar/storage.integration.test.mjs tests/sidebar/no-js.integration.test.mjs tests/sidebar/search-submit.integration.test.mjs tests/sidebar/navigation.integration.test.mjs tests/tools/results.integration.test.mjs",
         "test:frontmatter": "ruby tests/frontmatter/verify_frontmatter_test.rb",
         "test:site-validator": "python3 -m unittest tests.test_verify_site",
         "verify:frontmatter": "ruby scripts/verify_frontmatter.rb",
