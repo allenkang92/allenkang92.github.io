@@ -110,6 +110,9 @@
   /* 열린 메뉴의 첫 항목이 상단 탐색 영역 뒤에 가려지지 않도록 한다. */
   html.sidebar-enhanced .mobile-navigation + .layout-container .sidebar-right {
     padding-top: calc(var(--mobile-navigation-height) + 1rem) !important;
+    /* 메뉴 안의 포커스가 고정된 닫기 영역 뒤로 이동하지 않도록 한다. */
+    scroll-padding-top: calc(var(--mobile-navigation-height) + 6px);
+    scroll-padding-bottom: 6px;
   }
 
   html.sidebar-enhanced .mobile-navigation + .layout-container .main-content h1:first-of-type {
@@ -157,7 +160,7 @@
   }
 
   html.sidebar-enhanced .mobile-navigation + .layout-container .sidebar-right {
-    padding-top: var(--mobile-navigation-height) !important;
+    padding-top: calc(var(--mobile-navigation-height) + 6px) !important;
   }
 }
 

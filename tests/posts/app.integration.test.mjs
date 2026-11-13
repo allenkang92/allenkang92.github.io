@@ -1909,6 +1909,177 @@ for (const response of ['ready', 'failed']) {
   });
 }
 
+for (const firstResult of ['failed', 'incomplete']) {
+  test(`검색 색인 ${firstResult}에서는 요청한 페이지를 보존하고 복구 시 해당 페이지를 표시한다`, async () => {
+    const cleanup = installBrowser('https://blog.test/posts/?q=needle&page=2');
+    const browser = globalThis.window;
+    let resolveRetry;
+    let attempt = 0;
+    let mounted;
+    try {
+      mounted = await mountPostsApp(browser, posts, () => {
+        attempt += 1;
+        if (attempt === 1) return Promise.resolve(firstResult === 'failed'
+          ? { ok: false, status: 503 }
+          : { ok: true, json: async () => indexedRows.slice(0, 2) });
+        return new Promise(resolve => { resolveRetry = resolve; });
+      });
+      assert.equal(new URL(browser.location.href).searchParams.get('page'), '2', '부분 결과로 공유 주소를 덮어쓰지 않는다');
+      assert.match(mounted.rootElement.querySelector('#react-posts-page-fallback-status')?.textContent || '', /2페이지.*1페이지/);
+      assert.equal(mounted.rootElement.querySelectorAll('#react-posts-list .post-preview').length, 2);
+      await act(async () => mounted.rootElement.querySelector('#react-posts-retry-search-index').click());
+      assert.equal(new URL(browser.location.href).searchParams.get('page'), '2');
+      await act(async () => { resolveRetry({ ok: true, json: async () => indexedRows }); await Promise.resolve(); });
+      assert.equal(new URL(browser.location.href).searchParams.get('page'), '2');
+      assert.equal(mounted.rootElement.querySelector('a[aria-current="page"]')?.getAttribute('aria-label'), '2페이지');
+      assert.equal(mounted.rootElement.querySelectorAll('#react-posts-list .post-preview').length, 2);
+      assert.equal(mounted.rootElement.querySelector('#react-posts-page-fallback-status'), null);
+    } finally {
+      if (mounted) await act(async () => mounted.root.unmount());
+      await cleanup();
+    }
+  });
+}
+
+test('부분 검색에서 사용자가 표시된 페이지를 선택하면 재시도 후에도 선택을 유지한다', async () => {
+  const cleanup = installBrowser('https://blog.test/posts/?q=needle&page=2');
+  const browser = globalThis.window;
+  let resolveRetry;
+  let attempt = 0;
+  let mounted;
+  try {
+    mounted = await mountPostsApp(browser, posts, () => ++attempt === 1
+      ? Promise.resolve({ ok: false, status: 503 })
+      : new Promise(resolve => { resolveRetry = resolve; }));
+    await act(async () => mounted.rootElement.querySelector('#react-posts-retry-search-index').click());
+    await act(async () => mounted.rootElement.querySelector('#react-posts-use-partial-page').click());
+    assert.equal(new URL(browser.location.href).searchParams.has('page'), false);
+    await act(async () => { resolveRetry({ ok: true, json: async () => indexedRows }); await Promise.resolve(); });
+    assert.equal(new URL(browser.location.href).searchParams.has('page'), false);
+    assert.equal(mounted.rootElement.querySelector('a[aria-current="page"]')?.getAttribute('aria-label'), '1페이지');
+  } finally {
+    if (mounted) await act(async () => mounted.root.unmount());
+    await cleanup();
+  }
+});
+
+test('완전한 색인에 요청 페이지가 없으면 실제 마지막 페이지로 보정한다', async () => {
+  const cleanup = installBrowser('https://blog.test/posts/?q=needle&page=99');
+  const browser = globalThis.window;
+  let resolveFetch;
+  let mounted;
+  try {
+    mounted = await mountPostsApp(browser, posts, () => new Promise(resolve => { resolveFetch = resolve; }));
+    assert.equal(new URL(browser.location.href).searchParams.get('page'), '99');
+    await act(async () => { resolveFetch({ ok: true, json: async () => indexedRows }); await Promise.resolve(); });
+    assert.equal(new URL(browser.location.href).searchParams.get('page'), '2');
+    assert.equal(mounted.rootElement.querySelector('a[aria-current="page"]')?.getAttribute('aria-label'), '2페이지');
+  } finally {
+    if (mounted) await act(async () => mounted.root.unmount());
+    await cleanup();
+  }
+});
+
+test('부분 검색이 다른 페이지를 표시하면 저장된 요청 페이지 위치로 이동하지 않는다', async () => {
+  const cleanup = installBrowser('https://blog.test/posts/?q=needle&page=2');
+  const browser = globalThis.window;
+  const scroll = installScrollHarness(browser, 900);
+  let resolveRetry;
+  let attempt = 0;
+  let mounted;
+  try {
+    writeStoredState(browser, { page: 2 });
+    mounted = await mountPostsApp(browser, posts, () => ++attempt === 1
+      ? Promise.resolve({ ok: false, status: 503 })
+      : new Promise(resolve => { resolveRetry = resolve; }));
+    assert.equal(restoreButton(mounted)?.getAttribute('aria-disabled'), 'true');
+    await act(async () => restoreButton(mounted).click());
+    assert.deepEqual(scroll.calls, []);
+    await act(async () => mounted.rootElement.querySelector('#react-posts-retry-search-index').click());
+    await act(async () => { resolveRetry({ ok: true, json: async () => indexedRows }); await Promise.resolve(); });
+    assert.equal(restoreButton(mounted)?.getAttribute('aria-disabled'), null);
+    await act(async () => restoreButton(mounted).click());
+    assert.deepEqual(scroll.calls, [600]);
+  } finally {
+    if (mounted) await act(async () => mounted.root.unmount());
+    await cleanup();
+  }
+});
+
+test('재시도 중 사용자가 주제를 변경하면 원래 페이지가 되살아나지 않는다', async () => {
+  const cleanup = installBrowser('https://blog.test/posts/?q=needle&page=2');
+  const browser = globalThis.window;
+  let resolveRetry;
+  let attempt = 0;
+  let mounted;
+  try {
+    mounted = await mountPostsApp(browser, posts, () => ++attempt === 1
+      ? Promise.resolve({ ok: false, status: 503 })
+      : new Promise(resolve => { resolveRetry = resolve; }));
+    await act(async () => mounted.rootElement.querySelector('#react-posts-retry-search-index').click());
+    const category = mounted.rootElement.querySelector('#react-posts-category-select');
+    await act(async () => {
+      category.value = 'mathematics_philosophy_history';
+      category.dispatchEvent(new browser.Event('change', { bubbles: true }));
+    });
+    await act(async () => { resolveRetry({ ok: true, json: async () => indexedRows }); await Promise.resolve(); });
+    const url = new URL(browser.location.href);
+    assert.equal(url.searchParams.get('category'), 'mathematics_philosophy_history');
+    assert.equal(url.searchParams.has('page'), false);
+    assert.equal(mounted.rootElement.querySelector('a[aria-current="page"]')?.getAttribute('aria-label'), '1페이지');
+  } finally {
+    if (mounted) await act(async () => mounted.root.unmount());
+    await cleanup();
+  }
+});
+
+test('재시도 중 이력 이동한 경우 현재 이력의 페이지를 전체 색인으로 검증한다', async () => {
+  const cleanup = installBrowser('https://blog.test/posts/?q=needle&page=2');
+  const browser = globalThis.window;
+  let resolveRetry;
+  let attempt = 0;
+  let mounted;
+  try {
+    mounted = await mountPostsApp(browser, posts, () => ++attempt === 1
+      ? Promise.resolve({ ok: false, status: 503 })
+      : new Promise(resolve => { resolveRetry = resolve; }));
+    await act(async () => mounted.rootElement.querySelector('#react-posts-retry-search-index').click());
+    await act(async () => {
+      browser.history.pushState({}, '', '/posts/?q=needle&page=99');
+      browser.dispatchEvent(new browser.PopStateEvent('popstate'));
+    });
+    assert.equal(new URL(browser.location.href).searchParams.get('page'), '99');
+    await act(async () => { resolveRetry({ ok: true, json: async () => indexedRows }); await Promise.resolve(); });
+    assert.equal(new URL(browser.location.href).searchParams.get('page'), '2');
+    assert.equal(mounted.rootElement.querySelector('a[aria-current="page"]')?.getAttribute('aria-label'), '2페이지');
+  } finally {
+    if (mounted) await act(async () => mounted.root.unmount());
+    await cleanup();
+  }
+});
+
+test('재시도 성공으로 임시 페이지 선택 버튼이 사라지면 포커스를 복구한다', async () => {
+  const cleanup = installBrowser('https://blog.test/posts/?q=needle&page=2');
+  const browser = globalThis.window;
+  let resolveRetry;
+  let attempt = 0;
+  let mounted;
+  try {
+    mounted = await mountPostsApp(browser, posts, () => ++attempt === 1
+      ? Promise.resolve({ ok: false, status: 503 })
+      : new Promise(resolve => { resolveRetry = resolve; }));
+    await act(async () => mounted.rootElement.querySelector('#react-posts-retry-search-index').click());
+    const fallbackPage = mounted.rootElement.querySelector('#react-posts-use-partial-page');
+    fallbackPage.focus();
+    await act(async () => { resolveRetry({ ok: true, json: async () => indexedRows }); await Promise.resolve(); });
+    assert.equal(fallbackPage.isConnected, false);
+    assert.equal(browser.document.activeElement, mounted.rootElement.querySelector('#react-posts-search-input'));
+  } finally {
+    if (mounted) await act(async () => mounted.root.unmount());
+    await cleanup();
+  }
+});
+
 test('실패 후 재시도로 결과가 축소될 때 페이지 링크 포커스를 복구한다', async () => {
   const cleanup = installBrowser('https://blog.test/posts/?q=needle');
   const browser = globalThis.window;

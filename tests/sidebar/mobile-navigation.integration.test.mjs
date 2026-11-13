@@ -40,6 +40,8 @@ test('모바일에서 메뉴는 별도의 불투명 고정 영역에 있고 이�
     assert.equal(browser.getComputedStyle(toggle).height, '44px');
     assert.equal(browser.getComputedStyle(browser.document.querySelector('.layout-container')).paddingTop, navStyle.height);
     assert.ok(parseFloat(browser.getComputedStyle(browser.document.documentElement).scrollPaddingTop) >= parseFloat(navStyle.height));
+    assert.equal(browser.getComputedStyle(browser.document.querySelector('.sidebar-right')).scrollPaddingTop, `calc(${navStyle.height} + 6px)`);
+    assert.equal(browser.getComputedStyle(browser.document.querySelector('.sidebar-right')).scrollPaddingBottom, '6px');
     const skip = browser.document.querySelector('.skip-link');
     skip.focus();
     assert.ok(Number(browser.getComputedStyle(skip).zIndex) > Number(navStyle.zIndex));
@@ -51,6 +53,7 @@ test('매우 낮은 창은 고정 영역을 해제하며 데스크톱과 비활�
   const short = createPage(320, 120);
   assert.equal(short.getComputedStyle(short.document.querySelector('.mobile-navigation')).position, 'static');
   assert.equal(short.getComputedStyle(short.document.documentElement).scrollPaddingTop, '0');
+  assert.equal(short.getComputedStyle(short.document.querySelector('.sidebar-right')).scrollPaddingTop, 'calc(48px + 6px)');
   assert.equal(short.getComputedStyle(short.document.querySelector('.layout-container')).paddingTop, '0px');
   short.document.body.classList.add('sidebar-modal-open');
   assert.equal(short.getComputedStyle(short.document.querySelector('.mobile-navigation')).position, 'fixed');

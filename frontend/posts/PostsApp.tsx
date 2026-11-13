@@ -32,7 +32,7 @@ const POSTS_PER_PAGE = 10;
 const SEARCH_INPUT_DELAY_MS = 250;
 const SEARCH_INDEX_TIMEOUT_MS = 12000;
 const SCROLL_STATE_KEY = 'postsListState';
-const DYNAMIC_POST_CONTROL = '#react-posts-results a[href], #react-posts-results button, #react-posts-achievements-link, #react-posts-retry-search-index, #react-posts-restore-scroll, .posts-reset, .posts-scroll-location';
+const DYNAMIC_POST_CONTROL = '#react-posts-results a[href], #react-posts-results button, #react-posts-achievements-link, #react-posts-retry-search-index, #react-posts-use-partial-page, #react-posts-restore-scroll, .posts-reset, .posts-scroll-location';
 
 function isUnavailableControl(control: HTMLElement): boolean {
   return !control.isConnected || control.matches(':disabled')
@@ -431,7 +431,9 @@ export function PostsApp({
   // 대소문자와 공백만 다른 검색은 같은 결과로 취급한다.
   const searchPending = normalizeText(draftQuery) !== normalizeText(state.query);
   const hasSavedScroll = scrollStateMatches(savedScroll, state);
-  const restoreUnavailable = isLoading || searchPending;
+  // 부분 색인으로는 요청 페이지의 존재 여부를 확정할 수 없다.
+  const partialPageFallback = !!state.query && indexStatus !== 'ready' && state.page !== pageWindow.page;
+  const restoreUnavailable = isLoading || searchPending || partialPageFallback;
   const showRetry = canRetry && (state.query.length > 0 || hasSavedScroll);
 
 
@@ -571,7 +573,7 @@ export function PostsApp({
   }, [loadSearchIndex]);
 
   useEffect(() => {
-    if (state.query && indexStatus === 'loading') return;
+    if (state.query && indexStatus !== 'ready') return;
     const clampedPage = pageWindow.page;
     if (clampedPage === state.page) return;
     const normalizedState = { ...state, page: clampedPage };
@@ -948,6 +950,11 @@ export function PostsApp({
               invalidRowCount={invalidRowCount}
               totalPosts={fallbackPosts.length}
             />
+            {partialPageFallback && !searchPending && (
+              <span id="react-posts-page-fallback-status" className="posts-search-status" role="status" aria-live="polite">
+                요청한 {state.page}페이지를 아직 확인할 수 없어 현재 검색 범위의 {pageWindow.page}페이지를 임시로 보여줍니다. 전체 색인을 불러오면 요청한 페이지를 다시 확인합니다.
+              </span>
+            )}
             {state.query && indexStatus !== 'ready' && (
               <a id="react-posts-achievements-link" className="posts-search-status" href={achievementsUrl}>성과 목록 보기</a>
             )}
@@ -965,7 +972,7 @@ export function PostsApp({
             )}
           <span id="react-posts-restore-status" className="posts-restore-status" role="status" aria-live="polite">
             {hasSavedScroll && restoreUnavailable
-              ? isLoading ? '검색 목록을 불러온 뒤 이전 위치로 이동할 수 있습니다.' : '검색어를 반영한 뒤 이전 위치로 이동할 수 있습니다.'
+              ? isLoading || partialPageFallback ? '요청한 검색 목록을 불러온 뒤 이전 위치로 이동할 수 있습니다.' : '검색어를 반영한 뒤 이전 위치로 이동할 수 있습니다.'
               : hasSavedScroll && (indexStatus === 'failed' || indexStatus === 'incomplete')
                 ? restoreMessage
                   ? `${restoreMessage} 현재 불러온 내용 기준이며, 검색 인덱스를 다시 불러오면 결과가 달라질 수 있습니다.`
@@ -974,6 +981,14 @@ export function PostsApp({
           </span>
           </div>
           <div className="posts-meta-actions">
+            {partialPageFallback && !searchPending && (
+              <button
+                id="react-posts-use-partial-page"
+                type="button"
+                className="inline-action-btn"
+                onClick={() => applyPageChange(pageWindow.page)}
+              >현재 검색 범위의 {pageWindow.page}페이지로 이동</button>
+            )}
             {hasSavedScroll && (
               <button
                 id="react-posts-restore-scroll"
