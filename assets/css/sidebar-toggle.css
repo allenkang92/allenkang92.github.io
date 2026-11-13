@@ -2,6 +2,11 @@
    SIDEBAR TOGGLE STYLES
    ========================================================================== */
 
+/* 자바스크립트로 사이드바가 활성화된 모바일에서만 공간을 예약한다. */
+.mobile-navigation {
+  display: none;
+}
+
 /* Toggle Button */
 .sidebar-toggle {
   position: fixed;
@@ -57,8 +62,62 @@
 
 /* Mobile Responsive */
 @media (max-width: 768px) {
+  html.sidebar-enhanced {
+    --mobile-navigation-height: 60px;
+    scroll-padding-top: var(--mobile-navigation-height);
+  }
+
+  html.sidebar-enhanced .mobile-navigation + .layout-container {
+    padding-top: var(--mobile-navigation-height);
+  }
+
+  html.sidebar-enhanced .mobile-navigation {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1101;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    height: var(--mobile-navigation-height);
+    padding-inline: max(1rem, env(safe-area-inset-left)) max(1rem, env(safe-area-inset-right));
+    background: var(--atlas-surface-warm, #fffef8);
+    border-bottom: 1px solid var(--atlas-border, #c8e4dc);
+  }
+
+  .mobile-navigation::before {
+    content: attr(data-site-title);
+    min-width: 0;
+    overflow: hidden;
+    color: var(--atlas-ink, #1f3430);
+    font-size: 0.95rem;
+    font-weight: 700;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  html.sidebar-enhanced .mobile-navigation .sidebar-toggle {
+    position: static;
+    flex: 0 0 44px;
+  }
+
   html.sidebar-enhanced .sidebar-toggle {
     display: flex !important;
+  }
+
+  /* 열린 메뉴의 첫 항목이 상단 탐색 영역 뒤에 가려지지 않도록 한다. */
+  html.sidebar-enhanced .mobile-navigation + .layout-container .sidebar-right {
+    padding-top: calc(var(--mobile-navigation-height) + 1rem) !important;
+  }
+
+  html.sidebar-enhanced .mobile-navigation + .layout-container .main-content h1:first-of-type {
+    padding-right: 0;
+  }
+
+  .skip-link:focus {
+    z-index: 1102;
   }
   
   .sidebar-right {
@@ -73,6 +132,32 @@
   
   .sidebar-right.sidebar-collapsed {
     transform: translateX(100%);
+  }
+}
+
+/* 아주 낮은 창에서 고정 탐색 영역이 읽기 공간을 대부분 차지하지 않게 한다. */
+@media (max-width: 768px) and (max-height: 240px) {
+  html.sidebar-enhanced {
+    --mobile-navigation-height: 48px;
+    scroll-padding-top: 0;
+  }
+
+  html.sidebar-enhanced .mobile-navigation {
+    position: static;
+  }
+
+  /* 열려 있는 메뉴는 창 높이가 줄어도 닫기 버튼을 화면에 유지한다. */
+  html.sidebar-enhanced body.sidebar-modal-open .mobile-navigation,
+  html.sidebar-enhanced .mobile-navigation:focus-within {
+    position: fixed;
+  }
+
+  html.sidebar-enhanced .mobile-navigation + .layout-container {
+    padding-top: 0;
+  }
+
+  html.sidebar-enhanced .mobile-navigation + .layout-container .sidebar-right {
+    padding-top: var(--mobile-navigation-height) !important;
   }
 }
 
