@@ -1,13 +1,13 @@
 // 설정의 텍스트와 링크가 실제 페이지에서 원문 그대로 표시되는지 확인한다.
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { cp, mkdtemp, readFile, realpath, writeFile } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
+import { cp, readFile, writeFile } from 'node:fs/promises';
+import { withTemporaryDirectory } from '../helpers/temporary-directory.mjs';
 import { join, resolve } from 'node:path';
 import { Window } from 'happy-dom';
 
 const repository = resolve('.');
-const temp = await realpath(await mkdtemp(join(tmpdir(), 'sidebar-labels-fixture-')));
+await withTemporaryDirectory('sidebar-labels-fixture-', async (temp) => {
 const source = join(temp, 'source');
 const paths = ['_config.yml', '_includes', '_layouts', '_achievements', '_pages', '_posts', '_data', 'assets', 'tools', 'sitemap.xml', 'robots.txt', 'index.html', '404.html', 'search.json', 'manifest.json', 'favicon.ico', 'apple-touch-icon.png'];
 for (const path of paths) await cp(join(repository, path), join(source, path), { recursive: true });
@@ -59,4 +59,5 @@ for (const [name, base] of [['root', ''], ['subpath', '/blog']]) {
     assert.ok(toolsPage.querySelector('.sidebar-right form[role="search"]'), `${name}: 빠른 검색 유지`);
   } finally { await browser.happyDOM.abort(); }
 }
-console.log(`사이드바 제목 격리 빌드 검증 통과: ${temp}`);
+});
+console.log(`사이드바 제목 격리 빌드 검증 통과`);

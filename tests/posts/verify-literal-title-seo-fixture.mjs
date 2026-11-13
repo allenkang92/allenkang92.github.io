@@ -1,13 +1,13 @@
 // 리터럴 제목 보정의 범위와 JSON 스크립트 안전성을 실제 Jekyll 빌드로 검증한다.
 import assert from 'node:assert/strict';
 import { execFileSync, spawnSync } from 'node:child_process';
-import { cp, mkdtemp, readFile, realpath, writeFile } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
+import { cp, readFile, writeFile } from 'node:fs/promises';
+import { withTemporaryDirectory } from '../helpers/temporary-directory.mjs';
 import { join, resolve } from 'node:path';
 import { Window } from 'happy-dom';
 
 const repository = resolve('.');
-const temp = await realpath(await mkdtemp(join(tmpdir(), 'literal-title-seo-fixture-')));
+await withTemporaryDirectory('literal-title-seo-fixture-', async (temp) => {
 const source = join(temp, 'source');
 const paths = ['_config.yml', '_includes', '_layouts', '_achievements', '_pages', '_posts', '_data', 'assets', 'tools', 'sitemap.xml', 'robots.txt', 'index.html', '404.html', 'search.json', 'manifest.json', 'favicon.ico', 'apple-touch-icon.png'];
 for (const path of paths) await cp(join(repository, path), join(source, path), { recursive: true });
@@ -116,4 +116,5 @@ for (const [name, operation] of [
   assert.match(`${result.stdout}\n${result.stderr}`, /ERROR_literal_seo_plugin_output_mismatch/, `${name}: 실패 이유가 드러나야 합니다`);
 }
 await writeFile(includePath, originalInclude);
-console.log(`리터럴 제목 SEO 격리 빌드 검증 통과: ${temp}`);
+});
+console.log(`리터럴 제목 SEO 격리 빌드 검증 통과`);

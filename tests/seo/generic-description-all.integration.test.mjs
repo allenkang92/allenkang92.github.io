@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { execFileSync, spawnSync } from 'node:child_process';
-import { mkdir, mkdtemp, readFile, readdir, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join, relative, resolve } from 'node:path';
 import test from 'node:test';
@@ -135,8 +135,9 @@ function fixtureHtml(description) {
   return `<!doctype html><html><head><meta name="description" content="${escaped}"><meta property="og:description" name="twitter:description" content="${escaped}"><script type="application/ld+json">${json}</script></head></html>`;
 }
 
-test('설명 불일치, 메타·JSON 중복 및 누락을 독립 파서로 검출한다', async () => {
+test('설명 불일치, 메타·JSON 중복 및 누락을 독립 파서로 검출한다', async (t) => {
   const directory = await mkdtemp(join(tmpdir(), 'generic-description-check-'));
+  t.after(() => rm(directory, { recursive: true, force: true }));
   const file = join(directory, 'index.html');
   const value = '연구 &amp; 결과';
   const valid = fixtureHtml(value);
@@ -157,8 +158,9 @@ test('설명 불일치, 메타·JSON 중복 및 누락을 독립 파서로 검�
   await inspectSite(directory);
 });
 
-test('설명 원본의 우선순위, 단어 제한과 선택 대상 글·페이지를 확인한다', async () => {
+test('설명 원본의 우선순위, 단어 제한과 선택 대상 글·페이지를 확인한다', async (t) => {
   const root = await mkdtemp(join(tmpdir(), 'generic-description-source-'));
+  t.after(() => rm(root, { recursive: true, force: true }));
   const source = join(root, 'source');
   const output = join(root, 'site');
   await mkdir(join(source, '_posts'), { recursive: true });

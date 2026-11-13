@@ -1,13 +1,13 @@
 // 홈과 시리즈 탐색에서 제목 원문 및 링크가 보존되는지 실제 빌드로 확인한다.
 import assert from 'node:assert/strict';
 import { execFileSync, spawnSync } from 'node:child_process';
-import { cp, mkdtemp, readFile, realpath, writeFile } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
+import { cp, readFile, writeFile } from 'node:fs/promises';
+import { withTemporaryDirectory } from '../helpers/temporary-directory.mjs';
 import { join, resolve } from 'node:path';
 import { Window } from 'happy-dom';
 
 const repository = resolve('.');
-const temp = await realpath(await mkdtemp(join(tmpdir(), 'post-title-display-fixture-')));
+await withTemporaryDirectory('post-title-display-fixture-', async (temp) => {
 const source = join(temp, 'source');
 const paths = ['_config.yml', '_includes', '_layouts', '_achievements', '_pages', '_posts', '_data', 'assets', 'tools', 'sitemap.xml', 'robots.txt', 'index.html', '404.html', 'search.json', 'manifest.json', 'favicon.ico', 'apple-touch-icon.png'];
 for (const path of paths) await cp(join(repository, path), join(source, path), { recursive: true });
@@ -248,4 +248,5 @@ for (const [name, base] of [['root', ''], ['nested', '/blog']]) {
     await browser.happyDOM.abort();
   }
 }
-console.log(`제목 표시 격리 빌드 검증 통과: ${temp}`);
+});
+console.log(`제목 표시 격리 빌드 검증 통과`);

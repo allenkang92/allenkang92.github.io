@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { execFileSync, spawnSync } from 'node:child_process';
-import { mkdir, mkdtemp, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import test from 'node:test';
@@ -107,8 +107,9 @@ function fixtureHtml(title, description, siteTitle) {
   return `<!doctype html><html><head><title>${t} | ${st}</title><meta property="og:title" content="${t}"><meta name="twitter:title" content="${t}"><meta name="description" content="${d}"><meta property="og:description" name="twitter:description" content="${d}"><script type="application/ld+json">${json}</script></head><body></body></html>`;
 }
 
-test('새 성과와 기본 설명을 포함해 오기재된 평문·누락·중복을 탐지한다', async () => {
+test('새 성과와 기본 설명을 포함해 오기재된 평문·누락·중복을 탐지한다', async (t) => {
   const root = await mkdtemp(join(tmpdir(), 'achievement-plain-all-'));
+  t.after(() => rm(root, { recursive: true, force: true }));
   const source = join(root, 'source');
   const output = join(root, 'site');
   await mkdir(join(source, '_achievements'), { recursive: true });

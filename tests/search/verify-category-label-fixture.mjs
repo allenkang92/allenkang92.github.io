@@ -1,13 +1,13 @@
 // 분류 표시명은 작성한 문자열 그대로 HTML과 검색 설정에 전달되어야 한다.
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { cp, mkdtemp, readFile, realpath, writeFile } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
+import { cp, readFile, writeFile } from 'node:fs/promises';
+import { withTemporaryDirectory } from '../helpers/temporary-directory.mjs';
 import { join, resolve } from 'node:path';
 import { Window } from 'happy-dom';
 
 const repository = resolve('.');
-const temp = await realpath(await mkdtemp(join(tmpdir(), 'category-label-fixture-')));
+await withTemporaryDirectory('category-label-fixture-', async (temp) => {
 const source = join(temp, 'source');
 const paths = ['_config.yml', '_includes', '_layouts', '_achievements', '_pages', '_posts', '_data', 'assets', 'tools', 'sitemap.xml', 'robots.txt', 'index.html', '404.html', 'search.json', 'manifest.json', 'favicon.ico', 'apple-touch-icon.png'];
 for (const path of paths) await cp(join(repository, path), join(source, path), { recursive: true });
@@ -81,4 +81,5 @@ for (const [name, base] of [['root', ''], ['nested', '/blog']]) {
     }
   } finally { await browser.happyDOM.abort(); }
 }
-console.log(`분류 표시명 격리 빌드 검증 통과: ${temp}`);
+});
+console.log(`분류 표시명 격리 빌드 검증 통과`);

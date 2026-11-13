@@ -1,13 +1,13 @@
 // 실제 Jekyll 생성물로 성과 검색의 게시 조건과 사용자 지정 경로를 확인한다.
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { access, cp, mkdtemp, readFile, realpath, writeFile } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
+import { access, cp, readFile, writeFile } from 'node:fs/promises';
+import { withTemporaryDirectory } from '../helpers/temporary-directory.mjs';
 import { join, resolve } from 'node:path';
 import { Window } from 'happy-dom';
 
 const repository = resolve('.');
-const temp = await realpath(await mkdtemp(join(tmpdir(), 'achievement-search-fixture-')));
+await withTemporaryDirectory('achievement-search-fixture-', async (temp) => {
 const source = join(temp, 'source');
 const paths = ['_config.yml', '_includes', '_layouts', '_achievements', '_pages', '_posts', '_data', 'assets', 'tools', 'sitemap.xml', 'robots.txt', 'index.html', '404.html', 'search.json', 'manifest.json', 'favicon.ico', 'apple-touch-icon.png'];
 for (const path of paths) await cp(join(repository, path), join(source, path), { recursive: true });
@@ -89,4 +89,5 @@ for (const [name, extra, expectedTitles] of [
     await browser.happyDOM.abort();
   }
 }
-console.log(`성과 검색 격리 검증 통과: ${temp}`);
+});
+console.log(`성과 검색 격리 검증 통과`);

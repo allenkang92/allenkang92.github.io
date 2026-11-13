@@ -1,12 +1,12 @@
 // 기본 Pages 플러그인의 이름 원천과 특수문자 직렬화를 격리 실빌드로 확인한다.
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { cp, mkdir, mkdtemp, readFile, realpath, writeFile } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
+import { cp, mkdir, readFile, writeFile } from 'node:fs/promises';
+import { withTemporaryDirectory } from '../helpers/temporary-directory.mjs';
 import { join, resolve } from 'node:path';
 
 const repository = resolve('.');
-const fixture = await realpath(await mkdtemp(join(tmpdir(), 'seo-name-serialization-')));
+await withTemporaryDirectory('seo-name-serialization-', async (fixture) => {
 const source = join(fixture, 'source');
 await mkdir(join(source, '_layouts'), { recursive: true });
 await mkdir(join(source, '_posts'), { recursive: true });
@@ -103,4 +103,5 @@ assert.ifError(withoutSitePlain.error);
 assert.notEqual(withoutSitePlain.status, 0, '사이트 이름의 평문이 누락되면 실패해야 합니다');
 assert.match(`${withoutSitePlain.stdout}\n${withoutSitePlain.stderr}`, /ERROR_seo_plain_name_required/);
 
-console.log(`이름 SEO 격리 결과: ${fixture}`);
+});
+console.log(`이름 SEO 격리 결과`);

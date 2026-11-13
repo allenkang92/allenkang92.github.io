@@ -1,13 +1,13 @@
 // 글에 표시된 참고자료와 학습 목표가 검색 색인과 제한된 폴백에 들어가는지 확인한다.
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { cp, mkdtemp, readFile, realpath, writeFile } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
+import { cp, readFile, writeFile } from 'node:fs/promises';
+import { withTemporaryDirectory } from '../helpers/temporary-directory.mjs';
 import { join, resolve } from 'node:path';
 import { Window } from 'happy-dom';
 
 const repository = resolve('.');
-const temp = await realpath(await mkdtemp(join(tmpdir(), 'post-search-auxiliary-')));
+await withTemporaryDirectory('post-search-auxiliary-', async (temp) => {
 const source = join(temp, 'source');
 const paths = ['_config.yml', '_includes', '_layouts', '_achievements', '_pages', '_posts', '_data', 'assets', 'tools', 'sitemap.xml', 'robots.txt', 'index.html', '404.html', 'search.json', 'manifest.json', 'favicon.ico', 'apple-touch-icon.png'];
 for (const path of paths) await cp(join(repository, path), join(source, path), { recursive: true });
@@ -108,4 +108,5 @@ for (const [name, base] of [['root', ''], ['nested', '/blog']]) {
     } finally { await postBrowser.happyDOM.abort(); }
   } finally { await browser.happyDOM.abort(); }
 }
-console.log(`글 참고자료·학습 목표 검색 격리 빌드 검증 통과: ${temp}`);
+});
+console.log(`글 참고자료·학습 목표 검색 격리 빌드 검증 통과`);

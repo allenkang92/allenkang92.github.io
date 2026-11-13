@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { execFileSync, spawnSync } from 'node:child_process';
-import { mkdir, mkdtemp, readFile, realpath, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, realpath, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import test from 'node:test';
@@ -72,8 +72,9 @@ function exampleHtml(title) {
   return `<!doctype html><html><head><title>${value} | 사이트</title><meta property="og:title" content="${value}"><meta name="twitter:title" content="${value}"><script type="application/ld+json">${json}</script></head><body><h1 class="post-title">${value}</h1></body></html>`;
 }
 
-test('여러 원문 제목 글을 선택하고 변형된 중복 메타와 누락 산출물을 놓치지 않는다', async () => {
+test('여러 원문 제목 글을 선택하고 변형된 중복 메타와 누락 산출물을 놓치지 않는다', async (t) => {
   const fixture = await mkdtemp(join(tmpdir(), 'literal-title-all-'));
+  t.after(() => rm(fixture, { recursive: true, force: true }));
   const source = join(fixture, 'source');
   const output = join(fixture, 'site');
   await mkdir(join(source, '_posts'), { recursive: true });
@@ -112,8 +113,10 @@ test('여러 원문 제목 글을 선택하고 변형된 중복 메타와 누락
   await assert.rejects(validateAll([...posts, { ...target, destination: join(output, '없는-글.html') }]), /ENOENT/, '선택된 글의 산출물이 없으면 실패해야 합니다');
 });
 
-test('일반 페이지는 게시 글 전용 원문 제목 설정을 사용할 수 없다', async () => {
-  const fixture = await realpath(await mkdtemp(join(tmpdir(), 'literal-title-page-')));
+test('일반 페이지는 게시 글 전용 원문 제목 설정을 사용할 수 없다', async (t) => {
+  const temporary = await mkdtemp(join(tmpdir(), 'literal-title-page-'));
+  t.after(() => rm(temporary, { recursive: true, force: true }));
+  const fixture = await realpath(temporary);
   const source = join(fixture, 'source');
   await mkdir(join(source, '_includes'), { recursive: true });
   await mkdir(join(source, '_layouts'), { recursive: true });

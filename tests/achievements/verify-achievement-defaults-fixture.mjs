@@ -1,12 +1,12 @@
 // 실제 Jekyll Document의 defaults 범위·우선순위와 URL 검사를 함께 확인한다.
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { mkdtemp, mkdir, realpath, writeFile } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
+import { mkdir, writeFile } from 'node:fs/promises';
+import { withTemporaryDirectory } from '../helpers/temporary-directory.mjs';
 import { join, resolve } from 'node:path';
 
 const repository = resolve('.');
-const source = await realpath(await mkdtemp(join(tmpdir(), 'achievement-defaults-fixture-')));
+await withTemporaryDirectory('achievement-defaults-fixture-', async (source) => {
 await mkdir(join(source, '_achievements'));
 await mkdir(join(source, '_pages'));
 const first = join(source, '_achievements/one.md');
@@ -83,4 +83,5 @@ expectPass('glob 기본값은 개별 문서에서 비활성화하거나 덮어�
 await writeSecond('');
 expectFailure('glob 기본값이 적용된 HTML 문서를 검사한다', '_achievements/two.html', 'certificate_image');
 
-console.log(`성과 기본값 격리 검증 통과: ${source}`);
+});
+console.log(`성과 기본값 격리 검증 통과`);

@@ -1,13 +1,13 @@
 // 개별 글의 scripts·styles와 공통 복사 자산이 공존하는지 격리 빌드로 확인한다.
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { cp, mkdtemp, readFile, realpath, writeFile } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
+import { cp, readFile, writeFile } from 'node:fs/promises';
+import { withTemporaryDirectory } from '../helpers/temporary-directory.mjs';
 import { join, resolve } from 'node:path';
 import { Window } from 'happy-dom';
 
 const repository = resolve('.');
-const temp = await realpath(await mkdtemp(join(tmpdir(), 'code-copy-fixture-')));
+await withTemporaryDirectory('code-copy-fixture-', async (temp) => {
 const source = join(temp, 'source');
 const output = join(temp, 'site');
 const paths = ['_config.yml', '_includes', '_layouts', '_achievements', '_pages', '_posts', '_data', 'assets', 'tools', 'sitemap.xml', 'robots.txt', 'index.html', '404.html', 'search.json', 'manifest.json', 'favicon.ico', 'apple-touch-icon.png'];
@@ -45,4 +45,5 @@ try {
   assert.equal(styles.filter(path => path === '/assets/css/posts-refinement.css').length, 1, '글에서 지정한 스타일을 보존한다');
   assert.equal(browser.document.querySelector('#post-content pre.highlight code')?.textContent, '<p>한글 &amp; 코드</p>\n');
 } finally { await browser.happyDOM.abort(); }
-console.log(`글별 자산과 코드 예제 격리 검증 통과: ${temp}`);
+});
+console.log(`글별 자산과 코드 예제 격리 검증 통과`);

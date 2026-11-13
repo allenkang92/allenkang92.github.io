@@ -1,12 +1,12 @@
 // 기본 Pages 안전 모드에서 일반 문서의 설명 직렬화를 확인한다.
 import assert from 'node:assert/strict';
 import { execFileSync, spawnSync } from 'node:child_process';
-import { cp, mkdir, mkdtemp, readFile, realpath, writeFile } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
+import { cp, mkdir, readFile, writeFile } from 'node:fs/promises';
+import { withTemporaryDirectory } from '../helpers/temporary-directory.mjs';
 import { join, resolve } from 'node:path';
 
 const repository = resolve('.');
-const fixture = await realpath(await mkdtemp(join(tmpdir(), 'generic-seo-description-')));
+await withTemporaryDirectory('generic-seo-description-', async (fixture) => {
 const source = join(fixture, 'source');
 await mkdir(join(source, '_layouts'), { recursive: true });
 await mkdir(join(source, '_posts'), { recursive: true });
@@ -125,4 +125,5 @@ for (const [name, operation] of [
   assert.match(`${bad.stdout}\n${bad.stderr}`, /ERROR_seo_description_plugin_output_mismatch/, `${name}: 정확한 실패 이유가 필요합니다`);
 }
 await writeFile(includePath, include);
-console.log(`일반 문서 SEO 설명 격리 빌드 검증 통과: ${fixture}`);
+});
+console.log(`일반 문서 SEO 설명 격리 빌드 검증 통과`);

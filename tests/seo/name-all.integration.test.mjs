@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { execFileSync, spawnSync } from 'node:child_process';
-import { mkdir, mkdtemp, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import test from 'node:test';
@@ -94,8 +94,9 @@ function fixtureHtml(name, extra = {}) {
   return `<!doctype html><html><head><script type="application/ld+json">${json}</script></head></html>`;
 }
 
-test('이름 원천 우선순위와 누락·오기재·중복 JSON 키를 탐지한다', async () => {
+test('이름 원천 우선순위와 누락·오기재·중복 JSON 키를 탐지한다', async (t) => {
   const root = await mkdtemp(join(tmpdir(), 'seo-name-all-'));
+  t.after(() => rm(root, { recursive: true, force: true }));
   const source = join(root, 'source');
   const output = join(root, 'site');
   await mkdir(join(source, '_posts'), { recursive: true });

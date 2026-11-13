@@ -1,13 +1,13 @@
 // 실제 Jekyll 출력 대상과 성과 목록·상세 탐색을 격리 자료로 대조한다.
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { cp, mkdtemp, readFile, realpath, writeFile } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
+import { cp, readFile, writeFile } from 'node:fs/promises';
+import { withTemporaryDirectory } from '../helpers/temporary-directory.mjs';
 import { join, resolve } from 'node:path';
 import { Window } from 'happy-dom';
 
 const repository = resolve('.');
-const temp = await realpath(await mkdtemp(join(tmpdir(), 'achievement-visibility-fixture-')));
+await withTemporaryDirectory('achievement-visibility-fixture-', async (temp) => {
 const source = join(temp, 'source');
 const paths = ['_config.yml', '_includes', '_layouts', '_achievements', '_pages', '_posts', '_data', 'assets', 'tools', 'sitemap.xml', 'robots.txt', 'index.html', '404.html', 'search.json', 'manifest.json', 'favicon.ico', 'apple-touch-icon.png'];
 for (const path of paths) await cp(join(repository, path), join(source, path), { recursive: true });
@@ -139,4 +139,5 @@ try {
   assert.equal(empty.document.querySelectorAll('.achievement-card').length, 0, '출력하지 않는 컬렉션은 상세 링크를 표시하지 않습니다');
   assert.match(empty.document.querySelector('.achievements-timeline')?.textContent || '', /표시할 성과가 없습니다/, '빈 목록은 상태를 안내합니다');
 } finally { await empty.happyDOM.abort(); }
-console.log(`성과 노출·탐색 격리 검증 통과: ${temp}`);
+});
+console.log(`성과 노출·탐색 격리 검증 통과`);

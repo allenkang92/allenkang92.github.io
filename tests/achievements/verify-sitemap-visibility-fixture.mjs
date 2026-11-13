@@ -1,13 +1,13 @@
 // 실제 생성 여부와 사이트맵을 독립적으로 비교하는 격리 빌드다.
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { cp, mkdir, mkdtemp, readFile, readdir, realpath, writeFile, access } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
+import { cp, mkdir, readFile, readdir, writeFile, access } from 'node:fs/promises';
+import { withTemporaryDirectory } from '../helpers/temporary-directory.mjs';
 import { join, resolve } from 'node:path';
 import { Window } from 'happy-dom';
 
 const repository = resolve('.');
-const temp = await realpath(await mkdtemp(join(tmpdir(), 'sitemap-visibility-fixture-')));
+await withTemporaryDirectory('sitemap-visibility-fixture-', async (temp) => {
 const source = join(temp, 'source');
 const paths = ['_config.yml', '_includes', '_layouts', '_achievements', '_pages', '_posts', '_data', 'assets', 'tools', 'sitemap.xml', 'robots.txt', 'index.html', '404.html', 'search.json', 'manifest.json', 'favicon.ico', 'apple-touch-icon.png'];
 for (const path of paths) await cp(join(repository, path), join(source, path), { recursive: true });
@@ -123,4 +123,5 @@ const noOutputRows = await readSitemap(noOutput);
 assert.equal(noOutputRows.has(`${origin}/sample/index.html/deep/`), false, 'output:false는 성과 상세를 제외합니다');
 assert.equal(noOutputRows.has(`${origin}/sample/titleless/`), false, 'output:false는 제목 없는 성과도 제외합니다');
 assert.ok(noOutputRows.has(`${origin}/other/index.html/deep/`), '다른 컬렉션은 유지합니다');
-console.log(`사이트맵 노출 격리 검증 통과: ${temp}`);
+});
+console.log(`사이트맵 노출 격리 검증 통과`);
