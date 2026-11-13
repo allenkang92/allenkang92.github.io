@@ -438,8 +438,80 @@ export function PostsApp({
 
 
   useLayoutEffect(() => {
-    rootElement.hidden = false;
-    fallbackElement.hidden = true;
+    let disposed = false;
+    let activated = false;
+    let notice: HTMLDivElement | null = null;
+    let stopListening = () => {};
+    const showEnhancedList = () => {
+      if (disposed || activated || fallbackElement.contains(document.activeElement)) return;
+      activated = true;
+      stopListening();
+      rootElement.hidden = false;
+      fallbackElement.hidden = true;
+      notice?.remove();
+      notice = null;
+    };
+
+    if (fallbackElement.contains(document.activeElement)) {
+      // 정적 목록을 읽는 사용자의 포커스와 Tab 순서를 가로채지 않는다.
+      rootElement.hidden = true;
+      fallbackElement.hidden = false;
+      notice = document.createElement('div');
+      notice.className = 'posts-fallback-note';
+      const note = document.createElement('p');
+      note.setAttribute('role', 'status');
+      note.textContent = '검색 화면이 준비되었습니다. 지금 목록을 계속 이용하거나 검색 화면을 열 수 있습니다.';
+      const openSearch = document.createElement('button');
+      openSearch.type = 'button';
+      openSearch.className = 'inline-action-btn';
+      openSearch.textContent = '검색 화면 열기';
+      openSearch.addEventListener('click', () => {
+        if (disposed) return;
+        rootElement.hidden = false;
+        const input = rootElement.querySelector<HTMLInputElement>('#react-posts-search-input');
+        input?.focus();
+        if (input && document.activeElement === input) {
+          activated = true;
+          stopListening();
+          fallbackElement.hidden = true;
+          notice?.remove();
+          notice = null;
+        } else {
+          rootElement.hidden = true;
+        }
+      });
+      notice.append(note, openSearch);
+      // 목록 뒤에 두면 마지막 글에서 Tab으로 검색 전환에 도달할 수 있다.
+      (fallbackElement.querySelector('.posts-container') || fallbackElement).appendChild(notice);
+    } else {
+      showEnhancedList();
+    }
+
+    // 텍스트 선택이나 창 전환으로 body에 초점이 떨어진 것만으로는
+    // 사용자가 읽던 목록을 숨기지 않는다. 다른 조작 대상이 정해질 때 전환한다.
+    const afterFocusChange = () => {
+      if (disposed || activated) return;
+      Promise.resolve().then(() => {
+        const active = document.activeElement;
+        if (!active || active === document.body || active === document.documentElement) return;
+        showEnhancedList();
+      });
+    };
+    const onFocusOut = () => afterFocusChange();
+    const onFocusIn = () => afterFocusChange();
+    if (!activated) {
+      fallbackElement.addEventListener('focusout', onFocusOut);
+      document.addEventListener('focusin', onFocusIn);
+      stopListening = () => {
+        fallbackElement.removeEventListener('focusout', onFocusOut);
+        document.removeEventListener('focusin', onFocusIn);
+      };
+    }
+    return () => {
+      disposed = true;
+      stopListening();
+      notice?.remove();
+    };
   }, [fallbackElement, rootElement]);
 
   useLayoutEffect(() => {

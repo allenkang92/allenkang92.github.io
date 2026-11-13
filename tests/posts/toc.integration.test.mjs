@@ -7,28 +7,30 @@ import { Window } from 'happy-dom';
 const siteRoot = process.env.SITE_ROOT ? resolve(process.env.SITE_ROOT) : resolve('_site');
 const script = await readFile(new URL('../../assets/js/post-toc.js', import.meta.url), 'utf8');
 
-function createDocument(html) {
+function createDocument(html, executeToc = true) {
   const browser = new Window({
     url: 'https://blog.test/posts/example/',
     settings: { disableJavaScriptEvaluation: true, disableJavaScriptFileLoading: true },
   });
   browser.document.write(html);
-  browser.eval(script);
+  if (executeToc) browser.eval(script);
   return browser;
 }
 
 // HTML의 fragment 대상 선택은 원문 ID/name을 먼저 찾고, 없으면 퍼센트
 // 디코딩한 UTF-8 문자열로 다시 찾는다. 디코딩만 하면 유효한 ID를 놓친다.
-function fragmentTarget(document, link) {
+function fragmentTarget(document, link, snapshot) {
   // happy-dom의 anchor.hash는 비ASCII를 인코딩하지 않으므로 표준 URL로 직렬화한다.
   const address = new URL(link.getAttribute('href'), document.baseURI);
   const current = new URL(document.URL);
   if (address.origin !== current.origin || address.pathname !== current.pathname || address.search !== current.search) return null;
   const fragment = address.hash.slice(1);
   if (!fragment) return null;
-  const findTarget = value => document.getElementById(value)
-    || [...document.querySelectorAll('a[name]')].find(anchor => anchor.getAttribute('name') === value)
-    || null;
+  const findTarget = snapshot
+    ? value => snapshot.ids.get(value) || snapshot.names.get(value) || null
+    : value => document.getElementById(value)
+      || [...document.querySelectorAll('a[name]')].find(anchor => anchor.getAttribute('name') === value)
+      || null;
   const direct = findTarget(fragment);
   if (direct) return direct;
 
@@ -80,6 +82,38 @@ function assertStaticTocAlias(document, heading, context) {
   return target;
 }
 
+// 스크립트 실행 전 ID/name의 첫 대상을 보존한다. 요소 참조는 ID 변경 후에도 동일하다.
+function captureStaticToc(document, context) {
+  const headings = [...document.querySelectorAll('.post-content h2, .post-content h3')]
+    .filter(heading => heading.textContent.trim());
+  const ids = new Map();
+  const names = new Map();
+  for (const element of document.querySelectorAll('[id]')) {
+    if (element.id && !ids.has(element.id)) ids.set(element.id, element);
+  }
+  for (const anchor of document.querySelectorAll('a[name]')) {
+    const name = anchor.getAttribute('name');
+    if (name && !names.has(name)) names.set(name, anchor);
+  }
+  const targets = headings.map((heading, index) =>
+    assertStaticTocAlias(document, heading, `${context}: ${index + 1}번째 제목`) || heading);
+  return { headings, ids, names, targets };
+}
+
+// 목차의 공유 주소는 스크립트를 실행하지 않은 문서에서도 같은 제목을 찾아야 한다.
+function assertShareableToc(snapshot, dynamicDocument, context) {
+  const dynamicHeadings = [...dynamicDocument.querySelectorAll('.post-content h2, .post-content h3')]
+    .filter(heading => heading.textContent.trim());
+  const links = [...dynamicDocument.querySelectorAll('.table-of-contents .toc-list a')];
+  assert.equal(dynamicHeadings.length, snapshot.headings.length, `${context}: 실행 전후 제목 수가 같아야 합니다`);
+  assert.equal(links.length, snapshot.headings.length, `${context}: 제목마다 목차 링크가 있어야 합니다`);
+  snapshot.headings.forEach((heading, index) => {
+    assert.ok(dynamicHeadings[index] === heading, `${context}: 실행 전후 제목 순서가 같아야 합니다`);
+    assert.ok(fragmentTarget(dynamicDocument, links[index], snapshot) === snapshot.targets[index],
+      `${context}: ${index + 1}번째 목차 주소는 스크립트 없는 문서에서도 같은 제목 또는 별칭을 가리켜야 합니다`);
+  });
+}
+
 test('생성된 모든 글의 목차가 제목과 고유한 이동 대상을 가리킨다', async () => {
   const postsDir = resolve(siteRoot, 'posts');
   const directories = (await readdir(postsDir, { withFileTypes: true }))
@@ -98,9 +132,11 @@ test('생성된 모든 글의 목차가 제목과 고유한 이동 대상을 가
   for (const directory of directories) {
     const slug = directory.name;
     const html = await readFile(resolve(postsDir, slug, 'index.html'), 'utf8');
-    const browser = createDocument(html);
+    const browser = createDocument(html, false);
     try {
       const document = browser.document;
+      const snapshot = captureStaticToc(document, slug);
+      browser.eval(script);
       const article = document.querySelector('article.post');
       assert.ok(article, `${slug}: 글 본문이 있어야 합니다`);
       const content = article.querySelector('.post-content');
@@ -115,6 +151,7 @@ test('생성된 모든 글의 목차가 제목과 고유한 이동 대상을 가
       const links = [...toc.querySelectorAll('.toc-list a')];
       assert.equal(toc.hidden, headings.length === 0, `${slug}: 제목이 있을 때만 목차가 보여야 합니다`);
       assert.equal(links.length, headings.length, `${slug}: 목차 항목과 빈 제목을 제외한 본문 제목 수가 같아야 합니다`);
+      assertShareableToc(snapshot, document, slug);
 
       const ids = [...document.querySelectorAll('[id]')].map(element => element.id);
       headings.forEach((heading, index) => {
@@ -133,6 +170,33 @@ test('생성된 모든 글의 목차가 제목과 고유한 이동 대상을 가
     }
   }
   assert.ok(checkedHeadings > 0, '실제 제목을 적어도 하나 이상 검사해야 합니다');
+});
+
+test('공유 목차 주소가 정적 문서의 다른 제목이나 없는 대상을 가리키면 검증에 실패한다', async () => {
+  const cases = [
+    { name: '정적 ID 없음', content: '<h2>새 제목</h2>', valid: false },
+    { name: '중복 ID의 런타임 재할당', content: '<h2 id="same">첫 제목</h2><h2 id="same">둘째 제목</h2>', valid: false },
+    { name: '퍼센트 주소 충돌', content: '<h2 id="가">한글 제목</h2><h2 id="%EA%B0%80">퍼센트 제목</h2>', valid: false },
+    { name: '레거시 이름과 인코딩 주소 충돌', content: '<a name="%EA%B0%80">기존 위치</a><h2 id="가">한글 제목</h2>', valid: false },
+    { name: 'ID 없이 유효한 정적 별칭', content: '<h2 data-toc-fragment="toc-new"><span id="toc-new"></span>새 제목</h2>', valid: true },
+    { name: '퍼센트 충돌과 유효한 정적 별칭', content: '<h2 id="가" data-toc-fragment="toc-korean"><span id="toc-korean"></span>한글 제목</h2><h2 id="%EA%B0%80">퍼센트 제목</h2>', valid: true },
+  ];
+  for (const item of cases) {
+    const html = `<!doctype html><html lang="ko"><body>
+      <details class="table-of-contents" hidden><summary>목차</summary><ul class="toc-list"></ul></details>
+      <div class="post-content">${item.content}</div>
+    </body></html>`;
+    const browser = createDocument(html, false);
+    try {
+      const snapshot = captureStaticToc(browser.document, item.name);
+      browser.eval(script);
+      const check = () => assertShareableToc(snapshot, browser.document, item.name);
+      if (item.valid) assert.doesNotThrow(check, item.name);
+      else assert.throws(check, { name: 'AssertionError' }, item.name);
+    } finally {
+      await browser.happyDOM.abort();
+    }
+  }
 });
 
 test('빈 제목을 제외하고 식별자 충돌을 피하며 빈 목차는 숨긴다', async () => {

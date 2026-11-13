@@ -785,6 +785,228 @@ test('whitespace-only edits do not replace a focused result', async () => {
   }
 });
 
+test('제출하지 않은 검색도 뒤로와 앞으로 이동해 이전 검색을 복원한다', { timeout: 3000 }, async () => {
+  const browser = setup(async () => ({ ok: true, json: async () => [
+    searchRow({ title: 'old new', url: '/post/' }),
+  ] }), 'https://blog.test/prior/');
+  try {
+    browser.history.pushState({ marker: '유지' }, '', '/about/?q=old&source=guide#start');
+    browser.dispatchEvent(new browser.PopStateEvent('popstate'));
+    await new Promise(resolve => setTimeout(resolve, 0));
+    browser.requestAnimationFrame = callback => { callback(); return 1; };
+    const input = browser.document.querySelector('#search-input');
+    input.value = 'new';
+    input.dispatchEvent(new browser.Event('input', { bubbles: true }));
+    await new Promise(resolve => setTimeout(resolve, 350));
+    assert.equal(new URL(browser.location.href).searchParams.get('q'), 'new');
+    const navigate = method => new Promise(resolve => {
+      browser.addEventListener('popstate', resolve, { once: true });
+      browser.history[method]();
+    });
+    await navigate('back');
+    assert.equal(browser.location.pathname, '/about/');
+    assert.equal(input.value, 'old');
+    assert.equal(new URL(browser.location.href).searchParams.get('source'), 'guide');
+    assert.equal(browser.location.hash, '#start');
+    assert.equal(browser.history.state.marker, '유지');
+    await navigate('forward');
+    assert.equal(input.value, 'new');
+  } finally {
+    await browser.happyDOM.abort();
+  }
+});
+
+test('검색어를 지운 뒤 제출 전에 뒤로 가면 이전 검색어가 복원된다', async () => {
+  const browser = setup(async () => ({ ok: true, json: async () => [
+    searchRow({ title: '수학', url: '/math/' }),
+  ] }), 'https://blog.test/prior/');
+  try {
+    browser.history.pushState(['외부', 1], '', '/about/?q=수학&source=guide#start');
+    browser.dispatchEvent(new browser.PopStateEvent('popstate'));
+    await new Promise(resolve => setTimeout(resolve, 0));
+    const input = browser.document.querySelector('#search-input');
+    input.value = '';
+    input.dispatchEvent(new browser.Event('input', { bubbles: true }));
+    assert.equal(new URL(browser.location.href).searchParams.has('q'), false);
+    const restored = new Promise(resolve => browser.addEventListener('popstate', resolve, { once: true }));
+    browser.history.back();
+    await restored;
+    assert.equal(input.value, '수학');
+    assert.equal(new URL(browser.location.href).searchParams.get('source'), 'guide');
+    assert.equal(browser.location.hash, '#start');
+    assert.deepEqual(Array.from(browser.history.state), ['외부', 1]);
+  } finally {
+    await browser.happyDOM.abort();
+  }
+});
+
+test('한글 조합을 마친 뒤 Escape로 닫아도 뒤로 가기는 이전 검색을 복원한다', { timeout: 3000 }, async () => {
+  const browser = setup(async () => ({ ok: true, json: async () => [
+    searchRow({ title: '이전 검색과 한글', url: '/post/' }),
+  ] }), 'https://blog.test/about/?q=이전');
+  try {
+    await new Promise(resolve => setTimeout(resolve, 0));
+    browser.requestAnimationFrame = callback => { callback(); return 1; };
+    browser.document.querySelector('.sidebar-toggle').click();
+    const input = browser.document.querySelector('#search-input');
+    input.dispatchEvent(new browser.CompositionEvent('compositionstart', { bubbles: true }));
+    input.value = '한글';
+    input.dispatchEvent(new browser.InputEvent('input', { bubbles: true, isComposing: true }));
+    await new Promise(resolve => setTimeout(resolve, 350));
+    assert.equal(new URL(browser.location.href).searchParams.get('q'), '이전');
+    input.dispatchEvent(new browser.CompositionEvent('compositionend', { bubbles: true }));
+    await new Promise(resolve => setTimeout(resolve, 350));
+    assert.equal(new URL(browser.location.href).searchParams.get('q'), '한글');
+    input.dispatchEvent(new browser.KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+    assert.equal(browser.document.querySelector('#search-results').classList.contains('active'), false);
+    const restored = new Promise(resolve => browser.addEventListener('popstate', resolve, { once: true }));
+    browser.history.back();
+    await restored;
+    assert.equal(input.value, '이전');
+  } finally {
+    await browser.happyDOM.abort();
+  }
+});
+
+test('검색 중 외부 코드가 주소를 바꾸면 새 검색이 외부 이력을 덮어쓰지 않는다', { timeout: 3000 }, async () => {
+  const browser = setup(async () => ({ ok: true, json: async () => [
+    searchRow({ title: '첫 검색 다음 검색', url: '/post/' }),
+  ] }), 'https://blog.test/about/?q=처음');
+  try {
+    await new Promise(resolve => setTimeout(resolve, 0));
+    browser.requestAnimationFrame = callback => { callback(); return 1; };
+    const input = browser.document.querySelector('#search-input');
+    input.value = '첫';
+    input.dispatchEvent(new browser.Event('input', { bubbles: true }));
+    await new Promise(resolve => setTimeout(resolve, 350));
+    browser.history.pushState({ external: true }, '', '?q=첫&external=1#new');
+    input.value = '다음';
+    input.dispatchEvent(new browser.Event('input', { bubbles: true }));
+    await new Promise(resolve => setTimeout(resolve, 350));
+    const restored = new Promise(resolve => browser.addEventListener('popstate', resolve, { once: true }));
+    browser.history.back();
+    await restored;
+    assert.equal(new URL(browser.location.href).searchParams.get('q'), '첫');
+    assert.equal(new URL(browser.location.href).searchParams.get('external'), '1');
+    assert.equal(browser.location.hash, '#new');
+    assert.equal(browser.history.state.external, true);
+  } finally {
+    await browser.happyDOM.abort();
+  }
+});
+
+test('Navigation API가 있으면 같은 주소의 외부 이력 항목도 초안과 구분한다', { timeout: 3000 }, async () => {
+  const browser = setup(async () => ({ ok: true, json: async () => [
+    searchRow({ title: '첫 검색 다음 검색', url: '/post/' }),
+  ] }), 'https://blog.test/about/?q=처음', window => {
+    let sequence = 0;
+    let current = { key: 'key-0', id: 'id-0' };
+    Object.defineProperty(window, 'navigation', { configurable: true, value: {
+      get currentEntry() { return current; },
+    } });
+    const push = window.history.pushState.bind(window.history);
+    const replace = window.history.replaceState.bind(window.history);
+    window.history.pushState = (...args) => {
+      push(...args);
+      sequence++;
+      current = { key: `key-${sequence}`, id: `id-${sequence}` };
+    };
+    window.history.replaceState = (...args) => {
+      replace(...args);
+      sequence++;
+      current = { key: current.key, id: `id-${sequence}` };
+    };
+  });
+  try {
+    await new Promise(resolve => setTimeout(resolve, 0));
+    browser.requestAnimationFrame = callback => { callback(); return 1; };
+    const input = browser.document.querySelector('#search-input');
+    input.value = '첫';
+    input.dispatchEvent(new browser.Event('input', { bubbles: true }));
+    await new Promise(resolve => setTimeout(resolve, 350));
+    browser.history.pushState({ external: true }, '', browser.location.href);
+    const length = browser.history.length;
+    input.value = '다음';
+    input.dispatchEvent(new browser.Event('input', { bubbles: true }));
+    await new Promise(resolve => setTimeout(resolve, 350));
+    assert.equal(browser.history.length, length + 1, '다른 항목은 같은 주소여도 덮어쓰지 않는다');
+    const restored = new Promise(resolve => browser.addEventListener('popstate', resolve, { once: true }));
+    browser.history.back();
+    await restored;
+    assert.equal(new URL(browser.location.href).searchParams.get('q'), '첫');
+    assert.equal(browser.history.state.external, true);
+  } finally {
+    await browser.happyDOM.abort();
+  }
+});
+
+test('빠른 제출은 이력을 한 번만 추가하고 원본 중복 검색 매개변수도 복원한다', async () => {
+  const browser = setup(async () => ({ ok: true, json: async () => [
+    searchRow({ title: '새 검색', url: '/post/' }),
+  ] }), 'https://blog.test/about/?q=이전&q=둘째&source=guide#part');
+  try {
+    await new Promise(resolve => setTimeout(resolve, 0));
+    browser.requestAnimationFrame = callback => { callback(); return 1; };
+    const input = browser.document.querySelector('#search-input');
+    const form = browser.document.querySelector('.search-form');
+    const length = browser.history.length;
+    input.value = '새 검색';
+    input.dispatchEvent(new browser.Event('input', { bubbles: true }));
+    form.dispatchEvent(new browser.Event('submit', { bubbles: true, cancelable: true }));
+    assert.equal(browser.history.length, length + 1);
+    await new Promise(resolve => setTimeout(resolve, 350));
+    assert.equal(browser.history.length, length + 1, '예약된 실시간 검색이 추가 이력을 만들지 않는다');
+    const restored = new Promise(resolve => browser.addEventListener('popstate', resolve, { once: true }));
+    browser.history.back();
+    await restored;
+    assert.deepEqual(new URL(browser.location.href).searchParams.getAll('q'), ['이전', '둘째']);
+    assert.equal(input.value, '이전');
+    assert.equal(browser.location.hash, '#part');
+  } finally {
+    await browser.happyDOM.abort();
+  }
+});
+
+test('초기 검색 결과 표시와 입력 포커스는 기존 주소를 수정하지 않는다', async () => {
+  const initialUrl = 'https://blog.test/about/?q=이전&q=둘째&source=guide#part';
+  const browser = setup(async () => ({ ok: true, json: async () => [
+    searchRow({ title: '이전', url: '/post/' }),
+  ] }), initialUrl, window => { window.requestAnimationFrame = callback => { callback(); return 1; }; });
+  try {
+    await new Promise(resolve => setTimeout(resolve, 0));
+    assert.deepEqual(new URL(browser.location.href).searchParams.getAll('q'), ['이전', '둘째']);
+    const input = browser.document.querySelector('#search-input');
+    input.focus();
+    assert.deepEqual(new URL(browser.location.href).searchParams.getAll('q'), ['이전', '둘째']);
+    assert.equal(browser.location.hash, '#part');
+  } finally {
+    await browser.happyDOM.abort();
+  }
+});
+
+test('실시간 검색 대기 중 이력을 이동하면 이전 입력의 예약된 변경을 취소한다', { timeout: 3000 }, async () => {
+  const browser = setup(async () => ({ ok: true, json: async () => [
+    searchRow({ title: '예약된 검색', url: '/post/' }),
+  ] }), 'https://blog.test/about/?q=이전');
+  try {
+    await new Promise(resolve => setTimeout(resolve, 0));
+    browser.requestAnimationFrame = callback => { callback(); return 1; };
+    browser.history.pushState({ step: 2 }, '', '?q=현재');
+    browser.dispatchEvent(new browser.PopStateEvent('popstate'));
+    const input = browser.document.querySelector('#search-input');
+    input.value = '예약된 검색';
+    input.dispatchEvent(new browser.Event('input', { bubbles: true }));
+    const restored = new Promise(resolve => browser.addEventListener('popstate', resolve, { once: true }));
+    browser.history.back();
+    await restored;
+    await new Promise(resolve => setTimeout(resolve, 350));
+    assert.equal(new URL(browser.location.href).searchParams.get('q'), '이전');
+    assert.equal(input.value, '이전');
+  } finally {
+    await browser.happyDOM.abort();
+  }
+});
+
 test('이미 표시된 검색어를 제출해도 결과 포커스와 제출 기록이 유지된다', async () => {
   const browser = setup(async () => ({ ok: true, json: async () => [
     searchRow({ title: '물리', url: '/physics/' }),
@@ -811,11 +1033,11 @@ test('이미 표시된 검색어를 제출해도 결과 포커스와 제출 기�
     assert.ok(submission.defaultPrevented, '인덱스가 있으면 검색 제출을 처리한다');
     assert.ok(browser.document.activeElement === link, '기존 검색 결과에 포커스가 이동한다');
     assert.equal(frames.length, 0, '바뀌지 않은 결과를 다시 생성하지 않는다');
-    assert.equal(browser.history.length, historyLength + 1, '명시적인 제출을 방문 기록에 남긴다');
+    assert.equal(browser.history.length, historyLength, '입력 중 생성한 이력을 제출로 확정한다');
     assert.equal(new URL(browser.location.href).searchParams.get('q'), '물리');
     assert.ok(results.contains(link), '포커스된 링크가 문서에 남는다');
     form.dispatchEvent(new browser.Event('submit', { bubbles: true, cancelable: true }));
-    assert.equal(browser.history.length, historyLength + 1, '같은 검색어를 다시 제출해도 중복 기록은 만들지 않는다');
+    assert.equal(browser.history.length, historyLength, '같은 검색어를 다시 제출해도 중복 기록은 만들지 않는다');
   } finally {
     await browser.happyDOM.abort();
   }
@@ -840,10 +1062,10 @@ test('실시간 검색 후 제출하면 이전 주소로 한 번에 돌아가고
     assert.equal(new URL(browser.location.href).searchParams.get('q'), '물리');
     const beforeLength = browser.history.length;
     form.dispatchEvent(new browser.Event('submit', { bubbles: true, cancelable: true }));
-    assert.equal(browser.history.length, beforeLength + 1);
+    assert.equal(browser.history.length, beforeLength);
     assert.equal(browser.history.state.marker, '유지');
     form.dispatchEvent(new browser.Event('submit', { bubbles: true, cancelable: true }));
-    assert.equal(browser.history.length, beforeLength + 1);
+    assert.equal(browser.history.length, beforeLength);
 
     const navigate = method => new Promise(resolve => {
       browser.addEventListener('popstate', resolve, { once: true });
@@ -925,7 +1147,7 @@ test('검색을 다시 수정해 제출하면 이전 검색어와 최신 검색�
   }
 });
 
-test('검색어를 지우거나 원래 검색어로 되돌리면 제출 기록을 중복 생성하지 않는다', { timeout: 3000 }, async () => {
+test('검색 초안을 원래 검색어로 되돌리면 이력 항목 하나가 남지만 제출이 추가 항목을 만들지 않는다', { timeout: 3000 }, async () => {
   for (const initialQuery of ['', '수학']) {
     const url = new URL('https://blog.test/about/?source=guide');
     if (initialQuery) url.searchParams.set('q', initialQuery);
@@ -952,7 +1174,7 @@ test('검색어를 지우거나 원래 검색어로 되돌리면 제출 기록�
       } else {
         form.dispatchEvent(new browser.Event('submit', { bubbles: true, cancelable: true }));
       }
-      assert.equal(browser.history.length, length);
+      assert.equal(browser.history.length, length + 1, '이미 추가된 초안 이력은 History API로 삭제할 수 없다');
       assert.equal(new URL(browser.location.href).searchParams.get('q') || '', initialQuery);
       assert.equal(new URL(browser.location.href).searchParams.get('source'), 'guide');
     } finally {
@@ -998,7 +1220,7 @@ test('기존 검색어를 지우고 제출하면 뒤로 가기로 이전 검색�
   }
 });
 
-test('초기 검색어가 비어 있으면 빈 제출과 입력 후 지우기는 이력을 추가하지 않는다', { timeout: 3000 }, async () => {
+test('초기 빈 제출은 이력을 추가하지 않고 적용된 초안의 취소는 중복 항목 하나를 남긴다', { timeout: 3000 }, async () => {
   const browser = setup(async () => ({ ok: true, json: async () => [
     searchRow({ title: '수학', url: '/math/' }),
   ] }));
@@ -1018,7 +1240,7 @@ test('초기 검색어가 비어 있으면 빈 제출과 입력 후 지우기는
     input.value = '';
     input.dispatchEvent(new browser.Event('input', { bubbles: true }));
     form.dispatchEvent(new browser.Event('submit', { bubbles: true, cancelable: true }));
-    assert.equal(browser.history.length, length);
+    assert.equal(browser.history.length, length + 1, '적용된 초안이 원래 주소로 돌아오면 동일 주소 항목이 남는다');
     assert.equal(new URL(browser.location.href).searchParams.has('q'), false);
   } finally {
     await browser.happyDOM.abort();

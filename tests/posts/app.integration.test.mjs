@@ -827,11 +827,12 @@ function installBrowser(url) {
   };
 }
 
-async function mountPostsApp(browser, fallbackPosts, fetchImpl, categoryLabels = new Map([['mathematics_philosophy_history', '수학·철학사']]), expectedPagePaths = [], searchIndexUrl = '/search.json', expectedAchievementPaths = [], achievementsUrl = '/achievements/') {
+async function mountPostsApp(browser, fallbackPosts, fetchImpl, categoryLabels = new Map([['mathematics_philosophy_history', '수학·철학사']]), expectedPagePaths = [], searchIndexUrl = '/search.json', expectedAchievementPaths = [], achievementsUrl = '/achievements/', beforeMount = () => {}) {
   browser.document.body.innerHTML = '<div id="mount" hidden></div><section id="fallback"><p>정적 글 목록</p></section>';
   browser.fetch = fetchImpl;
   const rootElement = browser.document.getElementById('mount');
   const fallbackElement = browser.document.getElementById('fallback');
+  beforeMount({ browser, rootElement, fallbackElement });
   const [{ createRoot }, { PostsApp, PostsAppBoundary }] = await Promise.all([
     import('react-dom/client'),
     import('../../build/tests/frontend/posts/PostsApp.js'),
@@ -856,6 +857,188 @@ async function mountPostsApp(browser, fallbackPosts, fetchImpl, categoryLabels =
 
   return { root, rootElement, fallbackElement };
 }
+
+test('정적 목록을 키보드로 사용하는 동안 동적 전환을 기다리고 목록 밖의 포커스는 유지한다', async () => {
+  const cleanup = installBrowser('https://blog.test/posts/?q=needle&page=2');
+  const browser = globalThis.window;
+  let mounted;
+  try {
+    mounted = await mountPostsApp(browser, posts, async () => ({ ok: true, json: async () => indexedRows }), undefined, [], undefined, [], undefined,
+      ({ fallbackElement }) => {
+        fallbackElement.innerHTML = '<a href="/posts/unmatched/">검색 조건과 무관한 글</a><a href="/achievements/">성과 목록</a>';
+        browser.document.body.insertAdjacentHTML('beforeend', '<a id="outside" href="/feed.xml">피드</a>');
+        fallbackElement.querySelector('a').focus();
+      });
+    const [first, second] = mounted.fallbackElement.querySelectorAll('a');
+    assert.equal(browser.document.activeElement, first);
+    assert.equal(mounted.fallbackElement.hidden, false, '사용 중인 정적 목록을 숨기지 않는다');
+    assert.equal(mounted.rootElement.hidden, true, '중복된 목록을 동시에 노출하지 않는다');
+    assert.notEqual(mounted.fallbackElement.getAttribute('aria-hidden'), 'true');
+    assert.equal(mounted.fallbackElement.inert, false);
+    assert.match(mounted.fallbackElement.querySelector('[role="status"]').textContent, /검색 화면이 준비.*목록을 계속 이용/);
+    await act(async () => { second.focus(); await Promise.resolve(); });
+    assert.equal(browser.document.activeElement, second);
+    assert.equal(mounted.fallbackElement.hidden, false, '목록 내부의 다음 링크로 이동해도 유지한다');
+    const click = new browser.MouseEvent('click', { bubbles: true, cancelable: true });
+    assert.equal(second.dispatchEvent(click), true, '정적 링크의 기본 탐색을 가로채지 않는다');
+    const outside = browser.document.getElementById('outside');
+    await act(async () => { outside.focus(); await Promise.resolve(); });
+    assert.equal(browser.document.activeElement, outside, '사용자가 옮긴 포커스를 빼앗지 않는다');
+    assert.equal(mounted.fallbackElement.hidden, true);
+    assert.equal(mounted.rootElement.hidden, false);
+    assert.equal(mounted.fallbackElement.querySelector('[role="status"]'), null, '전환 안내를 정리한다');
+    assert.equal(mounted.rootElement.querySelector('#react-posts-search-input').value, 'needle');
+  } finally {
+    if (mounted) await act(async () => mounted.root.unmount());
+    await cleanup();
+  }
+});
+
+test('정적 목록의 검색 화면 열기는 사용자가 선택했을 때만 검색 입력으로 이동한다', async () => {
+  const cleanup = installBrowser('https://blog.test/posts/?q=needle');
+  const browser = globalThis.window;
+  let mounted;
+  try {
+    mounted = await mountPostsApp(browser, posts, async () => ({ ok: true, json: async () => indexedRows }), undefined, [], undefined, [], undefined,
+      ({ fallbackElement }) => {
+        fallbackElement.innerHTML = '<a href="/posts/first/">글</a>';
+        fallbackElement.querySelector('a').focus();
+      });
+    const button = [...mounted.fallbackElement.querySelectorAll('button')].find(item => item.textContent === '검색 화면 열기');
+    assert.ok(button);
+    await act(async () => { button.focus(); await Promise.resolve(); });
+    assert.equal(browser.document.activeElement, button);
+    assert.equal(mounted.fallbackElement.hidden, false, '버튼으로 이동만 한 상태에서는 목록을 숨기지 않는다');
+    await act(async () => { button.click(); await Promise.resolve(); });
+    assert.equal(mounted.rootElement.hidden, false);
+    assert.equal(mounted.fallbackElement.hidden, true);
+    assert.equal(browser.document.activeElement, mounted.rootElement.querySelector('#react-posts-search-input'));
+    assert.equal(browser.document.activeElement.value, 'needle');
+  } finally {
+    if (mounted) await act(async () => mounted.root.unmount());
+    await cleanup();
+  }
+});
+
+test('정적 본문을 마우스로 선택해 포커스가 body로 옮겨져도 읽는 목록을 유지한다', async () => {
+  const cleanup = installBrowser('https://blog.test/posts/');
+  const browser = globalThis.window;
+  let mounted;
+  try {
+    mounted = await mountPostsApp(browser, posts, async () => ({ ok: true, json: async () => indexedRows }), undefined, [], undefined, [], undefined,
+      ({ fallbackElement }) => {
+        fallbackElement.innerHTML = '<a href="/posts/first/">글</a><p>선택할 본문</p>';
+        browser.document.body.insertAdjacentHTML('beforeend', '<button id="outside">다른 조작</button>');
+        fallbackElement.querySelector('a').focus();
+      });
+    const link = mounted.fallbackElement.querySelector('a');
+    await act(async () => { link.blur(); await Promise.resolve(); });
+    assert.equal(browser.document.activeElement, browser.document.body);
+    assert.equal(mounted.fallbackElement.hidden, false, '텍스트 선택이나 창 전환으로 목록을 없애지 않는다');
+    assert.equal(mounted.rootElement.hidden, true);
+    await act(async () => { browser.document.getElementById('outside').focus(); await Promise.resolve(); });
+    assert.equal(mounted.fallbackElement.hidden, true, '이후 바깥 조작으로 이동하면 정상 전환한다');
+    assert.equal(browser.document.activeElement.id, 'outside');
+  } finally {
+    if (mounted) await act(async () => mounted.root.unmount());
+    await cleanup();
+  }
+});
+
+test('정적 목록 밖으로 이동했다가 즉시 돌아오면 대기 상태를 유지한다', async () => {
+  const cleanup = installBrowser('https://blog.test/posts/');
+  const browser = globalThis.window;
+  let mounted;
+  try {
+    mounted = await mountPostsApp(browser, posts, async () => ({ ok: true, json: async () => indexedRows }), undefined, [], undefined, [], undefined,
+      ({ fallbackElement }) => {
+        fallbackElement.innerHTML = '<a href="/posts/first/">글</a>';
+        browser.document.body.insertAdjacentHTML('beforeend', '<button id="outside">다른 조작</button>');
+        fallbackElement.querySelector('a').focus();
+      });
+    const link = mounted.fallbackElement.querySelector('a');
+    await act(async () => {
+      browser.document.getElementById('outside').focus();
+      link.focus();
+      await Promise.resolve();
+    });
+    assert.equal(browser.document.activeElement, link);
+    assert.equal(mounted.fallbackElement.hidden, false);
+    assert.equal(mounted.rootElement.hidden, true);
+  } finally {
+    if (mounted) await act(async () => mounted.root.unmount());
+    await cleanup();
+  }
+});
+
+test('색인 오류가 나도 정적 목록의 포커스는 유지되고 벗어난 뒤 재시도할 수 있다', async () => {
+  const cleanup = installBrowser('https://blog.test/posts/?q=needle');
+  const browser = globalThis.window;
+  let mounted;
+  try {
+    mounted = await mountPostsApp(browser, posts, async () => { throw new Error('offline'); }, undefined, [], undefined, [], undefined,
+      ({ fallbackElement }) => {
+        fallbackElement.innerHTML = '<a href="/posts/first/">글</a>';
+        browser.document.body.insertAdjacentHTML('beforeend', '<button id="outside">다른 조작</button>');
+        fallbackElement.querySelector('a').focus();
+      });
+    assert.equal(mounted.fallbackElement.hidden, false);
+    assert.equal(browser.document.activeElement, mounted.fallbackElement.querySelector('a'));
+    await act(async () => { browser.document.getElementById('outside').focus(); await Promise.resolve(); });
+    assert.equal(mounted.rootElement.hidden, false);
+    assert.ok(mounted.rootElement.querySelector('#react-posts-retry-search-index'));
+    assert.equal(browser.document.activeElement.id, 'outside');
+  } finally {
+    if (mounted) await act(async () => mounted.root.unmount());
+    await cleanup();
+  }
+});
+
+test('목록 전환 대기 중 앱이 제거되면 안내와 이벤트 처리를 정리한다', async () => {
+  const cleanup = installBrowser('https://blog.test/posts/');
+  const browser = globalThis.window;
+  let mounted;
+  try {
+    mounted = await mountPostsApp(browser, posts, async () => ({ ok: true, json: async () => indexedRows }), undefined, [], undefined, [], undefined,
+      ({ fallbackElement }) => {
+        fallbackElement.innerHTML = '<a href="/posts/first/">글</a>';
+        browser.document.body.insertAdjacentHTML('beforeend', '<button id="outside">다른 조작</button>');
+        fallbackElement.querySelector('a').focus();
+      });
+    await act(async () => {
+      // focusout 후 예약한 전환보다 제거가 먼저 일어나는 경계다.
+      browser.document.getElementById('outside').focus();
+      mounted.root.unmount();
+      await Promise.resolve();
+    });
+    assert.equal(mounted.fallbackElement.querySelector('[role="status"]'), null);
+    assert.equal(mounted.fallbackElement.hidden, false, '제거된 앱이 뒤늦게 폴백을 숨기지 않는다');
+    assert.equal(mounted.rootElement.hidden, true);
+    mounted = null;
+  } finally {
+    if (mounted) await act(async () => mounted.root.unmount());
+    await cleanup();
+  }
+});
+
+test('초기 포커스가 정적 목록 밖이면 동적 목록을 즉시 표시하고 포커스를 유지한다', async () => {
+  const cleanup = installBrowser('https://blog.test/posts/');
+  const browser = globalThis.window;
+  let mounted;
+  try {
+    mounted = await mountPostsApp(browser, posts, async () => ({ ok: true, json: async () => indexedRows }), undefined, [], undefined, [], undefined,
+      () => {
+        browser.document.body.insertAdjacentHTML('beforeend', '<button id="outside">다른 조작</button>');
+        browser.document.getElementById('outside').focus();
+      });
+    assert.equal(mounted.rootElement.hidden, false);
+    assert.equal(mounted.fallbackElement.hidden, true);
+    assert.equal(browser.document.activeElement.id, 'outside');
+  } finally {
+    if (mounted) await act(async () => mounted.root.unmount());
+    await cleanup();
+  }
+});
 
 test('검색어를 천천히 제출해도 뒤로·앞으로 이전 검색과 주소 상태를 복원한다', async () => {
   const cleanup = installBrowser('https://blog.test/');

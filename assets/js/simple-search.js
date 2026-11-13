@@ -28,9 +28,10 @@
     let suppressSearchFocus = false;
     let isComposing = false;
     let compositionCanceledByHistory = false;
-    let pendingIndexHistoryMode = 'replace';
+    // 초기 URL의 검색어를 표시하는 것은 이력 수정이 아닌 읽기 동작이다.
+    let pendingIndexHistoryMode = 'none';
     let pendingIndexTrackDraft = false;
-    let originalSearchParams = null;
+    let searchDraft = null;
     let categoryLabels = Object.create(null);
     let indexCompletenessUnknown = false;
     let currentResults = [];
@@ -322,7 +323,7 @@
         if (isComposing) compositionCanceledByHistory = true;
         pendingIndexHistoryMode = 'none';
         pendingIndexTrackDraft = false;
-        originalSearchParams = null;
+        searchDraft = null;
         searchInput.value = new URLSearchParams(window.location.search).get('q') || '';
         updateSearchInputState();
         const query = searchInput.value.trim();
@@ -411,7 +412,7 @@
             return;
         }
 
-        performSearch(query, { historyMode: 'replace', trackDraft: pendingIndexTrackDraft });
+        performSearch(query, { historyMode: pendingIndexTrackDraft ? 'replace' : 'none', trackDraft: pendingIndexTrackDraft });
     }
     
     // Handle form submission
@@ -837,13 +838,31 @@
         announceStatus('');
     }
     
+    function currentHistoryIdentity() {
+        try {
+            const entry = window.navigation?.currentEntry;
+            return entry && entry.key && entry.id ? { key: entry.key, id: entry.id } : null;
+        } catch {
+            return null;
+        }
+    }
+
+    function isCurrentDraft(draft) {
+        if (!draft || draft.href !== window.location.href) return false;
+        const identity = currentHistoryIdentity();
+        return !draft.identity || (!!identity && draft.identity.key === identity.key && draft.identity.id === identity.id);
+    }
+
+    function rememberDraft() {
+        searchDraft = { href: window.location.href, identity: currentHistoryIdentity() };
+    }
+
     // Update URL with search query
     function updateUrl(query, options = {}) {
         if (!history.pushState) return;
         
         const url = new URL(window.location);
         const before = url.href;
-        const originalValues = url.searchParams.getAll('q');
         
         if (query) {
             url.searchParams.set('q', query);
@@ -851,26 +870,20 @@
             url.searchParams.delete('q');
         }
         
+        if (searchDraft && !isCurrentDraft(searchDraft)) searchDraft = null;
         if (options.mode === 'push') {
-            if (originalSearchParams) {
-                const originalUrl = new URL(window.location);
-                originalUrl.searchParams.delete('q');
-                originalSearchParams.forEach(value => originalUrl.searchParams.append('q', value));
-                originalSearchParams = null;
-                if (originalUrl.href !== before) window.history.replaceState(window.history.state, '', originalUrl);
-                if (originalUrl.href !== url.href) window.history.pushState(window.history.state, '', url);
-            } else if (url.href !== before) {
-                window.history.pushState(window.history.state, '', url);
+            if (url.href !== before) {
+                if (searchDraft) window.history.replaceState(window.history.state, '', url);
+                else window.history.pushState(window.history.state, '', url);
             }
+            searchDraft = null;
             pendingIndexTrackDraft = false;
         } else {
             if (url.href === before) return;
-            if (options.trackDraft && originalSearchParams === null) originalSearchParams = originalValues;
-            window.history.replaceState(window.history.state, '', url);
-            if (originalSearchParams && originalSearchParams.length === (query ? 1 : 0)
-                && (!query || originalSearchParams[0] === query)) {
-                originalSearchParams = null;
-            }
+            if (options.trackDraft && !searchDraft) window.history.pushState(window.history.state, '', url);
+            else window.history.replaceState(window.history.state, '', url);
+            if (options.trackDraft) rememberDraft();
+            else searchDraft = null;
         }
     }
     
