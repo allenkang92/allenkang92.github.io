@@ -32,7 +32,7 @@ const POSTS_PER_PAGE = 10;
 const SEARCH_INPUT_DELAY_MS = 250;
 const SEARCH_INDEX_TIMEOUT_MS = 12000;
 const SCROLL_STATE_KEY = 'postsListState';
-const DYNAMIC_POST_CONTROL = '#react-posts-results a[href], #react-posts-results button, #react-posts-achievements-link, #react-posts-retry-search-index, #react-posts-restore-scroll, .posts-reset';
+const DYNAMIC_POST_CONTROL = '#react-posts-results a[href], #react-posts-results button, #react-posts-achievements-link, #react-posts-retry-search-index, #react-posts-restore-scroll, .posts-reset, .posts-scroll-location';
 
 function isUnavailableControl(control: HTMLElement): boolean {
   return !control.isConnected || control.matches(':disabled')
@@ -179,6 +179,9 @@ function readScrollState(): StoredScrollState | null {
 
 // 이동한 화면에 실제로 보이는 내용을 포커스해 키보드 사용자의 위치를 맞춘다.
 function focusVisibleScrollDestination(): void {
+  const focusableSelector = 'a[href], button, input, select, textarea, summary, [tabindex]';
+  // 컨테이너 자체에 포커스하면 화면 위쪽의 자식부터 Tab이 다시 시작될 수 있다.
+  const isLeaf = (element: HTMLElement) => !element.querySelector(focusableSelector);
   const candidates = Array.from(document.querySelectorAll<HTMLElement>(
     '#react-posts-list .post-preview h2 a, #react-posts-list .post-excerpt, #react-posts-pagination, footer',
   ));
@@ -189,17 +192,17 @@ function focusVisibleScrollDestination(): void {
     const rect = element.getBoundingClientRect();
     return rect.bottom > 0 && rect.top < window.innerHeight && rect.right > 0 && rect.left < window.innerWidth;
   };
-  const visible = candidates.filter(isVisible)
+  const visible = candidates.filter(element => isVisible(element) && isLeaf(element))
     .sort((left, right) => Math.abs(left.getBoundingClientRect().top) - Math.abs(right.getBoundingClientRect().top));
   const point = typeof document.elementFromPoint === 'function'
     ? document.elementFromPoint(Math.max(0, window.innerWidth / 2), Math.max(0, window.innerHeight / 2))
     : null;
   const pointTarget = point instanceof HTMLElement && point !== document.body
-    && point !== document.documentElement && isVisible(point) ? point : null;
+    && point !== document.documentElement && isVisible(point) && isLeaf(point) ? point : null;
   // 빈 공간을 클릭 위치로 선택했더라도 가능한 한 문서 순서 안의 실제 내용을 사용한다.
   const otherVisible = Array.from(document.querySelectorAll<HTMLElement>(
     'main a[href], main button, main p, main h1, main h2, main h3, main article, main nav, footer, footer a[href]',
-  )).filter(isVisible).sort((left, right) => Math.abs(left.getBoundingClientRect().top) - Math.abs(right.getBoundingClientRect().top));
+  )).filter(element => isVisible(element) && isLeaf(element)).sort((left, right) => Math.abs(left.getBoundingClientRect().top) - Math.abs(right.getBoundingClientRect().top));
   const target = visible[0] || pointTarget || otherVisible[0];
   if (target) {
     const previousTabIndex = target.getAttribute('tabindex');
@@ -217,13 +220,27 @@ function focusVisibleScrollDestination(): void {
     cleanup();
   }
   // 화면에 보이는 본문 요소를 찾지 못한 드문 경우에도 포커스를 화면 안에 둔다.
-  const marker = document.createElement('div');
+  const marker = document.createElement('span');
   marker.className = 'posts-scroll-location posts-restore-focus';
   marker.tabIndex = -1;
   marker.textContent = '이동한 위치';
   marker.addEventListener('blur', () => marker.remove(), { once: true });
-  const footer = document.querySelector('footer');
-  if (footer?.parentNode) footer.parentNode.insertBefore(marker, footer);
+  // 다음 조작 대상 앞에 두어, 고정 위치에 보이는 표식에서 Tab을 누를 때
+  // 화면 뒤쪽 본문을 건너뛰고 푸터로 이동하지 않도록 한다.
+  const following = Array.from(document.querySelectorAll<HTMLElement>(
+    'main a[href], main button, main input, main select, main textarea, main summary, main [tabindex], footer a[href], footer button, footer input, footer select, footer textarea, footer summary, footer [tabindex]',
+  )).filter(element => {
+    if (isUnavailableControl(element) || element.tabIndex < 0) return false;
+    const style = window.getComputedStyle(element);
+    const rect = element.getBoundingClientRect();
+    return style.display !== 'none' && style.visibility !== 'hidden' && style.visibility !== 'collapse'
+      && rect.bottom > 0 && rect.right > 0 && rect.left < window.innerWidth
+      && rect.right > rect.left && rect.bottom > rect.top;
+  }).sort((left, right) => left.getBoundingClientRect().top - right.getBoundingClientRect().top)[0];
+  // 제목·레이블 등 안에 표식을 넣으면 접근 가능한 이름이 일시적으로 바뀐다.
+  const namingAncestor = following?.parentElement?.closest('h1, h2, h3, h4, h5, h6, label, legend, summary, a, button');
+  const insertionPoint = namingAncestor || following || document.querySelector('footer');
+  if (insertionPoint?.parentNode) insertionPoint.parentNode.insertBefore(marker, insertionPoint);
   else document.body.append(marker);
   marker.focus({ preventScroll: true });
   if (document.activeElement !== marker) marker.remove();

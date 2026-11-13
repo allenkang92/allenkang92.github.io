@@ -356,6 +356,105 @@ test('보이는 본문을 찾지 못하면 위치 표식에 포커스하고 벗�
   }
 });
 
+test('빈 화면의 위치 표식은 화면 다음 조작 대상 앞에 놓이고 제목 이름을 바꾸지 않는다', async () => {
+  const cleanup = installBrowser('https://blog.test/posts/?q=needle');
+  const browser = globalThis.window;
+  const scroll = installScrollHarness(browser, 900);
+  let mounted;
+  try {
+    saveTestScroll(browser);
+    mounted = await mountPostsApp(browser, posts, async () => ({ ok: true, json: async () => indexedRows }));
+    const main = browser.document.createElement('main');
+    mounted.rootElement.before(main);
+    main.append(mounted.rootElement);
+    const footer = browser.document.createElement('footer');
+    footer.innerHTML = '<a href="/footer/">푸터 링크</a>';
+    browser.document.body.append(footer);
+    const links = mounted.rootElement.querySelectorAll('#react-posts-list .post-preview h2 a');
+    assert.ok(links.length >= 2);
+    const next = links[1];
+    const heading = next.closest('h2');
+    const title = heading.textContent;
+    links[0].closest('.post-preview').hidden = true;
+    links[0].getBoundingClientRect = () => ({ top: 650, bottom: 675, left: 10, right: 300, width: 290, height: 25 });
+    next.getBoundingClientRect = () => ({ top: 700, bottom: 725, left: 10, right: 300, width: 290, height: 25 });
+    footer.querySelector('a').getBoundingClientRect = () => ({ top: 900, bottom: 925, left: 10, right: 300, width: 290, height: 25 });
+    main.getBoundingClientRect = () => ({ top: -100, bottom: 1000, left: 0, right: 500, width: 500, height: 1100 });
+    browser.document.elementFromPoint = () => main;
+    await act(async () => { restoreButton(mounted).click(); });
+    await scroll.flush();
+    const marker = browser.document.querySelector('.posts-scroll-location');
+    assert.ok(marker && browser.document.activeElement === marker, '공통 본문 대신 표식에 포커스한다');
+    assert.ok(marker.nextElementSibling === heading, '숨겨진 링크는 건너뛰고 화면 다음 제목 앞에 둔다');
+    assert.equal(heading.textContent, title, '임시 표식이 제목 이름에 섞이지 않는다');
+    assert.ok(marker.compareDocumentPosition(footer.querySelector('a')) & browser.Node.DOCUMENT_POSITION_FOLLOWING);
+    await act(async () => mounted.root.unmount());
+    mounted = null;
+    assert.equal(marker.isConnected, false, 'React 결과를 제거해도 표식이 남지 않는다');
+  } finally {
+    if (mounted) await act(async () => mounted.root.unmount());
+    await cleanup();
+  }
+});
+
+test('다음 대상이 레이블 안에 있으면 위치 표식은 레이블 이름 밖에 둔다', async () => {
+  const cleanup = installBrowser('https://blog.test/posts/?q=needle');
+  const browser = globalThis.window;
+  installScrollHarness(browser, 900);
+  let mounted;
+  try {
+    saveTestScroll(browser);
+    mounted = await mountPostsApp(browser, posts, async () => ({ ok: true, json: async () => indexedRows }));
+    const main = browser.document.createElement('main');
+    mounted.rootElement.before(main);
+    main.append(mounted.rootElement);
+    const label = browser.document.createElement('label');
+    label.innerHTML = '다음 입력 <input type="text">';
+    main.append(label);
+    const input = label.querySelector('input');
+    input.getBoundingClientRect = () => ({ top: 700, bottom: 725, left: 10, right: 300, width: 290, height: 25 });
+    await act(async () => { restoreButton(mounted).click(); });
+    const marker = browser.document.querySelector('.posts-scroll-location');
+    assert.ok(marker && browser.document.activeElement === marker);
+    assert.ok(marker.nextElementSibling === label, '레이블 안에 임시 문구를 넣지 않는다');
+    assert.equal(label.textContent, '다음 입력 ');
+    input.focus();
+    assert.equal(browser.document.querySelector('.posts-scroll-location'), null);
+  } finally {
+    if (mounted) await act(async () => mounted.root.unmount());
+    await cleanup();
+  }
+});
+
+test('표식에 포커스한 뒤 이력 이동으로 결과가 사라지면 검색 입력으로 복구한다', async () => {
+  const cleanup = installBrowser('https://blog.test/posts/?q=needle');
+  const browser = globalThis.window;
+  installScrollHarness(browser, 900);
+  let mounted;
+  try {
+    saveTestScroll(browser);
+    mounted = await mountPostsApp(browser, posts, async () => ({ ok: true, json: async () => indexedRows }));
+    const main = browser.document.createElement('main');
+    mounted.rootElement.before(main);
+    main.append(mounted.rootElement);
+    const next = mounted.rootElement.querySelector('#react-posts-list .post-preview h2 a');
+    next.getBoundingClientRect = () => ({ top: 700, bottom: 725, left: 10, right: 300, width: 290, height: 25 });
+    await act(async () => { restoreButton(mounted).click(); });
+    const marker = browser.document.querySelector('.posts-scroll-location');
+    assert.ok(marker && browser.document.activeElement === marker);
+    await act(async () => {
+      browser.history.pushState({}, '', '/posts/?q=없는검색어');
+      browser.dispatchEvent(new browser.PopStateEvent('popstate'));
+    });
+    assert.equal(marker.isConnected, false, '사라진 결과의 표식을 제거한다');
+    assert.ok(browser.document.activeElement === mounted.rootElement.querySelector('#react-posts-search-input'), '이력으로 결과가 사라지면 입력란에 포커스를 복구한다');
+    assert.equal(mounted.fallbackElement.hidden, true, 'React 갱신 오류로 정적 폴백에 진입하지 않는다');
+  } finally {
+    if (mounted) await act(async () => mounted.root.unmount());
+    await cleanup();
+  }
+});
+
 test('검색 조건이나 이력 변경 후 일치하지 않는 저장 위치는 이용할 수 없다', async () => {
   for (const action of ['sort', 'history']) {
     const cleanup = installBrowser('https://blog.test/posts/?q=needle');
