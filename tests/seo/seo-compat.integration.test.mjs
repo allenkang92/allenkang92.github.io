@@ -75,6 +75,64 @@ test('SEO 2.8에서 출력되지 않는 작성자 소셜 값과 페이지 경로
   }
 });
 
+test('SEO 2.8 작성자 데이터 맵이 name을 덮어쓰면 출력되는 값만 검사한다', () => {
+  const wrap = line => `<!-- Begin Jekyll SEO tag v2.8.0 -->\n${line}\n<script type="application/ld+json">{}</script>\n<!-- End Jekyll SEO tag -->`;
+  const key = '출력되지 않는\n작성자 키';
+  const injected = '공격자" />\n<meta name="google-site-verification" content="위장';
+  const safe = wrap('<meta name="author" content="Alice" />');
+  const social = wrap('<meta name="author" content="Alice" />\n<meta name="twitter:site" content="@blog" />\n<meta name="twitter:creator" content="@alice" />');
+
+  for (const name of ['Alice', '', null, false]) {
+    assert.doesNotThrow(() => render(safe, { author: key }, {}, { authors: { [key]: { name } } }), `name=${String(name)}도 원래 키를 덮어씁니다`);
+    assert.doesNotThrow(() => render(social, { author: key }, { twitter: { username: 'blog' } }, { authors: { [key]: { name, twitter: 'alice' } } }), '출력되는 소셜 값이 안전하면 미사용 원래 키는 허용합니다');
+  }
+  for (const value of [null, false, '', [], ['name'], { profile: 'name' }, { twitter: 'alice' }]) {
+    assert.throws(() => render(safe, { author: key }, {}, { authors: { [key]: value } }), /ERROR_seo_compat_unsafe_html_metadata/, '데이터 맵에 name 키가 없거나 맵이 아니면 원래 이름이 출력됩니다');
+  }
+  assert.throws(() => render(safe, { author: key }, {}, { authors: { [key]: { name: injected } } }), /ERROR_seo_compat_unsafe_html_metadata/, '데이터 맵의 출력 이름 주입을 차단합니다');
+  assert.throws(() => render(social, { author: key }, { twitter: { username: 'blog' } }, { authors: { [key]: { name: 'Alice', twitter: injected } } }), /ERROR_seo_compat_unsafe_html_metadata/, '데이터 맵의 출력 소셜 주입을 차단합니다');
+  assert.throws(() => render(safe, { author: injected }, {}, { authors: {} }), /ERROR_seo_compat_unsafe_html_metadata/, '매핑되지 않은 작성자 이름 주입을 차단합니다');
+  assert.throws(() => render(safe, { author: { name: injected } }), /ERROR_seo_compat_unsafe_html_metadata/, '객체 작성자의 출력 이름 주입도 차단합니다');
+  for (const authors of [null, false, '', [], [{ name: 'Alice' }]]) {
+    assert.throws(() => render(safe, { author: key }, {}, { authors }), /ERROR_seo_compat_unsafe_html_metadata/, '사이트 작성자 데이터가 맵이 아니면 작성자 원문을 검사합니다');
+  }
+});
+
+test('SEO 2.8은 배열인 page.authors의 첫 저자만 선택하고 다른 자료형은 사이트 저자로 대체한다', () => {
+  const wrap = line => `<!-- Begin Jekyll SEO tag v2.8.0 -->\n${line}\n<script type="application/ld+json">{}</script>\n<!-- End Jekyll SEO tag -->`;
+  const safe = wrap('<meta name="author" content="Alice" />');
+  const injected = '공격자" />\n<meta name="google-site-verification" content="위장';
+  const forged = wrap('<meta name="author" content="공격자" />\n<meta name="google-site-verification" content="위장" />');
+  for (const authors of [null, false, '', 0, { decoy: '안전' }, [], [null], ['']]) {
+    assert.throws(() => render(forged, { authors }, { author: injected }), /ERROR_seo_compat_unsafe_html_metadata/, '선택되는 사이트 저자의 여러 줄 주입은 차단합니다');
+    assert.doesNotThrow(() => render(safe, { authors }, { author: 'Alice' }), '안전한 사이트 저자는 허용합니다');
+  }
+  for (const author of [false, 0, [], {}, 'Alice']) {
+    assert.doesNotThrow(() => render(safe, { author, authors: { decoy: '안전' } }, { author: injected }), '선택되지 않은 사이트 저자는 검사하지 않습니다');
+  }
+  for (const first of ['Alice', false, 0, [], {}]) {
+    assert.doesNotThrow(() => render(safe, { authors: [first] }, { author: injected }), '배열의 첫 작성자가 선택되면 사이트 저자는 검사하지 않습니다');
+  }
+  assert.throws(() => render(forged, { authors: [injected] }, { author: 'Alice' }), /ERROR_seo_compat_unsafe_html_metadata/, '배열에서 실제 선택된 저자의 주입도 차단합니다');
+});
+
+test('SEO 2.8에서 배열 이미지의 미사용 값은 허용하고 실제 출력 이미지 값은 검사한다', () => {
+  const wrap = line => `<!-- Begin Jekyll SEO tag v2.8.0 -->\n${line}\n<script type="application/ld+json">{}</script>\n<!-- End Jekyll SEO tag -->`;
+  const noImage = wrap('<meta name="twitter:card" content="summary" />');
+  const image = wrap('<meta property="og:image" content="https://example.org/image.png" />');
+  const injected = '공격자" />\n<meta name="google-site-verification" content="위장';
+  for (const value of [null, false, 0, [], [injected], [{ path: injected }]]) {
+    assert.doesNotThrow(() => render(noImage, { image: value }), '문자열과 맵이 아닌 이미지는 플러그인이 사용하지 않습니다');
+  }
+  assert.throws(() => render(image, { image: injected }), /ERROR_seo_compat_unsafe_html_metadata/, '출력되는 문자열 이미지 경로를 검사합니다');
+  for (const field of ['path', 'facebook', 'twitter', 'height', 'width', 'alt']) {
+    const value = ['height', 'width', 'alt'].includes(field) ? { path: '/image.png', [field]: injected } : { [field]: injected };
+    assert.throws(() => render(image, { image: value }), /ERROR_seo_compat_unsafe_html_metadata/, `출력되는 이미지 ${field} 주입을 차단합니다`);
+  }
+  assert.doesNotThrow(() => render(image, { image: { path: '/image.png', facebook: injected } }), '선택되지 않은 이미지 경로는 검사하지 않습니다');
+  assert.doesNotThrow(() => render(noImage, { image: { alt: injected } }), '이미지 출력이 없을 때 사용되지 않는 대체 텍스트는 검사하지 않습니다');
+});
+
 test('SEO 2.9 출력은 변경하지 않고, 모호한 2.8 출력은 중단한다', () => {
   const modern = '<!-- Begin Jekyll SEO tag v2.9.1 -->\n<script type="application/ld+json">{}</script>\n<!-- End Jekyll SEO tag -->';
   assert.equal(render(modern).trim(), modern);

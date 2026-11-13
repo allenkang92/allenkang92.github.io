@@ -5,7 +5,10 @@
   JSON에서 두 역슬래시를 제거하면 문자 그대로의 역슬래시+n은 허용된다.
 {%- endcomment -%}
 {%- assign page_author_json = page.author | jsonify -%}
-{%- assign first_author_json = page.authors.first | jsonify -%}
+{%- assign page_authors_json = page.authors | jsonify -%}
+{%- assign page_authors_type = page_authors_json | slice: 0, 1 -%}
+{%- assign first_author_json = 'null' -%}
+{%- if page_authors_type == '[' -%}{%- assign first_author_json = page.authors.first | jsonify -%}{%- endif -%}
 {%- if page_author_json != 'null' and page_author_json != '""' -%}
   {%- assign selected_author = page.author -%}
 {%- elsif first_author_json != 'null' and first_author_json != '""' -%}
@@ -25,8 +28,18 @@
     {{- selected_author.name | jsonify -}}
     {%- if site.twitter -%}{{- selected_author.twitter | jsonify -}}{%- endif -%}
   {%- else -%}
-    {{- selected_author_json -}}{{- site.data.authors[selected_author].name | jsonify -}}
-    {%- if site.twitter -%}{{- site.data.authors[selected_author].twitter | jsonify -}}{%- endif -%}
+    {%- assign selected_author_data = site.data.authors[selected_author] -%}
+    {%- assign authors_data_json = site.data.authors | jsonify -%}
+    {%- assign authors_data_type = authors_data_json | slice: 0, 1 -%}
+    {%- assign selected_author_data_json = selected_author_data | jsonify -%}
+    {%- assign selected_author_data_type = selected_author_data_json | slice: 0, 1 -%}
+    {%- comment -%}2.8은 문자열 저자의 데이터 맵에 name 키가 있으면 null이나 false도 원래 이름을 덮는다.{%- endcomment -%}
+    {%- if selected_author_type == '"' and authors_data_type == '{' and selected_author_data_type == '{' and selected_author_data contains 'name' -%}
+      {{- selected_author_data.name | jsonify -}}
+    {%- else -%}
+      {{- selected_author_json -}}{{- selected_author_data.name | jsonify -}}
+    {%- endif -%}
+    {%- if site.twitter -%}{{- selected_author_data.twitter | jsonify -}}{%- endif -%}
   {%- endif -%}
   {%- assign image_json = page.image | jsonify -%}
   {%- assign image_type = image_json | slice: 0, 1 -%}
@@ -38,7 +51,7 @@
     {%- if include.source contains '<meta property="og:image" content="' -%}
       {{- page.image.height | jsonify -}}{{- page.image.width | jsonify -}}{{- page.image.alt | jsonify -}}
     {%- endif -%}
-  {%- else -%}{{- image_json -}}{%- endif -%}
+  {%- elsif image_type == '"' -%}{{- image_json -}}{%- endif -%}
   {%- if site.url -%}
     {%- assign canonical_json = page.canonical_url | jsonify -%}
     {%- if canonical_json == 'null' or canonical_json == '""' -%}{{- page.url | jsonify -}}
