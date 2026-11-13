@@ -21,8 +21,13 @@
 {%- if selected_locale == nil or selected_locale == false -%}{%- assign selected_locale = site.lang -%}{%- endif -%}
 {%- assign selected_card = page.twitter.card | default: site.twitter.card | default: 'summary_large_image' -%}
 {%- capture legacy_inputs -%}
-  {%- if selected_author_type == '{' -%}{{- selected_author.name | jsonify -}}{{- selected_author.twitter | jsonify -}}
-  {%- else -%}{{- selected_author_json -}}{{- site.data.authors[selected_author].name | jsonify -}}{{- site.data.authors[selected_author].twitter | jsonify -}}{%- endif -%}
+  {%- if selected_author_type == '{' -%}
+    {{- selected_author.name | jsonify -}}
+    {%- if site.twitter -%}{{- selected_author.twitter | jsonify -}}{%- endif -%}
+  {%- else -%}
+    {{- selected_author_json -}}{{- site.data.authors[selected_author].name | jsonify -}}
+    {%- if site.twitter -%}{{- site.data.authors[selected_author].twitter | jsonify -}}{%- endif -%}
+  {%- endif -%}
   {%- assign image_json = page.image | jsonify -%}
   {%- assign image_type = image_json | slice: 0, 1 -%}
   {%- if image_type == '{' -%}
@@ -34,7 +39,11 @@
       {{- page.image.height | jsonify -}}{{- page.image.width | jsonify -}}{{- page.image.alt | jsonify -}}
     {%- endif -%}
   {%- else -%}{{- image_json -}}{%- endif -%}
-  {{- page.canonical_url | jsonify -}}{{- page.url | jsonify -}}
+  {%- if site.url -%}
+    {%- assign canonical_json = page.canonical_url | jsonify -%}
+    {%- if canonical_json == 'null' or canonical_json == '""' -%}{{- page.url | jsonify -}}
+    {%- else -%}{{- canonical_json -}}{%- endif -%}
+  {%- endif -%}
   {{- selected_locale | jsonify -}}
   {%- if include.source contains '<meta property="og:image" content="' -%}{{- selected_card | jsonify -}}{%- endif -%}
   {{- site.twitter.username | jsonify -}}
@@ -43,7 +52,9 @@
     {{- site.webmaster_verifications.google | jsonify -}}{{- site.webmaster_verifications.bing | jsonify -}}{{- site.webmaster_verifications.alexa | jsonify -}}
     {{- site.webmaster_verifications.yandex | jsonify -}}{{- site.webmaster_verifications.baidu | jsonify -}}{{- site.webmaster_verifications.facebook | jsonify -}}
   {%- else -%}{{- site.google_site_verification | jsonify -}}{%- endif -%}
-  {{- site.url | jsonify -}}{{- site.baseurl | jsonify -}}{{- paginator.previous_page_path | jsonify -}}{{- paginator.next_page_path | jsonify -}}
+  {{- site.url | jsonify -}}{{- site.baseurl | jsonify -}}
+  {%- if paginator.previous_page -%}{{- paginator.previous_page_path | jsonify -}}{%- endif -%}
+  {%- if paginator.next_page -%}{{- paginator.next_page_path | jsonify -}}{%- endif -%}
 {%- endcapture -%}
 {%- assign legacy_input_escapes = legacy_inputs | replace: '\\', '' -%}
 {%- if legacy_input_escapes contains '\n' or legacy_input_escapes contains '\r' -%}

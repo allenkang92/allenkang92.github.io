@@ -8,14 +8,16 @@ payload = JSON.parse(STDIN.read)
 config = Jekyll.configuration('source' => Dir.pwd, 'destination' => '/tmp/seo-compat-test-unused', 'quiet' => true)
 config.merge!(payload.fetch('site'))
 site = Jekyll::Site.new(config)
+site.data['authors'] = payload['authors'] if payload.key?('authors')
 context = Liquid::Context.new(site.site_payload, {}, { :site => site })
 context['input'] = payload.fetch('source')
 context['page'] = payload.fetch('page')
+context['paginator'] = payload['paginator'] if payload.key?('paginator')
 puts Liquid::Template.parse('{% include seo-compat.html source=input %}').render!(context)`;
 
-function render(source, page = {}, site = {}) {
+function render(source, page = {}, site = {}, options = {}) {
   const result = spawnSync(process.env.BUNDLE_BIN || 'bundle', ['exec', 'ruby', '-e', ruby], {
-    input: JSON.stringify({ source, page, site }), encoding: 'utf8', cwd: process.cwd(),
+    input: JSON.stringify({ source, page, site, ...options }), encoding: 'utf8', cwd: process.cwd(),
   });
   if (result.error) throw result.error;
   if (result.status !== 0) throw new Error(result.stderr);
@@ -38,6 +40,39 @@ test('SEO 2.8 JSON 전체를 스크립트 안전하게 변환하고 내용은 �
     assert.doesNotMatch(scripts[0].textContent, /<\s*\/\s*script/i);
     assert.equal(render(html).trim(), html.trim(), '중복 적용해도 출력 의미가 바뀌지 않습니다');
   } finally { await browser.happyDOM.abort(); }
+});
+
+test('SEO 2.8에서 출력되지 않는 작성자 소셜 값과 페이지 경로는 빌드를 막지 않는다', () => {
+  const wrap = lines => `<!-- Begin Jekyll SEO tag v2.8.0 -->\n${lines}\n<script type="application/ld+json">{}</script>\n<!-- End Jekyll SEO tag -->`;
+  const author = wrap('<meta name="author" content="Alice" />');
+  const unused = '사용하지 않는\n소셜 정보';
+  for (const site of [{}, { twitter: false }, { twitter: null }]) {
+    assert.doesNotThrow(() => render(author, { author: { name: 'Alice', twitter: unused } }, site), '소셜 기능이 꺼져 있으면 작성자 소셜 값은 출력되지 않습니다');
+    assert.doesNotThrow(() => render(author, { author: 'alice' }, site, { authors: { alice: { name: 'Alice', twitter: unused } } }), '데이터 맵의 미사용 소셜 값도 출력되지 않습니다');
+  }
+  const injected = '공격자" />\n<meta name="google-site-verification" content="위장';
+  const social = wrap('<meta name="author" content="Alice" />\n<meta name="twitter:site" content="@blog" />\n<meta name="twitter:creator" content="@Alice" />');
+  for (const twitter of [{ username: 'blog' }, {}, '']) {
+    assert.throws(() => render(social, { author: { name: 'Alice', twitter: injected } }, { twitter }), /ERROR_seo_compat_unsafe_html_metadata/, '소셜 설정이 켜지면 선택된 작성자의 소셜 주입을 차단해야 합니다');
+    assert.throws(() => render(social, { author: 'alice' }, { twitter }, { authors: { alice: { name: 'Alice', twitter: injected } } }), /ERROR_seo_compat_unsafe_html_metadata/, '선택된 데이터 맵의 소셜 주입도 차단해야 합니다');
+    assert.doesNotThrow(() => render(social, { author: { name: 'Alice', twitter: 'alice' } }, { twitter }), '정상 소셜 값은 허용해야 합니다');
+  }
+  const unusedPath = '/사용하지-않는\n경로';
+  assert.doesNotThrow(() => render(author, {}, {}, { paginator: { previous_page: null, previous_page_path: unusedPath, next_page: false, next_page_path: unusedPath } }), '표시되지 않는 이전·다음 경로는 검사 대상이 아닙니다');
+  for (const direction of ['previous', 'next']) {
+    const paginator = { [`${direction}_page`]: 1, [`${direction}_page_path`]: injected };
+    assert.throws(() => render(author, {}, {}, { paginator }), /ERROR_seo_compat_unsafe_html_metadata/, '표시되는 페이지 경로의 주입은 차단해야 합니다');
+    assert.doesNotThrow(() => render(author, {}, {}, { paginator: { [`${direction}_page`]: 1, [`${direction}_page_path`]: '/page/2/' } }), '정상 페이지 경로는 허용해야 합니다');
+  }
+  for (const url of [false, null]) {
+    assert.doesNotThrow(() => render(author, { canonical_url: unusedPath, url: unusedPath }, { url }), '사이트 주소가 없으면 표시되지 않는 정규 주소는 검사하지 않습니다');
+  }
+  assert.throws(() => render(author, { canonical_url: injected }, { url: 'https://example.org' }), /ERROR_seo_compat_unsafe_html_metadata/, '표시되는 정규 주소의 주입은 차단해야 합니다');
+  assert.doesNotThrow(() => render(author, { canonical_url: '/posts/' }, { url: 'https://example.org' }), '정상 정규 주소는 허용해야 합니다');
+  assert.doesNotThrow(() => render(author, { canonical_url: '/posts/', url: unusedPath }, { url: 'https://example.org' }), '정규 주소가 지정되면 사용하지 않는 페이지 주소는 검사하지 않습니다');
+  for (const canonical_url of [null, '']) {
+    assert.throws(() => render(author, { canonical_url, url: injected }, { url: 'https://example.org' }), /ERROR_seo_compat_unsafe_html_metadata/, '정규 주소가 없으면 대체 페이지 주소를 검사해야 합니다');
+  }
 });
 
 test('SEO 2.9 출력은 변경하지 않고, 모호한 2.8 출력은 중단한다', () => {
