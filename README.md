@@ -106,3 +106,5 @@ Liquid 템플릿에서 같은 라벨을 직접 `case`로 반복하지 않습니�
 ## 운영 문서
 
 `BLOG_OPERATIONS.md`, `CONTENT_STRATEGY.md`, `DESIGN.md`, `docs/`는 저장소 운영용 문서입니다. `_config.yml`의 `exclude`에 들어 있으므로 public site와 sitemap에는 노출하지 않습니다.
+
+생성물의 내부 링크, 검색 색인, 기본 접근성 구조는 `python3 scripts/verify_site.py --site-dir _site`로 검사합니다. 예를 들어 Jekyll을 `--baseurl /blog`로 빌드했다면 출력 폴더 안에 `blog` 폴더를 만들지 않고 `python3 scripts/verify_site.py --site-dir _site --baseurl /blog`로 검사합니다. 같은 출처라도 `/blog` 범위 밖의 URL은 다른 서비스일 수 있으므로 검증에 실패한 것으로 표시합니다. 출처를 지정하지 않으면 검색 색인에서 첫 번째 유효한 절대 글 URL의 출처를 추론하지만, 색인 자체가 잘못된 출처를 가리킬 수 있으므로 운영 검증에는 실제 사이트 출처를 `--site-origin https://example.com`처럼 명시하는 것을 권장합니다. 출처를 추론할 수 없는 상태에서 HTTP(S) 절대 URL이나 프로토콜 상대 URL을 만나면 검증에 실패합니다. 이 검사는 외부 사이트의 유효성이나 전체 접근성을 확인하지 않습니다.

@@ -2,6 +2,8 @@ import importlib.util
 import contextlib
 import io
 import json
+import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -11,6 +13,113 @@ ROOT = Path(__file__).resolve().parents[1]
 SPEC = importlib.util.spec_from_file_location('verify_site', ROOT / 'scripts' / 'verify_site.py')
 VERIFY_SITE = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(VERIFY_SITE)
+
+
+class BaseurlVerificationTests(unittest.TestCase):
+    def test_cli_checks_baseurl_build_and_archive_without_nested_directory(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            html = '''<html lang="ko"><head><title>예시</title></head><body><main><h1>예시</h1>
+              <a href="/blog/posts/one/?q=1#part">글</a></main></body></html>'''
+            post = '''<html lang="ko"><head><title>글</title></head><body><main><h1>글</h1>
+              <h2 id="part">부분</h2><a href="../../?q=1#top">홈</a></main></body></html>'''
+            (root / 'index.html').write_text(html, encoding='utf-8')
+            (root / 'posts' / 'one').mkdir(parents=True)
+            (root / 'posts' / 'index.html').write_text(html, encoding='utf-8')
+            (root / 'posts' / 'one' / 'index.html').write_text(post, encoding='utf-8')
+            (root / 'search.json').write_text(json.dumps([
+                {'type': 'post', 'url': 'https://blog.test/blog/posts/one/', 'title': '글', 'content': '본문'}
+            ]), encoding='utf-8')
+            result = subprocess.run([sys.executable, str(ROOT / 'scripts' / 'verify_site.py'),
+                                     '--site-dir', str(root), '--baseurl', '/blog'],
+                                    capture_output=True, text=True)
+            self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+            (root / 'posts' / 'index.html').write_text(html.replace('/blog/posts/one/', '/blog/'), encoding='utf-8')
+            result = subprocess.run([sys.executable, str(ROOT / 'scripts' / 'verify_site.py'),
+                                     '--site-dir', str(root), '--baseurl', '/blog'],
+                                    capture_output=True, text=True)
+            self.assertNotEqual(0, result.returncode)
+            self.assertIn('posts archive and search index differ', result.stdout)
+
+    def test_baseurl_boundary_traversal_and_symlink(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder) / 'site'
+            root.mkdir()
+            (root / 'index.html').write_text('root', encoding='utf-8')
+            (root / 'one').mkdir()
+            page = root / 'one' / 'index.html'
+            page.write_text('one', encoding='utf-8')
+            (root.parent / 'outside').write_text('outside', encoding='utf-8')
+            (root / 'escape').symlink_to(root.parent / 'outside')
+            for url in ('/blogger/', '/blog/%2e%2e/outside', '/blog/%2e%2e/blog/one/', '/blog/escape',
+                        'https://blog.test/blogger/', 'https://blog.test/blog/%2e%2e/outside'):
+                with self.subTest(url=url):
+                    self.assertIsNone(VERIFY_SITE.resolve_target(root, page, url, 'https://blog.test', '/blog')[0])
+            for url, expected in (('../?q=1#top', root / 'index.html'),
+                                  ('/blog/one/?q=1#part', page),
+                                  ('https://blog.test/blog/one/?q=1#part', page)):
+                with self.subTest(url=url):
+                    self.assertEqual(expected, VERIFY_SITE.resolve_target(root, page, url, 'https://blog.test', '/blog')[0])
+
+    def test_unknown_origin_is_reported_when_absolute_urls_exist(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            (root / 'index.html').write_text('''<html lang="ko"><head><title>예시</title></head>
+              <body><main><h1>예시</h1><a href="https://blog.test/missing">누락</a></main></body></html>''', encoding='utf-8')
+            for entries in ([], [{'type': 'post', 'url': '/', 'title': '글', 'content': '본문'}]):
+                with self.subTest(entries=entries):
+                    (root / 'search.json').write_text(json.dumps(entries), encoding='utf-8')
+                    output = io.StringIO()
+                    with contextlib.redirect_stdout(output):
+                        self.assertEqual(1, VERIFY_SITE.verify(root))
+                    self.assertIn('cannot determine site origin', output.getvalue())
+
+    def test_origin_override_and_outside_baseurl_are_explicit(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            page = root / 'index.html'
+            page.write_text('''<html lang="ko"><head><title>예시</title></head><body><main><h1>예시</h1>
+              <a href="https://outside.test/">외부</a><a href="https://blog.test/blogger/">범위 밖</a>
+              </main></body></html>''', encoding='utf-8')
+            (root / 'search.json').write_text('[]', encoding='utf-8')
+            output = io.StringIO()
+            with contextlib.redirect_stdout(output):
+                self.assertEqual(1, VERIFY_SITE.verify(root, '/blog', 'https://blog.test'))
+            self.assertIn('outside-baseurl', output.getvalue())
+            self.assertNotIn('https://outside.test/', output.getvalue())
+            page.write_text(page.read_text(encoding='utf-8').replace('<a href="https://blog.test/blogger/">범위 밖</a>', ''), encoding='utf-8')
+            with contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(0, VERIFY_SITE.verify(root, '/blog', 'https://blog.test'))
+
+    def test_unknown_origin_only_blocks_http_and_protocol_relative_links(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            page = root / 'index.html'
+            html = '''<html lang="ko"><head><title>예시</title></head><body><main><h1>예시</h1>
+              <a href="ftp://files.example.test/file">FTP</a>
+              <a href="obsidian://open?vault=notes">노트</a>
+              <a href="mailto:hello@example.test">메일</a>{link}</main></body></html>'''
+            (root / 'search.json').write_text('[]', encoding='utf-8')
+            page.write_text(html.format(link=''), encoding='utf-8')
+            with contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(0, VERIFY_SITE.verify(root))
+            for url in ('https://blog.test/missing', 'http://blog.test/missing', '//blog.test/missing'):
+                with self.subTest(url=url):
+                    page.write_text(html.format(link=f'<a href="{url}">미확인</a>'), encoding='utf-8')
+                    output = io.StringIO()
+                    with contextlib.redirect_stdout(output):
+                        self.assertEqual(1, VERIFY_SITE.verify(root))
+                    self.assertIn('cannot determine site origin', output.getvalue())
+
+    def test_cli_rejects_invalid_baseurl_and_origin(self):
+        for option, value in (('--baseurl', '//'), ('--baseurl', '/blog//'),
+                              ('--baseurl', '/blog/%2e%2e'), ('--baseurl', '/blog?x'),
+                              ('--site-origin', 'https://blog.test/blog')):
+            with self.subTest(option=option, value=value):
+                result = subprocess.run([sys.executable, str(ROOT / 'scripts' / 'verify_site.py'),
+                                         option, value], capture_output=True, text=True)
+                self.assertNotEqual(0, result.returncode)
+                self.assertIn('error:', result.stderr)
 
 
 class AccessibilityStructureTests(unittest.TestCase):
@@ -388,7 +497,7 @@ class FragmentTargetTests(unittest.TestCase):
             (root / 'search.json').write_text('[]', encoding='utf-8')
             output = io.StringIO()
             with contextlib.redirect_stdout(output):
-                self.assertEqual(1, VERIFY_SITE.verify(root))
+                self.assertEqual(1, VERIFY_SITE.verify(root, site_origin='https://blog.test'))
             self.assertIn("invalid href URL 'https://[invalid'", output.getvalue())
             self.assertIn("invalid href URL 'https://other.test:notaport/path'", output.getvalue())
             self.assertIn("invalid href URL 'https:///evil.test/missing#x'", output.getvalue())

@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import ipaddress
+import posixpath
 import json
 import re
 import sys
@@ -323,7 +324,7 @@ def has_invalid_url_authority(raw_url: str) -> bool:
         return True
 
 
-def parse_local_url(page: Path, raw_url: str, site_origin: str) -> tuple[SplitResult | None, str]:
+def parse_local_url(page: Path, raw_url: str, site_origin: str, baseurl: str = "") -> tuple[SplitResult | None, str]:
     # All callers, including search.json checks, share the same rejection
     # boundary used by HTML link checks.
     if has_invalid_url_authority(raw_url) or has_ambiguous_backslash(raw_url, site_origin):
@@ -332,7 +333,7 @@ def parse_local_url(page: Path, raw_url: str, site_origin: str) -> tuple[SplitRe
         raw = urlsplit(raw_url)
         if raw.scheme or raw.netloc:
             expected = http_origin(urlsplit(site_origin))
-            document_base = urljoin(site_origin.rstrip("/") + "/", "/" + page.as_posix())
+            document_base = urljoin(site_origin.rstrip("/") + "/", baseurl + "/" + page.as_posix())
             joined = urlsplit(urljoin(document_base, raw_url))
             if expected is None or http_origin(joined) != expected:
                 return None, ""
@@ -340,7 +341,7 @@ def parse_local_url(page: Path, raw_url: str, site_origin: str) -> tuple[SplitRe
                 # HTTP(S) authority-only URLs navigate to /, not the document.
                 joined = joined._replace(path="/")
             return joined, quote(joined.fragment, safe=FRAGMENT_SAFE)
-        joined = urlsplit(urljoin("/" + page.as_posix(), raw_url))
+        joined = urlsplit(urljoin(baseurl + "/" + page.as_posix(), raw_url))
         return joined, quote(joined.fragment, safe=FRAGMENT_SAFE)
     except ValueError:
         # Invalid IPv6 literals and ports are not usable local links.
@@ -373,12 +374,31 @@ def fragment_target(document: PageParser, fragment: str) -> tuple[str, str] | No
     return None
 
 
-def resolve_target(site_root: Path, page: Path, raw_url: str, site_origin: str) -> tuple[Path | None, str]:
-    joined, fragment = parse_local_url(page.relative_to(site_root), raw_url, site_origin)
+def resolve_target(site_root: Path, page: Path, raw_url: str, site_origin: str, baseurl: str = "") -> tuple[Path | None, str]:
+    joined, fragment = parse_local_url(page.relative_to(site_root), raw_url, site_origin, baseurl)
     if joined is None:
         return None, ""
 
-    relative = unquote(joined.path).lstrip("/")
+    decoded_path = unquote(joined.path)
+    if baseurl:
+        # urljoin already normalizes literal dot segments. Check the decoded
+        # remainder for encoded traversal before resolving the output path.
+        if decoded_path != baseurl and not decoded_path.startswith(baseurl + "/"):
+            return None, fragment
+        depth = 0
+        for component in decoded_path[len(baseurl):].split("/"):
+            if component == "..":
+                depth -= 1
+                if depth < 0:
+                    return None, fragment
+            elif component not in {"", "."}:
+                depth += 1
+        normalized_path = posixpath.normpath(decoded_path)
+        if normalized_path != baseurl and not normalized_path.startswith(baseurl + "/"):
+            return None, fragment
+        relative = normalized_path[len(baseurl):].lstrip("/")
+    else:
+        relative = decoded_path.lstrip("/")
     candidate = site_root / relative if joined.path else page
     if joined.path == "/":
         candidate = site_root
@@ -397,8 +417,8 @@ def resolve_target(site_root: Path, page: Path, raw_url: str, site_origin: str) 
     return None, fragment
 
 
-def normalized_url_path(raw_url: str, page: Path, site_root: Path, site_origin: str) -> str:
-    joined, _ = parse_local_url(page.relative_to(site_root), raw_url, site_origin)
+def normalized_url_path(raw_url: str, page: Path, site_root: Path, site_origin: str, baseurl: str = "") -> str:
+    joined, _ = parse_local_url(page.relative_to(site_root), raw_url, site_origin, baseurl)
     if joined is None:
         return ""
     return canonical_path(joined.path)
@@ -411,7 +431,7 @@ def read_page(path: Path) -> PageParser:
     return parser
 
 
-def verify(site_root: Path) -> int:
+def verify(site_root: Path, baseurl: str = "", site_origin: str = "") -> int:
     errors: list[str] = []
     pages = sorted(site_root.rglob("*.html"))
     if not pages:
@@ -428,12 +448,17 @@ def verify(site_root: Path) -> int:
                 raw_search_entries = [entry for entry in data if isinstance(entry, dict)]
         except (OSError, json.JSONDecodeError):
             pass
-    first_post_url = next(
-        (entry.get("url") for entry in raw_search_entries if entry.get("type") == "post" and isinstance(entry.get("url"), str)),
-        "",
-    )
-    parsed_origin = urlsplit(str(first_post_url))
-    site_origin = f"{parsed_origin.scheme}://{parsed_origin.netloc}" if parsed_origin.scheme and parsed_origin.netloc else ""
+    if not site_origin:
+        for entry in raw_search_entries:
+            if entry.get("type") != "post" or not isinstance(entry.get("url"), str):
+                continue
+            try:
+                parsed_origin = urlsplit(entry["url"])
+                if http_origin(parsed_origin):
+                    site_origin = f"{parsed_origin.scheme}://{parsed_origin.netloc}"
+                    break
+            except ValueError:
+                continue
     local_url_count = 0
     fragment_count = 0
     for page in pages:
@@ -457,13 +482,18 @@ def verify(site_root: Path) -> int:
             if has_ambiguous_backslash(raw_url, site_origin):
                 errors.append(f"{relative_page}: {attribute} URL has a backslash in its path or authority '{raw_url}'")
                 continue
-            target, fragment = resolve_target(site_root, page, raw_url, site_origin)
-            joined, _ = parse_local_url(page.relative_to(site_root), raw_url, site_origin)
+            if not site_origin:
+                raw = urlsplit(raw_url)
+                if raw.scheme.lower() in {"http", "https"} or (not raw.scheme and raw.netloc):
+                    errors.append(f"{relative_page}: cannot determine site origin to verify {attribute} '{raw_url}' (use --site-origin)")
+                    continue
+            target, fragment = resolve_target(site_root, page, raw_url, site_origin, baseurl)
+            joined, _ = parse_local_url(page.relative_to(site_root), raw_url, site_origin, baseurl)
             if joined is None:
                 continue
             local_url_count += 1
             if target is None:
-                errors.append(f"{relative_page}: broken local {attribute} '{raw_url}'")
+                errors.append(f"{relative_page}: broken or outside-baseurl local {attribute} '{raw_url}'")
                 continue
             if fragment:
                 fragment_count += 1
@@ -498,7 +528,7 @@ def verify(site_root: Path) -> int:
                 if not isinstance(url, str) or not url.strip():
                     errors.append(f"search.json entry {index + 1} has no URL")
                     continue
-                normalized = normalized_url_path(url, site_root / "index.html", site_root, site_origin)
+                normalized = normalized_url_path(url, site_root / "index.html", site_root, site_origin, baseurl)
                 if entry.get("type") == "post" and normalized in seen_urls:
                     errors.append(f"search.json contains duplicate URL '{normalized}'")
                 if entry.get("type") == "post":
@@ -507,18 +537,18 @@ def verify(site_root: Path) -> int:
                     errors.append(f"search.json entry '{normalized}' has no title")
                 if entry.get("type") == "post" and (not isinstance(entry.get("content"), str) or not entry["content"].strip()):
                     errors.append(f"search.json entry '{normalized}' has no searchable content")
-                target, _ = resolve_target(site_root, site_root / "index.html", url, site_origin)
+                target, _ = resolve_target(site_root, site_root / "index.html", url, site_origin, baseurl)
                 if target is None:
                     errors.append(f"search.json URL '{normalized}' has no generated page")
 
             posts_page = site_root / "posts" / "index.html"
             if posts_page.is_file():
                 archive_urls = {
-                    normalized_url_path(value, posts_page, site_root, site_origin)
+                    normalized_url_path(value, posts_page, site_root, site_origin, baseurl)
                     for attribute, value in parsed.get(posts_page, read_page(posts_page)).urls
                     if attribute == "href"
-                    and normalized_url_path(value, posts_page, site_root, site_origin).startswith("/posts/")
-                    and normalized_url_path(value, posts_page, site_root, site_origin) != "/posts/index.html"
+                    and normalized_url_path(value, posts_page, site_root, site_origin, baseurl).startswith(baseurl + "/posts/")
+                    and normalized_url_path(value, posts_page, site_root, site_origin, baseurl) != baseurl + "/posts/index.html"
                 }
                 if archive_urls != seen_urls:
                     missing_from_archive = sorted(seen_urls - archive_urls)
@@ -548,12 +578,27 @@ def verify(site_root: Path) -> int:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--site-dir", type=Path, default=Path("_site"), help="Jekyll output directory (default: _site)")
+    parser.add_argument("--baseurl", default="", help="deployment path prefix, e.g. /blog (default: root)")
+    parser.add_argument("--site-origin", default="", help="HTTP(S) origin, needed when it cannot be inferred from search.json")
     args = parser.parse_args()
+    baseurl = args.baseurl[:-1] if args.baseurl.endswith("/") else args.baseurl
+    if args.baseurl.startswith("//") or (baseurl and (not baseurl.startswith("/") or
+                    any(part in {"", ".", ".."} for part in baseurl[1:].split("/")) or
+                    any(char in baseurl for char in "%?#\\") or any(char.isspace() for char in baseurl))):
+        parser.error("--baseurl must be an absolute URL path without escapes, query, fragment or dot segments")
+    if args.site_origin:
+        try:
+            origin = urlsplit(args.site_origin)
+            valid_origin = http_origin(origin) and origin.path in {"", "/"} and not origin.query and not origin.fragment
+        except ValueError:
+            valid_origin = False
+        if not valid_origin:
+            parser.error("--site-origin must be an HTTP(S) origin without a path, query or fragment")
     site_root = args.site_dir.resolve()
     if not site_root.is_dir():
         print(f"FAIL: generated site directory does not exist: {site_root}")
         return 1
-    return verify(site_root)
+    return verify(site_root, baseurl, args.site_origin)
 
 
 if __name__ == "__main__":
