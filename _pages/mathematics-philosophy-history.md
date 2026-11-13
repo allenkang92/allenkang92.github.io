@@ -10,7 +10,7 @@ permalink: /series/mathematics-philosophy-history/
 {% assign series_posts = site.posts | where: "series", series_key | sort: "series_order" %}
 
 <section class="series-hub" aria-labelledby="series-hub-title">
-  <p class="series-hub-eyebrow">Mathematics / Philosophy / History</p>
+  <p class="series-hub-eyebrow" lang="en">Mathematics / Philosophy / History</p>
   <h1 id="series-hub-title">{{ series_record.title | escape }}</h1>
   <p>{{ series_record.summary }}</p>
   <dl class="series-hub-facts" markdown="0">
@@ -51,7 +51,12 @@ permalink: /series/mathematics-philosophy-history/
   <h2 id="series-reference-title">대표 참고자료</h2>
   <ul>
     {% for reference in series_record.references %}
-      <li>{{ reference }}</li>
+      {% if reference.title %}
+        {% assign reference_lang = reference.lang | default: '' | strip %}
+        <li{% if reference_lang != '' %} lang="{{ reference_lang | escape }}"{% endif %}>{{ reference.title | escape }}</li>
+      {% else %}
+        <li>{{ reference }}</li>
+      {% endif %}
     {% endfor %}
   </ul>
 </section>

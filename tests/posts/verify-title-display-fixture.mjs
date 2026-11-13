@@ -38,7 +38,9 @@ const seriesData = await readFile(dataPath, 'utf8');
 const updatedData = seriesData.replace('title: "수학철학·수학사"', `title: ${JSON.stringify(mathHubTitle)}`)
   .replace('title: "과학철학·현대물리학"', `title: ${JSON.stringify(scienceHubTitle)}`);
 assert.ok(updatedData.includes(mathHubTitle) && updatedData.includes(scienceHubTitle), '기존 시리즈의 제목 시험 자료가 적용돼야 합니다');
-await writeFile(dataPath, `${updatedData}\n  - key: QA-Title-Display\n    title: ${JSON.stringify(seriesTitle)}\n    hub_url: ${JSON.stringify('/series/title-fixture/?first=1&second=2')}\n    kicker: ${JSON.stringify('<분류> & 태그')}\n    summary: 시험 시리즈\n    featured: true\n`);
+const mixedData = updatedData.replace('    references:\n      - title: "Morris Kline, Mathematical Thought from Ancient to Modern Times"', `    references:\n      - title: ${JSON.stringify('한국어 <자료> & 설명')}\n        lang: ko\n      - title: ${JSON.stringify('제목 언어 미지정')}\n      - ${JSON.stringify('기존 <em>문자열</em>')}\n      - title: "Morris Kline, Mathematical Thought from Ancient to Modern Times"`);
+assert.notEqual(mixedData, updatedData, '한글·언어 미지정·기존 문자열 참고자료가 적용돼야 합니다');
+await writeFile(dataPath, `${mixedData}\n  - key: QA-Title-Display\n    title: ${JSON.stringify(seriesTitle)}\n    hub_url: ${JSON.stringify('/series/title-fixture/?first=1&second=2')}\n    kicker: ${JSON.stringify('<분류> & 태그')}\n    summary: 시험 시리즈\n    featured: true\n  - key: QA-English-Kicker\n    title: 영어 분류 시험\n    hub_url: /series/english-fixture/\n    kicker: ${JSON.stringify('Research & Practice')}\n    kicker_lang: en\n    summary: 시험 시리즈\n    featured: true\n`);
 const pagePath = join(source, '_pages/series.html');
 const page = await readFile(pagePath, 'utf8');
 const updatedPage = page.replace(/^title: 시리즈$/m, `title: ${JSON.stringify(seriesPageTitle)}`);
@@ -76,17 +78,54 @@ for (const [name, base] of [['root', ''], ['nested', '/blog']]) {
     assert.equal(card.getAttribute('href'), `${base}/series/title-fixture/?first=1&second=2`);
     assert.equal(card.querySelector('strong')?.textContent, seriesTitle);
     assert.equal(card.querySelector('.series-hub-kicker')?.textContent.trim(), '<분류> & 태그');
+    assert.equal(card.querySelector('.series-hub-kicker')?.getAttribute('lang'), null, `${name}: 언어 미지정 분류는 상속합니다`);
+    const englishCard = [...series.querySelectorAll('.series-hub-card')].find(link => link.querySelector('strong')?.textContent === '영어 분류 시험');
+    assert.equal(englishCard?.querySelector('.series-hub-kicker')?.textContent.trim(), 'Research & Practice');
+    assert.equal(englishCard?.querySelector('.series-hub-kicker')?.getAttribute('lang'), 'en');
+    for (const label of ['수학', '과학']) {
+      const koreanKicker = [...series.querySelectorAll('.series-hub-kicker')].find(element => element.textContent.trim() === label);
+      assert.ok(koreanKicker, `${name}: ${label} 분류가 있어야 합니다`);
+      assert.equal(koreanKicker.getAttribute('lang'), null, `${name}: 한글 분류에 영어 언어를 지정하지 않습니다`);
+    }
     const group = [...series.querySelectorAll('.series-catalog-group')].find(element => element.querySelector('h3')?.textContent === seriesTitle);
     assert.ok(group, `${name}: 시리즈 목록 제목 원문`);
     assert.equal(group.querySelector('.series-catalog-meta a')?.getAttribute('aria-label'), `${seriesTitle} 허브 보기`);
     assertLink([...group.querySelectorAll('ol a')].find(link => link.getAttribute('href') === `${base}${target}`), specialTitle, `${base}${target}`);
 
-    for (const [path, hubTitle, postTarget] of [
-      ['series/mathematics-philosophy-history/index.html', mathHubTitle, mathTarget],
-      ['series/science-philosophy-history/index.html', scienceHubTitle, scienceTarget],
+    for (const [path, hubTitle, postTarget, englishReferences] of [
+      ['series/mathematics-philosophy-history/index.html', mathHubTitle, mathTarget, [
+        'Morris Kline, Mathematical Thought from Ancient to Modern Times',
+        'Stewart Shapiro, Thinking about Mathematics',
+        'Imre Lakatos, Proofs and Refutations',
+        'Eugene Wigner, The Unreasonable Effectiveness of Mathematics in the Natural Sciences',
+      ]],
+      ['series/science-philosophy-history/index.html', scienceHubTitle, scienceTarget, [
+        'Alan Chalmers, What Is This Thing Called Science?',
+        'Peter Godfrey-Smith, Theory and Reality',
+        'David J. Griffiths, Introduction to Elementary Particles',
+        'CERN, The Standard Model',
+      ]],
     ]) {
       const hub = await readDocument(path);
       assert.equal(hub.querySelector('#series-hub-title')?.textContent, hubTitle, `${name}: 허브 제목 원문`);
+      assert.equal(hub.documentElement.getAttribute('lang'), 'ko', `${name}: 기본 문서 언어`);
+      assert.equal(hub.querySelector('.series-hub-eyebrow')?.getAttribute('lang'), 'en', `${name}: 영어 허브 표제 언어`);
+      const references = [...hub.querySelectorAll('.series-reference-note li')];
+      for (const title of englishReferences) {
+        const reference = references.find(item => item.textContent === title);
+        assert.ok(reference, `${name}: 참고자료 원문 유지: ${title}`);
+        assert.equal(reference.getAttribute('lang'), 'en', `${name}: 영어 참고자료 언어: ${title}`);
+      }
+      if (path.includes('mathematics')) {
+        const korean = references.find(item => item.textContent === '한국어 <자료> & 설명');
+        assert.equal(korean?.getAttribute('lang'), 'ko', `${name}: 한국어 참고자료`);
+        assert.equal(korean?.children.length, 0, `${name}: 새 데이터의 참고자료 제목은 텍스트로 표시`);
+        const unspecified = references.find(item => item.textContent === '제목 언어 미지정');
+        assert.equal(unspecified?.getAttribute('lang'), null, `${name}: 미지정 언어는 상속`);
+        const legacy = references.find(item => item.textContent === '기존 문자열');
+        assert.equal(legacy?.getAttribute('lang'), null, `${name}: 기존 문자열 언어는 상속`);
+        assert.equal(legacy?.querySelector('em')?.textContent, '문자열', `${name}: 기존 문자열의 표시 계약 보존`);
+      }
       assertLink([...hub.querySelectorAll('.series-path-item h3 a')].find(link => link.getAttribute('href') === `${base}${postTarget}`), specialTitle, `${base}${postTarget}`);
     }
 

@@ -19,14 +19,14 @@ permalink: /series/
 <section class="series-hub-grid" aria-label="주요 시리즈 허브">
   {% for item in featured_series %}
     {% assign item_posts = site.posts | where: "series", item.key | sort: "series_order" %}
+    {% assign kicker = item.kicker %}
+    {% assign kicker_lang = item.kicker_lang | default: '' | strip %}
+    {% case item.key %}
+      {% when 'Mathematics-Philosophy-History' %}{% assign kicker = '수학' %}{% assign kicker_lang = '' %}
+      {% when 'Science_Philosophy_History' %}{% assign kicker = '과학' %}{% assign kicker_lang = '' %}
+    {% endcase %}
     <a class="series-hub-card" href="{{ item.hub_url | relative_url | escape }}">
-      <span class="series-hub-kicker">
-        {% case item.key %}
-          {% when 'Mathematics-Philosophy-History' %}수학
-          {% when 'Science_Philosophy_History' %}과학
-          {% else %}{{ item.kicker | escape }}
-        {% endcase %}
-      </span>
+      <span class="series-hub-kicker"{% if kicker_lang != '' %} lang="{{ kicker_lang | escape }}"{% endif %}>{{ kicker | escape }}</span>
       <strong>{{ item.title | escape }}</strong>
       <span class="series-hub-count">{{ item_posts.size }}편</span>
       <span class="series-hub-summary">{{ item.summary }}</span>
