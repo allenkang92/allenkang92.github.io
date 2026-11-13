@@ -42,8 +42,12 @@
     <!-- Google tag (gtag.js): production 빌드에서만 삽입, 런타임 hostname 체크는 이중 안전장치 -->
     <script>
         (function () {
-          var localHosts = ['localhost', '127.0.0.1', '0.0.0.0', '::1', '[::1]', ''];
-          if (localHosts.indexOf(window.location.hostname) === -1) {
+          var hostname = window.location.hostname.toLowerCase().replace(/\.$/, '');
+          var localHosts = ['localhost', '0.0.0.0', '::1', '[::1]', ''];
+          var loopbackIPv4 = /^127(?:\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}$/;
+          var isLocalHost = localHosts.indexOf(hostname) !== -1 ||
+            hostname.endsWith('.localhost') || loopbackIPv4.test(hostname);
+          if (!isLocalHost) {
             var gaScript = document.createElement('script');
             gaScript.async = true;
             gaScript.src = 'https://www.googletagmanager.com/gtag/js?id={{ analytics_id }}';

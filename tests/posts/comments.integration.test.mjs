@@ -20,6 +20,10 @@ test('existing comment threads remain attached after post permalink changes', as
     assert.equal(script.hasAttribute('issue-term'), false, `${slug}: issue-term would override issue-number`);
     const fallback = window.document.querySelector('.comments-note a');
     assert.equal(fallback?.href, `https://github.com/allenkang92/allenkang92.github.io/issues/${issue}`, `${slug}: existing discussion is directly accessible`);
+    assert.match(fallback?.textContent || '', /새 탭/, `${slug}: 새 탭 안내`);
+    assert.equal(fallback?.target, '_blank');
+    assert.ok(fallback?.relList.contains('noopener'));
+    assert.ok(fallback?.relList.contains('noreferrer'));
     window.happyDOM.abort();
   }
 });

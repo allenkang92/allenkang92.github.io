@@ -19,7 +19,7 @@ const configPath = join(source, '_config.yml');
 const config = await readFile(configPath, 'utf8');
 const modified = config.replace(/^title:.*$/m, `title: ${JSON.stringify(siteTitle)}\nseo_plain_name: ${JSON.stringify('& Lab "Q" &')}`);
 assert.notEqual(modified, config);
-await writeFile(configPath, modified);
+await writeFile(configPath, `${modified}\nlinkedin_username: test-linkedin\ntwitter_username: test-twitter\n`);
 await writeFile(join(source, '_data/navigation.yml'), `main:\n  - title: ${JSON.stringify(homeTitle)}\n    url: /\n  - title: 글\n    url: /posts/\n  - title: ${JSON.stringify(queryTitle)}\n    url: "/tools/?first=1&second=2"\n`);
 
 const env = { ...process.env, BUNDLE_GEMFILE: process.env.BUNDLE_GEMFILE || join(repository, 'Gemfile'), JEKYLL_ENV: 'production', TZ: 'UTC' };
@@ -42,6 +42,15 @@ for (const [name, base] of [['root', ''], ['subpath', '/blog']]) {
     assert.equal(links[2].getAttribute('href'), `${base}/tools/?first=1&second=2`, `${name}: 쿼리 링크`);
     assert.ok(browser.document.querySelector('.sidebar-right nav[aria-label="주요 메뉴"]'));
     assert.ok(browser.document.querySelector('.sidebar-brand p')?.textContent.includes('Striving for a better tomorrow'));
+    const socialLinks = [...browser.document.querySelectorAll('.social-links .social-link')];
+    assert.equal(socialLinks.length, 3, `${name}: 소셜 링크 세 개`);
+    assert.match(browser.document.querySelector('.social-links small')?.textContent || '', /새 탭에서 열림/, `${name}: 표시되는 새 탭 안내`);
+    for (const link of socialLinks) {
+      assert.match(link.getAttribute('aria-label') || '', /새 탭에서 열림/, `${name}: 스크린리더 이름의 새 탭 안내`);
+      assert.equal(link.target, '_blank');
+      assert.ok(link.relList.contains('noopener'));
+      assert.ok(link.relList.contains('noreferrer'));
+    }
     assert.ok(browser.document.querySelector('#main-content'), `${name}: 본문 유지`);
     const postsPage = new browser.DOMParser().parseFromString(await readFile(join(output, 'posts/index.html'), 'utf8'), 'text/html');
     const postsLink = [...postsPage.querySelectorAll('.sidebar-right .nav-link')].find(link => link.getAttribute('href') === `${base}/posts/`);

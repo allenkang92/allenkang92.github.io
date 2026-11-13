@@ -1,12 +1,14 @@
 (function() {
   'use strict';
 
-  const LOCAL_HOSTS = new Set(['localhost', '127.0.0.1', '0.0.0.0', '::1', '[::1]', '']);
+  const LOCAL_HOSTS = new Set(['localhost', '0.0.0.0', '::1', '[::1]', '']);
+  const LOOPBACK_IPV4 = /^127(?:\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}$/;
   const ALLOWED_PARAMS = new Set(['tool_name', 'tab_name', 'category', 'query_length', 'link_url']);
   let selectedToolTab = null;
 
   function isProductionHost() {
-    return !LOCAL_HOSTS.has(window.location.hostname);
+    const hostname = window.location.hostname.toLowerCase().replace(/\.$/, '');
+    return !LOCAL_HOSTS.has(hostname) && !hostname.endsWith('.localhost') && !LOOPBACK_IPV4.test(hostname);
   }
 
   function canSendAnalytics() {
