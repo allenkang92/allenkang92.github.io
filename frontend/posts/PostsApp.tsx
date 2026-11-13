@@ -442,6 +442,21 @@ export function PostsApp({
     let activated = false;
     let notice: HTMLDivElement | null = null;
     let stopListening = () => {};
+    const hasFallbackSelection = () => {
+      try {
+        const selection = window.getSelection();
+        if (!selection || selection.isCollapsed) return false;
+        for (let index = 0; index < selection.rangeCount; index += 1) {
+          if (selection.getRangeAt(index).intersectsNode(fallbackElement)) return true;
+        }
+      } catch {
+        // 선택 범위를 확인할 수 없으면 기존 포커스 기준 전환을 유지한다.
+      }
+      return false;
+    };
+    const active = document.activeElement;
+    const selectingFallback = (!active || active === document.body || active === document.documentElement)
+      && hasFallbackSelection();
     const showEnhancedList = () => {
       if (disposed || activated || fallbackElement.contains(document.activeElement)) return;
       activated = true;
@@ -452,7 +467,7 @@ export function PostsApp({
       notice = null;
     };
 
-    if (fallbackElement.contains(document.activeElement)) {
+    if (fallbackElement.contains(active) || selectingFallback) {
       // 정적 목록을 읽는 사용자의 포커스와 Tab 순서를 가로채지 않는다.
       rootElement.hidden = true;
       fallbackElement.hidden = false;
@@ -499,12 +514,21 @@ export function PostsApp({
     };
     const onFocusOut = () => afterFocusChange();
     const onFocusIn = () => afterFocusChange();
+    const onPointerDown = (event: PointerEvent) => {
+      const target = event.target;
+      if (!(target instanceof Node) || target === document.body || target === document.documentElement
+        || fallbackElement.contains(target)) return;
+      // 외부를 명시적으로 선택한 경우에는 더 이상 이전 텍스트 선택을 유지하지 않는다.
+      Promise.resolve().then(showEnhancedList);
+    };
     if (!activated) {
       fallbackElement.addEventListener('focusout', onFocusOut);
       document.addEventListener('focusin', onFocusIn);
+      document.addEventListener('pointerdown', onPointerDown);
       stopListening = () => {
         fallbackElement.removeEventListener('focusout', onFocusOut);
         document.removeEventListener('focusin', onFocusIn);
+        document.removeEventListener('pointerdown', onPointerDown);
       };
     }
     return () => {
