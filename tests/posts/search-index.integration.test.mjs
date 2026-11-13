@@ -5,6 +5,71 @@ import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 import { Window } from 'happy-dom';
 
+const hubSearchSelector = '.series-hub h1, .series-hub > p:not(.series-hub-eyebrow), .series-hub-facts div:last-child dd, .series-reference-note li';
+const normalizeSearchContent = value => value.replace(/\s+/g, ' ').trim();
+
+// 색인 문자열은 HTML이 아니라 텍스트다. 문자 참조만 한 번 풀고 실제 `<`는 파싱하지 않는다.
+function decodeSearchContent(document, value) {
+  const decoder = document.createElement('textarea');
+  decoder.innerHTML = value.replace(/</g, '&lt;');
+  return normalizeSearchContent(decoder.value);
+}
+
+function assertHubSearchContent(document, content, context) {
+  // 현재 허브 작성 계약에서는 Liquid 토큰 자체가 화면에 노출되어서는 안 된다.
+  assert.doesNotMatch(decodeSearchContent(document, content), /\{[{%]/,
+    `${context}: 미실행 Liquid 표현식이 색인에 남으면 안 됩니다`);
+  const elements = [...document.querySelectorAll(hubSearchSelector)];
+  assert.ok(elements.length, `${context}: 표시 내용을 찾아야 합니다`);
+  for (const element of elements) {
+    const hiddenSelector = '[hidden], [aria-hidden="true"], script, style, template, noscript';
+    const nodes = new Set([element, ...element.querySelectorAll('*')]);
+    for (let parent = element.parentElement; parent; parent = parent.parentElement) nodes.add(parent);
+    const hiddenByStyle = [...nodes].some(node => {
+      const style = document.defaultView.getComputedStyle(node);
+      return style.display === 'none' || style.visibility === 'hidden' || style.visibility === 'collapse'
+        || style.contentVisibility === 'hidden';
+    });
+    assert.ok(!element.closest(hiddenSelector) && !element.querySelector(hiddenSelector) && !hiddenByStyle,
+    `${context}: 색인 대상에 숨긴 내용이나 실행 코드가 있어서는 안 됩니다`);
+  }
+  const expected = normalizeSearchContent(elements.map(element => element.textContent).join(' '));
+  assert.equal(decodeSearchContent(document, content), expected,
+    `${context}: 색인은 실제 표시된 허브 문구만 같은 순서로 담아야 합니다`);
+}
+
+test('시리즈 허브 색인은 실제 표시 텍스트와 정확히 일치해야 한다', async () => {
+  const browser = new Window({ settings: { disableJavaScriptEvaluation: true, disableJavaScriptFileLoading: true } });
+  try {
+    browser.document.write('<section class="series-hub"><h1>&lt;수학&gt; &amp; &lt;/textarea&gt;&lt;script&gt;</h1><p>보이는 설명</p><dl class="series-hub-facts"><div><dd>첫째</dd></div><div><dd>읽는 순서</dd></div></dl></section><section class="series-reference-note"><ul><li>기존 <em>참고자료</em></li></ul></section>');
+    const content = '&lt;수학&gt; &amp; &lt;/textarea&gt;&lt;script&gt; 보이는 설명 읽는 순서 기존 참고자료';
+    assert.doesNotThrow(() => assertHubSearchContent(browser.document, content, '정상 리터럴'));
+    for (const extra of ['<script>유입</script>', '숨긴 검색어', '{{ 미실행 }}']) {
+      assert.throws(() => assertHubSearchContent(browser.document, `${content} ${extra}`, '비표시 주입'),
+        { name: 'AssertionError' }, `${extra}: 표시되지 않은 텍스트는 거부해야 합니다`);
+    }
+    const hidden = browser.document.createElement('span');
+    hidden.setAttribute('hidden', '');
+    hidden.textContent = '숨긴 검색어';
+    browser.document.querySelector('.series-reference-note li').appendChild(hidden);
+    assert.throws(() => assertHubSearchContent(browser.document, `${content} 숨긴 검색어`, '숨김 대상'),
+      { name: 'AssertionError' }, '숨긴 내용은 화면 텍스트에 포함돼도 거부해야 합니다');
+    hidden.removeAttribute('hidden');
+    hidden.style.display = 'none';
+    assert.throws(() => assertHubSearchContent(browser.document, `${content} 숨긴 검색어`, '스타일 숨김 대상'),
+      { name: 'AssertionError' }, '인라인 숨김도 거부해야 합니다');
+    hidden.remove();
+    browser.document.querySelector('.series-reference-note').style.display = 'none';
+    assert.throws(() => assertHubSearchContent(browser.document, content, '상위 스타일 숨김'),
+      { name: 'AssertionError' }, '상위 요소의 숨김도 거부해야 합니다');
+    browser.document.querySelector('.series-reference-note').style.display = '';
+    const summary = browser.document.querySelector('.series-hub > p');
+    summary.textContent = '{{ 미실행 }}';
+    assert.throws(() => assertHubSearchContent(browser.document, content.replace('보이는 설명', '{{ 미실행 }}'), '화면과 색인에 남은 Liquid'),
+      { name: 'AssertionError' }, '화면과 색인 양쪽에 남은 미실행 Liquid도 거부해야 합니다');
+  } finally { await browser.happyDOM.abort(); }
+});
+
 test('두 검색 화면은 배포 버전이 포함된 같은 색인 주소를 요청한다', async () => {
   const siteRoot = process.env.SITE_ROOT || fileURLToPath(new URL('../../_site/', import.meta.url));
   const baseurl = process.env.SITE_BASEURL || '';
@@ -339,7 +404,8 @@ test('소개와 시리즈 허브의 색인 내용은 실제 표시 내용과 일
   const siteRoot = process.env.SITE_ROOT || fileURLToPath(new URL('../../_site/', import.meta.url));
   const baseurl = process.env.SITE_BASEURL || '';
   const entries = JSON.parse(await readFile(resolve(siteRoot, 'search.json'), 'utf8'));
-  const source = await readFile(new URL('../../_pages/about.html', import.meta.url), 'utf8');
+  const sourceRoot = process.env.SITE_SOURCE_ROOT || fileURLToPath(new URL('../..', import.meta.url));
+  const source = await readFile(resolve(sourceRoot, '_pages/about.html'), 'utf8');
   const body = source.replace(/^---[\s\S]*?---\s*/, '');
   const allowedArrow = '<span class="about-list-arrow" aria-hidden="true">›</span>';
   const safeBody = body.split(allowedArrow).join('');
@@ -357,21 +423,18 @@ test('소개와 시리즈 허브의 색인 내용은 실제 표시 내용과 일
       const rows = entries.filter(entry => new URL(entry.url).pathname === `${baseurl}${item.path}`);
       assert.equal(rows.length, 1, `${item.path}: 검색 항목은 하나여야 합니다`);
       const decoder = browser.document.createElement('textarea');
-      decoder.innerHTML = rows[0].content;
+      decoder.innerHTML = rows[0].content.replace(/</g, '&lt;');
       const norm = value => value.replace(/\s+/g, ' ').trim();
       const content = norm(decoder.value);
-      assert.doesNotMatch(content, /\{[{%]|<[^>]*>/);
-      const elements = [...browser.document.querySelectorAll(item.selector)];
-      assert.ok(elements.length, `${item.path}: 표시 내용을 찾아야 합니다`);
       if (item.full) {
+        assert.doesNotMatch(content, /\{[{%]/);
+        const elements = [...browser.document.querySelectorAll(item.selector)];
+        assert.ok(elements.length, `${item.path}: 표시 내용을 찾아야 합니다`);
         const clone = elements[0].cloneNode(true);
         clone.querySelectorAll('[aria-hidden="true"]').forEach(element => element.remove());
         assert.equal(content, norm(clone.textContent), '소개 본문과 색인은 같아야 합니다');
       } else {
-        for (const element of elements) {
-          const text = norm(element.textContent);
-          if (text) assert.ok(content.includes(text), `${item.path}: 표시 문구 누락 ${text}`);
-        }
+        assertHubSearchContent(browser.document, rows[0].content, item.path);
       }
     } finally { await browser.happyDOM.abort(); }
   }

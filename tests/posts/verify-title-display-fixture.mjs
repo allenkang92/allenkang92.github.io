@@ -211,6 +211,15 @@ for (const [name, base] of [['root', ''], ['nested', '/blog']]) {
     assert.doesNotMatch(decoder.value, /<em>|\{[{%]/, `${name}: 허브 원시 마크업·템플릿 제외`);
     const posts = await readDocument('posts/index.html');
     assertLink([...posts.querySelectorAll('.post-preview h2 a')].find(link => link.getAttribute('href') === `${base}${target}`), specialTitle, `${base}${target}`);
+    // 합성 원본과 그 산출물을 함께 전달해 일반 허브 검사도 동일한 자료를 검증한다.
+    execFileSync(process.execPath, [
+      '--test', '--test-name-pattern=^소개와 시리즈 허브의 색인 내용',
+      join(repository, 'tests/posts/search-index.integration.test.mjs'),
+    ], {
+      cwd: repository,
+      env: { ...env, SITE_ROOT: output, SITE_SOURCE_ROOT: source, SITE_BASEURL: base },
+      stdio: 'inherit',
+    });
   } finally {
     await browser.happyDOM.abort();
   }
