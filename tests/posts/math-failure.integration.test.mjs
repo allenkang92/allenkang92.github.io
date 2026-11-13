@@ -17,10 +17,15 @@ async function setupMath() {
       .map(script => script.textContent)
       .find(text => text.includes('window.MathJax ='));
     assert.ok(config, '수식 글에 MathJax 설정이 있어야 합니다');
+    const loaderHandler = parser.document.getElementById('mathjax-loader')?.getAttribute('onerror');
+    assert.ok(loaderHandler, '스크립트 자체 오류를 위한 대체 처리가 있어야 합니다');
     const notice = parser.document.getElementById('math-load-error');
     assert.ok(notice?.hidden, '초기 수식 오류 안내는 숨겨져 있어야 합니다');
     const delay = parser.document.getElementById('math-load-delay');
     assert.ok(delay?.hidden, '초기 지연 안내는 숨겨져 있어야 합니다');
+    const speech = parser.document.getElementById('math-speech-error');
+    assert.ok(speech?.hidden, '초기 음성·점자 오류 안내는 숨겨져 있어야 합니다');
+    assert.equal(speech.getAttribute('aria-hidden'), 'true', '시각 안내는 라이브 영역과 중복해서 노출하지 않습니다');
     const status = parser.document.getElementById('math-load-status');
     assert.ok(status && !status.hidden && !status.closest('[hidden]'), '라이브 영역은 처음부터 노출돼야 합니다');
     assert.equal(status.getAttribute('role'), 'status');
@@ -30,7 +35,7 @@ async function setupMath() {
     assert.equal(delay.querySelector('p').getAttribute('aria-hidden'), 'true', '시각 요약은 라이브 영역과 중복해서 노출하지 않습니다');
     assert.equal(delay.querySelectorAll('p')[1].getAttribute('aria-hidden'), null, '상세 복구 절차는 탐색할 수 있습니다');
     assert.equal(notice.getAttribute('aria-hidden'), 'true', '시각 오류 안내는 라이브 영역과 중복해서 노출하지 않습니다');
-    browser.document.body.innerHTML = status.outerHTML + delay.outerHTML + notice.outerHTML;
+    browser.document.body.innerHTML = status.outerHTML + delay.outerHTML + notice.outerHTML + speech.outerHTML;
     const timers = new Map();
     let nextTimer = 0;
     browser.setTimeout = (callback, duration) => {
@@ -40,6 +45,7 @@ async function setupMath() {
     };
     browser.clearTimeout = id => timers.delete(id);
     browser.testMathTimers = timers;
+    browser.testMathLoaderHandler = loaderHandler;
     browser.eval(config);
     return browser;
   } catch (error) {
@@ -228,6 +234,152 @@ test('정상 완료 후 늦은 구성요소 오류는 실패를 알린다', asyn
     assert.equal(failure.hidden, false);
     assert.equal(browser.document.getElementById('math-load-delay').hidden, true);
     assert.equal(browser.document.getElementById('math-load-status').textContent, failure.textContent);
+  } finally {
+    await browser.happyDOM.abort();
+  }
+});
+
+test('음성 생성 오류는 시각 안내와 라이브 상태를 표시하고 기본 오류 처리도 유지한다', async () => {
+  const browser = await setupMath();
+  try {
+    const error = new Error('음성 생성 실패');
+    const item = {};
+    const calls = [];
+    const doc = { speechError: (...args) => { calls.push(args); return '기본 결과'; } };
+    const status = browser.document.getElementById('math-load-status');
+    const speech = browser.document.getElementById('math-speech-error');
+    assert.equal(browser.MathJax.options.speechError(doc, item, error), '기본 결과');
+    assert.equal(calls.length, 1);
+    assert.deepEqual(calls[0], [doc, item, error]);
+    assert.equal(speech.hidden, false);
+    assert.match(speech.textContent, /일부 수식의 음성 또는 점자 정보 생성 중 오류가 발생했습니다/);
+    assert.equal(status.textContent, speech.textContent);
+    assert.equal(browser.document.getElementById('math-load-error').hidden, true, '음성 실패를 수식 표시 실패로 단정하지 않습니다');
+    const first = status.firstChild;
+    browser.MathJax.options.speechError(doc, item, error);
+    assert.equal(calls.length, 2, '반복 오류도 MathJax 기본 처리는 호출합니다');
+    assert.equal(status.firstChild, first, '반복 오류는 상태를 다시 알리지 않습니다');
+    browser.MathJax.startup.defaultPageReady = () => Promise.resolve();
+    await browser.MathJax.startup.pageReady();
+    assert.equal(status.textContent, speech.textContent, '조판 완료 뒤에도 음성 오류를 유지합니다');
+  } finally {
+    await browser.happyDOM.abort();
+  }
+});
+
+test('스크립트 오류 캡처와 인라인 처리가 이어져도 음성 오류 안내를 보존한다', async () => {
+  const browser = await setupMath();
+  try {
+    browser.MathJax.options.speechError({ speechError() {} }, {}, new Error('음성 오류'));
+    const loader = browser.document.createElement('script');
+    loader.id = 'mathjax-loader';
+    browser.document.body.append(loader);
+    loader.dispatchEvent(new browser.Event('error'));
+    // happy-dom은 동적으로 설정한 onerror 속성을 실행하지 않아 브라우저의 실행 순서를 모의한다.
+    browser.eval(browser.testMathLoaderHandler);
+    const display = browser.document.getElementById('math-load-error');
+    const speech = browser.document.getElementById('math-speech-error');
+    assert.equal(display.hidden, false);
+    assert.equal(speech.hidden, false);
+    assert.equal(browser.document.getElementById('math-load-status').textContent, `${display.textContent} ${speech.textContent}`);
+  } finally {
+    await browser.happyDOM.abort();
+  }
+});
+
+test('설정 스크립트가 없어도 로더의 인라인 오류 처리가 실패를 알린다', async () => {
+  const fixture = await setupMath();
+  const browser = new Window();
+  try {
+    const status = fixture.document.getElementById('math-load-status');
+    const failure = fixture.document.getElementById('math-load-error');
+    browser.document.body.innerHTML = status.outerHTML + failure.outerHTML;
+    const loader = browser.document.createElement('script');
+    loader.id = 'mathjax-loader';
+    browser.document.body.append(loader);
+    loader.dispatchEvent(new browser.Event('error'));
+    browser.eval(fixture.testMathLoaderHandler);
+    const shown = browser.document.getElementById('math-load-error');
+    assert.equal(shown.hidden, false);
+    assert.equal(browser.document.getElementById('math-load-status').textContent, shown.textContent);
+  } finally {
+    await browser.happyDOM.abort();
+    await fixture.happyDOM.abort();
+  }
+});
+
+test('지연 중 음성 오류는 지연 안내와 함께 알리고 조판 완료 뒤에도 보존한다', async () => {
+  const browser = await setupMath();
+  try {
+    const delay = browser.document.getElementById('math-load-delay');
+    const speech = browser.document.getElementById('math-speech-error');
+    const status = browser.document.getElementById('math-load-status');
+    [...browser.testMathTimers.values()][0]();
+    browser.MathJax.options.speechError({ speechError() {} }, {}, new Error('오류'));
+    assert.equal(delay.hidden, false);
+    assert.equal(status.textContent, `${delay.querySelector('p').textContent} ${speech.textContent}`);
+    assert.ok(status.querySelector('[lang="en"]'), '기존 언어 속성을 보존합니다');
+    browser.MathJax.startup.defaultPageReady = () => Promise.resolve();
+    await browser.MathJax.startup.pageReady();
+    assert.equal(delay.hidden, true);
+    assert.equal(speech.hidden, false);
+    assert.equal(status.textContent, speech.textContent);
+  } finally {
+    await browser.happyDOM.abort();
+  }
+});
+
+test('음성 오류 후 지연 타이머가 실행돼도 음성 오류를 덮지 않는다', async () => {
+  const browser = await setupMath();
+  try {
+    browser.MathJax.options.speechError({ speechError() {} }, {}, new Error('음성 오류'));
+    [...browser.testMathTimers.values()][0]();
+    const delay = browser.document.getElementById('math-load-delay');
+    const speech = browser.document.getElementById('math-speech-error');
+    const status = browser.document.getElementById('math-load-status');
+    assert.equal(delay.hidden, false);
+    assert.equal(status.textContent, `${delay.querySelector('p').textContent} ${speech.textContent}`);
+    browser.MathJax.startup.defaultPageReady = () => Promise.resolve();
+    await browser.MathJax.startup.pageReady();
+    assert.equal(status.textContent, speech.textContent);
+  } finally {
+    await browser.happyDOM.abort();
+  }
+});
+
+test('음성 오류와 수식 표시 오류는 발생 순서와 관계없이 모두 알린다', async () => {
+  for (const first of ['speech', 'display']) {
+    const browser = await setupMath();
+    try {
+      browser.console.error = () => {};
+      const speech = () => browser.MathJax.options.speechError({ speechError() {} }, {}, new Error('음성 오류'));
+      const display = () => browser.MathJax.loader.failed(new Error('표시 오류'));
+      if (first === 'speech') { speech(); display(); } else { display(); speech(); }
+      const notice = browser.document.getElementById('math-load-error');
+      const speechNotice = browser.document.getElementById('math-speech-error');
+      const status = browser.document.getElementById('math-load-status');
+      assert.equal(notice.hidden, false);
+      assert.equal(speechNotice.hidden, false);
+      assert.equal(status.textContent, `${notice.textContent} ${speechNotice.textContent}`);
+      browser.MathJax.startup.defaultPageReady = () => Promise.resolve();
+      await browser.MathJax.startup.pageReady();
+      assert.equal(status.textContent, `${notice.textContent} ${speechNotice.textContent}`);
+    } finally {
+      await browser.happyDOM.abort();
+    }
+  }
+});
+
+test('조판 완료 후 음성 오류와 기본 오류 처리의 예외도 표시한다', async () => {
+  const browser = await setupMath();
+  try {
+    browser.MathJax.startup.defaultPageReady = () => Promise.resolve();
+    await browser.MathJax.startup.pageReady();
+    const original = new Error('기본 처리 예외');
+    assert.throws(() => browser.MathJax.options.speechError({ speechError() { throw original; } }, {}, new Error('음성 오류')), error => error === original);
+    const speech = browser.document.getElementById('math-speech-error');
+    assert.equal(speech.hidden, false);
+    assert.equal(browser.document.getElementById('math-load-status').textContent, speech.textContent);
   } finally {
     await browser.happyDOM.abort();
   }
