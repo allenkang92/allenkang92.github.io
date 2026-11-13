@@ -1,7 +1,31 @@
 {%- if page.math -%}
 true
-{%- elsif layout.math_notice_in_post and page.math != false and page.content contains '$' -%}
-true
+{%- elsif layout.math_notice_in_post and page.math != false -%}
+  {%- assign math_source = page.content -%}
+  {%- comment -%}
+    Jekyll은 컬렉션 문서의 page.content를 변환된 HTML로 노출하지만,
+    일반 Markdown 페이지의 page.content는 원문으로 유지한다. 두 레이아웃에서
+    같은 본문을 검사하고 일반 Markdown에서 제거되는 단일 역슬래시는 제외한다.
+    후보 구분자가 있을 때만 Markdown을 변환해 불필요한 작업을 줄인다.
+  {%- endcomment -%}
+  {%- if page.content contains '\(' or page.content contains '\[' or page.content contains '\begin{' -%}
+    {%- assign math_extension = page.path | split: '.' | last | downcase -%}
+    {%- assign markdown_extensions = site.markdown_ext | default: 'markdown,mkdown,mkdn,mkd,md' | remove: ' ' | split: ',' -%}
+    {%- if page.collection == nil and markdown_extensions contains math_extension -%}
+      {%- assign math_source = page.content | markdownify -%}
+    {%- endif -%}
+  {%- endif -%}
+  {%- if page.content contains '$' -%}
+    true
+  {%- elsif math_source contains '\(' and math_source contains '\)' -%}
+    true
+  {%- elsif math_source contains '\[' and math_source contains '\]' -%}
+    true
+  {%- elsif math_source contains '\begin{' and math_source contains '\end{' -%}
+    true
+  {%- else -%}
+    false
+  {%- endif -%}
 {%- else -%}
 false
 {%- endif -%}
